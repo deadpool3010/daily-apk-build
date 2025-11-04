@@ -1,0 +1,1747 @@
+import 'package:flutter/material.dart';
+class HomepageUI extends StatelessWidget {
+  const HomepageUI({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: ListView(
+        children: [
+          HomepageMain(),
+        ],
+      ),
+    );
+  }
+}
+
+class HomepageMain extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Container(
+          width: 408,
+          height: 1708,
+          clipBehavior: Clip.antiAlias,
+          decoration: ShapeDecoration(
+            color: const Color(0xFFFFFCF9),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(50),
+            ),
+          ),
+          child: Stack(
+            children: [
+              Positioned(
+                left: -227.76,
+                top: -302.44,
+                child: Container(
+                  transform: Matrix4.identity()..translate(0.0, 0.0)..rotateZ(0.01),
+                  width: 869,
+                  height: 511,
+                  decoration: ShapeDecoration(
+                    color: const Color(0xFFFBF3E3),
+                    shape: OvalBorder(),
+                  ),
+                ),
+              ),
+              Positioned(
+                left: 310,
+                top: 118,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: 50,
+                      height: 50,
+                      decoration: ShapeDecoration(
+                        image: DecorationImage(
+                          image: NetworkImage("https://placehold.co/50x50"),
+                          fit: BoxFit.fill,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(50),
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 5),
+                    Container(
+                      width: 18,
+                      height: 18,
+                      clipBehavior: Clip.antiAlias,
+                      decoration: BoxDecoration(),
+                      child: Stack(),
+                    ),
+                  ],
+                ),
+              ),
+              Positioned(
+                left: 128,
+                top: 116,
+                child: Container(
+                  width: 23.25,
+                  height: 21,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: NetworkImage("https://placehold.co/23x21"),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
+                left: 24,
+                top: 115,
+                child: SizedBox(
+                  width: 143,
+                  child: Text.rich(
+                    TextSpan(
+                      children: [
+                        TextSpan(
+                          text: 'Namaste',
+                          style: TextStyle(
+                            color: const Color(0xFFD8A409),
+                            fontSize: 23.33,
+                            fontFamily: 'Roboto',
+                            fontWeight: FontWeight.w500,
+                            height: 1.20,
+                          ),
+                        ),
+                        TextSpan(
+                          text: ' ',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 23.33,
+                            fontFamily: 'Roboto',
+                            fontWeight: FontWeight.w500,
+                            height: 1.20,
+                          ),
+                        ),
+                        TextSpan(
+                          text: 'Siddharth ji',
+                          style: TextStyle(
+                            color: const Color(0xFFFF6A00),
+                            fontSize: 23.33,
+                            fontFamily: 'Roboto',
+                            fontWeight: FontWeight.w500,
+                            height: 1.20,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
+                left: -0.73,
+                top: -359.22,
+                child: Container(
+                  transform: Matrix4.identity()..translate(0.0, 0.0)..rotateZ(-0.29),
+                  width: 869,
+                  height: 511,
+                  decoration: ShapeDecoration(
+                    color: Colors.white,
+                    shape: OvalBorder(),
+                  ),
+                ),
+              ),
+              Positioned(
+                left: -23.26,
+                top: -375.51,
+                child: Container(
+                  transform: Matrix4.identity()..translate(0.0, 0.0)..rotateZ(-0.29),
+                  width: 869,
+                  height: 511,
+                  decoration: ShapeDecoration(
+                    color: const Color(0xFFFBF3E3),
+                    shape: OvalBorder(),
+                  ),
+                ),
+              ),
+              Positioned(
+                left: 24,
+                top: 733,
+                child: Container(
+                  width: 384,
+                  height: 278,
+                  child: Stack(
+                    children: [
+                      Positioned(
+                        left: 0,
+                        top: 0,
+                        child: SizedBox(
+                          width: 337,
+                          child: Text(
+                            'Daily Affirmations / Reminders',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 18,
+                              fontFamily: 'Roboto',
+                              fontWeight: FontWeight.w500,
+                              height: 1.33,
+                            ),
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        left: 0,
+                        top: 44,
+                        child: Container(
+                          width: 384,
+                          child: Wrap(
+                            direction: Axis.horizontal,
+                            spacing: 10,
+                            children: [
+                              Container(
+                                width: 317,
+                                height: 108,
+                                clipBehavior: Clip.antiAlias,
+                                decoration: ShapeDecoration(
+                                  color: const Color(0xFF014E99),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(24),
+                                      topRight: Radius.circular(24),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                width: 317,
+                                height: 144.63,
+                                decoration: ShapeDecoration(
+                                  image: DecorationImage(
+                                    image: NetworkImage("https://placehold.co/317x145"),
+                                    fit: BoxFit.fill,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.only(
+                                      bottomLeft: Radius.circular(24),
+                                      bottomRight: Radius.circular(24),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                width: 108,
+                                height: 18,
+                                child: Text(
+                                  '-Misty Copeland',
+                                  textAlign: TextAlign.right,
+                                  style: TextStyle(
+                                    color: const Color(0xFFFFE16A),
+                                    fontSize: 14,
+                                    fontFamily: 'Lato',
+                                    fontWeight: FontWeight.w500,
+                                    height: 1.14,
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                                clipBehavior: Clip.antiAlias,
+                                decoration: ShapeDecoration(
+                                  color: Colors.white.withOpacity(0.11),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    SizedBox(
+                                      width: 249,
+                                      child: Text(
+                                        '“Be strong, be fearless, be happy. And believe that anything is possible when you have the right people there to support you.”',
+                                        textAlign: TextAlign.justify,
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 13,
+                                          fontFamily: 'Lato',
+                                          fontWeight: FontWeight.w500,
+                                          height: 1.38,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                transform: Matrix4.identity()..translate(0.0, 0.0)..rotateZ(3.14),
+                                width: 317,
+                                height: 149.58,
+                                decoration: ShapeDecoration(
+                                  image: DecorationImage(
+                                    image: NetworkImage("https://placehold.co/317x150"),
+                                    fit: BoxFit.fill,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.only(
+                                      bottomLeft: Radius.circular(24),
+                                      bottomRight: Radius.circular(24),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                transform: Matrix4.identity()..translate(0.0, 0.0)..rotateZ(3.14),
+                                width: 317,
+                                height: 99.11,
+                                clipBehavior: Clip.antiAlias,
+                                decoration: ShapeDecoration(
+                                  gradient: LinearGradient(
+                                    begin: Alignment(-0.00, 0.59),
+                                    end: Alignment(1.00, 0.59),
+                                    colors: [const Color(0xFFF6D6D7), const Color(0xFFFFDEC3)],
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(24),
+                                      topRight: Radius.circular(24),
+                                    ),
+                                  ),
+                                ),
+                                child: Stack(
+                                  children: [
+                                    Positioned(
+                                      left: 299,
+                                      top: 98,
+                                      child: Container(
+                                        transform: Matrix4.identity()..translate(0.0, 0.0)..rotateZ(3.14),
+                                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                                        clipBehavior: Clip.antiAlias,
+                                        decoration: ShapeDecoration(
+                                          color: Colors.white.withOpacity(0.32),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(12),
+                                          ),
+                                        ),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          crossAxisAlignment: CrossAxisAlignment.center,
+                                          children: [
+                                            SizedBox(
+                                              width: 249,
+                                              child: Text(
+                                                '“Be strong, be fearless, be happy. And believe that anything is possible when you have the right people there to support you.”',
+                                                textAlign: TextAlign.justify,
+                                                style: TextStyle(
+                                                  color: const Color(0xFF827498),
+                                                  fontSize: 13,
+                                                  fontFamily: 'Lato',
+                                                  fontWeight: FontWeight.w500,
+                                                  height: 1.38,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(
+                                width: 108,
+                                height: 16.52,
+                                child: Text(
+                                  '-Misty Copeland',
+                                  textAlign: TextAlign.right,
+                                  style: TextStyle(
+                                    color: const Color(0xFF694A99),
+                                    fontSize: 14,
+                                    fontFamily: 'Lato',
+                                    fontWeight: FontWeight.w500,
+                                    height: 1.14,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Positioned(
+                left: 24,
+                top: 1041,
+                child: SizedBox(
+                  width: 337,
+                  child: Text(
+                    'Meet Our Strongest Warriors ',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 18,
+                      fontFamily: 'Roboto',
+                      fontWeight: FontWeight.w500,
+                      height: 1.33,
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
+                left: 24,
+                top: 589,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 17, vertical: 13),
+                  clipBehavior: Clip.antiAlias,
+                  decoration: ShapeDecoration(
+                    color: const Color(0xFFFBF3E3),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Container(
+                        width: 61,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Container(
+                              width: 41.87,
+                              height: 43,
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: NetworkImage("https://placehold.co/42x43"),
+                                  fit: BoxFit.fill,
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 11),
+                            Container(
+                              width: 41.87,
+                              height: 43,
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: NetworkImage("https://placehold.co/42x43"),
+                                  fit: BoxFit.fill,
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 11),
+                            SizedBox(
+                              width: 61,
+                              child: Text(
+                                'Health\nCalander',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: const Color(0xFF222222),
+                                  fontSize: 13,
+                                  fontFamily: 'Lato',
+                                  fontWeight: FontWeight.w500,
+                                  height: 1.23,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(width: 30),
+                      Container(
+                        width: 61,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Container(
+                              width: 42.66,
+                              height: 43,
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: NetworkImage("https://placehold.co/43x43"),
+                                  fit: BoxFit.fill,
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 13),
+                            Container(
+                              width: 42.66,
+                              height: 43,
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: NetworkImage("https://placehold.co/43x43"),
+                                  fit: BoxFit.fill,
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 13),
+                            SizedBox(
+                              width: 61,
+                              child: Text(
+                                'Manage\nFiles',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: const Color(0xFF222222),
+                                  fontSize: 13,
+                                  fontFamily: 'Lato',
+                                  fontWeight: FontWeight.w500,
+                                  height: 1.23,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(width: 30),
+                      Container(
+                        width: 61,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Container(
+                              width: 34.24,
+                              height: 56.36,
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: NetworkImage("https://placehold.co/34x56"),
+                                  fit: BoxFit.fill,
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 8),
+                            Container(
+                              width: 34.24,
+                              height: 56.36,
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: NetworkImage("https://placehold.co/34x56"),
+                                  fit: BoxFit.fill,
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 8),
+                            SizedBox(
+                              width: 61,
+                              child: Text(
+                                'Mitra',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: const Color(0xFF222222),
+                                  fontSize: 13,
+                                  fontFamily: 'Lato',
+                                  fontWeight: FontWeight.w500,
+                                  height: 1.23,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(width: 30),
+                      Container(
+                        width: 53,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Container(
+                              width: 44.41,
+                              height: 44.75,
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: NetworkImage("https://placehold.co/44x45"),
+                                  fit: BoxFit.fill,
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 11),
+                            Container(
+                              width: 44.41,
+                              height: 44.75,
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: NetworkImage("https://placehold.co/44x45"),
+                                  fit: BoxFit.fill,
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 11),
+                            SizedBox(
+                              width: 53,
+                              child: Text(
+                                'My Clinic',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: const Color(0xFF222222),
+                                  fontSize: 13,
+                                  fontFamily: 'Lato',
+                                  fontWeight: FontWeight.w500,
+                                  height: 1.23,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Positioned(
+                left: 24,
+                top: 555,
+                child: SizedBox(
+                  width: 337,
+                  child: Text(
+                    'Categories',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 18,
+                      fontFamily: 'Roboto',
+                      fontWeight: FontWeight.w500,
+                      height: 1.33,
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
+                left: 230.88,
+                top: 232.92,
+                child: Container(
+                  width: 27.12,
+                  height: 43.05,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: NetworkImage("https://placehold.co/27x43"),
+                      fit: BoxFit.fill,
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
+                left: 230.88,
+                top: 232.92,
+                child: Container(
+                  width: 27.12,
+                  height: 43.05,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: NetworkImage("https://placehold.co/27x43"),
+                      fit: BoxFit.fill,
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
+                left: 24,
+                top: 249,
+                child: SizedBox(
+                  width: 337,
+                  child: Text(
+                    'Daily Check-in with Mitra',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 18,
+                      fontFamily: 'Roboto',
+                      fontWeight: FontWeight.w500,
+                      height: 1.33,
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
+                left: 24,
+                top: 293,
+                child: Container(
+                  width: 384,
+                  child: Wrap(
+                    direction: Axis.horizontal,
+                    spacing: 12,
+                    children: [
+                      Container(
+                        width: 226,
+                        height: 232,
+                        clipBehavior: Clip.antiAlias,
+                        decoration: ShapeDecoration(
+                          color: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            side: BorderSide(
+                              width: 1,
+                              color: Colors.black.withOpacity(0.14),
+                            ),
+                            borderRadius: BorderRadius.circular(24),
+                          ),
+                        ),
+                        child: Stack(
+                          children: [
+                            Positioned(
+                              left: 5,
+                              top: 5.40,
+                              child: Container(
+                                width: 216,
+                                height: 133.62,
+                                decoration: ShapeDecoration(
+                                  image: DecorationImage(
+                                    image: NetworkImage("https://placehold.co/216x134"),
+                                    fit: BoxFit.fill,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(24),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Positioned(
+                              left: 15,
+                              top: 148,
+                              child: SizedBox(
+                                width: 196,
+                                child: Text(
+                                  'How are you feeling today?',
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 14,
+                                    fontFamily: 'Roboto',
+                                    fontWeight: FontWeight.w500,
+                                    height: 1.43,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Positioned(
+                              left: 14,
+                              top: 178,
+                              child: Container(
+                                width: 196,
+                                height: 36.74,
+                                child: Wrap(
+                                  direction: Axis.horizontal,
+                                  spacing: 11.02,
+                                  crossAxisAlignment: WrapCrossAlignment.center,
+                                  children: [
+                                    SizedBox(
+                                      width: 22.04,
+                                      height: 9.80,
+                                      child: Text(
+                                        'Happy',
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 7.35,
+                                          fontFamily: 'Lato',
+                                          fontWeight: FontWeight.w500,
+                                          height: 1.33,
+                                        ),
+                                      ),
+                                    ),
+                                    Container(
+                                      width: 21.15,
+                                      height: 21.15,
+                                      decoration: BoxDecoration(
+                                        image: DecorationImage(
+                                          image: NetworkImage("https://placehold.co/21x21"),
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 19.60,
+                                      height: 9.80,
+                                      child: Text(
+                                        'So-so',
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 7.35,
+                                          fontFamily: 'Lato',
+                                          fontWeight: FontWeight.w500,
+                                          height: 1.33,
+                                        ),
+                                      ),
+                                    ),
+                                    Container(
+                                      width: 21.15,
+                                      height: 21.15,
+                                      decoration: BoxDecoration(
+                                        image: DecorationImage(
+                                          image: NetworkImage("https://placehold.co/21x21"),
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    ),
+                                    Text(
+                                      'Wornout',
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 7.35,
+                                        fontFamily: 'Lato',
+                                        fontWeight: FontWeight.w500,
+                                        height: 1.33,
+                                      ),
+                                    ),
+                                    Container(
+                                      width: 21.15,
+                                      height: 21.15,
+                                      decoration: BoxDecoration(
+                                        image: DecorationImage(
+                                          image: NetworkImage("https://placehold.co/21x21"),
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    ),
+                                    Text(
+                                      'Scared',
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 7.35,
+                                        fontFamily: 'Lato',
+                                        fontWeight: FontWeight.w500,
+                                        height: 1.33,
+                                      ),
+                                    ),
+                                    Container(
+                                      width: 21.15,
+                                      height: 21.15,
+                                      decoration: BoxDecoration(
+                                        image: DecorationImage(
+                                          image: NetworkImage("https://placehold.co/21x21"),
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    ),
+                                    Text(
+                                      'Angry',
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 7.35,
+                                        fontFamily: 'Lato',
+                                        fontWeight: FontWeight.w500,
+                                        height: 1.33,
+                                      ),
+                                    ),
+                                    Container(
+                                      width: 21.15,
+                                      height: 21.15,
+                                      decoration: BoxDecoration(
+                                        image: DecorationImage(
+                                          image: NetworkImage("https://placehold.co/21x21"),
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    ),
+                                    Container(
+                                      width: 21.15,
+                                      height: 21.15,
+                                      decoration: BoxDecoration(
+                                        image: DecorationImage(
+                                          image: NetworkImage("https://placehold.co/21x21"),
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    ),
+                                    Text(
+                                      'Nothing',
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 7.35,
+                                        fontFamily: 'Lato',
+                                        fontWeight: FontWeight.w500,
+                                        height: 1.33,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        width: 226,
+                        height: 232,
+                        clipBehavior: Clip.antiAlias,
+                        decoration: ShapeDecoration(
+                          color: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            side: BorderSide(
+                              width: 1,
+                              color: Colors.black.withOpacity(0.14),
+                            ),
+                            borderRadius: BorderRadius.circular(24),
+                          ),
+                        ),
+                        child: Stack(
+                          children: [
+                            Positioned(
+                              left: 15,
+                              top: 148,
+                              child: SizedBox(
+                                width: 195,
+                                child: Text(
+                                  'Did you take your medicines ?',
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 14,
+                                    fontFamily: 'Roboto',
+                                    fontWeight: FontWeight.w500,
+                                    height: 1.43,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Positioned(
+                              left: 5,
+                              top: 5,
+                              child: Container(
+                                width: 216,
+                                height: 134,
+                                decoration: ShapeDecoration(
+                                  image: DecorationImage(
+                                    image: NetworkImage("https://placehold.co/216x134"),
+                                    fit: BoxFit.fill,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(24),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Positioned(
+                              left: 15,
+                              top: 182,
+                              child: Wrap(
+                                direction: Axis.horizontal,
+                                spacing: 17.57,
+                                crossAxisAlignment: WrapCrossAlignment.center,
+                                children: [
+                                  Container(
+                                    width: 75.72,
+                                    padding: const EdgeInsets.symmetric(horizontal: 12.45, vertical: 3.11),
+                                    clipBehavior: Clip.antiAlias,
+                                    decoration: ShapeDecoration(
+                                      color: const Color(0x19398F00),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(41.49),
+                                      ),
+                                    ),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Yes',
+                                          style: TextStyle(
+                                            color: const Color(0xFF398F00),
+                                            fontSize: 14.52,
+                                            fontFamily: 'Lato',
+                                            fontWeight: FontWeight.w500,
+                                            height: 0.70,
+                                          ),
+                                        ),
+                                        SizedBox(height: 10.37),
+                                        Container(
+                                          width: 24.89,
+                                          height: 24.89,
+                                          clipBehavior: Clip.antiAlias,
+                                          decoration: BoxDecoration(),
+                                          child: Stack(),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Container(
+                                    width: 75.72,
+                                    height: 31.12,
+                                    clipBehavior: Clip.antiAlias,
+                                    decoration: ShapeDecoration(
+                                      color: const Color(0x33F14029),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(41.49),
+                                      ),
+                                    ),
+                                    child: Stack(
+                                      children: [
+                                        Positioned(
+                                          left: 14.52,
+                                          top: 3.11,
+                                          child: Wrap(
+                                            direction: Axis.horizontal,
+                                            spacing: 3.11,
+                                            crossAxisAlignment: WrapCrossAlignment.center,
+                                            children: [
+                                              SizedBox(
+                                                width: 19.71,
+                                                child: Text(
+                                                  'No',
+                                                  style: TextStyle(
+                                                    color: const Color(0xFFF14029),
+                                                    fontSize: 14.52,
+                                                    fontFamily: 'Lato',
+                                                    fontWeight: FontWeight.w500,
+                                                    height: 0.70,
+                                                  ),
+                                                ),
+                                              ),
+                                              Container(
+                                                width: 24.89,
+                                                height: 24.89,
+                                                clipBehavior: Clip.antiAlias,
+                                                decoration: BoxDecoration(),
+                                                child: Stack(),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Positioned(
+                left: 2,
+                top: 1059,
+                child: Container(
+                  width: 375,
+                  height: 349,
+                  child: Stack(
+                    children: [
+                      Positioned(
+                        left: 105.43,
+                        top: 56.37,
+                        child: Container(
+                          transform: Matrix4.identity()..translate(0.0, 0.0)..rotateZ(0.33),
+                          width: 188.37,
+                          height: 223.63,
+                          clipBehavior: Clip.antiAlias,
+                          decoration: ShapeDecoration(
+                            color: const Color(0x70E6E6E6),
+                            shape: RoundedRectangleBorder(
+                              side: BorderSide(
+                                width: 1.30,
+                                color: Colors.black.withOpacity(0.09),
+                              ),
+                            ),
+                            shadows: [
+                              BoxShadow(
+                                color: Color(0xFFF1F1F1),
+                                blurRadius: 12.97,
+                                offset: Offset(1.30, 1.30),
+                                spreadRadius: 0,
+                              )
+                            ],
+                          ),
+                          child: Stack(
+                            children: [
+                              Positioned(
+                                left: 34.99,
+                                top: 12.14,
+                                child: Container(
+                                  width: 204.77,
+                                  height: 181.51,
+                                  child: Stack(
+                                    children: [
+                                      Positioned(
+                                        left: 6.71,
+                                        top: 0,
+                                        child: Container(
+                                          width: 196.61,
+                                          height: 161.71,
+                                          clipBehavior: Clip.antiAlias,
+                                          decoration: BoxDecoration(
+                                            gradient: LinearGradient(
+                                              begin: Alignment(0.01, 0.31),
+                                              end: Alignment(0.99, 0.54),
+                                              colors: [Colors.black, const Color(0xFF12100E)],
+                                            ),
+                                          ),
+                                          child: Stack(
+                                            children: [
+                                              Positioned(
+                                                left: 1.52,
+                                                top: 0,
+                                                child: Container(
+                                                  transform: Matrix4.identity()..translate(0.0, 0.0)..rotateZ(0.01),
+                                                  width: 194.91,
+                                                  height: 159.40,
+                                                  decoration: BoxDecoration(
+                                                    image: DecorationImage(
+                                                      image: NetworkImage("https://placehold.co/195x159"),
+                                                      fit: BoxFit.fill,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      Positioned(
+                                        left: -0.22,
+                                        top: 112.91,
+                                        child: SizedBox(
+                                          width: 164.29,
+                                          child: Text(
+                                            'Sita Amma’s Journey',
+                                            style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 12,
+                                              fontFamily: 'Roboto',
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              Positioned(
+                                left: 15.88,
+                                top: 144.61,
+                                child: SizedBox(
+                                  width: 177.19,
+                                  child: Text(
+                                    'After her 6-month treatment, Sita Amma began walking every morning again.  She says,\n “I found my strength in small steps and big smiles.”',
+                                    style: TextStyle(
+                                      color: Colors.black.withOpacity(0.51),
+                                      fontSize: 8,
+                                      fontFamily: 'Lato',
+                                      fontWeight: FontWeight.w500,
+                                      height: 1.59,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Positioned(
+                                left: 109.11,
+                                top: 219.78,
+                                child: Container(
+                                  transform: Matrix4.identity()..translate(0.0, 0.0)..rotateZ(0.03),
+                                  width: 63.19,
+                                  height: 38.89,
+                                  clipBehavior: Clip.antiAlias,
+                                  decoration: ShapeDecoration(
+                                    color: const Color(0xFF397BE9),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                  ),
+                                  child: Stack(
+                                    children: [
+                                      Positioned(
+                                        left: 5.69,
+                                        top: 3.86,
+                                        child: Transform(
+                                          transform: Matrix4.identity()..translate(0.0, 0.0)..rotateZ(0.02),
+                                          child: Text(
+                                            'Read her Story',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 8,
+                                              fontFamily: 'Lato',
+                                              fontWeight: FontWeight.w500,
+                                              height: 1.59,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        left: 330.69,
+                        top: 62.27,
+                        child: Container(
+                          transform: Matrix4.identity()..translate(0.0, 0.0)..rotateZ(0.04),
+                          width: 188.37,
+                          height: 234.74,
+                          clipBehavior: Clip.antiAlias,
+                          decoration: ShapeDecoration(
+                            color: const Color(0x70E6E6E6),
+                            shape: RoundedRectangleBorder(
+                              side: BorderSide(
+                                width: 1.30,
+                                color: Colors.black.withOpacity(0.09),
+                              ),
+                            ),
+                            shadows: [
+                              BoxShadow(
+                                color: Color(0xFFF1F1F1),
+                                blurRadius: 12.97,
+                                offset: Offset(1.30, 1.30),
+                                spreadRadius: 0,
+                              )
+                            ],
+                          ),
+                          child: Stack(
+                            children: [
+                              Positioned(
+                                left: 12.96,
+                                top: 10.09,
+                                child: Container(
+                                  width: 173.03,
+                                  height: 118.49,
+                                  clipBehavior: Clip.antiAlias,
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      begin: Alignment(0.01, 0.31),
+                                      end: Alignment(0.99, 0.54),
+                                      colors: [Colors.black, const Color(0xFF12100E)],
+                                    ),
+                                  ),
+                                  child: Stack(
+                                    children: [
+                                      Positioned(
+                                        left: 12.01,
+                                        top: 0.42,
+                                        child: Container(
+                                          transform: Matrix4.identity()..translate(0.0, 0.0)..rotateZ(0.01),
+                                          width: 148.73,
+                                          height: 115.90,
+                                          decoration: BoxDecoration(
+                                            image: DecorationImage(
+                                              image: NetworkImage("https://placehold.co/149x116"),
+                                              fit: BoxFit.fill,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      Positioned(
+                                        left: -0.66,
+                                        top: -7.91,
+                                        child: Container(
+                                          transform: Matrix4.identity()..translate(0.0, 0.0)..rotateZ(0.01),
+                                          width: 174.19,
+                                          height: 151.89,
+                                          decoration: BoxDecoration(
+                                            image: DecorationImage(
+                                              image: NetworkImage("https://placehold.co/174x152"),
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              Positioned(
+                                left: 12.23,
+                                top: 129.55,
+                                child: SizedBox(
+                                  width: 169.43,
+                                  child: Text(
+                                    'Natasha’s Journey',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 10.66,
+                                      fontFamily: 'Work Sans',
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Positioned(
+                                left: 10.16,
+                                top: 149.90,
+                                child: SizedBox(
+                                  width: 170.11,
+                                  child: Text(
+                                    'After her 6-month treatment, Sita Amma began walking every morning again.  She says,\n “I found my strength in small steps and big smiles.”',
+                                    textAlign: TextAlign.justify,
+                                    style: TextStyle(
+                                      color: Colors.black.withOpacity(0.51),
+                                      fontSize: 8,
+                                      fontFamily: 'Lato',
+                                      fontWeight: FontWeight.w500,
+                                      height: 1.59,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Positioned(
+                                left: 113.83,
+                                top: 210.10,
+                                child: Container(
+                                  transform: Matrix4.identity()..translate(0.0, 0.0)..rotateZ(-0.04),
+                                  width: 65.40,
+                                  height: 17.64,
+                                  clipBehavior: Clip.antiAlias,
+                                  decoration: ShapeDecoration(
+                                    color: const Color(0xFF397BE9),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                  ),
+                                  child: Stack(
+                                    children: [
+                                      Positioned(
+                                        left: 7,
+                                        top: 3,
+                                        child: Text(
+                                          'Read her Story',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 8,
+                                            fontFamily: 'Lato',
+                                            fontWeight: FontWeight.w500,
+                                            height: 1.59,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        left: 568,
+                        top: 83.66,
+                        child: Container(
+                          transform: Matrix4.identity()..translate(0.0, 0.0)..rotateZ(-0.32),
+                          width: 188.37,
+                          height: 229.65,
+                          clipBehavior: Clip.antiAlias,
+                          decoration: ShapeDecoration(
+                            color: const Color(0x70E6E6E6),
+                            shape: RoundedRectangleBorder(
+                              side: BorderSide(
+                                width: 1.30,
+                                color: Colors.black.withOpacity(0.09),
+                              ),
+                            ),
+                            shadows: [
+                              BoxShadow(
+                                color: Color(0xFFF1F1F1),
+                                blurRadius: 12.97,
+                                offset: Offset(1.30, 1.30),
+                                spreadRadius: 0,
+                              )
+                            ],
+                          ),
+                          child: Stack(
+                            children: [
+                              Positioned(
+                                left: 11.50,
+                                top: 12.07,
+                                child: Container(
+                                  width: 203.63,
+                                  height: 179.62,
+                                  child: Stack(
+                                    children: [
+                                      Positioned(
+                                        left: 0,
+                                        top: 0.48,
+                                        child: Container(
+                                          width: 195.78,
+                                          height: 159.73,
+                                          clipBehavior: Clip.antiAlias,
+                                          decoration: BoxDecoration(
+                                            gradient: LinearGradient(
+                                              begin: Alignment(0.01, 0.31),
+                                              end: Alignment(0.99, 0.54),
+                                              colors: [Colors.black, const Color(0xFF12100E)],
+                                            ),
+                                          ),
+                                          child: Stack(
+                                            children: [
+                                              Positioned(
+                                                left: 12.95,
+                                                top: 5.38,
+                                                child: Container(
+                                                  transform: Matrix4.identity()..translate(0.0, 0.0)..rotateZ(0.01),
+                                                  width: 170.01,
+                                                  height: 147.57,
+                                                  decoration: BoxDecoration(
+                                                    image: DecorationImage(
+                                                      image: NetworkImage("https://placehold.co/170x148"),
+                                                      fit: BoxFit.fill,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              Positioned(
+                                                left: 0.18,
+                                                top: -10.50,
+                                                child: Container(
+                                                  transform: Matrix4.identity()..translate(0.0, 0.0)..rotateZ(0.01),
+                                                  width: 204.13,
+                                                  height: 191.31,
+                                                  decoration: BoxDecoration(
+                                                    image: DecorationImage(
+                                                      image: NetworkImage("https://placehold.co/204x191"),
+                                                      fit: BoxFit.cover,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      Positioned(
+                                        left: 37.44,
+                                        top: 114,
+                                        child: SizedBox(
+                                          width: 164.63,
+                                          child: Text(
+                                            'Prashanth ',
+                                            style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 10.66,
+                                              fontFamily: 'Work Sans',
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              Positioned(
+                                left: 55.37,
+                                top: 145.13,
+                                child: SizedBox(
+                                  width: 177.91,
+                                  child: Text(
+                                    'After her 6-month treatment, Sita Amma began walking every morning again.  She says,\n “I found my strength in small steps and big smiles.”',
+                                    textAlign: TextAlign.justify,
+                                    style: TextStyle(
+                                      color: Colors.black.withOpacity(0.51),
+                                      fontSize: 8,
+                                      fontFamily: 'Lato',
+                                      fontWeight: FontWeight.w500,
+                                      height: 1.59,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Positioned(
+                                left: 170,
+                                top: 195.41,
+                                child: Container(
+                                  width: 68.91,
+                                  height: 39.66,
+                                  clipBehavior: Clip.antiAlias,
+                                  decoration: ShapeDecoration(
+                                    color: const Color(0xFF397BE9),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                  ),
+                                  child: Stack(
+                                    children: [
+                                      Positioned(
+                                        left: 7.59,
+                                        top: 5.36,
+                                        child: Text(
+                                          'Read his Story',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 8,
+                                            fontFamily: 'Lato',
+                                            fontWeight: FontWeight.w500,
+                                            height: 1.59,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        left: 337.26,
+                        top: 39.63,
+                        child: Container(
+                          width: 33.97,
+                          height: 33.97,
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image: NetworkImage("https://placehold.co/34x34"),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        left: 718.83,
+                        top: 0,
+                        child: Container(
+                          width: 33.97,
+                          height: 33.97,
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image: NetworkImage("https://placehold.co/34x34"),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        left: 95.09,
+                        top: 34,
+                        child: Container(
+                          width: 33.97,
+                          height: 33.97,
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image: NetworkImage("https://placehold.co/34x34"),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Positioned(
+                left: 24,
+                top: 1445,
+                child: SizedBox(
+                  width: 302,
+                  child: Text(
+                    'Shared with heart.',
+                    style: TextStyle(
+                      color: const Color(0x7F397BE9),
+                      fontSize: 80,
+                      fontFamily: 'Alumni Sans',
+                      fontWeight: FontWeight.w700,
+                      height: 0.79,
+                      letterSpacing: 1.60,
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
+                left: 24,
+                top: 1583,
+                child: Text(
+                  '-Built for BandhuCare',
+                  style: TextStyle(
+                    color: const Color(0xFF4D7EE7),
+                    fontSize: 13,
+                    fontFamily: 'Lato',
+                    fontWeight: FontWeight.w700,
+                    height: 1.80,
+                  ),
+                ),
+              ),
+              Positioned(
+                left: 0,
+                top: 1624,
+                child: Container(
+                  width: 408,
+                  padding: const EdgeInsets.symmetric(horizontal: 35, vertical: 15),
+                  clipBehavior: Clip.antiAlias,
+                  decoration: ShapeDecoration(
+                    color: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(24),
+                        topRight: Radius.circular(24),
+                      ),
+                    ),
+                    shadows: [
+                      BoxShadow(
+                        color: Color(0x3F000000),
+                        blurRadius: 10,
+                        offset: Offset(1, 1),
+                        spreadRadius: 0,
+                      )
+                    ],
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Container(
+                        width: 33,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              width: 33,
+                              child: Text(
+                                'Home',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: const Color(0xFF4D7EE7),
+                                  fontSize: 12,
+                                  fontFamily: 'Lato',
+                                  fontWeight: FontWeight.w600,
+                                  height: 1.45,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(width: 30),
+                      Container(
+                        width: 43,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              width: 43,
+                              child: Text(
+                                'Chatbot',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: const Color(0xFFB8B8B8),
+                                  fontSize: 12,
+                                  fontFamily: 'Lato',
+                                  fontWeight: FontWeight.w600,
+                                  height: 1.45,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(width: 30),
+                      Container(
+                        width: 43,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Container(
+                              width: 24,
+                              height: 24,
+                              clipBehavior: Clip.antiAlias,
+                              decoration: BoxDecoration(),
+                              child: Stack(),
+                            ),
+                            SizedBox(height: 8),
+                            SizedBox(
+                              width: 43,
+                              child: Text(
+                                'Groups',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: const Color(0xFFB8B8B8),
+                                  fontSize: 12,
+                                  fontFamily: 'Lato',
+                                  fontWeight: FontWeight.w600,
+                                  height: 1.45,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(width: 30),
+                      Container(
+                        width: 62,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              width: 62,
+                              child: Text(
+                                'Community',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: const Color(0xFFB8B8B8),
+                                  fontSize: 12,
+                                  fontFamily: 'Lato',
+                                  fontWeight: FontWeight.w600,
+                                  height: 1.45,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(width: 30),
+                      Container(
+                        width: 35,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Container(
+                              width: 32,
+                              height: 32,
+                              decoration: ShapeDecoration(
+                                image: DecorationImage(
+                                  image: NetworkImage("https://placehold.co/32x32"),
+                                  fit: BoxFit.fill,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  side: BorderSide(
+                                    width: 1.43,
+                                    strokeAlign: BorderSide.strokeAlignOutside,
+                                    color: const Color(0xFFECECEC),
+                                  ),
+                                  borderRadius: BorderRadius.circular(143.03),
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 4),
+                            SizedBox(
+                              width: 35,
+                              child: Text(
+                                'Profile',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: const Color(0xFFB8B8B8),
+                                  fontSize: 12,
+                                  fontFamily: 'Lato',
+                                  fontWeight: FontWeight.w600,
+                                  height: 1.45,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}

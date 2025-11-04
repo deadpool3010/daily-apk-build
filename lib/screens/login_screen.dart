@@ -1854,6 +1854,9 @@ class _LoginScreenState extends State<LoginScreen>
                     setState(() {
                       currentPage++;
                     });
+                  } else {
+                    // Final page - navigate to homepage
+                    Navigator.pushReplacementNamed(context, '/home');
                   }
                 },
                 child: Container(
