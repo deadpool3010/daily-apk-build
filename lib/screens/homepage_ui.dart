@@ -1,7 +1,7 @@
-import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'dart:math' as math;
 import 'feelings.dart';
 
 class HomepageUI extends StatelessWidget {
@@ -13,30 +13,125 @@ class HomepageUI extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: const Color(0xFFFFFCF9),
-      body: AnnotatedRegion<SystemUiOverlayStyle>(
-        value: SystemUiOverlayStyle.dark,
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // ✅ Header background image (scrollable)
-              SizedBox(
-                width: size.width,
-                height: size.height * 0.3, // 30% of screen height
-                child: Image.asset(
-                  'assets/headerimage.png',
-                  fit: BoxFit.cover,
-                  alignment: Alignment.topCenter,
-                ),
-              ),
+      body: Stack(
+        children: [
+          // Main scrollable content
+          AnnotatedRegion<SystemUiOverlayStyle>(
+            value: SystemUiOverlayStyle.dark,
+            child: SingleChildScrollView(
+              padding: EdgeInsets.only(bottom: 100), // Space for bottom bar
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Stack(
+                    children: [
+                      // Header background image (bottom layer)
+                      SizedBox(
+                        width: size.width,
+                        height: size.height * 0.3, // 30% of screen height
+                        child: Image.asset(
+                          'assets/headerimage.png',
+                          fit: BoxFit.cover,
+                          alignment: Alignment.topCenter,
+                        ),
+                      ),
 
-              // Daily check-in header
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Row(
-                  children: [
-                    Text(
-                      'Daily check-in with Mitra ',
+                      Positioned(
+                        top: 100,
+                        right: 10,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            SizedBox(
+                              width: 50,
+                              height: 50,
+                              child: Image.asset(
+                                'assets/hospital_logo.png',
+                                fit: BoxFit.contain,
+                              ),
+                            ),
+
+                            Icon(
+                              Icons.keyboard_arrow_down,
+                              color: const Color.fromARGB(255, 27, 4, 4),
+                              size: 30,
+                            ),
+                          ],
+                        ),
+                      ),
+                      Positioned(
+                        top: 100,
+                        right: 300,
+                        child: Row(
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Namaste',
+                                  style: TextStyle(
+                                    fontFamily: 'Roboto',
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w500,
+                                    color: Color(0xFFD8A409),
+                                  ),
+                                ),
+                                Text(
+                                  'Siddharth Ji',
+                                  style: TextStyle(
+                                    fontFamily: 'Roboto',
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w500,
+                                    color: Color.fromARGB(255, 255, 106, 0),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  // Daily check-in header
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Row(
+                      children: [
+                        Text(
+                          'Daily check-in with Mitra ',
+                          style: TextStyle(
+                            fontFamily: 'Roboto',
+                            fontSize: 18,
+                            fontWeight: FontWeight.w500,
+                            height: 24 / 18, // line-height / font-size
+                            letterSpacing: 0,
+                            color: Colors.black,
+                          ),
+                        ),
+                        Image.asset('assets/robot.png', width: 24, height: 24),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+
+                  // Horizontal scrollable feelings cards
+                  Container(
+                    height: 260,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    child: ListView(
+                      scrollDirection: Axis.horizontal,
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      children: [Feelings()],
+                    ),
+                  ),
+
+                  // Additional content can go here
+                  const SizedBox(height: 20),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Text(
+                      "Categories",
                       style: TextStyle(
                         fontFamily: 'Roboto',
                         fontSize: 18,
@@ -46,134 +141,106 @@ class HomepageUI extends StatelessWidget {
                         color: Colors.black,
                       ),
                     ),
-                    Image.asset('assets/robot.png', width: 24, height: 24),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 12),
-
-              // Horizontal scrollable feelings cards
-              Container(
-                height: 260,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  children: [Feelings()],
-                ),
-              ),
-
-              // Additional content can go here
-              const SizedBox(height: 20),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Text(
-                  "Categories",
-                  style: TextStyle(
-                    fontFamily: 'Roboto',
-                    fontSize: 18,
-                    fontWeight: FontWeight.w500,
-                    height: 24 / 18, // line-height / font-size
-                    letterSpacing: 0,
-                    color: Colors.black,
                   ),
-                ),
-              ),
-              const SizedBox(height: 12),
+                  const SizedBox(height: 12),
 
-              // Category container
-              Center(child: categories()),
-              const SizedBox(height: 12),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Text(
-                  "Daily Affirmation/Remainders",
-                  style: TextStyle(
-                    fontFamily: 'Roboto',
-                    fontSize: 18,
-                    fontWeight: FontWeight.w500,
-                    height: 24 / 18, // line-height / font-size
-                    letterSpacing: 0,
-                    color: Colors.black,
+                  // Category container
+                  Center(child: categories()),
+                  const SizedBox(height: 12),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Text(
+                      "Daily Affirmation/Remainders",
+                      style: TextStyle(
+                        fontFamily: 'Roboto',
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500,
+                        height: 24 / 18, // line-height / font-size
+                        letterSpacing: 0,
+                        color: Colors.black,
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              const SizedBox(height: 15),
-              // Horizontal scrollable affirmation cards
-              Container(
-                height: 250,
-                child: ListView.separated(
-                  scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  itemCount: 3,
-                  separatorBuilder: (context, index) =>
-                      const SizedBox(width: 16),
-                  itemBuilder: (context, index) {
-                    return DailyAffirmation();
-                  },
-                ),
-              ),
-
-              const SizedBox(height: 20),
-              // Warriors section
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Text(
-                  "Meet Our Strong Warriors",
-                  style: TextStyle(
-                    fontFamily: 'Roboto',
-                    fontSize: 18,
-                    fontWeight: FontWeight.w500,
-                    height: 24 / 18,
-                    letterSpacing: 0,
-                    color: Colors.black,
+                  const SizedBox(height: 15),
+                  // Horizontal scrollable affirmation cards
+                  Container(
+                    height: 250,
+                    child: ListView.separated(
+                      scrollDirection: Axis.horizontal,
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      itemCount: 3,
+                      separatorBuilder: (context, index) =>
+                          const SizedBox(width: 16),
+                      itemBuilder: (context, index) {
+                        return DailyAffirmation();
+                      },
+                    ),
                   ),
-                ),
-              ),
-              const SizedBox(height: 12),
-              // Horizontal scrollable warrior cards
-              Container(
-                height: 355,
-                decoration: BoxDecoration(color: const Color(0xFFFFFCF9)),
-                child: ListView.separated(
-                  scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 25,
-                    vertical: 15,
+
+                  const SizedBox(height: 20),
+                  // Warriors section
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Text(
+                      "Meet Our Strong Warriors",
+                      style: TextStyle(
+                        fontFamily: 'Roboto',
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500,
+                        height: 24 / 18,
+                        letterSpacing: 0,
+                        color: Colors.black,
+                      ),
+                    ),
                   ),
-                  itemCount: 3,
-                  separatorBuilder: (context, index) =>
-                      Container(width: 25, color: const Color(0xFFFFFCF9)),
-                  itemBuilder: (context, index) {
-                    final titles = [
-                      "Sita Amma's Journey",
-                      "Natasha's Journey",
-                      "Prashanth's Story",
-                    ];
-                    final rotations = [0.05, -0.02, -0.05];
-                    return _buildWarriorCard(
-                      titles[index],
-                      "After her 6-month treatment, Sita Amma began walking every morning again. She says, \"I found my strength in small steps and big smiles.\"",
-                      rotations[index],
-                    );
-                  },
-                ),
+                  const SizedBox(height: 12),
+                  // Horizontal scrollable warrior cards
+                  Container(
+                    height: 355,
+                    decoration: BoxDecoration(color: const Color(0xFFFFFCF9)),
+                    child: ListView.separated(
+                      scrollDirection: Axis.horizontal,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 25,
+                        vertical: 15,
+                      ),
+                      itemCount: 3,
+                      separatorBuilder: (context, index) =>
+                          Container(width: 25, color: const Color(0xFFFFFCF9)),
+                      itemBuilder: (context, index) {
+                        final titles = [
+                          "Sita Amma's Journey",
+                          "Natasha's Journey",
+                          "Prashanth's Story",
+                        ];
+                        final rotations = [0.05, -0.02, -0.05];
+                        return _buildWarriorCard(
+                          titles[index],
+                          "After her 6-month treatment, Sita Amma began walking every morning again. She says, \"I found my strength in small steps and big smiles.\"",
+                          rotations[index],
+                        );
+                      },
+                    ),
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  // Shared with heart text
+                  Padding(
+                    padding: const EdgeInsets.only(left: 24),
+                    child: SharedWithHeart(),
+                  ),
+
+                  const SizedBox(height: 40),
+                ],
               ),
-
-              const SizedBox(height: 20),
-
-              // Shared with heart text
-              Padding(
-                padding: const EdgeInsets.only(left: 24),
-                child: SharedWithHeart(),
-              ),
-
-              const SizedBox(height: 40),
-            ],
+            ),
           ),
-        ),
+
+          // Custom bottom navigation bar overlaid on top
+          Positioned(left: 0, right: 0, bottom: 0, child: CustomBottomBar()),
+        ],
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 }
@@ -487,6 +554,103 @@ class SharedWithHeart extends StatelessWidget {
               fontWeight: FontWeight.w700,
               height: 1.0,
               letterSpacing: 1.00,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class CustomBottomBar extends StatefulWidget {
+  @override
+  _CustomBottomBarState createState() => _CustomBottomBarState();
+}
+
+class _CustomBottomBarState extends State<CustomBottomBar> {
+  int _selectedIndex = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    const double cornerRadius = 20.0;
+
+    return Container(
+      width: double.infinity,
+      height: 80,
+      child: Stack(
+        children: [
+          // White bar with rounded corners on all sides
+          Positioned(
+            top: 8,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(cornerRadius),
+                  topRight: Radius.circular(cornerRadius),
+                  bottomLeft: Radius.circular(cornerRadius),
+                  bottomRight: Radius.circular(cornerRadius),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 10,
+                    offset: Offset(0, -2),
+                  ),
+                ],
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  _buildNavItem('assets/home.png', 'Home', 0),
+                  _buildNavItem('assets/chat_bot.png', 'Chat Bot', 1),
+                  _buildNavItem('assets/groups.png', 'Groups', 2),
+                  _buildNavItem('assets/community.png', 'Community', 3),
+                  _buildNavItem('assets/Avatar.png', 'Profile', 4),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNavItem(
+    String? imagePath,
+    String label,
+    int index, {
+    IconData? icon,
+  }) {
+    bool isSelected = _selectedIndex == index;
+    Color itemColor = isSelected ? Colors.lightBlue : Colors.grey[700]!;
+
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _selectedIndex = index;
+        });
+      },
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          if (imagePath != null)
+            ColorFiltered(
+              colorFilter: ColorFilter.mode(itemColor, BlendMode.srcIn),
+              child: Image.asset(imagePath, width: 28, height: 28),
+            )
+          else if (icon != null)
+            Icon(icon, size: 28, color: itemColor),
+          SizedBox(height: 4),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 12,
+              color: itemColor,
+              fontWeight: FontWeight.w500,
             ),
           ),
         ],
