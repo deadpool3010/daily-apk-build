@@ -1,3 +1,4 @@
+import 'package:bandhucare_new/screens/userProfile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -338,7 +339,6 @@ Widget _buildWarriorCard(String title, String description, double rotation) {
                   ),
                 ),
               ),
-
               // Title and description in white space below image (polaroid style)
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
@@ -579,7 +579,6 @@ class _CustomBottomBarState extends State<CustomBottomBar> {
       height: 80,
       child: Stack(
         children: [
-          // White bar with rounded corners on all sides
           Positioned(
             top: 8,
             left: 0,
@@ -609,7 +608,17 @@ class _CustomBottomBarState extends State<CustomBottomBar> {
                   _buildNavItem('assets/chat_bot.png', 'Chat Bot', 1),
                   _buildNavItem('assets/groups.png', 'Groups', 2),
                   _buildNavItem('assets/community.png', 'Community', 3),
-                  _buildNavItem('assets/Avatar.png', 'Profile', 4),
+                  _buildNavItem(
+                    'assets/Avatar.png',
+                    'Profile',
+                    4,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => UserProfile()),
+                      );
+                    },
+                  ),
                 ],
               ),
             ),
@@ -624,6 +633,7 @@ class _CustomBottomBarState extends State<CustomBottomBar> {
     String label,
     int index, {
     IconData? icon,
+    VoidCallback? onTap,
   }) {
     bool isSelected = _selectedIndex == index;
     Color itemColor = isSelected ? Colors.lightBlue : Colors.grey[700]!;
@@ -633,6 +643,7 @@ class _CustomBottomBarState extends State<CustomBottomBar> {
         setState(() {
           _selectedIndex = index;
         });
+        onTap?.call();
       },
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,

@@ -5,6 +5,7 @@ class DynamicButton extends StatelessWidget {
   final VoidCallback? onPressed;
   final double width;
   final double height;
+  final double fontSize;
 
   const DynamicButton({
     Key? key,
@@ -12,6 +13,7 @@ class DynamicButton extends StatelessWidget {
     this.onPressed,
     this.width = 360,
     this.height = 50,
+    this.fontSize = 18,
   }) : super(key: key);
 
   @override
@@ -47,9 +49,9 @@ class DynamicButton extends StatelessWidget {
           child: Center(
             child: Text(
               text,
-              style: const TextStyle(
+              style: TextStyle(
                 color: Colors.white,
-                fontSize: 18,
+                fontSize: fontSize,
                 fontWeight: FontWeight.w600,
               ),
             ),

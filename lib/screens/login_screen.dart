@@ -460,7 +460,7 @@ class _LoginScreenState extends State<LoginScreen>
                     ? Transform(
                         alignment: Alignment.center,
                         transform: Matrix4.identity()..rotateY(3.14159),
-                        child: _buildCardFront(),
+                        child: buildCardFront(),
                       )
                     : _buildCardBack(),
               ),
@@ -485,7 +485,7 @@ class _LoginScreenState extends State<LoginScreen>
   }
 
   // Card Front (shown after flip)
-  Widget _buildCardFront() {
+  Widget buildCardFront() {
     return Stack(
       children: [
         // Background image - blank ABHA card
