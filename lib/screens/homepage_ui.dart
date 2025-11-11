@@ -1,3 +1,4 @@
+import 'package:bandhucare_new/screens/chatbot_splash_loading_screen.dart';
 import 'package:bandhucare_new/screens/userProfile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -605,7 +606,19 @@ class _CustomBottomBarState extends State<CustomBottomBar> {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   _buildNavItem('assets/home.png', 'Home', 0),
-                  _buildNavItem('assets/chat_bot.png', 'Chat Bot', 1),
+                  _buildNavItem(
+                    'assets/chat_bot.png',
+                    'Chat Bot',
+                    1,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ChatbotSplashLoadingScreen(),
+                        ),
+                      );
+                    },
+                  ),
                   _buildNavItem('assets/groups.png', 'Groups', 2),
                   _buildNavItem('assets/community.png', 'Community', 3),
                   _buildNavItem(
