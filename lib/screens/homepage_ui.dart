@@ -171,8 +171,8 @@ class HomepageUI extends StatelessWidget {
                       scrollDirection: Axis.horizontal,
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       itemCount: 3,
-                      separatorBuilder: (context, index) =>
-                          const SizedBox(width: 16),
+                      separatorBuilder:
+                          (context, index) => const SizedBox(width: 16),
                       itemBuilder: (context, index) {
                         return DailyAffirmation();
                       },
@@ -207,8 +207,11 @@ class HomepageUI extends StatelessWidget {
                         vertical: 15,
                       ),
                       itemCount: 3,
-                      separatorBuilder: (context, index) =>
-                          Container(width: 25, color: const Color(0xFFFFFCF9)),
+                      separatorBuilder:
+                          (context, index) => Container(
+                            width: 25,
+                            color: const Color(0xFFFFFCF9),
+                          ),
                       itemBuilder: (context, index) {
                         final titles = [
                           "Sita Amma's Journey",
@@ -591,8 +594,6 @@ class _CustomBottomBarState extends State<CustomBottomBar> {
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(cornerRadius),
                   topRight: Radius.circular(cornerRadius),
-                  bottomLeft: Radius.circular(cornerRadius),
-                  bottomRight: Radius.circular(cornerRadius),
                 ),
                 boxShadow: [
                   BoxShadow(
