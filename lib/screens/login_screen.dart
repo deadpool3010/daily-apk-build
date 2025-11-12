@@ -1,4 +1,4 @@
-import 'package:bandhucare_new/screens/button.dart';
+import 'package:bandhucare_new/widget/button.dart';
 import 'package:flutter/material.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -20,7 +20,7 @@ class _LoginScreenState extends State<LoginScreen>
     6,
     (index) => TextEditingController(),
   );
-
+  TextEditingController emailAddressController = TextEditingController();
   // ABHA Number input controllers (3 fields with 4 digits each)
   List<TextEditingController> abhaNumberControllers = List.generate(
     3,
@@ -73,6 +73,7 @@ class _LoginScreenState extends State<LoginScreen>
     await Navigator.of(context).push(
       MaterialPageRoute(
         fullscreenDialog: true,
+
         builder: (BuildContext context) {
           return Scaffold(
             backgroundColor: Colors.white,
@@ -94,16 +95,6 @@ class _LoginScreenState extends State<LoginScreen>
                         decoration: BoxDecoration(
                           color: Color(0xFF3865FF),
                           borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Center(
-                          child: Text(
-                            'BandhuCare',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
                         ),
                       );
                     },
@@ -203,24 +194,13 @@ class _LoginScreenState extends State<LoginScreen>
                     text: 'Submit',
                     width: 360,
                     onPressed: () {
-                      // Verify OTP and close screen
                       String otp = verificationOtpControllers
                           .map((c) => c.text)
                           .join('');
                       print('OTP Entered: $otp');
-                      Navigator.of(
-                        context,
-                      ).pop(true); // Close OTP screen with success
-                    },
-                  ),
-                ),
-                Positioned(
-                  top: 60,
-                  right: 24,
-                  child: IconButton(
-                    icon: Icon(Icons.close, size: 30, color: Colors.black),
-                    onPressed: () {
-                      Navigator.of(context).pop();
+                      Navigator.of(context).pop(true);
+                      // Navigate to email address verification screen
+                      _emailAddressVerification();
                     },
                   ),
                 ),
@@ -230,12 +210,132 @@ class _LoginScreenState extends State<LoginScreen>
         },
       ),
     );
+  }
 
-    // After OTP screen closes, navigate to Page 3 to show ABHA card
+  //overlay screen for email address verification
+  void _emailAddressVerification() async {
+    await Navigator.of(context).push(
+      MaterialPageRoute(
+        fullscreenDialog: true,
+        builder: (BuildContext context) {
+          return Scaffold(
+            backgroundColor: Colors.white,
+            body: Stack(
+              children: [
+                Positioned(
+                  left: 24,
+                  top: 165,
+                  child: Image.asset(
+                    'assets/bandhucare_otp_screen.png',
+                    width: 224.16,
+                    height: 57,
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        width: 224.16,
+                        height: 57,
+                        decoration: BoxDecoration(
+                          color: Color(0xFF3865FF),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                Positioned(
+                  left: 24,
+                  top: 310,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Email Address heading
+                      Text(
+                        'Enter Email Address',
+                        style: TextStyle(
+                          fontFamily: 'Roboto',
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
+                          height: 30.87 / 20,
+                          letterSpacing: 0,
+                          color: Color(0xFF3865FF),
+                        ),
+                      ),
+
+                      const SizedBox(height: 8),
+
+                      // Description text
+                      Text(
+                        'This Email Address is used for all communications\nrelated to ABHA',
+                        style: TextStyle(
+                          fontFamily: 'Lato',
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400,
+                          height: 20 / 14,
+                          letterSpacing: 0,
+                          color: Colors.red,
+                        ),
+                      ),
+
+                      const SizedBox(height: 24),
+
+                      _buildEmailAddressInputContent(),
+
+                      const SizedBox(height: 24),
+                    ],
+                  ),
+                ),
+
+                // Submit Button
+                Positioned(
+                  left: 24,
+                  bottom: 150,
+                  child: DynamicButton(
+                    text: 'Submit',
+                    width: 360,
+                    onPressed: () {
+                      print('Email: ${emailAddressController.text}');
+                      Navigator.of(context).pop(true);
+                    },
+                  ),
+                ),
+
+                // Skip button
+                Positioned(
+                  left: 24,
+                  bottom: 100,
+                  child: SizedBox(
+                    width: 360,
+                    child: TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop(true);
+                      },
+                      child: Text(
+                        'Skip for now',
+                        style: TextStyle(
+                          fontFamily: 'Lato',
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+
+    // After email screen closes, go to welcome screen
     setState(() {
       currentPage = 3;
     });
   }
+
+  //overlay screen for create your abha address
+  void _createYourAbhaAddress() async {}
 
   @override
   Widget build(BuildContext context) {
@@ -1260,69 +1360,6 @@ class _LoginScreenState extends State<LoginScreen>
     );
   }
 
-  // Page 3: Create ABHA Form Page (when user is creating new ABHA)
-  Widget _buildCreateAbhaFormPage() {
-    return Positioned(
-      left: 24,
-      top: 128,
-      child: Container(
-        width: 360,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Main heading
-            Text(
-              'Fill ABHA Details',
-              style: TextStyle(
-                fontFamily: 'Roboto',
-                fontSize: 22,
-                fontWeight: FontWeight.w700,
-                height: 20 / 22,
-                letterSpacing: 0,
-                color: Color(0xFF3864FD),
-              ),
-            ),
-
-            const SizedBox(height: 14),
-
-            // Subtext
-            Text(
-              'Please provide your information to create ABHA.',
-              style: TextStyle(
-                fontFamily: 'Lato',
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                height: 16 / 14,
-                letterSpacing: 0,
-                color: Color(0xFF94A3B8),
-              ),
-            ),
-
-            const SizedBox(height: 40),
-
-            // Form fields will go here
-            // For now, just a placeholder message
-            Center(
-              child: Container(
-                padding: EdgeInsets.all(40),
-                child: Text(
-                  'Page 3: Create ABHA Form\n\n(Form fields will be added here)',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontFamily: 'Lato',
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                    color: Color(0xFF64748B),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   // Section 2: OTP Screen Widget
   Widget _buildOTPSection() {
     return Positioned(
@@ -1400,7 +1437,50 @@ class _LoginScreenState extends State<LoginScreen>
     );
   }
 
-  // Phone Number Input Content (reusable without Positioned)
+  Widget _buildEmailAddressInputContent() {
+    return Container(
+      width: 360,
+      child: Column(
+        children: [
+          Container(
+            height: 50,
+            decoration: BoxDecoration(
+              color: Color(0x299BBEF8),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Color(0xFFE2E8F0), width: 1),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: emailAddressController,
+                    keyboardType: TextInputType.emailAddress,
+                    decoration: InputDecoration(
+                      hintText: 'Email Address',
+                      hintStyle: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        color: Color(0xFF94A3B8),
+                      ),
+                      border: InputBorder.none,
+                      contentPadding: EdgeInsets.symmetric(horizontal: 16),
+                      counterText: '', // Hide character counter
+                    ),
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black87,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildPhoneNumberInputContent() {
     return Container(
       width: 360,
@@ -1420,7 +1500,6 @@ class _LoginScreenState extends State<LoginScreen>
 
           const SizedBox(height: 8),
 
-          // Phone input field
           Container(
             height: 50,
             decoration: BoxDecoration(

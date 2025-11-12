@@ -1,4 +1,4 @@
-import 'package:bandhucare_new/screens/button.dart';
+import 'package:bandhucare_new/widget/button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:google_fonts/google_fonts.dart';
