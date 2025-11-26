@@ -45,6 +45,13 @@ dependencies:
   liquid_glass_renderer: ^0.2.0-dev.3
   http: ^1.1.0
   fluttertoast: ^8.2.4
+  shared_preferences: ^2.5.3
+  get: ^4.7.2
+  jam_icons: ^0.0.1
+  mobile_scanner: ^5.2.3
+  pin_code_fields: ^8.0.1
+
+  
 
 dev_dependencies:
   flutter_test:

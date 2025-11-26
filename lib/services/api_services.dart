@@ -221,3 +221,136 @@ Future<Map<String, dynamic>> createAbhaAddressApi(
     throw Exception(e);
   }
 }
+
+Future<Map<String, dynamic>> addMeToCommunityApi(
+  List<String> communityIds,
+  String uniqueCode,
+) async {
+  try {
+    final url = baseUrl + addMeTOCommunity;
+    print('AddMeToCommunity API URL: $url');
+    print('AccessToken: $accessToken');
+
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {
+        "Authorization": "Bearer $accessToken",
+        "Content-Type": "application/json",
+      },
+      body: jsonEncode({
+        "communityIds": communityIds,
+        "uniqueCode": uniqueCode,
+      }),
+    );
+
+    print('AddMeToCommunity Response Status: ${response.statusCode}');
+    print('AddMeToCommunity Response Body: ${response.body}');
+
+    final result = jsonDecode(response.body);
+
+    if (response.statusCode == 200) {
+      return result;
+    } else {
+      throw Exception(result['message'] ?? 'Unknown error');
+    }
+  } catch (e) {
+    print('AddMeToCommunity Error: $e');
+    throw Exception(e);
+  }
+}
+
+Future<Map<String, dynamic>> getChatHistory({
+  int page = 1,
+  int limit = 10,
+}) async {
+  final url = baseUrl + getMessagesApi(page: page, limit: limit);
+  try {
+    final response = await http.get(
+      Uri.parse(url),
+      headers: {'Authorization': 'Bearer $accessToken'},
+    );
+
+    return jsonDecode(response.body);
+  } catch (e) {
+    print('Error getting chat history: $e');
+    return {'success': false, 'message': 'Failed to get chat history: $e'};
+  }
+}
+
+Future<Map<String, dynamic>> sendMessage({
+  required String conversationId,
+  required String content,
+  required String targetLanguage,
+}) async {
+  try {
+    final url = baseUrl + chatApi;
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      },
+      body: jsonEncode({
+        'conversationId': conversationId,
+        'content': content,
+        'targetLanguage': targetLanguage,
+        'senderType': 'patient',
+      }),
+    );
+
+    return jsonDecode(response.body);
+  } catch (e) {
+    print('Error sending message: $e');
+    return {'success': false, 'message': 'Failed to send message: $e'};
+  }
+}
+
+Future<Map<String, dynamic>> joinGroupApi({
+  required String groupId,
+  required List<Map<String, dynamic>> users,
+  String uniqueCode = "",
+}) async {
+  try {
+    final url = baseUrl + addMemberToGroup; // your endpoint here
+
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $accessToken",
+      },
+      body: jsonEncode({
+        "groupId": groupId,
+        "users": users,
+        "uniqueCode": uniqueCode,
+      }),
+    );
+
+    return jsonDecode(response.body);
+  } catch (e) {
+    print("Error creating group: $e");
+    return {"success": false, "message": "Failed to create group: $e"};
+  }
+}
+
+Future<Map<String, dynamic>> getCommunity(String groupId) async {
+  try {
+    final url = baseUrl + getCommunityApi(groupId);
+    final response = await http.get(
+      Uri.parse(url),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $accessToken",
+      },
+    );
+    final result = jsonDecode(response.body);
+    if (response.statusCode == 200) {
+      return result;
+    } else {
+      throw Exception(result['message'] ?? 'Unknown error');
+    }
+  } catch (e) {
+    print("Error getting community: $e");
+    throw Exception("Error getting community: $e");
+  }
+}

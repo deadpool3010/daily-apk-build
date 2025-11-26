@@ -1,6 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:bandhucare_new/screens/chat_bot_screen.dart';
+import 'package:bandhucare_new/screens/chatScreen/chat_bot_screen.dart';
 
 class ChatbotSplashLoadingScreen extends StatefulWidget {
   const ChatbotSplashLoadingScreen({super.key});
