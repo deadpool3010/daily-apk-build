@@ -6,6 +6,8 @@ class DynamicButton extends StatelessWidget {
   final double width;
   final double height;
   final double fontSize;
+  final Widget? leadingIcon;
+  final Widget? trailingIcon;
 
   const DynamicButton({
     Key? key,
@@ -14,6 +16,8 @@ class DynamicButton extends StatelessWidget {
     this.width = 360,
     this.height = 50,
     this.fontSize = 18,
+    this.leadingIcon,
+    this.trailingIcon,
   }) : super(key: key);
 
   @override
@@ -23,16 +27,16 @@ class DynamicButton extends StatelessWidget {
       height: height,
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [Color(0xFF0988F3), Color(0xFF0340CC)],
+          begin: Alignment.centerLeft,
+          end: Alignment.centerRight,
+          colors: [Color(0xFF076BE3), Color(0xFF098AF4)],
         ),
         borderRadius: BorderRadius.circular(25),
         boxShadow: [
           BoxShadow(
             color: const Color(0xFF0988F3).withOpacity(0.4),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
+            // blurRadius: 12,
+            // offset: const Offset(0, 4),
           ),
           BoxShadow(
             color: const Color(0xFF0340CC).withOpacity(0.3),
@@ -46,15 +50,34 @@ class DynamicButton extends StatelessWidget {
         child: InkWell(
           onTap: onPressed,
           borderRadius: BorderRadius.circular(25),
-          child: Center(
-            child: Text(
-              text,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: fontSize,
-                fontWeight: FontWeight.w600,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Leading Icon (optional)
+              if (leadingIcon != null) ...[
+                leadingIcon!,
+                const SizedBox(width: 10),
+              ],
+
+              // Button Text
+              Flexible(
+                child: Text(
+                  text,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: fontSize,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
               ),
-            ),
+
+              // Trailing Icon (optional)
+              if (trailingIcon != null) ...[
+                const SizedBox(width: 10),
+                trailingIcon!,
+              ],
+            ],
           ),
         ),
       ),

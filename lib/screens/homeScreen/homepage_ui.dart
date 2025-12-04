@@ -1,13 +1,14 @@
 import 'package:bandhucare_new/constant/colors.dart';
 import 'package:bandhucare_new/constant/image_constant.dart';
+import 'package:bandhucare_new/general_widget_&_classes/bottom_text.dart';
+import 'package:bandhucare_new/general_widget_&_classes/custom_bottom_navbar.dart';
+import 'package:bandhucare_new/routes/routes.dart';
 import 'package:bandhucare_new/screens/homeScreen/controller.dart';
-import 'package:bandhucare_new/screens/userProfile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
-import 'package:jam_icons/jam_icons.dart';
 import '../../../screens/feelings.dart';
 
 bool isBottomNavVisible = true;
@@ -60,7 +61,9 @@ class _HomepageScreenState extends State<HomepageScreen> {
       backgroundColor: const Color(0xFFFFFCF9),
       extendBodyBehindAppBar: true,
       body: AnnotatedRegion<SystemUiOverlayStyle>(
-        value: SystemUiOverlayStyle.light,
+        value: SystemUiOverlayStyle(
+          systemNavigationBarColor: Colors.transparent,
+        ),
         child: Stack(
           children: [
             // CustomScrollView with SliverAppBar
@@ -331,7 +334,13 @@ Widget categories() {
     child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        _buildCategoryItem(ImageConstant.healthCalander, 'Health \nCalander'),
+        _buildCategoryItem(
+          ImageConstant.healthCalander,
+          'Health \nCalander',
+          onTap: () {
+            Get.toNamed(AppRoutes.healthCalendar);
+          },
+        ),
         _buildCategoryItem(ImageConstant.fileManager, 'Manage \nFiles'),
         _buildCategoryItem(ImageConstant.robot, 'Mitra'),
         _buildCategoryItem(ImageConstant.myClinic, 'My Clinic'),
@@ -340,34 +349,41 @@ Widget categories() {
   );
 }
 
-Widget _buildCategoryItem(String iconPath, String label) {
+Widget _buildCategoryItem(String iconPath, String label, {Function()? onTap}) {
   return Expanded(
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Image.asset(
-          iconPath,
-          width: 48,
-          height: 48,
-          fit: BoxFit.contain,
-          filterQuality: FilterQuality.high,
-        ),
-        const SizedBox(height: 8),
-        Text(
-          label,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontFamily: 'Lato',
-            fontSize: 13,
-            fontWeight: FontWeight.w500,
-            height: 16 / 13, // line-height / font-size
-            letterSpacing: 0,
-            color: Colors.black,
+    child: GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: onTap,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Image.asset(
+            iconPath,
+            width: 48,
+            height: 48,
+            fit: BoxFit.contain,
+            filterQuality: FilterQuality.high,
           ),
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
-        ),
-      ],
+          const SizedBox(height: 6),
+          Flexible(
+            child: Text(
+              label,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontFamily: 'Lato',
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+                height: 16 / 13, // line-height / font-size
+                letterSpacing: 0,
+                color: Colors.black,
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
+      ),
     ),
   );
 }
@@ -389,6 +405,7 @@ Widget _buildWarriorCard(String title, String description, double rotation) {
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
               // Image with padding (polaroid style)
               Padding(
@@ -402,56 +419,61 @@ Widget _buildWarriorCard(String title, String description, double rotation) {
                 ),
               ),
               // Title and description in white space below image (polaroid style)
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: GoogleFonts.roboto(
-                        textStyle: TextStyle(
-                          color: AppColors.black,
-                          fontSize: 13.0,
+              Flexible(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        title,
+                        style: GoogleFonts.roboto(
+                          textStyle: TextStyle(
+                            color: AppColors.black,
+                            fontSize: 13.0,
+                          ),
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      description,
-                      style: GoogleFonts.roboto(
-                        textStyle: TextStyle(
-                          color: AppColors.black.withOpacity(0.6),
-                          fontSize: 9.4,
-                        ),
-                      ),
-                      maxLines: 3,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 10),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 8,
-                        ),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF397BE9),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
+                      const SizedBox(height: 6),
+                      Flexible(
                         child: Text(
-                          'Read Story',
-                          style: GoogleFonts.lato(
+                          description,
+                          style: GoogleFonts.roboto(
                             textStyle: TextStyle(
-                              color: AppColors.white,
-                              fontSize: 11.0,
+                              color: AppColors.black.withOpacity(0.6),
+                              fontSize: 9.4,
+                            ),
+                          ),
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF397BE9),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            'Read Story',
+                            style: GoogleFonts.lato(
+                              textStyle: TextStyle(
+                                color: AppColors.white,
+                                fontSize: 11.0,
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ],
@@ -577,190 +599,4 @@ Widget DailyAffirmation() {
       ),
     ],
   );
-}
-
-class SharedWithHeart extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: 302,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _buildGradientText(
-            'Shared',
-            fontSize: 80,
-            lineHeight: 62.84,
-            letterSpacing: 1.6, // 2% of 80px
-          ),
-          const SizedBox(height: 4),
-          _buildGradientText(
-            'with heart.',
-            fontSize: 80,
-            lineHeight: 62.84,
-            letterSpacing: 1.6, // 2% of 80px
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildGradientText(
-    String text, {
-    required double fontSize,
-    required double lineHeight,
-    required double letterSpacing,
-  }) {
-    return ShaderMask(
-      shaderCallback: (bounds) => LinearGradient(
-        colors: [
-          const Color(0xFF397BE9).withOpacity(0.4),
-          const Color(0xFF0040FF).withOpacity(0.4),
-        ],
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-      ).createShader(bounds),
-      child: Text(
-        text,
-        style: GoogleFonts.alumniSans(
-          fontSize: fontSize,
-          fontWeight: FontWeight.w700,
-          height: lineHeight / fontSize, // Convert to relative line height
-          letterSpacing: letterSpacing,
-          color: Colors.white, // This will be masked by the gradient
-        ),
-      ),
-    );
-  }
-}
-
-class CustomBottomBar extends StatelessWidget {
-  final HomepageController controller;
-
-  const CustomBottomBar({super.key, required this.controller});
-
-  @override
-  Widget build(BuildContext context) {
-    const double cornerRadius = 20.0;
-
-    return Container(
-      width: double.infinity,
-      height: 80,
-      child: Stack(
-        children: [
-          Positioned(
-            top: 6,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(cornerRadius),
-                  topRight: Radius.circular(cornerRadius),
-                  // bottomLeft: Radius.circular(cornerRadius),
-                  // bottomRight: Radius.circular(cornerRadius),
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.25),
-                    blurRadius: 7,
-                    spreadRadius: 0,
-                    offset: Offset(1, 2),
-                  ),
-                ],
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  _buildNavItem(context, ImageConstant.home, 'Home', 0),
-                  _buildNavItem(context, ImageConstant.chatIcon, 'Chat Bot', 1),
-                  _buildNavItem(
-                    context,
-                    null,
-                    'Groups',
-                    2,
-                    iconData: JamIcons.world,
-                  ),
-                  _buildNavItem(
-                    context,
-                    ImageConstant.community_icon,
-                    'Community',
-                    3,
-                    iconData: JamIcons.world,
-                  ),
-                  _buildNavItem(
-                    context,
-                    ImageConstant.avatar,
-                    'Profile',
-                    4,
-                    onTap: () async {
-                      await Get.to(() => UserProfile());
-                    },
-                    resetIndexOnReturn: 0,
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildNavItem(
-    BuildContext context,
-    String? imagePath,
-    String label,
-    int index, {
-    IconData? iconData,
-    Future<void> Function()? onTap,
-    int? resetIndexOnReturn,
-  }) {
-    return Obx(() {
-      bool isSelected = controller.selectedBottomNavIndex.value == index;
-      Color itemColor = isSelected ? Colors.lightBlue : Colors.grey[700]!;
-
-      return Expanded(
-        child: GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          onTap: () async {
-            controller.changeBottomNavIndex(index);
-            if (onTap != null) {
-              await onTap();
-              if (resetIndexOnReturn != null) {
-                controller.changeBottomNavIndex(resetIndexOnReturn);
-              }
-            }
-          },
-          child: Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (imagePath != null)
-                  ColorFiltered(
-                    colorFilter: ColorFilter.mode(itemColor, BlendMode.srcIn),
-                    child: Image.asset(imagePath, width: 20, height: 20),
-                  )
-                else if (iconData != null)
-                  Icon(iconData, size: 20, color: itemColor),
-                const SizedBox(height: 4),
-                Text(
-                  label,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: itemColor,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
-    });
-  }
 }

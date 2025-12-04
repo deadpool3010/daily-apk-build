@@ -254,6 +254,13 @@ class SplashController extends GetxController with GetTickerProviderStateMixin {
 
   Future<void> _decideNextRoute() async {
     if (_hasNavigated) return;
+
+    // Check if we're still on the splash screen route
+    if (Get.currentRoute != AppRoutes.splashScreen) {
+      _hasNavigated = true;
+      return;
+    }
+
     _hasNavigated = true;
 
     final sharedPrefs = SharedPrefLocalization();
@@ -272,11 +279,11 @@ class SplashController extends GetxController with GetTickerProviderStateMixin {
       print('📄 Cached profile: $cachedUser');
       print('========================================');
 
-      if (Get.context != null) {
+      if (Get.context != null && Get.currentRoute == AppRoutes.splashScreen) {
         Get.offNamed(AppRoutes.homeScreen);
       }
     } else {
-      if (Get.context != null) {
+      if (Get.context != null && Get.currentRoute == AppRoutes.splashScreen) {
         Get.offNamed(AppRoutes.consentFormScreen);
       }
     }
@@ -284,15 +291,16 @@ class SplashController extends GetxController with GetTickerProviderStateMixin {
 
   @override
   void onClose() {
+    // Cancel navigation timer first to prevent navigation
+    _navigationTimer?.cancel();
+    _hasNavigated = true; // Prevent any delayed navigation
+
     // Dispose animation controllers
     centerLogoController.dispose();
     rightCircleController.dispose();
     belowHandController.dispose();
     textController.dispose();
     backgroundController.dispose();
-
-    // Cancel navigation timer
-    _navigationTimer?.cancel();
 
     super.onClose();
   }

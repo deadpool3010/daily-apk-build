@@ -50,6 +50,11 @@ dependencies:
   jam_icons: ^0.0.1
   mobile_scanner: ^5.2.3
   pin_code_fields: ^8.0.1
+  flutter_tabler_icons: ^1.43.0
+  ionicons: ^0.2.2
+  bootstrap_icons: ^1.13.1
+  flutter_keyboard_visibility: ^6.0.0
+  table_calendar: ^3.1.2
 
   
 

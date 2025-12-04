@@ -1,6 +1,6 @@
 import 'package:bandhucare_new/constant/colors.dart';
 import 'package:bandhucare_new/constant/image_constant.dart';
-import 'package:bandhucare_new/general_widget/button.dart';
+import 'package:bandhucare_new/general_widget_&_classes/button.dart';
 import 'package:bandhucare_new/routes/routes.dart';
 import 'package:bandhucare_new/screens/login_screen/controller.dart';
 import 'package:bandhucare_new/services/shared_pref_localization.dart';
@@ -10,8 +10,6 @@ import 'package:bandhucare_new/constant/variables.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -143,9 +141,9 @@ class _LoginScreenState extends State<LoginScreen>
       return;
     }
 
-    setState(() {
-      isLoadingSignIn = true;
-    });
+    // Get controller and set loading state
+    final controller = Get.find<LoginController>();
+    controller.isLoadingSignIn.value = true;
 
     try {
       final result = await createAbhaNumberApi(aadhaarNumber);
@@ -174,7 +172,6 @@ class _LoginScreenState extends State<LoginScreen>
         createSubPage = 1;
       });
       // Sync with controller
-      final controller = Get.find<LoginController>();
       controller.createSubPage.value = 1;
     } catch (e) {
       print('');
@@ -200,9 +197,7 @@ class _LoginScreenState extends State<LoginScreen>
         textColor: Colors.white,
       );
     } finally {
-      setState(() {
-        isLoadingSignIn = false;
-      });
+      controller.isLoadingSignIn.value = false;
     }
   }
 
@@ -216,12 +211,15 @@ class _LoginScreenState extends State<LoginScreen>
       print('✅ All 6 OTP digits entered: ${controller.enteredOtp.value}');
       print('🚀 Calling VerifyOtp API automatically...');
       print('========================================');
-      await _verifyOTPforMobileNumber(controller.enteredOtp.value);
+      await _verifyOTPforMobileNumber(controller, controller.enteredOtp.value);
     }
   }
 
   // done getx
-  void _handleAadhaarNumberOTPChange(LoginController controller, String value) {
+  void _handleAadhaarNumberOTPChange(
+    LoginController controller,
+    String value,
+  ) async {
     controller.enteredAadhaarOtp.value = value;
 
     // Check if all 6 OTP digits are filled (don't auto-verify)
@@ -230,13 +228,17 @@ class _LoginScreenState extends State<LoginScreen>
       print('✅ All 6 OTP digits entered: $value');
       print('📝 Ready for verification - Click Verify button');
       print('========================================');
+      await _verifyOTPforAadhaarNumber(controller, value);
     } else {
       debugPrint('Aadhaar OTP Changed: $value (Length: ${value.length})');
     }
   }
 
   // Call VerifyOTP API
-  Future<void> _verifyOTPforMobileNumber(String otp) async {
+  Future<void> _verifyOTPforMobileNumber(
+    LoginController controller,
+    String otp,
+  ) async {
     if (sessionId.isEmpty) {
       print('❌ SessionId is empty!');
       Fluttertoast.showToast(
@@ -2532,10 +2534,8 @@ class _LoginScreenState extends State<LoginScreen>
                 onPressed: isLoadingVerifyOtp
                     ? null
                     : () async {
-                        // Get OTP from controllers
-                        String otp = controller.otpControllers
-                            .map((c) => c.text)
-                            .join('');
+                        // Get OTP from PinCodeTextField (stored in enteredAadhaarOtp)
+                        String otp = controller.enteredAadhaarOtp.value.trim();
 
                         // Get mobile number
                         String mobileNumber = controller.phoneController.text
@@ -2968,6 +2968,7 @@ class _LoginScreenState extends State<LoginScreen>
 
             // "Don't have Abha Address? Create" text
             GestureDetector(
+              behavior: HitTestBehavior.opaque,
               onTap: () {
                 setState(() {
                   isCreatingNewAbha = true;
@@ -3223,6 +3224,12 @@ class _LoginScreenState extends State<LoginScreen>
                     controller: controller.phoneController,
                     keyboardType: TextInputType.phone,
                     maxLength: 10,
+                    onChanged: (value) {
+                      // Close keyboard automatically when 10 digits are entered
+                      if (value.length == 10) {
+                        FocusScope.of(context).unfocus();
+                      }
+                    },
                     decoration: InputDecoration(
                       hintText: 'xxxxxxxxxx',
                       hintStyle: TextStyle(
@@ -3364,39 +3371,41 @@ class _LoginScreenState extends State<LoginScreen>
                 width: 84,
                 height: 34,
                 margin: const EdgeInsets.only(right: 8),
-                child: ElevatedButton(
-                  onPressed: controller.isLoadingSignIn.value
-                      ? null
-                      : () => controller.handleGetOTP(),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFF3864FD),
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                child: Obx(
+                  () => ElevatedButton(
+                    onPressed: controller.isLoadingSignIn.value
+                        ? null
+                        : () => controller.handleGetOTP(),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xFF3864FD),
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      elevation: 0,
+                      padding: EdgeInsets.fromLTRB(13, 7, 13, 7),
                     ),
-                    elevation: 0,
-                    padding: EdgeInsets.fromLTRB(13, 7, 13, 7),
-                  ),
-                  child: controller.isLoadingSignIn.value
-                      ? SizedBox(
-                          width: 12,
-                          height: 12,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              Colors.white,
+                    child: controller.isLoadingSignIn.value
+                        ? SizedBox(
+                            width: 12,
+                            height: 12,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                Colors.white,
+                              ),
+                            ),
+                          )
+                        : Text(
+                            'Get OTP',
+                            style: TextStyle(
+                              fontFamily: 'Lato',
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.white,
                             ),
                           ),
-                        )
-                      : Text(
-                          'Get OTP',
-                          style: TextStyle(
-                            fontFamily: 'Lato',
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.white,
-                          ),
-                        ),
+                  ),
                 ),
               ),
             ],
@@ -3404,21 +3413,26 @@ class _LoginScreenState extends State<LoginScreen>
         ),
 
         // Loading overlay when verifying OTP
-        if (controller.isLoadingVerifyOtp.value)
-          Positioned.fill(
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.3),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Center(
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF3864FD)),
-                ),
-              ),
-            ),
-          ),
+        Obx(
+          () => controller.isLoadingVerifyOtp.value
+              ? Positioned.fill(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.3),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          Color(0xFF3864FD),
+                        ),
+                      ),
+                    ),
+                  ),
+                )
+              : SizedBox.shrink(),
+        ),
       ],
     );
   }
@@ -3485,21 +3499,26 @@ class _LoginScreenState extends State<LoginScreen>
         ),
 
         // Loading overlay when verifying OTP
-        if (controller.isLoadingVerifyOtp.value)
-          Positioned.fill(
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.3),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Center(
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF3864FD)),
-                ),
-              ),
-            ),
-          ),
+        Obx(
+          () => controller.isLoadingVerifyOtp.value
+              ? Positioned.fill(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.3),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          Color(0xFF3864FD),
+                        ),
+                      ),
+                    ),
+                  ),
+                )
+              : SizedBox.shrink(),
+        ),
       ],
     );
   }
@@ -3543,7 +3562,7 @@ class _LoginScreenState extends State<LoginScreen>
         controller.enteredAadhaarOtp.value = value;
         debugPrint('Aadhaar OTP Completed: $value');
         // Optionally auto-verify when Aadhaar OTP is complete
-        // _handleVerifyAadhaarOTP(controller);
+        // handleVerifyAadhaarOTP(controller);
       },
     );
   }
@@ -3865,90 +3884,101 @@ class _LoginScreenState extends State<LoginScreen>
 
                     // Next Button
                     if (currentPage < 3)
-                      GestureDetector(
-                        onTap: isLoadingSelectAccount
-                            ? null
-                            : () async {
-                                // Page 1: Check if OTP is verified and ABHA accounts are loaded
-                                if (currentPage == 1) {
-                                  if (abhaAccounts.isEmpty) {
-                                    Fluttertoast.showToast(
-                                      msg: "Please verify OTP first",
-                                      toastLength: Toast.LENGTH_SHORT,
-                                      backgroundColor: Colors.orange,
-                                      textColor: Colors.white,
-                                    );
-                                    return;
-                                  }
-                                  // Navigate to page 2 (ABHA selection)
-                                  setState(() {
-                                    currentPage = 2;
-                                  });
-                                  controller.currentPage.value = 2;
-                                }
-                                // Page 2: Different logic based on create vs select flow
-                                else if (currentPage == 2) {
-                                  if (isCreatingNewAbha) {
-                                    // Creating new ABHA - handle sub-pages
-                                    if (createSubPage == 0) {
-                                      // Call API to get OTP, then move to second sub-page
-                                      await _handleGetAadhaarNumberOTP();
-                                      // Note: createSubPage will be set to 1 inside _handleGetAadhaarNumberOTP on success
-                                    } else if (createSubPage == 1) {
-                                      // Move to page 3 (Welcome screen)
-                                      setState(() {
-                                        currentPage = 3;
-                                      });
-                                      controller.currentPage.value = 3;
+                      Obx(
+                        () => GestureDetector(
+                          onTap:
+                              (isLoadingSelectAccount ||
+                                  controller.isLoadingSignIn.value)
+                              ? null
+                              : () async {
+                                  // Page 1: Check if OTP is verified and ABHA accounts are loaded
+                                  if (currentPage == 1) {
+                                    if (abhaAccounts.isEmpty) {
+                                      Fluttertoast.showToast(
+                                        msg: "Please verify OTP first",
+                                        toastLength: Toast.LENGTH_SHORT,
+                                        backgroundColor: Colors.orange,
+                                        textColor: Colors.white,
+                                      );
+                                      return;
                                     }
-                                  } else {
-                                    // Selecting existing ABHA - call SelectAccount API
-                                    await _selectAccount();
+                                    // Navigate to page 2 (ABHA selection)
+                                    setState(() {
+                                      currentPage = 2;
+                                    });
+                                    controller.currentPage.value = 2;
                                   }
-                                } else if (currentPage < 3) {
-                                  // Navigate to next page
-                                  setState(() {
-                                    currentPage++;
-                                  });
-                                  controller.nextPage();
-                                }
-                              },
-                        child: Container(
-                          width: 47,
-                          height: 47,
-                          decoration: BoxDecoration(
-                            color: isLoadingSelectAccount
-                                ? const Color(0xFF3864FD).withOpacity(0.6)
-                                : const Color(0xFF3864FD),
-                            borderRadius: BorderRadius.circular(
-                              23.5,
-                            ), // Radius 23.5px
-                            boxShadow: [
-                              BoxShadow(
-                                color: const Color(0xFF3864FD).withOpacity(0.3),
-                                blurRadius: 12,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                          child: isLoadingSelectAccount
-                              ? const Center(
-                                  child: SizedBox(
-                                    width: 20,
-                                    height: 20,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      valueColor: AlwaysStoppedAnimation<Color>(
-                                        Colors.white,
+                                  // Page 2: Different logic based on create vs select flow
+                                  else if (currentPage == 2) {
+                                    if (isCreatingNewAbha) {
+                                      // Creating new ABHA - handle sub-pages
+                                      if (createSubPage == 0) {
+                                        // Call API to get OTP, then move to second sub-page
+                                        await _handleGetAadhaarNumberOTP();
+                                        // Note: createSubPage will be set to 1 inside _handleGetAadhaarNumberOTP on success
+                                      } else if (createSubPage == 1) {
+                                        // Move to page 3 (Welcome screen)
+                                        setState(() {
+                                          currentPage = 3;
+                                        });
+                                        controller.currentPage.value = 3;
+                                      }
+                                    } else {
+                                      // Selecting existing ABHA - call SelectAccount API
+                                      await _selectAccount();
+                                    }
+                                  } else if (currentPage < 3) {
+                                    // Navigate to next page
+                                    setState(() {
+                                      currentPage++;
+                                    });
+                                    controller.nextPage();
+                                  }
+                                },
+                          child: Container(
+                            width: 47,
+                            height: 47,
+                            decoration: BoxDecoration(
+                              color:
+                                  (isLoadingSelectAccount ||
+                                      controller.isLoadingSignIn.value)
+                                  ? const Color(0xFF3864FD).withOpacity(0.6)
+                                  : const Color(0xFF3864FD),
+                              borderRadius: BorderRadius.circular(
+                                23.5,
+                              ), // Radius 23.5px
+                              boxShadow: [
+                                BoxShadow(
+                                  color: const Color(
+                                    0xFF3864FD,
+                                  ).withOpacity(0.3),
+                                  blurRadius: 12,
+                                  offset: const Offset(0, 4),
+                                ),
+                              ],
+                            ),
+                            child:
+                                (isLoadingSelectAccount ||
+                                    controller.isLoadingSignIn.value)
+                                ? const Center(
+                                    child: SizedBox(
+                                      width: 20,
+                                      height: 20,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        valueColor:
+                                            AlwaysStoppedAnimation<Color>(
+                                              Colors.white,
+                                            ),
                                       ),
                                     ),
+                                  )
+                                : const Icon(
+                                    Icons.arrow_forward,
+                                    color: Colors.white,
+                                    size: 20,
                                   ),
-                                )
-                              : const Icon(
-                                  Icons.arrow_forward,
-                                  color: Colors.white,
-                                  size: 20,
-                                ),
+                          ),
                         ),
                       ),
                   ],

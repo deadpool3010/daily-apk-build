@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:bandhucare_new/constant/image_constant.dart';
 import 'package:flutter/material.dart';
 import 'package:bandhucare_new/screens/chatScreen/chat_bot_screen.dart';
 
@@ -13,97 +14,68 @@ class ChatbotSplashLoadingScreen extends StatefulWidget {
 class _ChatbotSplashLoadingScreenState extends State<ChatbotSplashLoadingScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
-  late Animation<double> _bounceAnimation;
+  Animation<double>? _bounceAnimation;
+  bool _animationInitialized = false;
 
   @override
   void initState() {
     super.initState();
-
+    // Initialize controller first
     _animationController = AnimationController(
-      duration: const Duration(milliseconds: 2000),
+      duration: const Duration(milliseconds: 800), // Faster transition
       vsync: this,
     );
+  }
 
-    _bounceAnimation = TweenSequence<double>([
-      // Initial drop down to Mitra top
-      TweenSequenceItem(
-        tween: Tween<double>(
-          begin: 200.0,
-          end: 390.0,
-        ).chain(CurveTween(curve: Curves.easeIn)),
-        weight: 20,
-      ),
-      // First bounce up (highest)
-      TweenSequenceItem(
-        tween: Tween<double>(
-          begin: 390.0,
-          end: 310.0,
-        ).chain(CurveTween(curve: Curves.easeOut)),
-        weight: 15,
-      ),
-      // Second drop
-      TweenSequenceItem(
-        tween: Tween<double>(
-          begin: 310.0,
-          end: 390.0,
-        ).chain(CurveTween(curve: Curves.easeIn)),
-        weight: 15,
-      ),
-      // Second bounce up (medium height)
-      TweenSequenceItem(
-        tween: Tween<double>(
-          begin: 390.0,
-          end: 340.0,
-        ).chain(CurveTween(curve: Curves.easeOut)),
-        weight: 12,
-      ),
-      // Third drop
-      TweenSequenceItem(
-        tween: Tween<double>(
-          begin: 340.0,
-          end: 390.0,
-        ).chain(CurveTween(curve: Curves.easeIn)),
-        weight: 12,
-      ),
-      // Third bounce up (smaller)
-      TweenSequenceItem(
-        tween: Tween<double>(
-          begin: 390.0,
-          end: 365.0,
-        ).chain(CurveTween(curve: Curves.easeOut)),
-        weight: 10,
-      ),
-      // Fourth drop
-      TweenSequenceItem(
-        tween: Tween<double>(
-          begin: 365.0,
-          end: 390.0,
-        ).chain(CurveTween(curve: Curves.easeIn)),
-        weight: 8,
-      ),
-      // Fourth bounce up (tiny)
-      TweenSequenceItem(
-        tween: Tween<double>(
-          begin: 390.0,
-          end: 378.0,
-        ).chain(CurveTween(curve: Curves.easeOut)),
-        weight: 8,
-      ),
-      // Final settle on Mitra top
-      TweenSequenceItem(
-        tween: Tween<double>(
-          begin: 378.0,
-          end: 385.0,
-        ).chain(CurveTween(curve: Curves.easeInOut)),
-        weight: 10,
-      ),
-    ]).animate(_animationController);
+  void _initializeAnimation(double screenHeight) {
+    if (_animationInitialized) return;
+    _animationInitialized = true;
+
+    // Calculate Mitra container position
+    // Mitra is at bottom: 250, height: 132
+    // So its top position = screenHeight - 250 - 132
+    const mitraBottomOffset = 250.0;
+    const mitraContainerHeight = 132.0;
+    final mitraTopPosition =
+        screenHeight - mitraBottomOffset - mitraContainerHeight;
+
+    // Robot image height is 139.77, so we want robot's bottom to align with Mitra's top
+    // Robot top position = mitraTopPosition - robotHeight
+    const robotHeight = 139.77;
+    final landingPosition = mitraTopPosition - robotHeight;
+
+    // Start position (from top of screen)
+    final startPosition = 200.0;
+
+    // Bounce height (relative to landing position)
+    // Single bounce up height
+    final settleOffset = 30.0; // Final settle position
+
+    setState(() {
+      _bounceAnimation = TweenSequence<double>([
+        // Initial drop down to Mitra top
+        TweenSequenceItem(
+          tween: Tween<double>(
+            begin: startPosition,
+            end: landingPosition,
+          ).chain(CurveTween(curve: Curves.easeIn)),
+          weight: 40, // 40% of animation time
+        ),
+        TweenSequenceItem(
+          tween: Tween<double>(
+            begin: landingPosition,
+            end: landingPosition - settleOffset,
+          ).chain(CurveTween(curve: Curves.easeInOut)),
+          weight: 15, // 15% of animation time
+        ),
+      ]).animate(_animationController);
+    });
 
     // Start animation and navigate when done
     _animationController.forward().then((_) {
       // Wait a moment after animation completes, then navigate
       if (mounted) {
-        Future.delayed(Duration(milliseconds: 800), () {
+        Future.delayed(Duration(milliseconds: 200), () {
           if (mounted) {
             Navigator.pushReplacement(
               context,
@@ -123,6 +95,17 @@ class _ChatbotSplashLoadingScreenState extends State<ChatbotSplashLoadingScreen>
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+
+    // Initialize animation with screen height on first build
+    if (!_animationInitialized) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && !_animationInitialized) {
+          _initializeAnimation(screenHeight);
+        }
+      });
+    }
+
     return Scaffold(
       backgroundColor: Color(0xFF5C83F3),
       body: Stack(
@@ -201,7 +184,7 @@ class _ChatbotSplashLoadingScreenState extends State<ChatbotSplashLoadingScreen>
             right: 0,
             child: Center(
               child: Image(
-                image: AssetImage('assets/Introducing.png'),
+                image: AssetImage(ImageConstant.introducing),
                 fit: BoxFit.contain,
                 height: 48,
                 width: 212,
@@ -235,7 +218,7 @@ class _ChatbotSplashLoadingScreenState extends State<ChatbotSplashLoadingScreen>
                 ),
                 child: Center(
                   child: Image(
-                    image: AssetImage('assets/Mitra.png'),
+                    image: AssetImage(ImageConstant.mitra),
                     fit: BoxFit.contain,
                     height: 28,
                     width: 99,
@@ -246,25 +229,41 @@ class _ChatbotSplashLoadingScreenState extends State<ChatbotSplashLoadingScreen>
           ),
 
           // Robot with bounce animation - placed AFTER Mitra so it appears on top
-          AnimatedBuilder(
-            animation: _animationController,
-            builder: (context, child) {
-              return Positioned(
-                top: _bounceAnimation.value,
-                left: 0,
-                right: 0,
-                child: RepaintBoundary(child: child!),
-              );
-            },
-            child: Center(
-              child: Image(
-                image: AssetImage('assets/robot2.png'),
-                fit: BoxFit.contain,
-                height: 139.77,
-                width: 88.24,
+          if (_bounceAnimation != null)
+            AnimatedBuilder(
+              animation: _animationController,
+              builder: (context, child) {
+                return Positioned(
+                  top: _bounceAnimation!.value,
+                  left: 0,
+                  right: 0,
+                  child: RepaintBoundary(child: child!),
+                );
+              },
+              child: Center(
+                child: Image(
+                  image: AssetImage(ImageConstant.mitra_robot),
+                  fit: BoxFit.contain,
+                  height: 139.77,
+                  width: 88.24,
+                ),
+              ),
+            )
+          else
+            // Show robot at start position until animation is ready
+            Positioned(
+              top: 200.0,
+              left: 0,
+              right: 0,
+              child: Center(
+                child: Image(
+                  image: AssetImage(ImageConstant.mitra_robot),
+                  fit: BoxFit.contain,
+                  height: 139.77,
+                  width: 88.24,
+                ),
               ),
             ),
-          ),
         ],
       ),
     );

@@ -45,4 +45,24 @@ class SharedPrefLocalization {
     final hasUserInfo = userInfo.isNotEmpty && userInfo != 'Nothing found';
     return hasTokens && hasUserInfo;
   }
+
+  Future<void> appLanguage(String appLanguage) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString('appLanguage', appLanguage);
+  }
+
+  Future<void> mitraLanguage(String mitraLanguage) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString('mitraLanguage', mitraLanguage);
+  }
+
+  Future<String> getAppLanguage() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('appLanguage') ?? 'English';
+  }
+
+  Future<String> getMitraLanguage() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('mitraLanguage') ?? 'English';
+  }
 }

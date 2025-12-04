@@ -1,8 +1,10 @@
+import 'package:bandhucare_new/constant/colors.dart';
+import 'package:bandhucare_new/general_widget_&_classes/chat_screen%20_bottom.dart';
+import 'package:bandhucare_new/general_widget_&_classes/chat_screen_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:bandhucare_new/services/api_services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:bandhucare_new/screens/chatScreen/chat_screen_widgets.dart';
 
 List<Map<String, String>> chatbotDemoQustionAns = [
   {"hii": "hello,How can i help you today?"},
@@ -276,11 +278,8 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
   @override
   Widget build(BuildContext context) {
     final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
-    final screenHeight = MediaQuery.of(context).size.height;
-    final statusBarHeight = MediaQuery.of(context).padding.top;
 
     // Get header background color to match status bar
-    // Header color is defined in chat_screen_widgets.dart - currently Colors.red
     final headerColor = Color.fromARGB(
       255,
       249,
@@ -292,7 +291,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
     // Set status bar to match header's background color
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
-        statusBarColor: headerColor, // Match header background color
+        statusBarColor: headerColor,
         statusBarIconBrightness: isLightColor
             ? Brightness.dark
             : Brightness.light,
@@ -300,202 +299,171 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
             ? Brightness.light
             : Brightness.dark, // For iOS
       ),
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            Container(
-              width: 408,
-              height: keyboardHeight > 0
-                  ? (screenHeight - keyboardHeight).clamp(0, 913)
-                  : 913,
-              constraints: BoxConstraints(
-                maxHeight: (screenHeight - keyboardHeight).clamp(0, 913),
-              ),
-              clipBehavior: Clip.antiAlias,
-              decoration: ShapeDecoration(
-                color: Colors.white,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-              ),
-              child: Stack(
-                children: [
-                  // Chat messages area - starts from top, messages scroll behind header
-                  Positioned(
-                    left: 0,
-                    right: 0,
-                    top: statusBarHeight, // Start from status bar
-                    bottom: 120, // Fixed bottom, container height adjusts
-                    child: _isLoading
-                        ? Center(
-                            child: CircularProgressIndicator(
-                              color: const Color(0xFF3865FF),
-                            ),
-                          )
-                        : _messages.isEmpty && _showSuggestions
-                        ? _buildSuggestionsView()
-                        : _buildChatView(),
-                  ),
-                  // Header overlay - positioned on top of messages, extends into status bar area
-                  Positioned(
-                    left: 0,
-                    right: 0,
-                    top: 0, // Start from top to fill status bar area
-                    child: Container(
-                      padding: EdgeInsets.only(
-                        top: statusBarHeight,
-                      ), // Add status bar height as padding
-                      color:
-                          headerColor, // Match header background for seamless look
-                      child: chatscreen_header(),
-                    ),
-                  ),
-                  // Input field - moves up with keyboard
-                  Positioned(
-                    left: 40,
-                    bottom: keyboardHeight > 0
-                        ? 69
-                        : 69, // Keep at 69 when keyboard is open, container adjusts
-                    child: Container(
-                      width: 344,
-                      height: 50,
-                      clipBehavior: Clip.antiAlias,
-                      decoration: ShapeDecoration(
-                        color: const Color(0x216A8BF3),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
+      child: Scaffold(
+        backgroundColor: Colors.black,
+        appBar: ChatScreenAppBar(),
+        body: Container(
+          width: double.infinity,
+          height: double.infinity,
+          clipBehavior: Clip.antiAlias,
+          decoration: ShapeDecoration(
+            color: Colors.white,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+          ),
+          child: Stack(
+            children: [
+              // Chat messages area - starts from top
+              Positioned(
+                child: _isLoading
+                    ? Center(
+                        child: CircularProgressIndicator(
+                          color: const Color(0xFF3865FF),
                         ),
-                      ),
-                      child: Stack(
-                        children: [
-                          Positioned(
-                            left: 28,
-                            top: 0,
-                            bottom: 0,
-                            child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: SizedBox(
-                                width: 250,
-                                child: Material(
-                                  color: Colors.transparent,
-                                  child: TextField(
-                                    controller: _messageController,
-                                    textAlignVertical: TextAlignVertical.center,
-                                    onSubmitted: (text) => _sendMessage(text),
-                                    decoration: InputDecoration(
-                                      hintText: 'Hi, How can i help you today?',
-                                      hintStyle: TextStyle(
-                                        color: Colors.black.withOpacity(0.32),
-                                        fontSize: 16,
-                                        fontFamily: 'Lato',
-                                        fontWeight: FontWeight.w400,
-                                      ),
-                                      border: InputBorder.none,
-                                      contentPadding: EdgeInsets.zero,
-                                      isDense: true,
-                                    ),
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 16,
-                                      fontFamily: 'Lato',
-                                      fontWeight: FontWeight.w400,
-                                      decoration: TextDecoration.none,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          Positioned(
-                            left: 296,
-                            top: 7,
-                            child: Material(
-                              color: Colors.transparent,
-                              child: InkWell(
-                                onTap: () {
-                                  _sendMessage(_messageController.text);
-                                },
-                                child: Container(
-                                  width: 35,
-                                  height: 35,
-                                  padding: const EdgeInsets.all(5),
-                                  decoration: ShapeDecoration(
-                                    gradient: LinearGradient(
-                                      begin: Alignment(0.41, 1.00),
-                                      end: Alignment(0.51, 0.04),
-                                      colors: [
-                                        const Color(0xFF6595FF),
-                                        const Color(0xFF3865FF),
-                                      ],
-                                    ),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(
-                                        17.50,
-                                      ),
-                                    ),
-                                  ),
-                                  child: Center(
-                                    child: Image.asset(
-                                      'assets/arrow-big-up-lines.png',
-                                      width: 24,
-                                      height: 24,
-                                      fit: BoxFit.contain,
-                                      color: Colors.white,
-                                      errorBuilder:
-                                          (context, error, stackTrace) {
-                                            return Icon(
-                                              Icons.arrow_upward,
-                                              color: Colors.white,
-                                              size: 20,
-                                            );
-                                          },
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  // Disclaimer text - moves up with keyboard
-                  Positioned(
-                    left: 25,
-                    bottom: keyboardHeight > 0
-                        ? 38
-                        : 38, // Keep at 38 when keyboard is open, container adjusts
-                    child: SizedBox(
-                      width: 359,
-                      child: Text(
-                        'Mitra can make mistakes. Contact doctor in emergency',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: const Color(0x4C263441),
-                          fontSize: 12,
-                          fontFamily: 'Lato',
-                          fontWeight: FontWeight.w400,
-                          height: 1.50,
-                          decoration: TextDecoration.none,
-                        ),
-                      ),
-                    ),
-                  ),
+                      )
+                    : _messages.isEmpty && _showSuggestions
+                    ? _buildSuggestionsView()
+                    : _buildChatView(),
+              ),
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: 0,
+                child: ChatScreenBottom(
+                  messageController: _messageController,
+                  onSend: _sendMessage,
+                ),
+              ),
 
-                  // Bot animation - moves up with keyboard
-                  Positioned(
-                    left: 24,
-                    top: 96,
-                    child: Container(
-                      width: 27,
-                      height: 25,
-                      clipBehavior: Clip.antiAlias,
-                      decoration: BoxDecoration(),
-                      child: Stack(),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
+              // Input field - moves up with keyboard
+              // Positioned(
+              //   left: 40,
+              //   bottom: keyboardHeight > 0
+              //       ? keyboardHeight + 19
+              //       : 69, // Move up when keyboard is open
+              //   child: Container(
+              //     width: 344,
+              //     height: 50,
+              //     clipBehavior: Clip.antiAlias,
+              //     decoration: ShapeDecoration(
+              //       color: const Color(0x216A8BF3),
+              //       shape: RoundedRectangleBorder(
+              //         borderRadius: BorderRadius.circular(30),
+              //       ),
+              //     ),
+              //     child: Stack(
+              //       children: [
+              //         Positioned(
+              //           left: 28,
+              //           top: 0,
+              //           bottom: 0,
+              //           child: Align(
+              //             alignment: Alignment.centerLeft,
+              //             child: SizedBox(
+              //               width: 250,
+              //               child: Material(
+              //                 color: Colors.transparent,
+              //                 child: TextField(
+              //                   controller: _messageController,
+              //                   textAlignVertical: TextAlignVertical.center,
+              //                   onSubmitted: (text) => _sendMessage(text),
+              //                   decoration: InputDecoration(
+              //                     hintText: 'Hi, How can i help you today?',
+              //                     hintStyle: TextStyle(
+              //                       color: Colors.black.withOpacity(0.32),
+              //                       fontSize: 16,
+              //                       fontFamily: 'Lato',
+              //                       fontWeight: FontWeight.w400,
+              //                     ),
+              //                     border: InputBorder.none,
+              //                     contentPadding: EdgeInsets.zero,
+              //                     isDense: true,
+              //                   ),
+              //                   style: TextStyle(
+              //                     color: Colors.black,
+              //                     fontSize: 16,
+              //                     fontFamily: 'Lato',
+              //                     fontWeight: FontWeight.w400,
+              //                     decoration: TextDecoration.none,
+              //                   ),
+              //                 ),
+              //               ),
+              //             ),
+              //           ),
+              //         ),
+              //         Positioned(
+              //           left: 296,
+              //           top: 7,
+              //           child: Material(
+              //             color: Colors.transparent,
+              //             child: InkWell(
+              //               onTap: () {
+              //                 _sendMessage(_messageController.text);
+              //               },
+              //               child: Container(
+              //                 width: 35,
+              //                 height: 35,
+              //                 padding: const EdgeInsets.all(5),
+              //                 decoration: ShapeDecoration(
+              //                   gradient: LinearGradient(
+              //                     begin: Alignment(0.41, 1.00),
+              //                     end: Alignment(0.51, 0.04),
+              //                     colors: [
+              //                       const Color(0xFF6595FF),
+              //                       const Color(0xFF3865FF),
+              //                     ],
+              //                   ),
+              //                   shape: RoundedRectangleBorder(
+              //                     borderRadius: BorderRadius.circular(17.50),
+              //                   ),
+              //                 ),
+              //                 child: Center(
+              //                   child: Image.asset(
+              //                     'assets/arrow-big-up-lines.png',
+              //                     width: 24,
+              //                     height: 24,
+              //                     fit: BoxFit.contain,
+              //                     color: Colors.white,
+              //                     errorBuilder: (context, error, stackTrace) {
+              //                       return Icon(
+              //                         Icons.arrow_upward,
+              //                         color: Colors.white,
+              //                         size: 20,
+              //                       );
+              //                     },
+              //                   ),
+              //                 ),
+              //               ),
+              //             ),
+              //           ),
+              //         ),
+              //       ],
+              //     ),
+              //   ),
+              // ),
+              // Disclaimer text - moves up with keyboard
+              // Positioned(
+              //   left: 25,
+              //   bottom: keyboardHeight > 0
+              //       ? keyboardHeight - 12
+              //       : 38, // Move up when keyboard is open
+              //   child: SizedBox(
+              //     width: 359,
+              //     child: Text(
+              //       'Mitra can make mistakes. Contact doctor in emergency',
+              //       textAlign: TextAlign.center,
+              //       style: TextStyle(
+              //         color: const Color(0x4C263441),
+              //         fontSize: 12,
+              //         fontFamily: 'Lato',
+              //         fontWeight: FontWeight.w400,
+              //         height: 1.50,
+              //         decoration: TextDecoration.none,
+              //       ),
+              //     ),
+              //   ),
+              // ),
+            ],
+          ),
         ),
       ),
     );
@@ -571,13 +539,15 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
   Widget _buildChatView() {
     // Header height: 50 (image) + 15 (top padding) + 15 (bottom padding) = 80px
     // Add top padding so messages appear below header
+
     return ListView.builder(
       controller: _scrollController,
       padding: EdgeInsets.only(
         left: 25,
         right: 25,
         top: 90, // Space for header (80px) + extra spacing (10px)
-        bottom: 20,
+        // Extra bottom padding so messages are not hidden behind bottom bar
+        bottom: 110, // 90 (bottom bar height) + 20 (extra space)
       ),
       reverse: true,
       itemCount: _messages.length,

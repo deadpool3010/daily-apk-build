@@ -1,6 +1,8 @@
-import 'package:bandhucare_new/general_widget/button.dart';
+import 'package:bandhucare_new/general_widget_&_classes/abha_section_user_profile.dart';
+import 'package:bandhucare_new/general_widget_&_classes/logout_function.dart';
+import 'package:bandhucare_new/routes/routes.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class UserProfile extends StatefulWidget {
@@ -13,124 +15,6 @@ class UserProfile extends StatefulWidget {
 class _UserProfileState extends State<UserProfile> {
   bool showPersonalInfo = false;
   String selectedLanguage = 'English';
-
-  void _showLanguagePicker() {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      builder: (BuildContext context) {
-        return Container(
-          height: 250,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(20),
-              topRight: Radius.circular(20),
-            ),
-          ),
-          child: Column(
-            children: [
-              // Header
-              Container(
-                padding: EdgeInsets.all(16),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: Text(
-                        'Cancel',
-                        style: TextStyle(color: Colors.blue, fontSize: 16),
-                      ),
-                    ),
-                    Text(
-                      'Select Language',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: Text(
-                        'Done',
-                        style: TextStyle(
-                          color: Colors.blue,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Divider(height: 1),
-              // Picker
-              Expanded(
-                child: CupertinoPicker(
-                  backgroundColor: Colors.white,
-                  itemExtent: 40,
-                  scrollController: FixedExtentScrollController(
-                    initialItem: [
-                      'Kannada',
-                      'Malayalam',
-                      'Gujarati',
-                      'English',
-                      'Hindi',
-                      'Telugu',
-                      'Tamil',
-                    ].indexOf(selectedLanguage),
-                  ),
-                  onSelectedItemChanged: (index) {
-                    setState(() {
-                      selectedLanguage = [
-                        'Kannada',
-                        'Malayalam',
-                        'Gujarati',
-                        'English',
-                        'Hindi',
-                        'Telugu',
-                        'Tamil',
-                      ][index];
-                    });
-                  },
-                  children: [
-                    Center(
-                      child: Text('Kannada', style: TextStyle(fontSize: 18)),
-                    ),
-                    Center(
-                      child: Text('Malayalam', style: TextStyle(fontSize: 18)),
-                    ),
-                    Center(
-                      child: Text('Gujarati', style: TextStyle(fontSize: 18)),
-                    ),
-                    Center(
-                      child: Text(
-                        'English',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                    Center(
-                      child: Text('Hindi', style: TextStyle(fontSize: 18)),
-                    ),
-                    Center(
-                      child: Text('Telugu', style: TextStyle(fontSize: 18)),
-                    ),
-                    Center(
-                      child: Text('Tamil', style: TextStyle(fontSize: 18)),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -199,25 +83,43 @@ class _UserProfileState extends State<UserProfile> {
             },
           ),
           SizedBox(height: 20),
-          _buildSeparatorLine(5),
+          _buildSeparatorLine(3),
           SizedBox(height: 20),
           _buildMenuItem(
             Icons.language,
             'Language Settings',
-            onTap: _showLanguagePicker,
+            onTap: () async {
+              final result = await Get.toNamed(AppRoutes.simpleLanguageScreen);
+              if (result != null && result is String) {
+                setState(() {
+                  selectedLanguage = result;
+                });
+              }
+            },
           ),
           SizedBox(height: 20),
-          _buildSeparatorLine(5),
+          _buildSeparatorLine(3),
           SizedBox(height: 20),
           _buildMenuItem(Icons.notifications_outlined, 'Notification'),
           SizedBox(height: 20),
-          _buildSeparatorLine(5),
-          SizedBox(height: 20),
-          _buildMenuItem(Icons.lock_outline, 'Privacy & Security'),
-          SizedBox(height: 20),
-          _buildSeparatorLine(5),
+          _buildSeparatorLine(3),
+          // _buildMenuItem(
+          //   Icons.lock_outline,
+          //   'Privacy & Security',
+          //   onTap: () => Get.toNamed(AppRoutes.privacyScreen),
+          // ),
+          //      SizedBox(height: 20),
+          // _buildSeparatorLine(5),
           SizedBox(height: 20),
           _buildMenuItem(Icons.qr_code_scanner, 'Scan'),
+          SizedBox(height: 20),
+          _buildSeparatorLine(3),
+          SizedBox(height: 20),
+          _buildMenuItem(
+            Icons.logout,
+            'Logout',
+            onTap: () => logoutBottomSheet(context),
+          ),
         ],
       ),
     );
@@ -225,6 +127,7 @@ class _UserProfileState extends State<UserProfile> {
 
   Widget _buildMenuItem(IconData icon, String label, {VoidCallback? onTap}) {
     return GestureDetector(
+      behavior: HitTestBehavior.opaque,
       onTap: onTap,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -378,307 +281,6 @@ Widget buildProfile() {
         ),
         Spacer(), // Pushes edit icon to the end
         Icon(Icons.edit, size: 20, color: Colors.black),
-      ],
-    ),
-  );
-}
-
-Widget buildAbhaSection() {
-  return Container(
-    width: 360,
-    height: 125,
-    decoration: BoxDecoration(
-      color: Color.fromRGBO(237, 242, 247, 1.0),
-      borderRadius: BorderRadius.circular(16),
-    ),
-    child: Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Row(
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Add your content hereText
-              Text(
-                "ABHA ID",
-                style: TextStyle(
-                  fontFamily: GoogleFonts.roboto().fontFamily,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 18,
-                ),
-              ),
-              Text(
-                "Your Personal Identification",
-                style: TextStyle(
-                  fontFamily: GoogleFonts.roboto().fontFamily,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 13,
-                ),
-              ),
-              SizedBox(height: 13),
-              DynamicButton(
-                text: "Create Another",
-                width: 129,
-                height: 35,
-                onPressed: () {},
-                fontSize: 14,
-              ),
-            ],
-          ),
-          SizedBox(width: 16),
-          buildCardFront(width: 140, height: 85),
-        ],
-      ),
-    ),
-  );
-}
-
-Widget buildCardFront({double width = 360, double height = 198}) {
-  // Calculate scale factor based on original size (360x198)
-  final scaleFactorW = width / 360;
-  final scaleFactorH = height / 198;
-  final scaleFactor = (scaleFactorW + scaleFactorH) / 2;
-
-  return SizedBox(
-    width: width,
-    height: height,
-    child: Stack(
-      children: [
-        // Background image - blank ABHA card
-        ClipRRect(
-          borderRadius: BorderRadius.circular(24 * scaleFactor),
-          child: Image.asset(
-            'assets/blank_abha.png',
-            width: width,
-            height: height,
-            fit: BoxFit.fill,
-          ),
-        ),
-
-        // ABHA Card Content Overlay
-        Positioned.fill(
-          child: Padding(
-            padding: EdgeInsets.only(
-              left: 20 * scaleFactorW,
-              right: 20 * scaleFactorW,
-              top: 75 * scaleFactorH,
-              bottom: 16 * scaleFactorH,
-            ),
-            child: Column(
-              children: [
-                // User info row
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Avatar
-                    Container(
-                      width: 62 * scaleFactorW,
-                      height: 64 * scaleFactorH,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[300],
-                        borderRadius: BorderRadius.circular(12 * scaleFactor),
-                      ),
-                      child: Icon(
-                        Icons.person,
-                        size: 40 * scaleFactor,
-                        color: Colors.grey[600],
-                      ),
-                    ),
-
-                    SizedBox(width: 12 * scaleFactorW),
-
-                    // Name, ABHA No, ABHA Address
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Name
-                          RichText(
-                            text: TextSpan(
-                              children: [
-                                TextSpan(
-                                  text: 'Name: ',
-                                  style: TextStyle(
-                                    fontFamily: 'Lato',
-                                    fontSize: 12 * scaleFactor,
-                                    fontWeight: FontWeight.w400,
-                                    color: Colors.grey[600],
-                                  ),
-                                ),
-                                TextSpan(
-                                  text: 'Siddharth',
-                                  style: TextStyle(
-                                    fontFamily: 'Lato',
-                                    fontSize: 12 * scaleFactor,
-                                    fontWeight: FontWeight.w700,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(height: 6 * scaleFactorH),
-                          // ABHA No
-                          RichText(
-                            text: TextSpan(
-                              children: [
-                                TextSpan(
-                                  text: 'Abha No: ',
-                                  style: TextStyle(
-                                    fontFamily: 'Lato',
-                                    fontSize: 11 * scaleFactor,
-                                    fontWeight: FontWeight.w400,
-                                    color: Colors.grey[600],
-                                  ),
-                                ),
-                                TextSpan(
-                                  text: '91 1234 5678 9101',
-                                  style: TextStyle(
-                                    fontFamily: 'Lato',
-                                    fontSize: 11 * scaleFactor,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(height: 6 * scaleFactorH),
-                          // ABHA Address
-                          RichText(
-                            text: TextSpan(
-                              children: [
-                                TextSpan(
-                                  text: 'Abha Address: ',
-                                  style: TextStyle(
-                                    fontFamily: 'Lato',
-                                    fontSize: 11 * scaleFactor,
-                                    fontWeight: FontWeight.w400,
-                                    color: Colors.grey[600],
-                                  ),
-                                ),
-                                TextSpan(
-                                  text: 'Sid2000@abdm',
-                                  style: TextStyle(
-                                    fontFamily: 'Lato',
-                                    fontSize: 11 * scaleFactor,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    // QR Code
-                    Container(
-                      width: 45 * scaleFactorW,
-                      height: 45 * scaleFactorH,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        border: Border.all(color: Colors.grey[300]!),
-                        borderRadius: BorderRadius.circular(8 * scaleFactor),
-                      ),
-                      child: Icon(
-                        Icons.qr_code,
-                        size: 35 * scaleFactor,
-                        color: Colors.black,
-                      ),
-                    ),
-                  ],
-                ),
-
-                Spacer(),
-
-                // Bottom row - Gender, DOB, Mobile
-                Row(
-                  children: [
-                    // Gender
-                    RichText(
-                      text: TextSpan(
-                        children: [
-                          TextSpan(
-                            text: 'Gender: ',
-                            style: TextStyle(
-                              fontFamily: 'Lato',
-                              fontSize: 11 * scaleFactor,
-                              fontWeight: FontWeight.w400,
-                              color: Colors.grey[600],
-                            ),
-                          ),
-                          TextSpan(
-                            text: 'Male',
-                            style: TextStyle(
-                              fontFamily: 'Lato',
-                              fontSize: 11 * scaleFactor,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.black,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(width: 13 * scaleFactorW),
-                    // DOB
-                    RichText(
-                      text: TextSpan(
-                        children: [
-                          TextSpan(
-                            text: 'DOB: ',
-                            style: TextStyle(
-                              fontFamily: 'Lato',
-                              fontSize: 11 * scaleFactor,
-                              fontWeight: FontWeight.w400,
-                              color: Colors.grey[600],
-                            ),
-                          ),
-                          TextSpan(
-                            text: '03032004',
-                            style: TextStyle(
-                              fontFamily: 'Lato',
-                              fontSize: 11 * scaleFactor,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.black,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(width: 13 * scaleFactorW),
-                    // Mobile
-                    RichText(
-                      text: TextSpan(
-                        children: [
-                          TextSpan(
-                            text: 'Mobile: ',
-                            style: TextStyle(
-                              fontFamily: 'Lato',
-                              fontSize: 11 * scaleFactor,
-                              fontWeight: FontWeight.w400,
-                              color: Colors.grey[600],
-                            ),
-                          ),
-                          TextSpan(
-                            text: '1234567891',
-                            style: TextStyle(
-                              fontFamily: 'Lato',
-                              fontSize: 11 * scaleFactor,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.black,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ),
       ],
     ),
   );

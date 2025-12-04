@@ -59,4 +59,8 @@ class ImageConstant {
 
   static const String chatIcon = '${basePath}chat_icon.png';
   static const String community_icon = '${basePath}community_icon.png';
+  static const String introducing = '${basePath}Introducing.png';
+  static const String mitra = '${basePath}mitra_text.png';
+  static const String mitra_robot = '${basePath}mitra_robot.png';
+  static const String mitra_logo_header = '${basePath}chat_screen_header.png';
 }

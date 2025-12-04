@@ -24,4 +24,8 @@ class AppColors {
   static const Color accentBlue = Color(0xFF89A0FD);
   static const Color lightBlue = Color(0xFF60A5FA);
   static const Color white = Color(0xFFFFFFFF);
+  static const Color lightBlue2 = Color(0x299BBEF8);
+  static const Color borderOfbox = Color(0xFFE2E8F0);
+  static const Color hintTextColor = Color(0xFFBFBFBF);
+  static const Color chatScreenHeader = Color(0xFFF9FBFF);
 }
