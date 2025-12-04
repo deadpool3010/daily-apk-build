@@ -12,7 +12,7 @@ class _EventsState extends State<Events> {
     return SizedBox(
       height: 250,
       child: Padding(
-        padding: EdgeInsets.only(left: 16, right: 16),
+        padding: EdgeInsets.symmetric(horizontal: 8),
         child: Container(
           width: double.infinity,
           decoration: BoxDecoration(

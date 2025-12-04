@@ -1,6 +1,7 @@
 import 'package:bandhucare_new/general_widget_&_classes/custom_app_bar.dart';
 import 'package:bandhucare_new/general_widget_&_classes/toggle_switch.dart';
 import 'package:bandhucare_new/screens/MyAppointment/my_appointment.dart';
+import 'package:bandhucare_new/screens/YourReminders/your_reminders.dart';
 import 'package:flutter/material.dart';
 
 class HealthCalendar extends StatefulWidget {
@@ -31,7 +32,7 @@ class _HealthCalendarState extends State<HealthCalendar> {
             Expanded(
               child: selectedIndex == 0
                   ? const MyAppointment()
-                  : const Center(child: Text('Your Reminders')),
+                  : const YourReminders(),
             ),
           ],
         ),

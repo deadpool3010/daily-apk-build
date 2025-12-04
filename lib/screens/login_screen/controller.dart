@@ -123,7 +123,7 @@ class LoginController extends GetxController with GetTickerProviderStateMixin {
 
   void toggleCardFlip() {
     if (isCardFlipped.value) {
-      flipController.reverse();
+      // flipController.reverse();
     } else {
       flipController.forward();
     }

@@ -18,7 +18,14 @@ class SimpleLanguageScreen extends StatefulWidget {
 }
 
 class _SimpleLanguageScreenState extends State<SimpleLanguageScreen> {
-  final LanguageSettingController controller = Get.find();
+  late final LanguageSettingController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    // Safely get or create controller
+    controller = Get.put(LanguageSettingController(), permanent: false);
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -8,12 +8,12 @@ class LanguageSettingController extends GetxController {
   final selectedAppLanguage = 'English'.obs;
   final selectedMitraLanguage = 'English'.obs;
   final activeTarget = Rx<LanguageSelectionTarget?>(null);
-  late final FixedExtentScrollController scrollControllerApp =
-      FixedExtentScrollController(initialItem: currentSelectedIndexApp.value);
-  late final FixedExtentScrollController scrollControllerMitra =
-      FixedExtentScrollController(initialItem: currentSelectedIndexMitra.value);
   final currentSelectedIndexApp = 3.obs;
   final currentSelectedIndexMitra = 3.obs;
+  late final FixedExtentScrollController scrollControllerApp =
+      FixedExtentScrollController(initialItem: 3);
+  late final FixedExtentScrollController scrollControllerMitra =
+      FixedExtentScrollController(initialItem: 3);
   final List<String> languages = [
     'Kannada',
     'Malayalam',
@@ -26,20 +26,37 @@ class LanguageSettingController extends GetxController {
   final _prefs = SharedPrefLocalization();
 
   @override
-  void onInit() async {
+  void onInit() {
     super.onInit();
-    await _loadPersistedLanguages();
 
-    print(selectedAppLanguage.value);
-    print(selectedMitraLanguage.value);
-    print(languages.indexOf(selectedAppLanguage.value));
-    print(languages.indexOf(selectedMitraLanguage.value));
-    currentSelectedIndexApp.value = languages.indexOf(
-      selectedAppLanguage.value,
-    );
-    currentSelectedIndexMitra.value = languages.indexOf(
-      selectedMitraLanguage.value,
-    );
+    _loadPersistedLanguages().then((_) {
+      print(selectedAppLanguage.value);
+      print(selectedMitraLanguage.value);
+      print(languages.indexOf(selectedAppLanguage.value));
+      print(languages.indexOf(selectedMitraLanguage.value));
+
+      final appIndex = languages.indexOf(selectedAppLanguage.value);
+      final mitraIndex = languages.indexOf(selectedMitraLanguage.value);
+
+      currentSelectedIndexApp.value = appIndex >= 0 ? appIndex : 3;
+      currentSelectedIndexMitra.value = mitraIndex >= 0 ? mitraIndex : 3;
+
+      // Animate scroll controllers to the correct position
+      if (scrollControllerApp.hasClients) {
+        scrollControllerApp.animateToItem(
+          currentSelectedIndexApp.value,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        );
+      }
+      if (scrollControllerMitra.hasClients) {
+        scrollControllerMitra.animateToItem(
+          currentSelectedIndexMitra.value,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        );
+      }
+    });
     //syncPickerToTarget(LanguageSelectionTarget.app);
     //currentSelectedIndex.value = languages.indexOf(selectedAppLanguage.value);
     // // Set an initial target (example: app language)

@@ -1057,164 +1057,196 @@ class _LoginScreenState extends State<LoginScreen>
   @override
   Widget build(BuildContext context) {
     final LoginController controller = Get.find<LoginController>();
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      backgroundColor: Colors.white,
-      body: GestureDetector(
-        onTap: () {
-          // Dismiss keyboard when tapping anywhere on the screen
-          FocusScope.of(context).unfocus();
-        },
-        behavior: HitTestBehavior.opaque,
-        child: SafeArea(
-          child: Stack(
-            children: [
-              // Main Content (only for pages 0, 1, 2)
-              if (currentPage != 3)
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const SizedBox(height: 100),
-
-                    // Section 1: Language Selection (Page 0)
-                    if (currentPage == 0) _buildLanguageSection(),
-
-                    const SizedBox(height: 40),
-
-                    // Illustration Image
-                    if (currentPage == 0)
-                      Expanded(
-                        child: Center(
-                          child: Image.asset(
-                            'assets/choose_language.png',
-                            width: 300,
-                            fit: BoxFit.contain,
-                            errorBuilder: (context, error, stackTrace) {
-                              return Container(
-                                width: 300,
-                                height: 300,
-                                color: Colors.grey[200],
-                                child: const Icon(
-                                  Icons.image,
-                                  size: 100,
-                                  color: Colors.grey,
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                      ),
-
-                    if (currentPage == 1) const Spacer(),
-
-                    if (currentPage == 2) const Spacer(),
-
-                    // Navigation Dots and Next Button (only for pages 0, 1, 2)
-                    _buildBottomNavigation(controller),
-
-                    const SizedBox(height: 30),
-                  ],
-                ),
-
-              // OTP Screen - Welcome Section (Page 1)
-              if (currentPage == 1) _buildOTPSection(),
-
-              // Phone Number Input (Page 1)
-              if (currentPage == 1) _buildPhoneNumberInput(controller),
-
-              // OTP Input and Get OTP Button (Page 1)
-              if (currentPage == 1) _buildOTPInputSection(controller),
-
-              // Other Login Options (Page 1)
-              if (currentPage == 1) _buildOtherLoginOptions(),
-
-              // Page 2: Header with Back Button
-              if (currentPage == 2)
-                Positioned(
-                  left: 24,
-                  top: 40,
-                  child: Row(
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.dark,
+        statusBarBrightness: Brightness.light,
+      ),
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        backgroundColor: Colors.white,
+        body: GestureDetector(
+          onTap: () {
+            // Dismiss keyboard when tapping anywhere on the screen
+            FocusScope.of(context).unfocus();
+          },
+          behavior: HitTestBehavior.opaque,
+          child: SafeArea(
+            child: Stack(
+              children: [
+                // Main Content (only for pages 0, 1, 2)
+                if (currentPage != 3)
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      // Back button
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            currentPage = 1;
-                            // Clear ABHA accounts data
-                            abhaAccounts.clear();
-                            selectedAbhaIndex = null;
-                          });
-                        },
-                        child: Container(
-                          width: 40,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                              color: Color(0xFFE2E8F0),
-                              width: 1,
+                      const SizedBox(height: 100),
+
+                      // Section 1: Language Selection (Page 0)
+                      if (currentPage == 0) _buildLanguageSection(),
+
+                      const SizedBox(height: 40),
+
+                      // Illustration Image
+                      if (currentPage == 0)
+                        Expanded(
+                          child: Center(
+                            child: Image.asset(
+                              'assets/choose_language.png',
+                              width: 300,
+                              fit: BoxFit.contain,
+                              errorBuilder: (context, error, stackTrace) {
+                                return Container(
+                                  width: 300,
+                                  height: 300,
+                                  color: Colors.grey[200],
+                                  child: const Icon(
+                                    Icons.image,
+                                    size: 100,
+                                    color: Colors.grey,
+                                  ),
+                                );
+                              },
                             ),
                           ),
-                          child: Icon(
-                            Icons.arrow_back,
-                            color: Color(0xFF3864FD),
-                            size: 20,
-                          ),
                         ),
-                      ),
+
+                      if (currentPage == 1) const Spacer(),
+
+                      if (currentPage == 2) const Spacer(),
+
+                      // Navigation Dots and Next Button (only for pages 0, 1, 2)
+                      _buildBottomNavigation(controller),
+
+                      const SizedBox(height: 30),
                     ],
                   ),
-                ),
 
-              // Page 2: ABHA Address Selection Section (if ABHA found)
-              if (currentPage == 2 && !isCreatingNewAbha)
-                _buildAbhaAddressSection(),
+                // OTP Screen - Welcome Section (Page 1)
+                if (currentPage == 1) _buildOTPSection(),
 
-              // Page 2: Create New ABHA Section (if user clicked Create)
-              if (currentPage == 2 && isCreatingNewAbha)
-                _buildCreateAbhaSection(controller),
+                // Phone Number Input (Page 1)
+                if (currentPage == 1) _buildPhoneNumberInput(controller),
 
-              // Page 3: Welcome Screen (for both ABHA found and create flows)
-              if (currentPage == 3) _buildWelcomeSection(),
+                // OTP Input and Get OTP Button (Page 1)
+                if (currentPage == 1) _buildOTPInputSection(controller),
 
-              // ABHA Card - Page 3 (for both ABHA found and create flows)
-              if (currentPage == 3 && !isCreatingNewAbha)
-                _buildAbhaCard(controller),
-              if (currentPage == 3 && isCreatingNewAbha)
-                _buildNewAbhaCard(controller),
+                // Other Login Options (Page 1)
+                if (currentPage == 1) _buildOtherLoginOptions(),
 
-              // Bottom Navigation for Page 3 - Positioned at bottom
-              if (currentPage == 3)
-                Positioned(
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  child: _buildBottomNavigation(controller),
-                ),
+                // Page 2: Header with Back Button
+                if (currentPage == 2)
+                  Positioned(
+                    left: 24,
+                    top: 40,
+                    child: Row(
+                      children: [
+                        // Back button
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              currentPage = 1;
+                              // Clear ABHA accounts data
+                              abhaAccounts.clear();
+                              selectedAbhaIndex = null;
+                            });
+                          },
+                          child: Container(
+                            width: 40,
+                            height: 40,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: Color(0xFFE2E8F0),
+                                width: 1,
+                              ),
+                            ),
+                            child: Icon(
+                              Icons.arrow_back,
+                              color: Color(0xFF3864FD),
+                              size: 20,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
 
-              // Ayushman Bharat Image - Fixed Position (Page 2 - ABHA Address Screen, only if not creating)
-              if (currentPage == 2 && !isCreatingNewAbha)
-                Positioned(
-                  left: 152,
-                  top: 219,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(147.48),
+                // Page 2: ABHA Address Selection Section (if ABHA found)
+                if (currentPage == 2 && !isCreatingNewAbha)
+                  _buildAbhaAddressSection(),
+
+                // Page 2: Create New ABHA Section (if user clicked Create)
+                if (currentPage == 2 && isCreatingNewAbha)
+                  _buildCreateAbhaSection(controller),
+
+                // Page 3: Welcome Screen (for both ABHA found and create flows)
+                if (currentPage == 3) _buildWelcomeSection(),
+
+                // ABHA Card - Page 3 (for both ABHA found and create flows)
+                if (currentPage == 3 && !isCreatingNewAbha)
+                  _buildAbhaCard(controller),
+                if (currentPage == 3 && isCreatingNewAbha)
+                  _buildNewAbhaCard(controller),
+
+                // Bottom Navigation for Page 3 - Positioned at bottom
+                if (currentPage == 3)
+                  Positioned(
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    child: _buildBottomNavigation(controller),
+                  ),
+
+                // Ayushman Bharat Image - Fixed Position (Page 2 - ABHA Address Screen, only if not creating)
+                if (currentPage == 2 && !isCreatingNewAbha)
+                  Positioned(
+                    left: 152,
+                    top: 219,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(147.48),
+                      child: Image.asset(
+                        'assets/ayush_man_bharat.png',
+                        width: 104,
+                        height: 101,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            width: 104,
+                            height: 101,
+                            decoration: BoxDecoration(
+                              color: Colors.grey[300],
+                              borderRadius: BorderRadius.circular(147.48),
+                            ),
+                            child: const Icon(
+                              Icons.medical_information,
+                              size: 40,
+                              color: Colors.grey,
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+
+                // Stethoscope Image - Fixed Position (Page 1 - OTP Screen)
+                if (currentPage == 1)
+                  Positioned(
+                    left: -12,
+                    top: 103,
                     child: Image.asset(
-                      'assets/ayush_man_bharat.png',
-                      width: 104,
-                      height: 101,
-                      fit: BoxFit.cover,
+                      'assets/st.png',
+                      width: 95,
+                      height: 104,
+                      fit: BoxFit.contain,
                       errorBuilder: (context, error, stackTrace) {
                         return Container(
-                          width: 104,
-                          height: 101,
-                          decoration: BoxDecoration(
-                            color: Colors.grey[300],
-                            borderRadius: BorderRadius.circular(147.48),
-                          ),
+                          width: 95,
+                          height: 104,
+                          color: Colors.grey[300],
                           child: const Icon(
-                            Icons.medical_information,
+                            Icons.medical_services,
                             size: 40,
                             color: Colors.grey,
                           ),
@@ -1222,33 +1254,8 @@ class _LoginScreenState extends State<LoginScreen>
                       },
                     ),
                   ),
-                ),
-
-              // Stethoscope Image - Fixed Position (Page 1 - OTP Screen)
-              if (currentPage == 1)
-                Positioned(
-                  left: -12,
-                  top: 103,
-                  child: Image.asset(
-                    'assets/st.png',
-                    width: 95,
-                    height: 104,
-                    fit: BoxFit.contain,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        width: 95,
-                        height: 104,
-                        color: Colors.grey[300],
-                        child: const Icon(
-                          Icons.medical_services,
-                          size: 40,
-                          color: Colors.grey,
-                        ),
-                      );
-                    },
-                  ),
-                ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -1543,16 +1550,16 @@ class _LoginScreenState extends State<LoginScreen>
                   return Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(24),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(
-                            0.1 + (flipProgress * 0.1),
-                          ),
-                          blurRadius: 16 + (flipProgress * 8),
-                          offset: Offset(0, 4 + (flipProgress * 2)),
-                          spreadRadius: 0,
-                        ),
-                      ],
+                      // boxShadow: [
+                      //   BoxShadow(
+                      //     color: Colors.black.withOpacity(
+                      //       0.1 + (flipProgress * 0.1),
+                      //     ),
+                      //     blurRadius: 16 + (flipProgress * 8),
+                      //     offset: Offset(0, 4 + (flipProgress * 2)),
+                      //     spreadRadius: 0,
+                      //   ),
+                      // ],
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(24),
@@ -1675,6 +1682,8 @@ class _LoginScreenState extends State<LoginScreen>
       height: 210,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: Colors.black.withOpacity(0.1)),
+
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.1),
@@ -1822,9 +1831,12 @@ class _LoginScreenState extends State<LoginScreen>
       return Container(
         width: 360,
         height: 198,
+        margin: EdgeInsets.only(left: 3),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(24),
           color: Colors.white,
+
+          border: Border.all(color: Colors.black.withOpacity(0.1)),
         ),
         child: Column(
           children: [

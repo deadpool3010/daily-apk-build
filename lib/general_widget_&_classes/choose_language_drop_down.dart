@@ -61,7 +61,7 @@ class ChooseLanguageDropDown extends StatelessWidget {
                         style: const TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w400,
-                          color: Color.fromARGB(255, 217, 217, 217),
+                          color: Colors.black,
                         ),
                       ),
                     ),
