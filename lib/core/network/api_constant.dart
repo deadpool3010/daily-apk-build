@@ -19,3 +19,6 @@ String getMessagesApi({int page = 1, int limit = 10}) {
 String addMemberToGroup = "";
 String getCommunityApi(String groupId) =>
     "community?groupId=$groupId&search=&page&limit&sort&uniqueCode=$uniqueCode";
+String sendVerificationLink = "auth/send-verification-link";
+String abhaAddressSuggestions(String sessionId) =>
+    "auth/abha-address-suggestions/$sessionId";

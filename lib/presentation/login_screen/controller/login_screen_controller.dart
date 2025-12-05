@@ -27,6 +27,8 @@ class LoginController extends GetxController with GetTickerProviderStateMixin {
     (index) => TextEditingController(),
   );
   final isAbhaAddressValid = false.obs;
+  final abhaAddressSuggestions = <String>[].obs; // Reactive list for suggestions
+  final isLoadingSuggestions = false.obs; // Loading state for suggestions
   List<TextEditingController> aadhaarNumberControllers = List.generate(
     3,
     (index) => TextEditingController(),
@@ -832,5 +834,77 @@ class LoginController extends GetxController with GetTickerProviderStateMixin {
     if (index < abhaAccounts.length) {
       selectedUserData.value = abhaAccounts[index];
     }
+  }
+
+  // Fetch ABHA Address Suggestions
+  Future<void> fetchAbhaAddressSuggestions() async {
+    if (sessionId.isEmpty) {
+      print('❌ SessionId is empty! Cannot fetch suggestions.');
+      return;
+    }
+
+    isLoadingSuggestions.value = true;
+
+    try {
+      final result = await getAbhaAddressSuggestionsApi(sessionId);
+      print('');
+      print('========================================');
+      print('✅ ABHA Address Suggestions API SUCCESS');
+      print('========================================');
+      print('📦 Full Response: $result');
+      print('========================================');
+      print('');
+
+      if (result['success'] == true && result['data'] != null) {
+        // Get suggestions from data.suggestions array
+        abhaAddressSuggestions.value = List<String>.from(
+          result['data']['suggestions'] ?? [],
+        );
+        print('💡 Loaded ${abhaAddressSuggestions.length} suggestions');
+        print('📋 Suggestions: $abhaAddressSuggestions');
+      }
+    } catch (e) {
+      print('');
+      print('========================================');
+      print('❌ Failed to fetch ABHA suggestions');
+      print('========================================');
+      print('Error: $e');
+      print('========================================');
+      print('');
+    } finally {
+      isLoadingSuggestions.value = false;
+    }
+  }
+
+  // Select suggestion and fill text field
+  void selectSuggestion(String suggestion) {
+    abhaAddressController.text = suggestion;
+    isAbhaAddressValid.value = _validateAbhaAddress(suggestion);
+    print('✅ Selected suggestion: $suggestion');
+  }
+
+  // Validate ABHA Address
+  bool _validateAbhaAddress(String value) {
+    // Min 8 characters, Max 18 characters
+    if (value.length < 8 || value.length > 18) {
+      return false;
+    }
+
+    // Count special characters (only dot and underscore allowed)
+    int dotCount = value.split('.').length - 1;
+    int underscoreCount = value.split('_').length - 1;
+
+    // Maximum 1 dot and/or 1 underscore
+    if (dotCount > 1 || underscoreCount > 1) {
+      return false;
+    }
+
+    // Check for any other special characters
+    RegExp allowedPattern = RegExp(r'^[a-zA-Z0-9._]+$');
+    if (!allowedPattern.hasMatch(value)) {
+      return false;
+    }
+
+    return true;
   }
 }

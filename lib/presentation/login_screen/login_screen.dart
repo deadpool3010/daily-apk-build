@@ -216,7 +216,7 @@ class _LoginScreenState extends State<LoginScreen>
       print('✅ All 6 OTP digits entered: $value');
       print('📝 Ready for verification - Click Verify button');
       print('========================================');
-      await _verifyOTPforAadhaarNumber(controller, value);
+      // await _verifyOTPforAadhaarNumber(controller, value);
     } else {
       debugPrint('Aadhaar OTP Changed: $value (Length: ${value.length})');
     }
@@ -580,7 +580,7 @@ class _LoginScreenState extends State<LoginScreen>
                   left: 24,
                   top: 165,
                   child: Image.asset(
-                    'assets/images/bandhucare_otp_screen.png',
+                    ImageConstant.bandhucareOtpScreen,
                     width: 224.16,
                     height: 57,
                     fit: BoxFit.contain,
@@ -732,7 +732,7 @@ class _LoginScreenState extends State<LoginScreen>
                   left: 24,
                   top: 165,
                   child: Image.asset(
-                    'assets/imagesbandhucare_otp_screen.png',
+                    'assets/images/bandhucare_otp_screen.png',
                     width: 224.16,
                     height: 57,
                     fit: BoxFit.contain,
@@ -857,7 +857,12 @@ class _LoginScreenState extends State<LoginScreen>
     });
   }
 
+  //overlay screen for create your unique abha address
   void _createYourAbhaAddress() async {
+    // Fetch suggestions when opening the screen using GetX controller
+    final controller = Get.find<LoginController>();
+    controller.fetchAbhaAddressSuggestions();
+
     final result = await Navigator.of(context).push(
       MaterialPageRoute(
         fullscreenDialog: true,
@@ -938,6 +943,11 @@ class _LoginScreenState extends State<LoginScreen>
 
                       // ABHA Address Input
                       _buildAbhaAddressInput(),
+
+                      const SizedBox(height: 16),
+
+                      // Suggestions Section
+                      _buildAbhaAddressSuggestions(),
                     ],
                   ),
                 ),
@@ -2085,14 +2095,26 @@ class _LoginScreenState extends State<LoginScreen>
                         color: Colors.grey[300],
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: Image.network(
-                        profileDetails?['profilePhoto'] ??
-                            Icon(
+                      child: profileDetails?['profilePhoto'] != null
+                          ? ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: Image.network(
+                                profileDetails!['profilePhoto'],
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Icon(
+                                    Icons.person,
+                                    size: 40,
+                                    color: Colors.grey[600],
+                                  );
+                                },
+                              ),
+                            )
+                          : Icon(
                               Icons.person,
                               size: 40,
                               color: Colors.grey[600],
                             ),
-                      ),
                     ),
 
                     const SizedBox(width: 12),
@@ -3062,6 +3084,103 @@ class _LoginScreenState extends State<LoginScreen>
         ],
       ),
     );
+  }
+
+  // ABHA Address Suggestions Widget - Using GetX Reactive
+  Widget _buildAbhaAddressSuggestions() {
+    final controller = Get.find<LoginController>();
+
+    return Obx(() {
+      // Show loading indicator
+      if (controller.isLoadingSuggestions.value) {
+        return Container(
+          width: 360,
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          child: const Center(
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF3865FF)),
+            ),
+          ),
+        );
+      }
+
+      // Hide if no suggestions
+      if (controller.abhaAddressSuggestions.isEmpty) {
+        return const SizedBox.shrink();
+      }
+
+      // Show suggestions as simple text in a single scrollable line
+      return SizedBox(
+        width: 360,
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: [
+              // "Suggestions:" label
+              Text(
+                'Suggestions: ',
+                style: TextStyle(
+                  fontFamily: 'Lato',
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFF64748B),
+                ),
+              ),
+              // Suggestions as comma-separated text
+              ...controller.abhaAddressSuggestions.asMap().entries.map((entry) {
+                int index = entry.key;
+                String suggestion = entry.value;
+                bool isLast =
+                    index == controller.abhaAddressSuggestions.length - 1;
+
+                return Row(
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        // Update the local text controller used in dialog
+                        abhaAddressController.text = suggestion;
+                        setState(() {
+                          isAbhaAddressValid = _validateAbhaAddress(suggestion);
+                        });
+                        print('✅ Selected suggestion: $suggestion');
+                        Fluttertoast.showToast(
+                          msg: "Selected: $suggestion",
+                          toastLength: Toast.LENGTH_SHORT,
+                          backgroundColor: Colors.blue,
+                          textColor: Colors.white,
+                        );
+                      },
+                      child: Text(
+                        suggestion,
+                        style: TextStyle(
+                          fontFamily: 'Lato',
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                          color: Color(0xFF3865FF),
+                          decoration: TextDecoration.underline,
+                          decorationColor: Color(0xFF3865FF),
+                        ),
+                      ),
+                    ),
+                    if (!isLast)
+                      Text(
+                        ', ',
+                        style: TextStyle(
+                          fontFamily: 'Lato',
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                          color: Color(0xFF64748B),
+                        ),
+                      ),
+                  ],
+                );
+              }),
+            ],
+          ),
+        ),
+      );
+    });
   }
 
   // ABHA Address Input Widget (like the design provided) ()

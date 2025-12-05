@@ -354,3 +354,47 @@ Future<Map<String, dynamic>> getCommunity(String groupId) async {
     throw Exception("Error getting community: $e");
   }
 }
+
+Future<Map<String, dynamic>> sendVerificationLinkApi(
+  String email,
+  String sessionId,
+) async {
+  try {
+    final url = baseUrl + sendVerificationLink;
+    final response = await http.post(
+      Uri.parse(url),
+      body: {"sessionId": sessionId, "email": email},
+    );
+    final result = jsonDecode(response.body);
+    if (response.statusCode == 200) {
+      return result;
+    } else {
+      throw Exception(result['message'] ?? 'Unknown error');
+    }
+  } catch (e) {
+    print("Error sending verification link: $e");
+    throw Exception("Error sending verification link: $e");
+  }
+}
+
+Future<Map<String, dynamic>> getAbhaAddressSuggestionsApi(
+  String sessionId,
+) async {
+  try {
+    final url = baseUrl + abhaAddressSuggestions(sessionId);
+    final response = await http.get(
+      Uri.parse(url),
+      headers: {"Content-Type": "application/json"},
+    );
+    final result = jsonDecode(response.body);
+    if (response.statusCode == 200) {
+      print("Abha address suggestions: $result");
+      return result;
+    } else {
+      throw Exception(result['message'] ?? 'Unknown error');
+    }
+  } catch (e) {
+    print("Error getting abha address suggestions: $e");
+    throw Exception("Error getting abha address suggestions: $e");
+  }
+}
