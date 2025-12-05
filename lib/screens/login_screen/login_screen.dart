@@ -228,7 +228,7 @@ class _LoginScreenState extends State<LoginScreen>
       print('✅ All 6 OTP digits entered: $value');
       print('📝 Ready for verification - Click Verify button');
       print('========================================');
-      await _verifyOTPforAadhaarNumber(controller, value);
+      // await _verifyOTPforAadhaarNumber(controller, value);
     } else {
       debugPrint('Aadhaar OTP Changed: $value (Length: ${value.length})');
     }
