@@ -18,7 +18,15 @@ class ChatScreenAppBar extends StatelessWidget implements PreferredSizeWidget {
         scrolledUnderElevation: 0,
         leading: Padding(
           padding: const EdgeInsets.only(left: 11, top: 41, bottom: 25),
-          child: Icon(Icons.arrow_back_ios_new, size: 22),
+          child: InkWell(
+            onTap: () {
+              // Use Navigator for safe navigation without snackbar dependencies
+              if (Navigator.of(context).canPop()) {
+                Navigator.of(context).pop();
+              }
+            },
+            child: Icon(Icons.arrow_back_ios_new, size: 22),
+          ),
         ),
         title: Padding(
           padding: const EdgeInsets.only(top: 41, bottom: 25),

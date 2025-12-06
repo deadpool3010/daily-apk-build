@@ -30,7 +30,7 @@ class Feelings extends StatelessWidget {
                   height: 133.62,
                   decoration: ShapeDecoration(
                     image: DecorationImage(
-                      image: AssetImage("assets/flower.png"),
+                      image: AssetImage("assets/images/flower.png"),
                       fit: BoxFit.fill,
                     ),
                     shape: RoundedRectangleBorder(
@@ -121,7 +121,7 @@ class Feelings extends StatelessWidget {
                   height: 134,
                   decoration: ShapeDecoration(
                     image: DecorationImage(
-                      image: AssetImage("assets/treeimage.png"),
+                      image: AssetImage("assets/images/treeimage.png"),
                       fit: BoxFit.fill,
                     ),
                     shape: RoundedRectangleBorder(
