@@ -18,6 +18,7 @@ class ImageConstant {
   static const String cardUpDesign = '${basePath}card_up_design.png';
   static const String nationalHealthAuthorityLogo =
       '${basePath}national_health_authority_logo.png';
+  static const String loginHeader = '${basePath}login_header.png';
 
   static const String qrCode = '${basePath}qr_code.png';
   static const String qrCodeIconSvg = '${basePath}qr_code_icon.svg';
