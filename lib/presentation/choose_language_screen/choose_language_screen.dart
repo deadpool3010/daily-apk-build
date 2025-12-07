@@ -1,6 +1,7 @@
 import 'package:bandhucare_new/core/app_exports.dart';
 import 'package:bandhucare_new/presentation/choose_language_screen/controller/choose_language_controller.dart';
 import 'package:get/get.dart';
+import 'package:heroicons/heroicons.dart';
 
 class ChooseLanguageScreen extends StatelessWidget {
   const ChooseLanguageScreen({super.key});
@@ -179,8 +180,8 @@ class ChooseLanguageScreen extends StatelessWidget {
                       turns: controller.dropdownAnimation.value * 0.5,
                       duration: const Duration(milliseconds: 300),
                       curve: Curves.easeInOut,
-                      child: Icon(
-                        Icons.keyboard_arrow_down,
+                      child: HeroIcon(
+                        HeroIcons.chevronUpDown,
                         color: Colors.black54,
                       ),
                     ),

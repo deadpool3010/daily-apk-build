@@ -11,7 +11,8 @@ class LoginController extends GetxController with GetTickerProviderStateMixin {
   final enteredAadhaarOtp = ''.obs;
   final aadhaarFieldKey = 0.obs;
 
-  final currentPage = 1.obs; // Start at page 1 (language selection moved to separate screen)
+  final currentPage =
+      1.obs; // Start at page 1 (language selection moved to separate screen)
   final isDropdownExpanded = false.obs;
   final isCreatingNewAbha = false.obs;
   final isCardFlipped = false.obs;
@@ -27,7 +28,8 @@ class LoginController extends GetxController with GetTickerProviderStateMixin {
     (index) => TextEditingController(),
   );
   final isAbhaAddressValid = false.obs;
-  final abhaAddressSuggestions = <String>[].obs; // Reactive list for suggestions
+  final abhaAddressSuggestions =
+      <String>[].obs; // Reactive list for suggestions
   final isLoadingSuggestions = false.obs; // Loading state for suggestions
   List<TextEditingController> aadhaarNumberControllers = List.generate(
     3,
@@ -40,6 +42,7 @@ class LoginController extends GetxController with GetTickerProviderStateMixin {
   final isLoadingSignIn = false.obs;
   final isLoadingVerifyOtp = false.obs;
   final isLoadingSelectAccount = false.obs;
+  final showGetOtpHint = true.obs; // Show hint for Get OTP button
   List<Map<String, dynamic>> abhaAccounts = [];
   final profileDetails = Rxn<Map<String, dynamic>>(); // Make it observable
   final List<FocusNode> otpFocusNodes = List.generate(6, (_) => FocusNode());
@@ -217,6 +220,9 @@ class LoginController extends GetxController with GetTickerProviderStateMixin {
 
   // Call SignIn API
   Future<void> handleGetOTP() async {
+    // Hide hint when button is clicked
+    showGetOtpHint.value = false;
+
     String phone = phoneController.text.trim();
 
     if (phone.isEmpty || phone.length != 10) {
@@ -906,5 +912,127 @@ class LoginController extends GetxController with GetTickerProviderStateMixin {
     }
 
     return true;
+  }
+
+  // Handle OTP change and auto-verify
+  void handleOTPChange(String value) {
+    enteredOtp.value = value;
+    // Check if all 6 OTP digits are filled
+    if (enteredOtp.value.length == 6 && !isLoadingVerifyOtp.value) {
+      print('========================================');
+      print('✅ All 6 OTP digits entered: ${enteredOtp.value}');
+      print('🚀 Calling VerifyOtp API automatically...');
+      print('========================================');
+      // Set loading state immediately to show animation
+      isLoadingVerifyOtp.value = true;
+      // Add 2 second delay before calling API
+      Future.delayed(Duration(seconds: 2), () {
+        if (!isClosed && isLoadingVerifyOtp.value) {
+          verifyOTPforMobileNumber(enteredOtp.value);
+        }
+      });
+    }
+  }
+
+  // Call VerifyOTP API
+  Future<void> verifyOTPforMobileNumber(String otp) async {
+    if (sessionId.isEmpty) {
+      print('❌ SessionId is empty!');
+      isLoadingVerifyOtp.value = false;
+      Fluttertoast.showToast(
+        msg: "Session expired. Please request OTP again.",
+        toastLength: Toast.LENGTH_SHORT,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+      );
+      return;
+    }
+
+    // Loading state is already set in handleOTPChange if called from there
+    // But set it here too in case method is called directly
+    if (!isLoadingVerifyOtp.value) {
+      isLoadingVerifyOtp.value = true;
+    }
+
+    try {
+      final result = await verifyOtpforabhaMobileApi(otp, sessionId);
+      print('');
+      print('========================================');
+      print('✅ ✅ ✅ VerifyOTP API SUCCESS ✅ ✅ ✅');
+      print('========================================');
+      print('📦 Full Response: $result');
+      print('📊 Success: ${result['success']}');
+      print('📨 Message: ${result['message']}');
+      print('📋 Data: ${result['data']}');
+      print('========================================');
+      print('');
+
+      Fluttertoast.showToast(
+        msg: "OTP verified successfully!",
+        toastLength: Toast.LENGTH_SHORT,
+        backgroundColor: Colors.green,
+        textColor: Colors.white,
+      );
+
+      // Store accounts data and new sessionId if available
+      if (result['data'] != null) {
+        // Update sessionId from VerifyOtp response
+        if (result['data']['sessionId'] != null) {
+          sessionId = result['data']['sessionId'] as String;
+          print('🔄 SessionId updated: $sessionId');
+        }
+
+        // Store accounts
+        if (result['data']['accounts'] != null) {
+          List<dynamic> accounts = result['data']['accounts'];
+          abhaAccounts = accounts
+              .map(
+                (account) => {
+                  'abhaNumber': account['abhaNumber'] ?? '',
+                  'name': account['name'] ?? '',
+                  'abhaAddress': account['abhaAddress'] ?? '',
+                },
+              )
+              .toList();
+
+          print('========================================');
+          print('📋 Stored ${abhaAccounts.length} ABHA accounts');
+          print('🔑 Using SessionId: $sessionId');
+          print('========================================');
+        }
+      }
+    } catch (e) {
+      print('');
+      print('========================================');
+      print('❌ ❌ ❌ VerifyOTP API FAILED ❌ ❌ ❌');
+      print('========================================');
+      print('Error: $e');
+      print('========================================');
+      print('');
+
+      // Extract the actual error message
+      String errorMessage = e.toString();
+      if (errorMessage.startsWith('Exception: Exception: ')) {
+        errorMessage = errorMessage.replaceFirst('Exception: Exception: ', '');
+      } else if (errorMessage.startsWith('Exception: ')) {
+        errorMessage = errorMessage.replaceFirst('Exception: ', '');
+      }
+
+      Fluttertoast.showToast(
+        msg: errorMessage,
+        toastLength: Toast.LENGTH_LONG,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+      );
+    } finally {
+      isLoadingVerifyOtp.value = false;
+    }
+  }
+
+  // Navigate to create ABHA flow
+  void goToCreateAbhaFlow() {
+    isCreatingNewAbha.value = true;
+    createSubPage.value = 0;
+    currentPage.value = 2;
   }
 }
