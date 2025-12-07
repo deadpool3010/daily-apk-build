@@ -16,6 +16,8 @@ import '../presentation/login_screen/binding/login_screen_binding.dart';
 import '../presentation/login_screen/login_screen.dart';
 import '../presentation/splash_screen/binding/splash_binding.dart';
 import '../presentation/splash_screen/splash_screen.dart';
+import '../presentation/choose_language_screen/binding/choose_language_binding.dart';
+import '../presentation/choose_language_screen/choose_language_screen.dart';
 
 class AppRoutes {
   AppRoutes._();
@@ -36,6 +38,7 @@ class AppRoutes {
   static const privacyScreen = '/privacy-screen';
   static const chatbotSplashLoadingScreen = '/chatbot-splash-loading-screen';
   static const healthCalendar = '/health-calendar';
+  static const chooseLanguageScreen = '/choose-language';
 }
 
 class AppPages {
@@ -46,6 +49,12 @@ class AppPages {
       name: AppRoutes.splashScreen,
       page: () => const SplashScreen(),
       binding: SplashBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.chooseLanguageScreen,
+      page: () => const ChooseLanguageScreen(),
+      binding: ChooseLanguageBinding(),
+      transition: Transition.fadeIn,
     ),
     GetPage(
       name: AppRoutes.consentFormScreen,

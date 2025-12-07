@@ -284,7 +284,7 @@ class SplashController extends GetxController with GetTickerProviderStateMixin {
       }
     } else {
       if (Get.context != null && Get.currentRoute == AppRoutes.splashScreen) {
-        Get.offNamed(AppRoutes.consentFormScreen);
+        Get.offNamed(AppRoutes.chooseLanguageScreen);
       }
     }
   }

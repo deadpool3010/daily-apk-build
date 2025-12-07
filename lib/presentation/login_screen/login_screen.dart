@@ -16,9 +16,8 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen>
     with TickerProviderStateMixin {
-  String selectedLanguage = 'English';
-  int currentPage = 0; // Track which section is visible (0-3)
-  bool isDropdownExpanded = false; // Track dropdown state
+  int currentPage =
+      1; // Track which section is visible (1-3) - Language selection moved to separate screen
   bool isCreatingNewAbha =
       false; // Track if user clicked "Create" to follow different path
   int createSubPage =
@@ -1055,206 +1054,135 @@ class _LoginScreenState extends State<LoginScreen>
   @override
   Widget build(BuildContext context) {
     final LoginController controller = Get.find<LoginController>();
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.dark,
-        statusBarBrightness: Brightness.light,
-      ),
-      child: Scaffold(
-        resizeToAvoidBottomInset: false,
-        backgroundColor: Colors.white,
-        body: GestureDetector(
-          onTap: () {
-            // Dismiss keyboard when tapping anywhere on the screen
-            FocusScope.of(context).unfocus();
-          },
-          behavior: HitTestBehavior.opaque,
-          child: SafeArea(
-            child: Stack(
-              children: [
-                // Main Content (only for pages 0, 1, 2)
-                if (currentPage != 3)
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      const SizedBox(height: 100),
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      backgroundColor: Colors.white,
+      body: GestureDetector(
+        onTap: () {
+          // Dismiss keyboard when tapping anywhere on the screen
+          FocusScope.of(context).unfocus();
+        },
+        behavior: HitTestBehavior.opaque,
+        child: Stack(
+          children: [
+            // Main Content (only for pages 1, 2)
+            if (currentPage != 3)
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const SizedBox(height: 100),
 
-                      // Section 1: Language Selection (Page 0)
-                      if (currentPage == 0) _buildLanguageSection(),
+                  if (currentPage == 1) const Spacer(),
 
-                      const SizedBox(height: 40),
+                  if (currentPage == 2) const Spacer(),
 
-                      // Illustration Image
-                      if (currentPage == 0)
-                        Expanded(
-                          child: Center(
-                            child: Image.asset(
-                              'assets/images/choose_language.png',
-                              width: 300,
-                              fit: BoxFit.contain,
-                              errorBuilder: (context, error, stackTrace) {
-                                return Container(
-                                  width: 300,
-                                  height: 300,
-                                  color: Colors.grey[200],
-                                  child: const Icon(
-                                    Icons.image,
-                                    size: 100,
-                                    color: Colors.grey,
-                                  ),
-                                );
-                              },
-                            ),
+                  // Navigation Dots and Next Button (only for pages 1, 2)
+                  _buildBottomNavigation(controller),
+
+                  const SizedBox(height: 30),
+                ],
+              ),
+
+            // Page 1: New Login Screen Design
+            if (currentPage == 1)
+              Positioned.fill(child: _buildNewLoginScreen(controller)),
+
+            // Page 2: Header with Back Button
+            if (currentPage == 2)
+              Positioned(
+                left: 24,
+                top: 40,
+                child: Row(
+                  children: [
+                    // Back button
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          currentPage = 1;
+                          // Clear ABHA accounts data
+                          abhaAccounts.clear();
+                          selectedAbhaIndex = null;
+                        });
+                      },
+                      child: Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: Color(0xFFE2E8F0),
+                            width: 1,
                           ),
                         ),
-
-                      if (currentPage == 1) const Spacer(),
-
-                      if (currentPage == 2) const Spacer(),
-
-                      // Navigation Dots and Next Button (only for pages 0, 1, 2)
-                      _buildBottomNavigation(controller),
-
-                      const SizedBox(height: 30),
-                    ],
-                  ),
-
-                // OTP Screen - Welcome Section (Page 1)
-                if (currentPage == 1) _buildOTPSection(),
-
-                // Phone Number Input (Page 1)
-                if (currentPage == 1) _buildPhoneNumberInput(controller),
-
-                // OTP Input and Get OTP Button (Page 1)
-                if (currentPage == 1) _buildOTPInputSection(controller),
-
-                // Other Login Options (Page 1)
-                if (currentPage == 1) _buildOtherLoginOptions(),
-
-                // Page 2: Header with Back Button
-                if (currentPage == 2)
-                  Positioned(
-                    left: 24,
-                    top: 40,
-                    child: Row(
-                      children: [
-                        // Back button
-                        GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              currentPage = 1;
-                              // Clear ABHA accounts data
-                              abhaAccounts.clear();
-                              selectedAbhaIndex = null;
-                            });
-                          },
-                          child: Container(
-                            width: 40,
-                            height: 40,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(
-                                color: Color(0xFFE2E8F0),
-                                width: 1,
-                              ),
-                            ),
-                            child: Icon(
-                              Icons.arrow_back,
-                              color: Color(0xFF3864FD),
-                              size: 20,
-                            ),
-                          ),
+                        child: Icon(
+                          Icons.arrow_back,
+                          color: Color(0xFF3864FD),
+                          size: 20,
                         ),
-                      ],
-                    ),
-                  ),
-
-                // Page 2: ABHA Address Selection Section (if ABHA found)
-                if (currentPage == 2 && !isCreatingNewAbha)
-                  _buildAbhaAddressSection(),
-
-                // Page 2: Create New ABHA Section (if user clicked Create)
-                if (currentPage == 2 && isCreatingNewAbha)
-                  _buildCreateAbhaSection(controller),
-
-                // Page 3: Welcome Screen (for both ABHA found and create flows)
-                if (currentPage == 3) _buildWelcomeSection(),
-
-                // ABHA Card - Page 3 (for both ABHA found and create flows)
-                if (currentPage == 3 && !isCreatingNewAbha)
-                  _buildAbhaCard(controller),
-                if (currentPage == 3 && isCreatingNewAbha)
-                  _buildNewAbhaCard(controller),
-
-                // Bottom Navigation for Page 3 - Positioned at bottom
-                if (currentPage == 3)
-                  Positioned(
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    child: _buildBottomNavigation(controller),
-                  ),
-
-                // Ayushman Bharat Image - Fixed Position (Page 2 - ABHA Address Screen, only if not creating)
-                if (currentPage == 2 && !isCreatingNewAbha)
-                  Positioned(
-                    left: 152,
-                    top: 219,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(147.48),
-                      child: Image.asset(
-                        'assets/images/ayush_man_bharat.png',
-                        width: 104,
-                        height: 101,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return Container(
-                            width: 104,
-                            height: 101,
-                            decoration: BoxDecoration(
-                              color: Colors.grey[300],
-                              borderRadius: BorderRadius.circular(147.48),
-                            ),
-                            child: const Icon(
-                              Icons.medical_information,
-                              size: 40,
-                              color: Colors.grey,
-                            ),
-                          );
-                        },
                       ),
                     ),
-                  ),
+                  ],
+                ),
+              ),
 
-                // Stethoscope Image - Fixed Position (Page 1 - OTP Screen)
-                if (currentPage == 1)
-                  Positioned(
-                    left: -12,
-                    top: 103,
-                    child: Image.asset(
-                      'assets/images/st.png',
-                      width: 95,
-                      height: 104,
-                      fit: BoxFit.contain,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Container(
-                          width: 95,
-                          height: 104,
+            // Page 2: ABHA Address Selection Section (if ABHA found)
+            if (currentPage == 2 && !isCreatingNewAbha)
+              _buildAbhaAddressSection(),
+
+            // Page 2: Create New ABHA Section (if user clicked Create)
+            if (currentPage == 2 && isCreatingNewAbha)
+              _buildCreateAbhaSection(controller),
+
+            // Page 3: Welcome Screen (for both ABHA found and create flows)
+            if (currentPage == 3) _buildWelcomeSection(),
+
+            // ABHA Card - Page 3 (for both ABHA found and create flows)
+            if (currentPage == 3 && !isCreatingNewAbha)
+              _buildAbhaCard(controller),
+            if (currentPage == 3 && isCreatingNewAbha)
+              _buildNewAbhaCard(controller),
+
+            // Bottom Navigation for Page 3 - Positioned at bottom
+            if (currentPage == 3)
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: 0,
+                child: _buildBottomNavigation(controller),
+              ),
+
+            // Ayushman Bharat Image - Fixed Position (Page 2 - ABHA Address Screen, only if not creating)
+            if (currentPage == 2 && !isCreatingNewAbha)
+              Positioned(
+                left: 152,
+                top: 219,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(147.48),
+                  child: Image.asset(
+                    'assets/images/ayush_man_bharat.png',
+                    width: 104,
+                    height: 101,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        width: 104,
+                        height: 101,
+                        decoration: BoxDecoration(
                           color: Colors.grey[300],
-                          child: const Icon(
-                            Icons.medical_services,
-                            size: 40,
-                            color: Colors.grey,
-                          ),
-                        );
-                      },
-                    ),
+                          borderRadius: BorderRadius.circular(147.48),
+                        ),
+                        child: const Icon(
+                          Icons.medical_information,
+                          size: 40,
+                          color: Colors.grey,
+                        ),
+                      );
+                    },
                   ),
-              ],
-            ),
-          ),
+                ),
+              ),
+          ],
         ),
       ),
     );
@@ -2964,6 +2892,496 @@ class _LoginScreenState extends State<LoginScreen>
   }
 
   // Section 2: OTP Screen Widget
+  // New Login Screen Design (Page 1)
+  Widget _buildNewLoginScreen(LoginController controller) {
+    return Column(
+      children: [
+        // Header Section with Dark Blue Background
+        _buildLoginHeader(),
+
+        // Content Card Section
+        Expanded(child: _buildLoginContentCard(controller)),
+      ],
+    );
+  }
+
+  // Header Section with Dark Blue Background
+  Widget _buildLoginHeader() {
+    return Container(
+      height: 280,
+      width: double.infinity,
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage(ImageConstant.loginHeader),
+          fit: BoxFit.cover,
+        ),
+      ),
+      child: Stack(
+        children: [
+          // Back Button
+          Positioned(
+            left: 24,
+            top: 20,
+            child: GestureDetector(
+              onTap: () {
+                // Navigate back to language selection screen
+                Get.offNamed(AppRoutes.chooseLanguageScreen);
+              },
+              child: Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.2),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(Icons.arrow_back, color: Colors.white, size: 20),
+              ),
+            ),
+          ),
+
+          // Logo on the right
+          Positioned(
+            right: 24,
+            top: 20,
+            child: Container(
+              width: 60,
+              height: 60,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white.withOpacity(0.2),
+              ),
+              child: ClipOval(
+                child: Image.asset(
+                  ImageConstant.appLogoWhite,
+                  fit: BoxFit.contain,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Icon(
+                      Icons.medical_services,
+                      color: Colors.white,
+                      size: 30,
+                    );
+                  },
+                ),
+              ),
+            ),
+          ),
+
+          // Title and Subtitle
+          Positioned(
+            left: 24,
+            top: 80,
+            right: 100,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Go ahead and set up your account',
+                  style: TextStyle(
+                    fontFamily: 'Roboto',
+                    fontSize: 24,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white,
+                    height: 1.2,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: () {
+                    setState(() {
+                      isCreatingNewAbha = true;
+                      createSubPage = 0;
+                      currentPage = 2;
+                    });
+                  },
+                  child: RichText(
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: "Don't have an Abha Address? ",
+                          style: TextStyle(
+                            fontFamily: 'Lato',
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.white.withOpacity(0.9),
+                          ),
+                        ),
+                        TextSpan(
+                          text: 'Create one',
+                          style: TextStyle(
+                            fontFamily: 'Lato',
+                            fontSize: 14,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white,
+                            decoration: TextDecoration.underline,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Content Card Section
+  Widget _buildLoginContentCard(LoginController controller) {
+    return Transform.translate(
+      offset: Offset(0, -30),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Color(0xFFF8F9FA),
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(32),
+            topRight: Radius.circular(32),
+          ),
+        ),
+        child: SingleChildScrollView(
+          padding: EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Instruction Text
+              Text(
+                'Enter the Mobile Number linked to your Abha Address',
+                style: TextStyle(
+                  fontFamily: 'Lato',
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: Color(0xFF94A3B8),
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              // Mobile Number Input
+              _buildMobileNumberInput(controller),
+              const SizedBox(height: 16),
+
+              // OTP Input with Get OTP Button
+              _buildOTPInputWithButton(controller),
+              const SizedBox(height: 24),
+
+              // Login Button
+              _buildLoginButton(controller),
+              const SizedBox(height: 24),
+
+              // Separator
+              Row(
+                children: [
+                  Expanded(
+                    child: Divider(color: Color(0xFFCBD5E1), thickness: 1),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Text(
+                      'Or login with',
+                      style: TextStyle(
+                        fontFamily: 'Lato',
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: Color(0xFF94A3B8),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Divider(color: Color(0xFFCBD5E1), thickness: 1),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+
+              // Alternative Login Options
+              _buildAlternativeLoginOptions(),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  // Mobile Number Input
+  Widget _buildMobileNumberInput(LoginController controller) {
+    return Container(
+      height: 50,
+      decoration: BoxDecoration(
+        color: Color(0xFFF1F5F9),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Color(0xFFE2E8F0), width: 1),
+      ),
+      child: Row(
+        children: [
+          // Country code
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            child: Text(
+              '+91',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                color: Color(0xFF3864FD),
+              ),
+            ),
+          ),
+          // Divider
+          Container(width: 1, height: 30, color: Color(0xFFE2E8F0)),
+          // Phone number input
+          Expanded(
+            child: TextField(
+              controller: controller.phoneController,
+              keyboardType: TextInputType.phone,
+              maxLength: 10,
+              onChanged: (value) {
+                if (value.length == 10) {
+                  FocusScope.of(context).unfocus();
+                }
+              },
+              decoration: InputDecoration(
+                hintText: '6281858219',
+                hintStyle: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  color: Color(0xFF94A3B8),
+                ),
+                border: InputBorder.none,
+                contentPadding: EdgeInsets.symmetric(horizontal: 16),
+                counterText: '',
+              ),
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                color: Colors.black87,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // OTP Input with Get OTP Button
+  Widget _buildOTPInputWithButton(LoginController controller) {
+    return Container(
+      height: 50,
+      decoration: BoxDecoration(
+        color: Color(0xFFF1F5F9),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Color(0xFFE2E8F0), width: 1),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.only(left: 16, right: 8),
+              child: _buildPinCodeField(controller),
+            ),
+          ),
+          Obx(
+            () => Container(
+              margin: const EdgeInsets.only(right: 8),
+              child: ElevatedButton(
+                onPressed: controller.isLoadingSignIn.value
+                    ? null
+                    : () => controller.handleGetOTP(),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color(0xFF3864FD),
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  elevation: 0,
+                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                ),
+                child: controller.isLoadingSignIn.value
+                    ? SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            Colors.white,
+                          ),
+                        ),
+                      )
+                    : Text(
+                        'Get OTP',
+                        style: TextStyle(
+                          fontFamily: 'Lato',
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
+                      ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Login Button
+  Widget _buildLoginButton(LoginController controller) {
+    return Obx(
+      () => Container(
+        width: double.infinity,
+        height: 50,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFF3864FD), Color(0xFF5B8DFE)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: ElevatedButton(
+          onPressed: controller.isLoadingVerifyOtp.value
+              ? null
+              : () {
+                  // Auto-verify if OTP is complete
+                  if (controller.enteredOtp.value.length == 6) {
+                    _handleOTPChange(controller, controller.enteredOtp.value);
+                  } else {
+                    Fluttertoast.showToast(
+                      msg: "Please enter complete OTP",
+                      toastLength: Toast.LENGTH_SHORT,
+                      backgroundColor: Colors.orange,
+                      textColor: Colors.white,
+                    );
+                  }
+                },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.transparent,
+            shadowColor: Colors.transparent,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            elevation: 0,
+          ),
+          child: controller.isLoadingVerifyOtp.value
+              ? SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  ),
+                )
+              : Text(
+                  'Login',
+                  style: TextStyle(
+                    fontFamily: 'Lato',
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
+                ),
+        ),
+      ),
+    );
+  }
+
+  // Alternative Login Options
+  Widget _buildAlternativeLoginOptions() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        _buildAlternativeLoginButton(
+          icon: Icons.g_mobiledata,
+          label: 'Google',
+          iconColor: Colors.orange,
+        ),
+        _buildAlternativeLoginButton(
+          icon: Icons.phone,
+          label: 'Mobile',
+          iconColor: Color(0xFF3864FD),
+        ),
+        _buildAlternativeLoginButton(
+          icon: Icons.email,
+          label: 'E-Mail ID',
+          iconColor: Color(0xFF3864FD),
+        ),
+      ],
+    );
+  }
+
+  // Alternative Login Button
+  Widget _buildAlternativeLoginButton({
+    required IconData icon,
+    required String label,
+    required Color iconColor,
+  }) {
+    return GestureDetector(
+      onTap: () {
+        // Handle alternative login options
+        if (label == 'Google') {
+          // Handle Google login
+        } else if (label == 'Mobile') {
+          // Already on mobile login
+        } else if (label == 'E-Mail ID') {
+          // Handle email login
+        }
+      },
+      child: Container(
+        width: 100,
+        height: 50,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Color(0xFFE2E8F0), width: 1),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if (label == 'Google')
+              Container(
+                width: 20,
+                height: 20,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Color(0xFF4285F4),
+                      Color(0xFF34A853),
+                      Color(0xFFFBBC05),
+                      Color(0xFFEA4335),
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: Center(
+                  child: Text(
+                    'G',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              )
+            else
+              Icon(icon, color: iconColor, size: 20),
+            const SizedBox(width: 6),
+            Text(
+              label,
+              style: TextStyle(
+                fontFamily: 'Lato',
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: Colors.black87,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildOTPSection() {
     return Positioned(
       left: 24,
@@ -3686,158 +4104,6 @@ class _LoginScreenState extends State<LoginScreen>
     );
   }
 
-  // Section 1: Language Selection Widget
-  Widget _buildLanguageSection() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 23),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // "Choose Language" text
-          Text(
-            'Choose Language',
-            style: TextStyle(
-              fontFamily: 'Roboto',
-              fontSize: 22,
-              fontWeight: FontWeight.w700,
-              height: 20 / 22, // line-height / font-size
-              letterSpacing: 0,
-              color: Color(0xFF3864FD),
-            ),
-          ),
-
-          const SizedBox(height: 14),
-
-          // "What language would you like the app to be in?" text
-          Text(
-            'What language would you like the app to be in?',
-            style: TextStyle(
-              fontFamily: 'Lato',
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              height: 16 / 14, // line-height / font-size
-              letterSpacing: 0,
-              color: Color(0xFF94A3B8),
-            ),
-          ),
-
-          const SizedBox(height: 30), // Gap between text and dropdown
-          // Language Dropdown Selector
-          _buildLanguageDropdown(),
-        ],
-      ),
-    );
-  }
-
-  // Custom Language Dropdown Widget
-  Widget _buildLanguageDropdown() {
-    List<String> languages = [
-      'English',
-      'Telugu',
-      'Gujarati',
-      'Tamil',
-      'Hindi',
-      'Malayalam',
-    ];
-
-    return Column(
-      children: [
-        // Dropdown Header (always visible)
-        GestureDetector(
-          onTap: () {
-            setState(() {
-              isDropdownExpanded = !isDropdownExpanded;
-            });
-          },
-          child: Container(
-            width: double.infinity,
-            height: 50,
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            decoration: BoxDecoration(
-              color: const Color(0xFFF1F5F9),
-              borderRadius: isDropdownExpanded
-                  ? const BorderRadius.only(
-                      topLeft: Radius.circular(8),
-                      topRight: Radius.circular(8),
-                    )
-                  : BorderRadius.circular(8),
-              border: Border.all(color: const Color(0xFFE2E8F0), width: 1),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  selectedLanguage,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.black87,
-                  ),
-                ),
-                Icon(
-                  isDropdownExpanded
-                      ? Icons.keyboard_arrow_up
-                      : Icons.keyboard_arrow_down,
-                  color: Colors.black54,
-                ),
-              ],
-            ),
-          ),
-        ),
-
-        // Expanded Options List
-        if (isDropdownExpanded)
-          Container(
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: const BorderRadius.only(
-                bottomLeft: Radius.circular(8),
-                bottomRight: Radius.circular(8),
-              ),
-              border: Border.all(color: const Color(0xFFE2E8F0), width: 1),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 8,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: Column(
-              children: languages.where((lang) => lang != selectedLanguage).map(
-                (language) {
-                  return GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        selectedLanguage = language;
-                        isDropdownExpanded = false;
-                      });
-                    },
-                    child: Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
-                      ),
-                      child: Text(
-                        language,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w400,
-                          color: Colors.black87,
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              ).toList(),
-            ),
-          ),
-      ],
-    );
-  }
-
   // Bottom Navigation with Dots, Previous and Next Buttons
   Widget _buildBottomNavigation(LoginController controller) {
     return Obx(() {
@@ -3935,16 +4201,18 @@ class _LoginScreenState extends State<LoginScreen>
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                // Navigation Dots (Left)
+                // Navigation Dots (Left) - 3 dots for pages 1, 2, 3
                 Row(
-                  children: List.generate(4, (index) {
+                  children: List.generate(3, (index) {
+                    // Map index 0,1,2 to pages 1,2,3
+                    int pageNumber = index + 1;
                     return Container(
                       margin: const EdgeInsets.only(right: 8),
                       width: 8,
                       height: 8,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: index == currentPage
+                        color: pageNumber == currentPage
                             ? const Color(0xFF3864FD) // Active dot - blue
                             : const Color(
                                 0xFFE2E8F0,
@@ -3958,7 +4226,7 @@ class _LoginScreenState extends State<LoginScreen>
                 Row(
                   children: [
                     // Previous Button (only show if not on first page or first sub-page)
-                    if (currentPage > 0 ||
+                    if (currentPage > 1 ||
                         (currentPage == 2 &&
                             isCreatingNewAbha &&
                             createSubPage > 0)) ...[

@@ -11,7 +11,7 @@ class LoginController extends GetxController with GetTickerProviderStateMixin {
   final enteredAadhaarOtp = ''.obs;
   final aadhaarFieldKey = 0.obs;
 
-  final currentPage = 0.obs;
+  final currentPage = 1.obs; // Start at page 1 (language selection moved to separate screen)
   final isDropdownExpanded = false.obs;
   final isCreatingNewAbha = false.obs;
   final isCardFlipped = false.obs;
@@ -758,7 +758,7 @@ class LoginController extends GetxController with GetTickerProviderStateMixin {
   void nextPage() {
     if (currentPage.value < 3) {
       // Ensure OTP text controller is initialized when navigating to page 1
-      if (currentPage.value == 0 && !isClosed) {
+      if (currentPage.value == 1 && !isClosed) {
         enteredOtp.value = '';
         otpFieldKey.value++;
       }
@@ -810,7 +810,7 @@ class LoginController extends GetxController with GetTickerProviderStateMixin {
   }
 
   void previousPage() {
-    if (currentPage.value > 0) {
+    if (currentPage.value > 1) {
       currentPage.value--;
       // Reset create flag when going back to page 1 (OTP screen)
       if (currentPage.value == 1) {
