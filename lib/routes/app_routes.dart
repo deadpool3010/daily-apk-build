@@ -1,0 +1,96 @@
+import 'package:bandhucare_new/presentation/scan_qr_screen/binding/scan_qr_binding.dart';
+import 'package:bandhucare_new/presentation/scan_qr_screen/scan_qr_screen.dart';
+import 'package:bandhucare_new/presentation/health_calendar/health_calendar.dart';
+import 'package:bandhucare_new/presentation/chat_splash_screen/chatbot_splash_loading_screen.dart';
+import 'package:bandhucare_new/presentation/home_screen/binding/home_screen_binding.dart';
+import 'package:bandhucare_new/presentation/join_community_screen/binding/join_community_binding.dart';
+import 'package:bandhucare_new/presentation/join_community_screen/join_community_screen.dart';
+import 'package:bandhucare_new/presentation/join_group_screen/join_group_screen.dart';
+import 'package:bandhucare_new/presentation/language_setting_screen/binding/language_setting_binding.dart';
+import 'package:bandhucare_new/presentation/user_profile_screen/userProfile.dart';
+import 'package:bandhucare_new/presentation/user_profile_screen/binding/user_profile_binding.dart';
+import 'package:bandhucare_new/presentation/language_setting_screen/language_setting_screen.dart';
+import 'package:get/get.dart';
+import '../presentation/home_screen/home_screen.dart';
+import '../presentation/login_screen/binding/login_screen_binding.dart';
+import '../presentation/login_screen/login_screen.dart';
+import '../presentation/splash_screen/binding/splash_binding.dart';
+import '../presentation/splash_screen/splash_screen.dart';
+
+class AppRoutes {
+  AppRoutes._();
+
+  static const splashScreen = '/';
+  static const consentFormScreen = '/consent-form';
+  static const loginScreen = '/login';
+  static const homeScreen = '/home';
+  static const imagePreviewRoute = '/image-preview';
+  static const videoPreviewRoute = '/video-preview';
+  static const documentPreviewRoute = '/document-preview';
+  static const scanQrScreen = '/scan-qr';
+  static const joinGroupScreen = '/join-group';
+  static const joinCommunityScreen = '/join-community';
+  static const languageSettingsScreen = '/language-settings';
+  static const simpleLanguageScreen = '/simple-language-settings';
+  static const userProfile = '/user-profile';
+  static const privacyScreen = '/privacy-screen';
+  static const chatbotSplashLoadingScreen = '/chatbot-splash-loading-screen';
+  static const healthCalendar = '/health-calendar';
+}
+
+class AppPages {
+  AppPages._();
+
+  static final pages = <GetPage<dynamic>>[
+    GetPage(
+      name: AppRoutes.splashScreen,
+      page: () => const SplashScreen(),
+      binding: SplashBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.consentFormScreen,
+      page: () => const LoginScreen(),
+      binding: LoginBinding(),
+      transition: Transition.fadeIn,
+    ),
+    GetPage(
+      name: AppRoutes.loginScreen,
+      page: () => const LoginScreen(),
+      binding: LoginBinding(),
+      transition: Transition.fadeIn,
+    ),
+    GetPage(
+      name: AppRoutes.homeScreen,
+      page: () => const HomepageScreen(),
+      transition: Transition.fadeIn,
+      binding: HomepageBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.scanQrScreen,
+      page: () => const ScanQrScreen(),
+      binding: ScanQrBinding(),
+    ),
+    GetPage(name: AppRoutes.joinGroupScreen, page: () => const GroupScreen()),
+    GetPage(
+      name: AppRoutes.joinCommunityScreen,
+      page: () => JoinCommunityScreen(),
+      binding: JoinCommunityBinding(),
+    ),
+
+    GetPage(
+      name: AppRoutes.userProfile,
+      page: () => const UserProfile(),
+      binding: UserProfileBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.simpleLanguageScreen,
+      page: () => const SimpleLanguageScreen(),
+      binding: LanguageSettingBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.chatbotSplashLoadingScreen,
+      page: () => const ChatbotSplashLoadingScreen(),
+    ),
+    GetPage(name: AppRoutes.healthCalendar, page: () => const HealthCalendar()),
+  ];
+}
