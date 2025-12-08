@@ -38,11 +38,11 @@ class DynamicButton extends StatelessWidget {
             // blurRadius: 12,
             // offset: const Offset(0, 4),
           ),
-          BoxShadow(
-            color: const Color(0xFF0340CC).withOpacity(0.3),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
-          ),
+          // BoxShadow(
+          //   color: const Color(0xFF0340CC).withOpacity(0.3),
+          //   blurRadius: 20,
+          //   offset: const Offset(0, 8),
+          // ),
         ],
       ),
       child: Material(

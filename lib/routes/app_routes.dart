@@ -18,6 +18,10 @@ import '../presentation/splash_screen/binding/splash_binding.dart';
 import '../presentation/splash_screen/splash_screen.dart';
 import '../presentation/choose_language_screen/binding/choose_language_binding.dart';
 import '../presentation/choose_language_screen/choose_language_screen.dart';
+import '../presentation/email_password_login_screen/email_password_login_screen.dart';
+import '../presentation/email_password_login_screen/binding/email_password_login_binding.dart';
+import '../presentation/mobile_password_login_screen/mobile_password_login_screen.dart';
+import '../presentation/mobile_password_login_screen/binding/mobile_password_login_binding.dart';
 
 class AppRoutes {
   AppRoutes._();
@@ -39,6 +43,8 @@ class AppRoutes {
   static const chatbotSplashLoadingScreen = '/chatbot-splash-loading-screen';
   static const healthCalendar = '/health-calendar';
   static const chooseLanguageScreen = '/choose-language';
+  static const emailPasswordLoginScreen = '/email-password-login';
+  static const mobilePasswordLoginScreen = '/mobile-password-login';
 }
 
 class AppPages {
@@ -66,6 +72,18 @@ class AppPages {
       name: AppRoutes.loginScreen,
       page: () => const LoginScreen(),
       binding: LoginBinding(),
+      transition: Transition.fadeIn,
+    ),
+    GetPage(
+      name: AppRoutes.emailPasswordLoginScreen,
+      page: () => const EmailPasswordLoginScreen(),
+      binding: EmailPasswordLoginBinding(),
+      transition: Transition.fadeIn,
+    ),
+    GetPage(
+      name: AppRoutes.mobilePasswordLoginScreen,
+      page: () => const MobilePasswordLoginScreen(),
+      binding: MobilePasswordLoginBinding(),
       transition: Transition.fadeIn,
     ),
     GetPage(

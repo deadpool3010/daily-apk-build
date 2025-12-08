@@ -10,77 +10,85 @@ class ChooseLanguageScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Get.find<ChooseLanguageController>();
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const SizedBox(height: 100),
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.dark,
+        statusBarBrightness: Brightness.dark,
+        systemNavigationBarColor: Colors.transparent,
+      ),
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        body: SafeArea(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const SizedBox(height: 100),
 
-            // Language Selection Section
-            _buildLanguageSection(context, controller),
+              // Language Selection Section
+              _buildLanguageSection(context, controller),
 
-            const SizedBox(height: 40),
+              const SizedBox(height: 40),
 
-            // Illustration Image
-            Expanded(
-              child: Center(
-                child: Image.asset(
-                  ImageConstant.loginLanguage,
-                  width: 300,
-                  fit: BoxFit.contain,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      width: 300,
-                      height: 300,
-                      color: Colors.grey[200],
-                      child: const Icon(
-                        Icons.image,
-                        size: 100,
-                        color: Colors.grey,
-                      ),
-                    );
-                  },
+              // Illustration Image
+              Expanded(
+                child: Center(
+                  child: Image.asset(
+                    ImageConstant.loginLanguage,
+                    width: 300,
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        width: 300,
+                        height: 300,
+                        color: Colors.grey[200],
+                        child: const Icon(
+                          Icons.image,
+                          size: 100,
+                          color: Colors.grey,
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ),
-            ),
 
-            // Next Button
-            Padding(
-              padding: const EdgeInsets.fromLTRB(23, 0, 23, 30),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      controller.proceedToLogin();
-                    },
-                    child: Container(
-                      width: 47,
-                      height: 47,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF3864FD),
-                        borderRadius: BorderRadius.circular(23.5),
-                        boxShadow: [
-                          BoxShadow(
-                            color: const Color(0xFF3864FD).withOpacity(0.3),
-                            blurRadius: 12,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: const Icon(
-                        Icons.arrow_forward,
-                        color: Colors.white,
-                        size: 20,
+              // Next Button
+              Padding(
+                padding: const EdgeInsets.fromLTRB(23, 0, 23, 30),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        controller.proceedToLogin();
+                      },
+                      child: Container(
+                        width: 47,
+                        height: 47,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF3864FD),
+                          borderRadius: BorderRadius.circular(23.5),
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(0xFF3864FD).withOpacity(0.3),
+                              blurRadius: 12,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: const Icon(
+                          Icons.arrow_forward,
+                          color: Colors.white,
+                          size: 20,
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

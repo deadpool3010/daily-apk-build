@@ -1,13 +1,14 @@
 import 'package:bandhucare_new/core/app_exports.dart';
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'controller/email_password_login_controller.dart';
 
-class LoginScreen extends StatelessWidget {
-  const LoginScreen({super.key});
+class EmailPasswordLoginScreen extends StatelessWidget {
+  const EmailPasswordLoginScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.find<LoginController>();
+    final controller = Get.find<EmailPasswordLoginController>();
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
@@ -68,7 +69,7 @@ class LoginScreen extends StatelessWidget {
   }
 
   // Header Section with Dark Blue Background
-  Widget _buildLoginHeader(LoginController controller) {
+  Widget _buildLoginHeader(EmailPasswordLoginController controller) {
     return Container(
       height: 360,
       width: double.infinity,
@@ -91,7 +92,7 @@ class LoginScreen extends StatelessWidget {
                   top: 20,
                   child: GestureDetector(
                     onTap: () {
-                      Get.offNamed(AppRoutes.chooseLanguageScreen);
+                      Get.back();
                     },
                     child: Container(
                       width: 40,
@@ -116,14 +117,13 @@ class LoginScreen extends StatelessWidget {
                 // Logo on the right
                 // Positioned(
                 //   right: 24,
-                //   top: 20,
+                //   top: 100,
                 //   child: SizedBox(
                 //     width: 60,
                 //     height: 60,
                 //     child: ClipOval(
                 //       child: Image.asset(
                 //         ImageConstant.blueLogo,
-                //         color: Colors.white,
                 //         fit: BoxFit.contain,
                 //         errorBuilder: (context, error, stackTrace) {
                 //           return Icon(
@@ -229,11 +229,9 @@ class LoginScreen extends StatelessWidget {
   // Content Card Section
   Widget _buildLoginContentCard(
     BuildContext context,
-    LoginController controller,
+    EmailPasswordLoginController controller,
     bool keyboardVisible,
   ) {
-    // Adjust this value to control container height when keyboard is not visible
-    // When keyboard is visible: container will be full height automatically
     const double containerHeightPercentage = 0.68;
 
     final contentWidget = SingleChildScrollView(
@@ -241,23 +239,16 @@ class LoginScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Instruction Text
-          Text(
-            'Enter the Mobile Number linked to your Abha Address',
-            style: GoogleFonts.lato(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              color: Color(0xFF94A3B8),
-            ),
-          ),
+          // Email Input
+          _buildEmailInput(controller),
           const SizedBox(height: 16),
 
-          // Mobile Number Input
-          _buildMobileNumberInput(controller),
+          // Password Input
+          _buildPasswordInput(controller),
           const SizedBox(height: 16),
 
-          // OTP Input with Get OTP Button
-          _buildOTPInputWithButton(controller),
+          // Remember me and Forget Password
+          _buildRememberMeAndForgetPassword(controller),
           const SizedBox(height: 24),
 
           // Login Button
@@ -272,7 +263,8 @@ class LoginScreen extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Text(
                   'Or login with',
-                  style: GoogleFonts.lato(
+                  style: TextStyle(
+                    fontFamily: 'Lato',
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
                     color: Color(0xFF94A3B8),
@@ -291,7 +283,7 @@ class LoginScreen extends StatelessWidget {
     );
 
     final containerDecoration = BoxDecoration(
-      color: Color(0xFFF8F9FA),
+      color: Colors.white,
       borderRadius: BorderRadius.only(
         topLeft: Radius.circular(30),
         topRight: Radius.circular(30),
@@ -302,7 +294,6 @@ class LoginScreen extends StatelessWidget {
       builder: (context, constraints) {
         final availableHeight = constraints.maxHeight;
 
-        // When keyboard is visible: use full available height, when not: use percentage
         final containerHeight = keyboardVisible
             ? availableHeight
             : containerHeightPercentage * availableHeight;
@@ -326,8 +317,8 @@ class LoginScreen extends StatelessWidget {
     );
   }
 
-  // Mobile Number Input
-  Widget _buildMobileNumberInput(LoginController controller) {
+  // Email Input
+  Widget _buildEmailInput(EmailPasswordLoginController controller) {
     return Container(
       height: 50,
       decoration: BoxDecoration(
@@ -337,35 +328,24 @@ class LoginScreen extends StatelessWidget {
       ),
       child: Row(
         children: [
-          // Country code
+          // Envelope Icon
           Container(
             padding: EdgeInsets.symmetric(horizontal: 16),
-            child: Text(
-              '+91',
-              style: GoogleFonts.roboto(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                color: AppColors.primaryColor,
-              ),
+            child: Icon(
+              BootstrapIcons.envelope,
+              color: Color(0xFF2563EB),
+              size: 20,
             ),
           ),
-          // Divider
-          Container(width: 1, height: 30, color: Color(0xFFE2E8F0)),
-          // Phone number input
+          // Email input
           Expanded(
             child: TextField(
-              controller: controller.phoneController,
-              keyboardType: TextInputType.phone,
-              maxLength: 10,
-              onChanged: (value) {
-                if (value.length == 10) {
-                  FocusScope.of(Get.context!).unfocus();
-                }
-              },
+              controller: controller.emailController,
+              keyboardType: TextInputType.emailAddress,
               decoration: InputDecoration(
-                hintText: '1234567890',
-                hintStyle: GoogleFonts.roboto(
-                  fontSize: 14,
+                hintText: 'E-mail ID',
+                hintStyle: GoogleFonts.lato(
+                  fontSize: 16,
                   fontWeight: FontWeight.w500,
                   color: Color(0xFF94A3B8),
                 ),
@@ -373,11 +353,6 @@ class LoginScreen extends StatelessWidget {
                 contentPadding: EdgeInsets.symmetric(horizontal: 16),
                 counterText: '',
               ),
-              style: GoogleFonts.roboto(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                color: Color(0xFF94A3B8),
-              ),
             ),
           ),
         ],
@@ -385,127 +360,148 @@ class LoginScreen extends StatelessWidget {
     );
   }
 
-  // OTP Input with Get OTP Button
-  Widget _buildOTPInputWithButton(LoginController controller) {
-    return Container(
-      height: 50,
-      decoration: BoxDecoration(
-        color: Color(0xFFF1F5F9),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Color(0xFFE2E8F0), width: 1),
-      ),
-      child: Stack(
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 16, right: 8),
-                  child: _buildPinCodeField(controller),
-                ),
+  // Password Input
+  Widget _buildPasswordInput(EmailPasswordLoginController controller) {
+    return Obx(
+      () => Container(
+        height: 50,
+        decoration: BoxDecoration(
+          color: Color(0xFFF1F5F9),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Color(0xFFE2E8F0), width: 1),
+        ),
+        child: Row(
+          children: [
+            // Padlock Icon
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              child: Icon(
+                BootstrapIcons.lock,
+                color: Color(0xFF2563EB),
+                size: 20,
               ),
-              Obx(
-                () => Container(
-                  margin: const EdgeInsets.only(right: 8),
-                  child: ElevatedButton(
-                    onPressed: controller.isLoadingSignIn.value
-                        ? null
-                        : () => controller.handleGetOTP(),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFF3864FD),
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      elevation: 0,
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 8,
-                      ),
-                    ),
-                    child: controller.isLoadingSignIn.value
-                        ? SizedBox(
-                            width: 16,
-                            height: 16,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                Colors.white,
-                              ),
-                            ),
-                          )
-                        : Text(
-                            'Get OTP',
-                            style: GoogleFonts.lato(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.white,
-                            ),
-                          ),
+            ),
+            // Password input
+            Expanded(
+              child: TextField(
+                controller: controller.passwordController,
+                obscureText: !controller.isPasswordVisible.value,
+                decoration: InputDecoration(
+                  hintText: 'Password',
+                  hintStyle: GoogleFonts.lato(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: Color(0xFF94A3B8),
                   ),
+                  border: InputBorder.none,
+                  contentPadding: EdgeInsets.symmetric(horizontal: 8),
                 ),
               ),
-            ],
-          ),
-          // Hint overlay on OTP field
-          Obx(
-            () =>
-                controller.showGetOtpHint.value &&
-                    controller.enteredOtp.value.isEmpty
-                ? Positioned.fill(
-                    child: GestureDetector(
-                      onTap: () {
-                        controller.showGetOtpHint.value = false;
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.only(left: 16),
-                        alignment: Alignment.centerLeft,
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.info_outline,
-                              size: 14,
-                              color: Color(0xFF94A3B8),
-                            ),
-                            const SizedBox(width: 6),
-                            Text(
-                              'Click "Get OTP" to receive code',
-                              style: GoogleFonts.lato(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                                color: Color(0xFF94A3B8),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  )
-                : SizedBox.shrink(),
-          ),
-        ],
+            ),
+            // Show/Hide Password Icon
+            GestureDetector(
+              onTap: () {
+                controller.togglePasswordVisibility();
+              },
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                child: Icon(
+                  controller.isPasswordVisible.value
+                      ? Icons.visibility_outlined
+                      : Icons.visibility_off_outlined,
+                  color: Color(0xFF94A3B8),
+                  size: 20,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
+  // Remember me and Forget Password
+  Widget _buildRememberMeAndForgetPassword(
+    EmailPasswordLoginController controller,
+  ) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        // Remember me checkbox
+        GestureDetector(
+          onTap: () {
+            controller.toggleRememberMe();
+          },
+          child: Row(
+            children: [
+              Obx(
+                () => Container(
+                  width: 20,
+                  height: 20,
+                  decoration: BoxDecoration(
+                    color: controller.rememberMe.value
+                        ? Color(0xFF3864FD)
+                        : Colors.transparent,
+                    borderRadius: BorderRadius.circular(4),
+                    border: Border.all(
+                      color: controller.rememberMe.value
+                          ? Color(0xFF3864FD)
+                          : Color(0xFFE2E8F0),
+                      width: 2,
+                    ),
+                  ),
+                  child: controller.rememberMe.value
+                      ? Icon(Icons.check, color: Colors.white, size: 14)
+                      : null,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                'Remember me',
+                style: TextStyle(
+                  fontFamily: 'Lato',
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black87,
+                ),
+              ),
+            ],
+          ),
+        ),
+        // Forget Password link
+        GestureDetector(
+          onTap: () {
+            // Handle forget password
+            // controller.goToForgetPassword();
+          },
+          child: Text(
+            'Forget Password?',
+            style: TextStyle(
+              fontFamily: 'Lato',
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: Color(0xFF3864FD),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   // Login Button
-  Widget _buildLoginButton(LoginController controller) {
+  Widget _buildLoginButton(EmailPasswordLoginController controller) {
     return Obx(() {
-      final isLoading = controller.isLoadingVerifyOtp.value;
-      final otpLength = controller.enteredOtp.value.length;
+      final isLoading = controller.isLoading.value;
 
       return DynamicButton(
         text: isLoading ? '' : 'Login',
         width: double.infinity,
         height: 50,
         fontSize: 16,
-        onPressed: isLoading || otpLength != 6
+        onPressed: isLoading
             ? null
             : () {
-                // Verify OTP when button is clicked
-                controller.verifyOTPforMobileNumber(
-                  controller.enteredOtp.value,
-                );
+                controller.handleLogin();
               },
         leadingIcon: isLoading
             ? LoadingAnimationWidget.horizontalRotatingDots(
@@ -528,14 +524,14 @@ class LoginScreen extends StatelessWidget {
           iconColor: Colors.orange,
         ),
         _buildAlternativeLoginButton(
+          label: 'Abha ID',
+          iconColor: Color(0xFF3864FD),
+          imagePath: ImageConstant.ayushmanBharat,
+        ),
+        _buildAlternativeLoginButton(
           icon: BootstrapIcons.telephone_fill,
           label: 'Mobile',
           iconSize: Size(16, 16),
-          iconColor: Color(0xFF3864FD),
-        ),
-        _buildAlternativeLoginButton(
-          icon: TablerIcons.mail,
-          label: 'E-Mail ID',
           iconColor: Color(0xFF3864FD),
         ),
       ],
@@ -544,9 +540,10 @@ class LoginScreen extends StatelessWidget {
 
   // Alternative Login Button
   Widget _buildAlternativeLoginButton({
-    required IconData icon,
+    IconData? icon,
     required String label,
-    required Color iconColor,
+    Color? iconColor,
+    String? imagePath,
     Size? iconSize,
   }) {
     return GestureDetector(
@@ -555,10 +552,10 @@ class LoginScreen extends StatelessWidget {
         if (label == 'Google') {
           // Handle Google login
         } else if (label == 'Mobile') {
-          Get.toNamed(AppRoutes.mobilePasswordLoginScreen);
-        } else if (label == 'E-Mail ID') {
-          // Navigate to email/password login screen
-          Get.toNamed(AppRoutes.emailPasswordLoginScreen);
+          // Navigate to mobile password login
+          Get.offNamed(AppRoutes.mobilePasswordLoginScreen);
+        } else if (label == 'Abha ID') {
+          Get.back();
         }
       },
       child: Container(
@@ -573,70 +570,21 @@ class LoginScreen extends StatelessWidget {
           children: [
             if (label == 'Google')
               Image.asset(ImageConstant.googleLogo, width: 20, height: 20)
+            else if (imagePath != null)
+              Image.asset(imagePath, width: 20, height: 20)
             else
               Icon(icon, color: iconColor, size: iconSize?.width ?? 20),
             const SizedBox(width: 6),
             Text(
               label,
-              style: GoogleFonts.lato(
+              style: TextStyle(
+                fontFamily: 'Lato',
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
                 color: Colors.black87,
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-
-  // Build PinCodeTextField
-  Widget _buildPinCodeField(LoginController controller) {
-    return ClipRect(
-      child: SizedBox(
-        height: 40,
-        child: PinCodeTextField(
-          key: ValueKey(
-            'otp_field_${controller.currentPage.value}_${controller.otpFieldKey.value}',
-          ),
-          appContext: Get.context!,
-          length: 6,
-          keyboardType: TextInputType.number,
-          animationType: AnimationType.none,
-          enableActiveFill: false,
-          enabled: !controller.isLoadingVerifyOtp.value,
-          textStyle: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-            color: Colors.black87,
-          ),
-          pinTheme: PinTheme(
-            borderWidth: 0,
-            fieldHeight: 40,
-            fieldWidth: 35,
-            activeFillColor: Colors.transparent,
-            selectedFillColor: Colors.transparent,
-            inactiveFillColor: Colors.transparent,
-            activeColor: Colors.transparent,
-            selectedColor: Colors.transparent,
-            inactiveColor: Colors.transparent,
-            shape: PinCodeFieldShape.box,
-            activeBorderWidth: 0,
-            selectedBorderWidth: 0,
-            inactiveBorderWidth: 0,
-            disabledColor: Colors.transparent,
-            errorBorderColor: Colors.transparent,
-          ),
-          hapticFeedbackTypes: HapticFeedbackTypes.heavy,
-          cursorColor: AppColors.primaryColor,
-          backgroundColor: Colors.transparent,
-          onChanged: (value) {
-            controller.handleOTPChange(value);
-          },
-          onCompleted: (value) {
-            controller.enteredOtp.value = value;
-            debugPrint('OTP Completed: $value');
-          },
         ),
       ),
     );
