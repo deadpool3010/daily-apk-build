@@ -1,3 +1,4 @@
+import 'package:bandhucare_new/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -63,7 +64,7 @@ class EmailVerificationAbhaController extends GetxController {
       );
 
       // TODO: Navigate to next screen
-      // Get.offNamed(AppRoutes.homeScreen);
+      Get.offNamed(AppRoutes.createAbhaUsernameScreen);
     } catch (e) {
       String errorMessage = e.toString();
       if (errorMessage.startsWith('Exception: Exception: ')) {

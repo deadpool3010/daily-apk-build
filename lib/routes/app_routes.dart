@@ -34,6 +34,8 @@ import '../presentation/otp_verification_screen/otp_verification_screen.dart';
 import '../presentation/otp_verification_screen/binding/otp_verification_binding.dart';
 import '../presentation/email_verification_abha_screen/email_verification_abha_screen.dart';
 import '../presentation/email_verification_abha_screen/binding/email_verification_abha_binding.dart';
+import '../presentation/create_abha_username_screen/create_abha_username_screen.dart';
+import '../presentation/create_abha_username_screen/binding/create_abha_username_binding.dart';
 
 class AppRoutes {
   AppRoutes._();
@@ -63,6 +65,7 @@ class AppRoutes {
   static const abhaRegisterScreen = '/abha-register';
   static const otpVerificationScreen = '/otp-verification';
   static const emailVerificationAbhaScreen = '/email-verification-abha';
+  static const createAbhaUsernameScreen = '/create-abha-username';
 }
 
 class AppPages {
@@ -138,6 +141,12 @@ class AppPages {
       name: AppRoutes.emailVerificationAbhaScreen,
       page: () => const EmailVerificationAbhaScreen(),
       binding: EmailVerificationAbhaBinding(),
+      transition: Transition.fadeIn,
+    ),
+    GetPage(
+      name: AppRoutes.createAbhaUsernameScreen,
+      page: () => const CreateAbhaUsernameScreen(),
+      binding: CreateAbhaUsernameBinding(),
       transition: Transition.fadeIn,
     ),
     GetPage(
