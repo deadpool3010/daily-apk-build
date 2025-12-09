@@ -527,7 +527,7 @@ class AbhaRegisterScreen extends StatelessWidget {
               text: isLoading ? '' : 'Get OTP',
               width: double.infinity,
               height: 50,
-              fontSize: 16,
+              fontSize: 14,
               onPressed: isLoading
                   ? null
                   : () {
@@ -576,8 +576,8 @@ class AbhaRegisterScreen extends StatelessWidget {
     int index,
   ) {
     return Container(
-      height: 50,
-      padding: EdgeInsets.only(left: 6, right: 6),
+      height: 55,
+      padding: EdgeInsets.only(left: 6, right: 6, bottom: 30),
       decoration: BoxDecoration(
         color: Color(
           0x299BBEF8,
@@ -590,6 +590,7 @@ class AbhaRegisterScreen extends StatelessWidget {
         focusNode: controller.aadhaarFocusNodes[index],
         keyboardType: TextInputType.number,
         maxLength: 4,
+        cursorHeight: 20,
         textAlign: TextAlign.center,
         style: GoogleFonts.urbanist(
           fontSize: 18,
@@ -603,6 +604,7 @@ class AbhaRegisterScreen extends StatelessWidget {
           counterText: '',
           contentPadding: EdgeInsets.zero,
           hintText: '____',
+          hintFadeDuration: Duration(milliseconds: 100),
           hintStyle: GoogleFonts.urbanist(
             fontSize: 18,
             fontWeight: FontWeight.w500,
@@ -610,6 +612,13 @@ class AbhaRegisterScreen extends StatelessWidget {
             letterSpacing: 5,
           ),
         ),
+        textAlignVertical: TextAlignVertical.center,
+        onTap: () {
+          // Position cursor at the end of text (appears centered with textAlign.center)
+          final text = controller.aadhaarControllers[index].text;
+          controller.aadhaarControllers[index].selection =
+              TextSelection.collapsed(offset: text.length);
+        },
         onChanged: (value) {
           // Auto-advance to next field when 4 digits are entered
           if (value.length == 4 && index < 2) {
@@ -672,7 +681,7 @@ class AbhaRegisterScreen extends StatelessWidget {
         Builder(
           builder: (context) => CustomTextField(
             controller: controller.mobileController,
-            hintText: '6281858219',
+            hintText: '1234567890',
             countryCode: '+91',
             keyboardType: TextInputType.phone,
             maxLength: 10,
@@ -727,7 +736,7 @@ class AbhaRegisterScreen extends StatelessWidget {
       pinTheme: PinTheme(
         shape: PinCodeFieldShape.circle,
         borderWidth: 0,
-        fieldHeight: 40,
+        fieldHeight: 45,
         fieldWidth: 35,
         activeFillColor: Colors.transparent,
         selectedFillColor: Colors.transparent,
@@ -735,6 +744,7 @@ class AbhaRegisterScreen extends StatelessWidget {
         activeColor: Colors.transparent,
         selectedColor: Colors.transparent,
         inactiveColor: Colors.transparent,
+        disabledColor: Colors.transparent,
       ),
       cursorColor: AppColors.primaryColor,
       backgroundColor: Colors.transparent,

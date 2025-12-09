@@ -30,6 +30,10 @@ import '../presentation/mobile_register_screen/mobile_register_screen.dart';
 import '../presentation/mobile_register_screen/binding/mobile_register_binding.dart';
 import '../presentation/abha_register_screen/abha_register_screen.dart';
 import '../presentation/abha_register_screen/binding/abha_register_binding.dart';
+import '../presentation/otp_verification_screen/otp_verification_screen.dart';
+import '../presentation/otp_verification_screen/binding/otp_verification_binding.dart';
+import '../presentation/email_verification_abha_screen/email_verification_abha_screen.dart';
+import '../presentation/email_verification_abha_screen/binding/email_verification_abha_binding.dart';
 
 class AppRoutes {
   AppRoutes._();
@@ -57,6 +61,8 @@ class AppRoutes {
   static const emailRegisterScreen = '/email-register';
   static const mobileRegisterScreen = '/mobile-register';
   static const abhaRegisterScreen = '/abha-register';
+  static const otpVerificationScreen = '/otp-verification';
+  static const emailVerificationAbhaScreen = '/email-verification-abha';
 }
 
 class AppPages {
@@ -120,6 +126,18 @@ class AppPages {
       name: AppRoutes.abhaRegisterScreen,
       page: () => const AbhaRegisterScreen(),
       binding: AbhaRegisterBinding(),
+      transition: Transition.fadeIn,
+    ),
+    GetPage(
+      name: AppRoutes.otpVerificationScreen,
+      page: () => const OtpVerificationScreen(),
+      binding: OtpVerificationBinding(),
+      transition: Transition.fadeIn,
+    ),
+    GetPage(
+      name: AppRoutes.emailVerificationAbhaScreen,
+      page: () => const EmailVerificationAbhaScreen(),
+      binding: EmailVerificationAbhaBinding(),
       transition: Transition.fadeIn,
     ),
     GetPage(

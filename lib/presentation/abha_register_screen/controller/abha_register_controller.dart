@@ -1,3 +1,4 @@
+import 'package:bandhucare_new/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -63,6 +64,24 @@ class AbhaRegisterController extends GetxController
       end: 1,
     ).animate(CurvedAnimation(parent: flipController, curve: Curves.easeInOut));
 
+    // Add focus listeners to position cursor correctly
+    for (int i = 0; i < aadhaarFocusNodes.length; i++) {
+      aadhaarFocusNodes[i].addListener(() {
+        if (aadhaarFocusNodes[i].hasFocus) {
+          // Position cursor at the end of text (or start if empty)
+          // With textAlign.center, this appears centered
+          final text = aadhaarControllers[i].text;
+          Future.delayed(Duration(milliseconds: 10), () {
+            if (!isClosed && aadhaarFocusNodes[i].hasFocus) {
+              aadhaarControllers[i].selection = TextSelection.collapsed(
+                offset: text.length,
+              );
+            }
+          });
+        }
+      });
+    }
+
     // Start card animations when screen opens
     startCardAnimations();
 
@@ -106,6 +125,14 @@ class AbhaRegisterController extends GetxController
               Future.delayed(Duration(milliseconds: 300), () {
                 if (!isClosed && aadhaarFocusNodes[0].canRequestFocus) {
                   aadhaarFocusNodes[0].requestFocus();
+                  // Position cursor at start (offset 0) - with textAlign.center, cursor appears centered
+                  Future.delayed(Duration(milliseconds: 50), () {
+                    if (!isClosed) {
+                      aadhaarControllers[0].selection = TextSelection.collapsed(
+                        offset: 0,
+                      );
+                    }
+                  });
                 }
               });
             }
@@ -287,9 +314,7 @@ class AbhaRegisterController extends GetxController
         backgroundColor: Colors.green,
         textColor: Colors.white,
       );
-
-      // TODO: Navigate to next screen or show success
-      // Get.offNamed(AppRoutes.homeScreen);
+      Get.toNamed(AppRoutes.otpVerificationScreen);
     } catch (e) {
       String errorMessage = e.toString();
       if (errorMessage.startsWith('Exception: Exception: ')) {
