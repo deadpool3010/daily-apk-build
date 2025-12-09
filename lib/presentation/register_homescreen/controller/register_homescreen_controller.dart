@@ -15,12 +15,12 @@ class RegisterHomescreenController extends GetxController {
   }
 
   void handleMobileRegistration() {
-    // Navigate to mobile registration (OTP-based login screen)
-    Get.toNamed(AppRoutes.loginScreen);
+    // Navigate to mobile registration screen
+    Get.toNamed(AppRoutes.mobileRegisterScreen);
   }
 
   void handleEmailRegistration() {
-    // Navigate to email registration (email/password login screen)
-    Get.toNamed(AppRoutes.emailPasswordLoginScreen);
+    // Navigate to email registration screen
+    Get.toNamed(AppRoutes.emailRegisterScreen);
   }
 }

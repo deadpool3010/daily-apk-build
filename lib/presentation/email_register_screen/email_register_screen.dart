@@ -1,14 +1,14 @@
 import 'package:bandhucare_new/core/app_exports.dart';
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'controller/email_password_login_controller.dart';
+import 'controller/email_register_controller.dart';
 
-class EmailPasswordLoginScreen extends StatelessWidget {
-  const EmailPasswordLoginScreen({super.key});
+class EmailRegisterScreen extends StatelessWidget {
+  const EmailRegisterScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.find<EmailPasswordLoginController>();
+    final controller = Get.find<EmailRegisterController>();
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
@@ -33,12 +33,14 @@ class EmailPasswordLoginScreen extends StatelessWidget {
               if (keyboardVisible) {
                 return Stack(
                   children: [
-                    Column(children: [_buildLoginHeader(controller), Spacer()]),
+                    Column(
+                      children: [_buildRegisterHeader(controller), Spacer()],
+                    ),
                     Positioned(
                       left: 0,
                       right: 0,
                       bottom: 0,
-                      child: _buildLoginContentCard(
+                      child: _buildRegisterContentCard(
                         context,
                         controller,
                         keyboardVisible,
@@ -50,10 +52,10 @@ class EmailPasswordLoginScreen extends StatelessWidget {
                 return Stack(
                   children: [
                     // Header Section with Dark Blue Background
-                    _buildLoginHeader(controller),
+                    _buildRegisterHeader(controller),
 
                     // Content Card Section
-                    _buildLoginContentCard(
+                    _buildRegisterContentCard(
                       context,
                       controller,
                       keyboardVisible,
@@ -69,13 +71,13 @@ class EmailPasswordLoginScreen extends StatelessWidget {
   }
 
   // Header Section with Dark Blue Background
-  Widget _buildLoginHeader(EmailPasswordLoginController controller) {
+  Widget _buildRegisterHeader(EmailRegisterController controller) {
     return CommonLoginRegisterHeader(
       title: 'Go ahead and set\nup your account',
-      subtitleText: "Don't have an account? ",
-      actionText: 'Register',
+      subtitleText: 'Already have an account? ',
+      actionText: 'Login',
       onActionTap: () {
-        Get.toNamed(AppRoutes.registerHomescreen);
+        Get.toNamed(AppRoutes.emailPasswordLoginScreen);
       },
       onBackTap: () {
         Get.back();
@@ -84,9 +86,9 @@ class EmailPasswordLoginScreen extends StatelessWidget {
   }
 
   // Content Card Section
-  Widget _buildLoginContentCard(
+  Widget _buildRegisterContentCard(
     BuildContext context,
-    EmailPasswordLoginController controller,
+    EmailRegisterController controller,
     bool keyboardVisible,
   ) {
     const double containerHeightPercentage = 0.68;
@@ -96,20 +98,24 @@ class EmailPasswordLoginScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Full Name Input
+          _buildFullNameInput(controller),
+          const SizedBox(height: 16),
+
           // Email Input
           _buildEmailInput(controller),
           const SizedBox(height: 16),
 
-          // Password Input
-          _buildPasswordInput(controller),
+          // Create Password Input
+          _buildCreatePasswordInput(controller),
           const SizedBox(height: 16),
 
-          // Remember me and Forget Password
-          _buildRememberMeAndForgetPassword(controller),
+          // Confirm Password Input
+          _buildConfirmPasswordInput(controller),
           const SizedBox(height: 24),
 
-          // Login Button
-          _buildLoginButton(controller),
+          // Continue Button
+          _buildContinueButton(controller),
           const SizedBox(height: 24),
 
           // Separator
@@ -119,7 +125,7 @@ class EmailPasswordLoginScreen extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Text(
-                  'Or login with',
+                  'Other options',
                   style: TextStyle(
                     fontFamily: 'Lato',
                     fontSize: 14,
@@ -133,8 +139,8 @@ class EmailPasswordLoginScreen extends StatelessWidget {
           ),
           const SizedBox(height: 24),
 
-          // Alternative Login Options
-          _buildAlternativeLoginOptions(),
+          // Alternative Registration Options
+          _buildAlternativeRegistrationOptions(),
         ],
       ),
     );
@@ -174,8 +180,18 @@ class EmailPasswordLoginScreen extends StatelessWidget {
     );
   }
 
+  // Full Name Input
+  Widget _buildFullNameInput(EmailRegisterController controller) {
+    return CustomTextField(
+      controller: controller.fullNameController,
+      hintText: 'Full Name',
+      icon: BootstrapIcons.person,
+      keyboardType: TextInputType.name,
+    );
+  }
+
   // Email Input
-  Widget _buildEmailInput(EmailPasswordLoginController controller) {
+  Widget _buildEmailInput(EmailRegisterController controller) {
     return CustomTextField(
       controller: controller.emailController,
       hintText: 'E-mail ID',
@@ -184,106 +200,56 @@ class EmailPasswordLoginScreen extends StatelessWidget {
     );
   }
 
-  // Password Input
-  Widget _buildPasswordInput(EmailPasswordLoginController controller) {
+  // Create Password Input
+  Widget _buildCreatePasswordInput(EmailRegisterController controller) {
     return Obx(
       () => CustomTextField(
-        controller: controller.passwordController,
-        hintText: 'Password',
+        controller: controller.createPasswordController,
+        hintText: 'Create Password',
         icon: BootstrapIcons.lock,
         keyboardType: TextInputType.visiblePassword,
-        obscureText: !controller.isPasswordVisible.value,
+        obscureText: !controller.isCreatePasswordVisible.value,
         showPasswordToggle: true,
         onTogglePassword: () {
-          controller.togglePasswordVisibility();
+          controller.toggleCreatePasswordVisibility();
         },
         contentPadding: EdgeInsets.symmetric(horizontal: 8),
       ),
     );
   }
 
-  // Remember me and Forget Password
-  Widget _buildRememberMeAndForgetPassword(
-    EmailPasswordLoginController controller,
-  ) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        // Remember me checkbox
-        GestureDetector(
-          onTap: () {
-            controller.toggleRememberMe();
-          },
-          child: Row(
-            children: [
-              Obx(
-                () => Container(
-                  width: 20,
-                  height: 20,
-                  decoration: BoxDecoration(
-                    color: controller.rememberMe.value
-                        ? Color(0xFF3864FD)
-                        : Colors.transparent,
-                    borderRadius: BorderRadius.circular(4),
-                    border: Border.all(
-                      color: controller.rememberMe.value
-                          ? Color(0xFF3864FD)
-                          : Color(0xFFE2E8F0),
-                      width: 2,
-                    ),
-                  ),
-                  child: controller.rememberMe.value
-                      ? Icon(Icons.check, color: Colors.white, size: 14)
-                      : null,
-                ),
-              ),
-              const SizedBox(width: 8),
-              Text(
-                'Remember me',
-                style: TextStyle(
-                  fontFamily: 'Lato',
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.black87,
-                ),
-              ),
-            ],
-          ),
-        ),
-        // Forget Password link
-        GestureDetector(
-          onTap: () {
-            // Handle forget password
-            // controller.goToForgetPassword();
-          },
-          child: Text(
-            'Forget Password?',
-            style: TextStyle(
-              fontFamily: 'Lato',
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              color: Color(0xFF3864FD),
-            ),
-          ),
-        ),
-      ],
+  // Confirm Password Input
+  Widget _buildConfirmPasswordInput(EmailRegisterController controller) {
+    return Obx(
+      () => CustomTextField(
+        controller: controller.confirmPasswordController,
+        hintText: 'Confirm Password',
+        icon: BootstrapIcons.lock,
+        keyboardType: TextInputType.visiblePassword,
+        obscureText: !controller.isConfirmPasswordVisible.value,
+        showPasswordToggle: true,
+        onTogglePassword: () {
+          controller.toggleConfirmPasswordVisibility();
+        },
+        contentPadding: EdgeInsets.symmetric(horizontal: 8),
+      ),
     );
   }
 
-  // Login Button
-  Widget _buildLoginButton(EmailPasswordLoginController controller) {
+  // Continue Button
+  Widget _buildContinueButton(EmailRegisterController controller) {
     return Obx(() {
       final isLoading = controller.isLoading.value;
 
       return DynamicButton(
-        text: isLoading ? '' : 'Login',
+        text: isLoading ? '' : 'Continue',
         width: double.infinity,
         height: 50,
         fontSize: 16,
         onPressed: isLoading
             ? null
             : () {
-                controller.handleLogin();
+                controller.handleRegister();
               },
         leadingIcon: isLoading
             ? LoadingAnimationWidget.horizontalRotatingDots(
@@ -295,22 +261,22 @@ class EmailPasswordLoginScreen extends StatelessWidget {
     });
   }
 
-  // Alternative Login Options
-  Widget _buildAlternativeLoginOptions() {
+  // Alternative Registration Options
+  Widget _buildAlternativeRegistrationOptions() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        _buildAlternativeLoginButton(
+        _buildAlternativeRegistrationButton(
           icon: Icons.g_mobiledata,
           label: 'Google',
           iconColor: Colors.orange,
         ),
-        _buildAlternativeLoginButton(
+        _buildAlternativeRegistrationButton(
           label: 'Abha ID',
           iconColor: Color(0xFF3864FD),
           imagePath: ImageConstant.ayushmanBharat,
         ),
-        _buildAlternativeLoginButton(
+        _buildAlternativeRegistrationButton(
           icon: BootstrapIcons.telephone_fill,
           label: 'Mobile',
           iconSize: Size(16, 16),
@@ -320,8 +286,8 @@ class EmailPasswordLoginScreen extends StatelessWidget {
     );
   }
 
-  // Alternative Login Button
-  Widget _buildAlternativeLoginButton({
+  // Alternative Registration Button
+  Widget _buildAlternativeRegistrationButton({
     IconData? icon,
     required String label,
     Color? iconColor,
@@ -330,13 +296,14 @@ class EmailPasswordLoginScreen extends StatelessWidget {
   }) {
     return GestureDetector(
       onTap: () {
-        // Handle alternative login options
+        // Handle alternative registration options
         if (label == 'Google') {
-          // Handle Google login
+          // Handle Google registration
         } else if (label == 'Mobile') {
-          // Navigate to mobile password login
-          Get.offNamed(AppRoutes.mobilePasswordLoginScreen);
+          // Navigate to mobile registration
+          Get.toNamed(AppRoutes.mobileRegisterScreen);
         } else if (label == 'Abha ID') {
+          // Handle Abha ID registration
           Get.back();
         }
       },

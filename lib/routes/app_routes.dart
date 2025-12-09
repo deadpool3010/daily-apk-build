@@ -24,6 +24,10 @@ import '../presentation/mobile_password_login_screen/mobile_password_login_scree
 import '../presentation/mobile_password_login_screen/binding/mobile_password_login_binding.dart';
 import '../presentation/register_homescreen/register_homescreen.dart';
 import '../presentation/register_homescreen/binding/register_homescreen_binding.dart';
+import '../presentation/email_register_screen/email_register_screen.dart';
+import '../presentation/email_register_screen/binding/email_register_binding.dart';
+import '../presentation/mobile_register_screen/mobile_register_screen.dart';
+import '../presentation/mobile_register_screen/binding/mobile_register_binding.dart';
 
 class AppRoutes {
   AppRoutes._();
@@ -48,6 +52,8 @@ class AppRoutes {
   static const emailPasswordLoginScreen = '/email-password-login';
   static const mobilePasswordLoginScreen = '/mobile-password-login';
   static const registerHomescreen = '/register-homescreen';
+  static const emailRegisterScreen = '/email-register';
+  static const mobileRegisterScreen = '/mobile-register';
 }
 
 class AppPages {
@@ -93,6 +99,18 @@ class AppPages {
       name: AppRoutes.registerHomescreen,
       page: () => const RegisterHomescreen(),
       binding: RegisterHomescreenBinding(),
+      transition: Transition.fadeIn,
+    ),
+    GetPage(
+      name: AppRoutes.emailRegisterScreen,
+      page: () => const EmailRegisterScreen(),
+      binding: EmailRegisterBinding(),
+      transition: Transition.fadeIn,
+    ),
+    GetPage(
+      name: AppRoutes.mobileRegisterScreen,
+      page: () => const MobileRegisterScreen(),
+      binding: MobileRegisterBinding(),
       transition: Transition.fadeIn,
     ),
     GetPage(
