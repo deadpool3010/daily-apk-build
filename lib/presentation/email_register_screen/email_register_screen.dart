@@ -80,7 +80,7 @@ class EmailRegisterScreen extends StatelessWidget {
         Get.toNamed(AppRoutes.emailPasswordLoginScreen);
       },
       onBackTap: () {
-        Get.back();
+        Get.toNamed(AppRoutes.registerHomescreen);
       },
     );
   }

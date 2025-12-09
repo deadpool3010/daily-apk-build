@@ -28,6 +28,8 @@ import '../presentation/email_register_screen/email_register_screen.dart';
 import '../presentation/email_register_screen/binding/email_register_binding.dart';
 import '../presentation/mobile_register_screen/mobile_register_screen.dart';
 import '../presentation/mobile_register_screen/binding/mobile_register_binding.dart';
+import '../presentation/abha_register_screen/abha_register_screen.dart';
+import '../presentation/abha_register_screen/binding/abha_register_binding.dart';
 
 class AppRoutes {
   AppRoutes._();
@@ -54,6 +56,7 @@ class AppRoutes {
   static const registerHomescreen = '/register-homescreen';
   static const emailRegisterScreen = '/email-register';
   static const mobileRegisterScreen = '/mobile-register';
+  static const abhaRegisterScreen = '/abha-register';
 }
 
 class AppPages {
@@ -111,6 +114,12 @@ class AppPages {
       name: AppRoutes.mobileRegisterScreen,
       page: () => const MobileRegisterScreen(),
       binding: MobileRegisterBinding(),
+      transition: Transition.fadeIn,
+    ),
+    GetPage(
+      name: AppRoutes.abhaRegisterScreen,
+      page: () => const AbhaRegisterScreen(),
+      binding: AbhaRegisterBinding(),
       transition: Transition.fadeIn,
     ),
     GetPage(

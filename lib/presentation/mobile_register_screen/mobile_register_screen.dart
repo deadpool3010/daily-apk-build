@@ -80,7 +80,7 @@ class MobileRegisterScreen extends StatelessWidget {
         Get.toNamed(AppRoutes.mobilePasswordLoginScreen);
       },
       onBackTap: () {
-        Get.back();
+        Get.toNamed(AppRoutes.registerHomescreen);
       },
     );
   }

@@ -4,8 +4,7 @@ import 'package:bandhucare_new/routes/app_routes.dart';
 class RegisterHomescreenController extends GetxController {
   void handleAbhaIdRegistration() {
     // Navigate to Abha ID registration flow
-    // TODO: Implement Abha ID registration
-    // Get.toNamed(AppRoutes.abhaIdRegistrationScreen);
+    Get.toNamed(AppRoutes.abhaRegisterScreen);
   }
 
   void handleGoogleRegistration() {
