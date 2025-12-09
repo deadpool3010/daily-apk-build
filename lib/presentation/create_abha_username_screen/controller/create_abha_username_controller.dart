@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:bandhucare_new/routes/app_routes.dart';
 
 class CreateAbhaUsernameController extends GetxController {
   // Text Controller for username
@@ -124,8 +125,8 @@ class CreateAbhaUsernameController extends GetxController {
         textColor: Colors.white,
       );
 
-      // TODO: Navigate to next screen
-      // Get.offNamed(AppRoutes.homeScreen);
+      // Navigate to ABHA Created screen
+      Get.toNamed(AppRoutes.abhaCreatedScreen);
     } catch (e) {
       String errorMessage = e.toString();
       if (errorMessage.startsWith('Exception: Exception: ')) {

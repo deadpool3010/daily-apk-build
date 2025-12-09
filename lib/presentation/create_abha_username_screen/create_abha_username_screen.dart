@@ -173,12 +173,7 @@ class CreateAbhaUsernameScreen extends StatelessWidget {
         decoration: BoxDecoration(
           color: Color(0xFF9BBEF8).withOpacity(0.16),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: controller.isUsernameValid.value
-                ? Colors.green
-                : Color(0xFFE2E8F0),
-            width: controller.isUsernameValid.value ? 2 : 1,
-          ),
+          border: Border.all(color: Color(0xFFE2E8F0), width: 1),
         ),
         child: Row(
           children: [
