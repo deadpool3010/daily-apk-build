@@ -1,6 +1,6 @@
 /// Class containing all image asset paths used in the application
 class ImageConstant {
-  static const String basePath = 'assets/';
+  static const String basePath = 'assets/images/';
 
   static const String splashRightCircle = '${basePath}right_circle.png';
   static const String splashCenter = '${basePath}center.png';

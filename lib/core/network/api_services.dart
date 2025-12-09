@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:bandhucare_new/services/variables.dart';
 import 'package:bandhucare_new/core/network/api_constant.dart';
@@ -281,27 +282,82 @@ Future<Map<String, dynamic>> sendMessage({
   required String conversationId,
   required String content,
   required String targetLanguage,
+  File? file,
+  String? fileType, // pass 'document' or 'audio'
 }) async {
   try {
     final url = baseUrl + chatApi;
-    final response = await http.post(
-      Uri.parse(url),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $accessToken',
-      },
-      body: jsonEncode({
+
+    // If file is provided, use multipart/form-data
+    if (file != null && fileType != null) {
+      if (fileType == 'audio') {
+        var request = http.MultipartRequest('POST', Uri.parse(url));
+        request.headers['Authorization'] = 'Bearer $accessToken';
+        request.fields['conversationId'] = conversationId;
+        request.fields['targetLanguage'] = targetLanguage;
+        request.fields['fileType'] = fileType;
+        request.fields['senderType'] = 'patient';
+        // Send WAV file with correct content type
+        request.files.add(
+          await http.MultipartFile.fromPath(
+            'file',
+            file.path,
+            filename: file.path.split('/').last, // Ensure .wav extension in filename
+          ),
+        );
+        final streamedResponse = await request.send();
+        final response = await http.Response.fromStream(streamedResponse);
+        return jsonDecode(response.body);
+      } else if (fileType == 'document') {
+        var request = http.MultipartRequest('POST', Uri.parse(url));
+
+        // Add headers
+        request.headers['Authorization'] = 'Bearer $accessToken';
+
+        // Add text fields
+        request.fields['conversationId'] = conversationId;
+        request.fields['content'] = content;
+        request.fields['targetLanguage'] = targetLanguage;
+        request.fields['senderType'] = 'patient';
+        request.fields['fileType'] = fileType; // use the provided type
+        request.fields['caption'] = content;
+
+        // Add file
+        request.files.add(await http.MultipartFile.fromPath('file', file.path));
+
+        final streamedResponse = await request.send();
+        final response = await http.Response.fromStream(streamedResponse);
+
+        return jsonDecode(response.body);
+      } else {
+        // Unsupported file type
+        throw Exception(
+          'Unsupported file type: $fileType. Only "audio" and "document" are supported.',
+        );
+      }
+    } else {
+      // No file, use regular JSON
+      final Map<String, dynamic> body = {
         'conversationId': conversationId,
         'content': content,
         'targetLanguage': targetLanguage,
         'senderType': 'patient',
-      }),
-    );
+      };
 
-    return jsonDecode(response.body);
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $accessToken',
+        },
+        body: jsonEncode(body),
+      );
+
+      return jsonDecode(response.body);
+    }
   } catch (e) {
     print('Error sending message: $e');
-    return {'success': false, 'message': 'Failed to send message: $e'};
+    throw Exception('Failed to send message: $e');
   }
 }
 

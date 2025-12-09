@@ -1,3 +1,4 @@
+import 'package:bandhucare_new/core/utils/image_constant.dart';
 import 'package:flutter/material.dart';
 
 class Feelings extends StatelessWidget {
@@ -30,7 +31,7 @@ class Feelings extends StatelessWidget {
                   height: 133.62,
                   decoration: ShapeDecoration(
                     image: DecorationImage(
-                      image: AssetImage("assets/flower.png"),
+                      image: AssetImage(ImageConstant.flowerImage),
                       fit: BoxFit.fill,
                     ),
                     shape: RoundedRectangleBorder(
@@ -121,7 +122,7 @@ class Feelings extends StatelessWidget {
                   height: 134,
                   decoration: ShapeDecoration(
                     image: DecorationImage(
-                      image: AssetImage("assets/treeimage.png"),
+                      image: AssetImage(ImageConstant.treeImage),
                       fit: BoxFit.fill,
                     ),
                     shape: RoundedRectangleBorder(
