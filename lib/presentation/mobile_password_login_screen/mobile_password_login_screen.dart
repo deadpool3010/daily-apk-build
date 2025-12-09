@@ -141,8 +141,7 @@ class MobilePasswordLoginScreen extends StatelessWidget {
                             GestureDetector(
                               behavior: HitTestBehavior.opaque,
                               onTap: () {
-                                // Navigate to register screen
-                                // controller.goToRegister();
+                                Get.toNamed(AppRoutes.registerHomescreen);
                               },
                               child: RichText(
                                 text: TextSpan(

@@ -22,6 +22,8 @@ import '../presentation/email_password_login_screen/email_password_login_screen.
 import '../presentation/email_password_login_screen/binding/email_password_login_binding.dart';
 import '../presentation/mobile_password_login_screen/mobile_password_login_screen.dart';
 import '../presentation/mobile_password_login_screen/binding/mobile_password_login_binding.dart';
+import '../presentation/register_homescreen/register_homescreen.dart';
+import '../presentation/register_homescreen/binding/register_homescreen_binding.dart';
 
 class AppRoutes {
   AppRoutes._();
@@ -45,6 +47,7 @@ class AppRoutes {
   static const chooseLanguageScreen = '/choose-language';
   static const emailPasswordLoginScreen = '/email-password-login';
   static const mobilePasswordLoginScreen = '/mobile-password-login';
+  static const registerHomescreen = '/register-homescreen';
 }
 
 class AppPages {
@@ -84,6 +87,12 @@ class AppPages {
       name: AppRoutes.mobilePasswordLoginScreen,
       page: () => const MobilePasswordLoginScreen(),
       binding: MobilePasswordLoginBinding(),
+      transition: Transition.fadeIn,
+    ),
+    GetPage(
+      name: AppRoutes.registerHomescreen,
+      page: () => const RegisterHomescreen(),
+      binding: RegisterHomescreenBinding(),
       transition: Transition.fadeIn,
     ),
     GetPage(

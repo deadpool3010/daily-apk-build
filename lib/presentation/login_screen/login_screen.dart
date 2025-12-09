@@ -18,7 +18,7 @@ class LoginScreen extends StatelessWidget {
       ),
       child: Scaffold(
         resizeToAvoidBottomInset: true,
-        backgroundColor: Colors.black,
+        backgroundColor: Colors.white,
         body: GestureDetector(
           onTap: () {
             FocusScope.of(context).unfocus();
@@ -165,8 +165,7 @@ class LoginScreen extends StatelessWidget {
                             GestureDetector(
                               behavior: HitTestBehavior.opaque,
                               onTap: () {
-                                // Navigate to register screen
-                                // controller.goToRegister();
+                                Get.toNamed(AppRoutes.registerHomescreen);
                               },
                               child: RichText(
                                 text: TextSpan(
