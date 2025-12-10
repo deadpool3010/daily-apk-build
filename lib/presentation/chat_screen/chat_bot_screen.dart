@@ -328,7 +328,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
             padding: EdgeInsets.only(top: 15),
             child: message.isUser
                 ? _buildUserMessage(message)
-                : _buildBotMessage(message.text),
+                : _buildBotMessage(message),
           );
         },
       ),
@@ -339,21 +339,28 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
     return Align(
       alignment: Alignment.centerRight,
       child: message.file != null
-          ? ChatBubblePdf(
-              fileName: message.file!['fileName']?.toString() ?? 'Document.pdf',
-              fileUrl: message.file!['fileUrl']?.toString(),
-              caption: message.file!['caption']?.toString() ?? message.text,
-              fileSize: null, // Can be extracted from file if needed
-            )
+          ? message.file!['fileType'] == 'audio'
+                ? AudioChatBubble(
+                    audioUrl: message.file!['fileUrl']?.toString(),
+                    audioTranscript:
+                        message.file!['audioTranscript']?.toString() ??
+                        message.text,
+                    isLoading: message.file!['fileUrl'] == null,
+                  )
+                : ChatBubblePdf(
+                    fileName:
+                        message.file!['fileName']?.toString() ?? 'Document.pdf',
+                    fileUrl: message.file!['fileUrl']?.toString(),
+                    caption:
+                        message.file!['caption']?.toString() ?? message.text,
+                    fileSize: null, // Can be extracted from file if needed
+                    isLoading: message.file!['fileUrl'] == null,
+                  )
           : Container(
               constraints: BoxConstraints(maxWidth: 300),
               padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
               decoration: ShapeDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment(0.43, 0.00),
-                  end: Alignment(0.44, 1.00),
-                  colors: [const Color(0xFF3865FF), const Color(0xFF213C99)],
-                ),
+                color: Color(0xff3865FF),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(12),
@@ -377,34 +384,81 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
     );
   }
 
-  Widget _buildBotMessage(String text) {
+  Widget _buildBotMessage(ChatMessage message) {
     return Align(
       alignment: Alignment.centerLeft,
-      child: Container(
-        constraints: BoxConstraints(maxWidth: 300),
-        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-        decoration: ShapeDecoration(
-          color: const Color(0xFFECF0FE),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(12),
-              topRight: Radius.circular(12),
-              bottomRight: Radius.circular(12),
+      child: message.file != null && message.file!['fileType'] != null
+          ? message.file!['fileType'] == 'audio'
+                ? AudioChatBubble(
+                    audioUrl: message.file!['fileUrl']?.toString(),
+                    audioTranscript:
+                        message.file!['audioTranscript']?.toString() ??
+                        message.text,
+                    isLoading: message.file!['fileUrl'] == null,
+                  )
+                : message.file!['fileType'] == 'document'
+                ? ChatBubblePdf(
+                    fileName:
+                        message.file!['fileName']?.toString() ?? 'Document.pdf',
+                    fileUrl: message.file!['fileUrl']?.toString(),
+                    caption:
+                        message.file!['caption']?.toString() ?? message.text,
+                    fileSize: null,
+                    isLoading: message.file!['fileUrl'] == null,
+                  )
+                : Container(
+                    constraints: BoxConstraints(maxWidth: 300),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 15,
+                      vertical: 10,
+                    ),
+                    decoration: ShapeDecoration(
+                      color: const Color(0xFFECF0FE),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(12),
+                          topRight: Radius.circular(12),
+                          bottomRight: Radius.circular(12),
+                        ),
+                      ),
+                    ),
+                    child: Text(
+                      message.text,
+                      style: const TextStyle(
+                        color: Color(0xFF3865FF),
+                        fontSize: 16,
+                        fontFamily: 'Lato',
+                        fontWeight: FontWeight.w400,
+                        height: 1.44,
+                        decoration: TextDecoration.none,
+                      ),
+                    ),
+                  )
+          : Container(
+              constraints: BoxConstraints(maxWidth: 300),
+              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+              decoration: ShapeDecoration(
+                color: const Color(0xFFECF0FE),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(12),
+                    topRight: Radius.circular(12),
+                    bottomRight: Radius.circular(12),
+                  ),
+                ),
+              ),
+              child: Text(
+                message.text,
+                style: const TextStyle(
+                  color: Color(0xFF3865FF),
+                  fontSize: 16,
+                  fontFamily: 'Lato',
+                  fontWeight: FontWeight.w400,
+                  height: 1.44,
+                  decoration: TextDecoration.none,
+                ),
+              ),
             ),
-          ),
-        ),
-        child: Text(
-          text,
-          style: TextStyle(
-            color: const Color(0xFF3865FF),
-            fontSize: 16,
-            fontFamily: 'Lato',
-            fontWeight: FontWeight.w400,
-            height: 1.44,
-            decoration: TextDecoration.none,
-          ),
-        ),
-      ),
     );
   }
 }

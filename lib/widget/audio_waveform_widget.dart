@@ -139,7 +139,6 @@ class AudioWaveformWidgetState extends State<AudioWaveformWidget> {
         for (int i = 0; i < currentAmplitudeList.length; i++) {
           double target = targetAmplitudeList[i];
           double current = currentAmplitudeList[i];
-
           // Lerp (linear interpolation) with 0.3 smoothing factor
           // Lower value = smoother but slower, higher = faster response
           currentAmplitudeList[i] = current + (target - current) * 0.3;

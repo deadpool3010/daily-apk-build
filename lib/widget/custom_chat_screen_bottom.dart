@@ -282,29 +282,16 @@ class _ChatScreenBottomState extends State<ChatScreenBottom> {
                             ),
                             child: Material(
                               color: Colors.transparent,
-                              child: RawGestureDetector(
-                                gestures: {
-                                  FastLongPressGestureRecognizer:
-                                      GestureRecognizerFactoryWithHandlers<
-                                        FastLongPressGestureRecognizer
-                                      >(
-                                        () => FastLongPressGestureRecognizer(
-                                          duration: Duration(milliseconds: 20),
-                                        ), // 👈 150ms long press
-                                        (
-                                          FastLongPressGestureRecognizer
-                                          instance,
-                                        ) {
-                                          instance.onLongPressStart = (_) {
-                                            _audioWaveformKey.currentState
-                                                ?.startRecording();
-                                          };
-                                          instance.onLongPressEnd = (_) {
-                                            _audioWaveformKey.currentState
-                                                ?.stopRecording();
-                                          };
-                                        },
-                                      ),
+                              child: GestureDetector(
+                                onLongPressStart: (_) {
+                                  _audioWaveformKey.currentState
+                                      ?.startRecording();
+                                  _audioWaveformKey.currentState
+                                      ?.startRecording();
+                                },
+                                onLongPressEnd: (_) {
+                                  _audioWaveformKey.currentState
+                                      ?.stopRecording();
                                 },
                                 child: InkWell(
                                   onTap: () {
