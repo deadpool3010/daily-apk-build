@@ -17,6 +17,10 @@ class ScanQrController extends GetxController {
   final isFlashOn = false.obs;
   final ImagePicker _imagePicker = ImagePicker();
 
+  // Debounce timer to prevent multiple rapid scans
+  Timer? _debounceTimer;
+  String? _lastScannedCode;
+
   @override
   void onInit() {
     super.onInit();
@@ -26,16 +30,18 @@ class ScanQrController extends GetxController {
   Future<void> _initializeCamera() async {
     try {
       final controller = MobileScannerController(
-        detectionSpeed: DetectionSpeed.noDuplicates,
+        detectionSpeed: DetectionSpeed
+            .normal, // Changed from noDuplicates to normal for faster scanning
         facing: CameraFacing.back,
-        autoStart: false, // Don't auto-start, we'll start manually
+        autoStart: true, // Auto-start for faster initialization
       );
 
-      // Start the camera manually after a short delay
-      await Future.delayed(Duration(milliseconds: 300));
+      // Reduced delay for faster startup
+      await Future.delayed(Duration(milliseconds: 100));
 
       try {
-        await controller.start();
+        // Since autoStart is true, the controller should start automatically
+        // Just assign it to the reactive variable
         mobileScannerController.value = controller;
         cameraError.value = null; // Clear any previous errors
       } catch (startError) {
@@ -81,24 +87,39 @@ class ScanQrController extends GetxController {
   void handleBarcode(String rawValue) async {
     if (!isScanning.value) return;
 
-    isScanning.value = false;
-    await mobileScannerController.value?.stop();
-
-    try {
-      dynamic parsedData = jsonDecode(rawValue);
-      Get.offNamed(AppRoutes.joinGroupScreen, arguments: parsedData);
-    } catch (e) {
-      isScanning.value = true;
-      mobileScannerController.value?.start();
-      Get.snackbar(
-        'Invalid QR',
-        'Unable to read group information. Please try again.',
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-        snackPosition: SnackPosition.BOTTOM,
-        margin: const EdgeInsets.all(16),
-      );
+    // Prevent duplicate scans of the same code
+    if (_lastScannedCode == rawValue) {
+      return;
     }
+    _lastScannedCode = rawValue;
+
+    // Cancel any existing debounce timer
+    _debounceTimer?.cancel();
+
+    // Process immediately with minimal delay (50ms) to prevent rapid duplicate scans
+    _debounceTimer = Timer(Duration(milliseconds: 50), () async {
+      if (!isScanning.value) return;
+
+      isScanning.value = false;
+      await mobileScannerController.value?.stop();
+
+      try {
+        dynamic parsedData = jsonDecode(rawValue);
+        print("parsedData:::::::::::::::::::: $parsedData");
+        Get.offNamed(AppRoutes.joinGroupScreen, arguments: parsedData);
+      } catch (e) {
+        isScanning.value = true;
+        _lastScannedCode = null; // Reset to allow retry
+        mobileScannerController.value?.start();
+        Fluttertoast.showToast(
+          msg: 'Unable to read group information. Please try again.',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+        );
+      }
+    });
   }
 
   // Pick image from gallery and scan for QR code
@@ -200,6 +221,7 @@ class ScanQrController extends GetxController {
 
   @override
   void onClose() {
+    _debounceTimer?.cancel();
     mobileScannerController.value?.dispose();
     super.onClose();
   }

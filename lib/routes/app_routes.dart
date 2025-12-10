@@ -1,3 +1,5 @@
+import 'package:bandhucare_new/presentation/concent_form_screen/binding/consent_form_binding.dart';
+import 'package:bandhucare_new/presentation/concent_form_screen/consent_form_screen.dart';
 import 'package:bandhucare_new/presentation/scan_qr_screen/binding/scan_qr_binding.dart';
 import 'package:bandhucare_new/presentation/scan_qr_screen/scan_qr_screen.dart';
 import 'package:bandhucare_new/presentation/health_calendar/health_calendar.dart';
@@ -6,6 +8,7 @@ import 'package:bandhucare_new/presentation/home_screen/binding/home_screen_bind
 import 'package:bandhucare_new/presentation/join_community_screen/binding/join_community_binding.dart';
 import 'package:bandhucare_new/presentation/join_community_screen/join_community_screen.dart';
 import 'package:bandhucare_new/presentation/join_group_screen/join_group_screen.dart';
+import 'package:bandhucare_new/presentation/join_group_screen/binding/join_group_binding.dart';
 import 'package:bandhucare_new/presentation/language_setting_screen/binding/language_setting_binding.dart';
 import 'package:bandhucare_new/presentation/user_profile_screen/userProfile.dart';
 import 'package:bandhucare_new/presentation/user_profile_screen/binding/user_profile_binding.dart';
@@ -88,8 +91,8 @@ class AppPages {
     ),
     GetPage(
       name: AppRoutes.consentFormScreen,
-      page: () => const LoginScreen(),
-      binding: LoginBinding(),
+      page: () => ConsentFormScreen(),
+      binding: ConsentFormBinding(),
       transition: Transition.fadeIn,
     ),
     GetPage(
@@ -169,7 +172,11 @@ class AppPages {
       page: () => const ScanQrScreen(),
       binding: ScanQrBinding(),
     ),
-    GetPage(name: AppRoutes.joinGroupScreen, page: () => const GroupScreen()),
+    GetPage(
+      name: AppRoutes.joinGroupScreen,
+      page: () => const GroupScreen(),
+      binding: JoinGroupBinding(),
+    ),
     GetPage(
       name: AppRoutes.joinCommunityScreen,
       page: () => JoinCommunityScreen(),

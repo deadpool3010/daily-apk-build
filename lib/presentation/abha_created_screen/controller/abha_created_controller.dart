@@ -10,10 +10,17 @@ class AbhaCreatedController extends GetxController {
   final dob = '03032004'.obs;
   final mobile = '1234567891'.obs;
   final profileImageUrl = ''.obs; // URL for profile image if available
+  final showAbhaCard = true.obs; // Flag to show/hide ABHA card
 
   @override
   void onInit() {
     super.onInit();
+    // Check if screen was opened from mobile/email registration
+    final arguments = Get.arguments;
+    if (arguments != null && arguments is Map<String, dynamic>) {
+      final fromRegistration = arguments['fromRegistration'] as bool? ?? false;
+      showAbhaCard.value = !fromRegistration;
+    }
     // TODO: Load ABHA data from API or passed parameters
     // This data should come from the previous screen or API response
   }

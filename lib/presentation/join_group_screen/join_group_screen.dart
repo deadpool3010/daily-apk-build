@@ -1,15 +1,19 @@
 import 'package:bandhucare_new/core/app_exports.dart';
+import 'package:bandhucare_new/presentation/join_group_screen/controller/join_group_controller.dart';
 
 class GroupScreen extends StatelessWidget {
   const GroupScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final controller = Get.find<JoinGroupController>();
     final List<GroupListItem> groups = _parseGroupArguments(Get.arguments);
     final qr_code_data = Get.arguments;
     // Safely handle null values
+    String extractedUniqueCode = '';
     if (qr_code_data != null && qr_code_data is Map<String, dynamic>) {
-      uniqueCode = qr_code_data['uniqueCode']?.toString() ?? '';
+      extractedUniqueCode = qr_code_data['uniqueCode']?.toString() ?? '';
+      uniqueCode = extractedUniqueCode;
     } else {
       uniqueCode = '';
     }
@@ -88,19 +92,21 @@ class GroupScreen extends StatelessWidget {
                                       const SizedBox(height: 12),
                                   itemBuilder: (context, index) {
                                     final group = groups[index];
-                                    return _GroupCard(
-                                      title: group.title,
-                                      createdOn: group.createdOn,
-                                      hospital: group.hospital,
-                                      onJoinTap: () {
-                                        Get.toNamed(
-                                          AppRoutes.joinCommunityScreen,
-                                          arguments: {
-                                            'groupId': group.groupId,
-                                            'groupName': group.title,
-                                          },
-                                        );
-                                      },
+                                    return Obx(
+                                      () => _GroupCard(
+                                        title: group.title,
+                                        createdOn: group.createdOn,
+                                        hospital: group.hospital,
+                                        groupId: group.groupId,
+                                        uniqueCode: extractedUniqueCode,
+                                        isLoading: controller.isLoading.value,
+                                        onJoinTap: () {
+                                          controller.joinGroup(
+                                            groupId: group.groupId,
+                                            uniqueCode: extractedUniqueCode,
+                                          );
+                                        },
+                                      ),
                                     );
                                   },
                                 ),
@@ -222,12 +228,18 @@ class _GroupCard extends StatelessWidget {
     required this.title,
     required this.createdOn,
     required this.hospital,
+    required this.groupId,
+    required this.uniqueCode,
+    required this.isLoading,
     required this.onJoinTap,
   });
 
   final String title;
   final String createdOn;
   final String hospital;
+  final String groupId;
+  final String uniqueCode;
+  final bool isLoading;
   final VoidCallback onJoinTap;
 
   @override
@@ -327,15 +339,26 @@ class _GroupCard extends StatelessWidget {
                     ),
                     elevation: 0,
                   ),
-                  onPressed: onJoinTap,
-                  child: const Text(
-                    'Join Group',
-                    style: TextStyle(
-                      fontFamily: 'Lato',
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
+                  onPressed: isLoading ? null : onJoinTap,
+                  child: isLoading
+                      ? SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              Colors.white,
+                            ),
+                          ),
+                        )
+                      : const Text(
+                          'Join Group',
+                          style: TextStyle(
+                            fontFamily: 'Lato',
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                 ),
                 Row(
                   children: List.generate(

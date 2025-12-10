@@ -99,12 +99,13 @@ class ScanQrScreen extends StatelessWidget {
             controller: scannerController,
             fit: BoxFit.cover,
             onDetect: (capture) {
+              // Process immediately without additional checks for faster detection
               final List<Barcode> barcodes = capture.barcodes;
-              if (barcodes.isNotEmpty && controller.isScanning.value) {
-                final rawValue = barcodes.first.rawValue;
-                if (rawValue != null) {
-                  controller.handleBarcode(rawValue);
-                }
+              if (barcodes.isNotEmpty &&
+                  controller.isScanning.value &&
+                  barcodes.first.rawValue != null) {
+                // Process the first valid barcode immediately
+                controller.handleBarcode(barcodes.first.rawValue!);
               }
             },
           ),

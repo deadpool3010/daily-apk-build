@@ -6,6 +6,7 @@ String getAbhaAddressSuggetions(String sessionId) =>
     "auth/abha-address-suggestions/$sessionId";
 String createAbhaAddress = "auth/create-abha-address";
 String signIn = "auth/sign-in";
+String signUp = "auth/sign-up";
 String verifyOtp = "auth/verify-otp";
 String selectAccount = "auth/select-account";
 String createAbhaNumber = "auth/create-abha";
@@ -16,7 +17,7 @@ String getMessagesApi({int page = 1, int limit = 10}) {
   return "chat/?page=$page&limit=$limit";
 }
 
-String addMemberToGroup = "";
+String addMemberToGroup = "groups/add-members";
 String getCommunityApi(String groupId) =>
     "community?groupId=$groupId&search=&page&limit&sort&uniqueCode=$uniqueCode";
 String sendVerificationLink = "auth/send-verification-link";

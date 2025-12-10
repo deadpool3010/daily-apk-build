@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:bandhucare_new/core/network/api_services.dart';
+import 'package:bandhucare_new/routes/app_routes.dart';
 
 class MobilePasswordLoginController extends GetxController {
   late TextEditingController mobileController;
@@ -79,22 +81,40 @@ class MobilePasswordLoginController extends GetxController {
     isLoading.value = true;
 
     try {
-      // TODO: Implement mobile/password login API call
-      // Example:
-      // final result = await mobilePasswordLoginApi(mobile, password);
-
-      // Simulate API call
-      await Future.delayed(Duration(seconds: 2));
-
-      Fluttertoast.showToast(
-        msg: "Login successful!",
-        toastLength: Toast.LENGTH_SHORT,
-        backgroundColor: Colors.green,
-        textColor: Colors.white,
+      // Call sign-in API with mobile number and password
+      final result = await signInWithCredentialsApi(
+        emailNumber: mobile,
+        password: password,
       );
 
-      // Navigate to home screen after successful login
-      // Get.offAllNamed(AppRoutes.homeScreen);
+      if (result['success'] == true || result['message'] != null) {
+        Fluttertoast.showToast(
+          msg: result['message'] ?? "Login successful!",
+          toastLength: Toast.LENGTH_SHORT,
+          backgroundColor: Colors.green,
+          textColor: Colors.white,
+        );
+
+        // Check if newRegistration is true in response
+        final newRegistration =
+            result['newRegistration'] ??
+            result['data']?['newRegistration'] ??
+            false;
+
+        // Use post-frame callback to ensure proper widget disposal before navigation
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          Future.delayed(Duration(milliseconds: 300), () {
+            // If newRegistration is true, navigate to scan QR screen, otherwise home screen
+            if (newRegistration == true) {
+              Get.offAllNamed(AppRoutes.scanQrScreen);
+            } else {
+              Get.offAllNamed(AppRoutes.homeScreen);
+            }
+          });
+        });
+      } else {
+        throw Exception(result['message'] ?? 'Login failed');
+      }
     } catch (e) {
       String errorMessage = e.toString();
       if (errorMessage.startsWith('Exception: Exception: ')) {

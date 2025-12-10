@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:bandhucare_new/core/network/api_services.dart';
+import 'package:bandhucare_new/routes/app_routes.dart';
 
 class MobileRegisterController extends GetxController {
   late TextEditingController fullNameController;
@@ -127,22 +129,34 @@ class MobileRegisterController extends GetxController {
     isLoading.value = true;
 
     try {
-      // TODO: Implement mobile registration API call
-      // Example:
-      // final result = await mobileRegisterApi(fullName, mobile, createPassword);
-
-      // Simulate API call
-      await Future.delayed(Duration(seconds: 2));
-
-      Fluttertoast.showToast(
-        msg: "OTP sent successfully!",
-        toastLength: Toast.LENGTH_SHORT,
-        backgroundColor: Colors.green,
-        textColor: Colors.white,
+      // Call sign-up API with mobile number
+      final result = await signUpApi(
+        name: fullName,
+        emailNumber: mobile,
+        password: createPassword,
+        userType: "patient",
       );
 
-      // Navigate to OTP verification screen after successful registration
-      // Get.toNamed(AppRoutes.otpVerificationScreen);
+      if (result['success'] == true || result['message'] != null) {
+        Fluttertoast.showToast(
+          msg: result['message'] ?? "Registration successful!",
+          toastLength: Toast.LENGTH_SHORT,
+          backgroundColor: Colors.green,
+          textColor: Colors.white,
+        );
+
+        // Use post-frame callback to ensure proper widget disposal before navigation
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          Future.delayed(Duration(milliseconds: 300), () {
+            Get.offAllNamed(
+              AppRoutes.abhaCreatedScreen,
+              arguments: {'fromRegistration': true},
+            );
+          });
+        });
+      } else {
+        throw Exception(result['message'] ?? 'Registration failed');
+      }
     } catch (e) {
       String errorMessage = e.toString();
       if (errorMessage.startsWith('Exception: Exception: ')) {

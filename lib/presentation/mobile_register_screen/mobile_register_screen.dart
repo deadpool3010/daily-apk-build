@@ -185,6 +185,11 @@ class MobileRegisterScreen extends StatelessWidget {
     return CustomTextField(
       controller: controller.fullNameController,
       hintText: 'Full Name',
+      hintStyle: GoogleFonts.lato(
+        fontWeight: FontWeight.w500,
+        color: Color(0xFF94A3B8),
+        fontSize: 14,
+      ),
       icon: BootstrapIcons.person,
       keyboardType: TextInputType.name,
     );
@@ -197,6 +202,11 @@ class MobileRegisterScreen extends StatelessWidget {
       hintText: 'Mobile Number',
       iconSize: 16,
       icon: BootstrapIcons.telephone,
+      hintStyle: GoogleFonts.lato(
+        fontWeight: FontWeight.w500,
+        color: Color(0xFF94A3B8),
+        fontSize: 14,
+      ),
       keyboardType: TextInputType.phone,
       maxLength: 10,
       onChanged: (value) {
@@ -214,6 +224,11 @@ class MobileRegisterScreen extends StatelessWidget {
         controller: controller.createPasswordController,
         hintText: 'Create Password',
         icon: BootstrapIcons.lock,
+        hintStyle: GoogleFonts.lato(
+          fontWeight: FontWeight.w500,
+          color: Color(0xFF94A3B8),
+          fontSize: 14,
+        ),
         keyboardType: TextInputType.visiblePassword,
         obscureText: !controller.isCreatePasswordVisible.value,
         showPasswordToggle: true,
@@ -232,6 +247,11 @@ class MobileRegisterScreen extends StatelessWidget {
         controller: controller.confirmPasswordController,
         hintText: 'Confirm Password',
         icon: BootstrapIcons.lock,
+        hintStyle: GoogleFonts.lato(
+          fontWeight: FontWeight.w500,
+          color: Color(0xFF94A3B8),
+          fontSize: 14,
+        ),
         keyboardType: TextInputType.visiblePassword,
         obscureText: !controller.isConfirmPasswordVisible.value,
         showPasswordToggle: true,
@@ -249,7 +269,7 @@ class MobileRegisterScreen extends StatelessWidget {
       final isLoading = controller.isLoading.value;
 
       return DynamicButton(
-        text: isLoading ? '' : 'Get OTP',
+        text: isLoading ? '' : 'Sign Up',
         width: double.infinity,
         height: 50,
         fontSize: 16,

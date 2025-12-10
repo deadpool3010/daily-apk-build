@@ -27,13 +27,24 @@ class AbhaCreatedScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const SizedBox(height: 40),
+                      controller.showAbhaCard.value
+                          ? const SizedBox(height: 40)
+                          : SizedBox(height: 100),
                       // Welcome Header
                       _buildWelcomeSection(controller),
                       const SizedBox(height: 40),
-                      // ABHA Card
-                      Center(child: _buildAbhaCard(controller)),
-                      const SizedBox(height: 40),
+                      // ABHA Card (only show if not from registration)
+                      Obx(() {
+                        if (controller.showAbhaCard.value) {
+                          return Column(
+                            children: [
+                              Center(child: _buildAbhaCard(controller)),
+                              const SizedBox(height: 40),
+                            ],
+                          );
+                        }
+                        return const SizedBox.shrink();
+                      }),
                       // How Scanning Works Section
                       _buildHowScanningWorksSection(),
                       const SizedBox(height: 40),
