@@ -25,6 +25,14 @@ class ScanQrScreen extends StatelessWidget {
 
             // Scanning Frame Overlay
             Positioned.fill(child: _buildScanningOverlay(controller)),
+
+            // Gallery Button at bottom
+            Positioned(
+              bottom: 40,
+              left: 0,
+              right: 0,
+              child: _buildGalleryButton(controller),
+            ),
           ],
         ),
       ),
@@ -255,6 +263,106 @@ class ScanQrScreen extends StatelessWidget {
         // ),
       ],
     );
+  }
+
+  Widget _buildGalleryButton(ScanQrController controller) {
+    return Obx(() {
+      return Center(
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(30),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.15),
+                blurRadius: 8,
+                offset: Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Gallery Button (Active - Left Side)
+              GestureDetector(
+                onTap: controller.isLoadingImage.value
+                    ? null
+                    : () => controller.pickImageFromGallery(),
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(30),
+                      bottomLeft: Radius.circular(30),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (controller.isLoadingImage.value)
+                        SizedBox(
+                          width: 18,
+                          height: 18,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              Color(0xFF3865FF),
+                            ),
+                          ),
+                        )
+                      else
+                        Icon(
+                          Icons.photo_library,
+                          color: Color(0xFF3865FF),
+                          size: 20,
+                        ),
+                      SizedBox(width: 8),
+                      Text(
+                        controller.isLoadingImage.value
+                            ? 'Processing...'
+                            : 'Gallery',
+                        style: GoogleFonts.roboto(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF3865FF),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              // Flash Toggle Button (Right Side)
+              Obx(() {
+                return GestureDetector(
+                  onTap: () => controller.toggleFlash(),
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                    decoration: BoxDecoration(
+                      color: controller.isFlashOn.value
+                          ? Colors.white
+                          : Color(0xFF3E2723).withOpacity(0.8),
+                      borderRadius: BorderRadius.only(
+                        topRight: Radius.circular(30),
+                        bottomRight: Radius.circular(30),
+                      ),
+                    ),
+                    child: Icon(
+                      controller.isFlashOn.value
+                          ? Icons.flash_on
+                          : Icons.flash_off,
+                      color: controller.isFlashOn.value
+                          ? Color(0xFF3865FF)
+                          : Colors.white,
+                      size: 20,
+                    ),
+                  ),
+                );
+              }),
+            ],
+          ),
+        ),
+      );
+    });
   }
 }
 

@@ -3,14 +3,19 @@ import 'dart:convert';
 
 import 'package:bandhucare_new/routes/app_routes.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ScanQrController extends GetxController {
   // Timer countdown
   final isScanning = true.obs;
   final mobileScannerController = Rxn<MobileScannerController>();
   final cameraError = Rxn<String>();
+  final isLoadingImage = false.obs;
+  final isFlashOn = false.obs;
+  final ImagePicker _imagePicker = ImagePicker();
 
   @override
   void onInit() {
@@ -92,6 +97,103 @@ class ScanQrController extends GetxController {
         colorText: Colors.white,
         snackPosition: SnackPosition.BOTTOM,
         margin: const EdgeInsets.all(16),
+      );
+    }
+  }
+
+  // Pick image from gallery and scan for QR code
+  Future<void> pickImageFromGallery() async {
+    try {
+      isLoadingImage.value = true;
+
+      // Pick image from gallery
+      final XFile? image = await _imagePicker.pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 100,
+      );
+
+      if (image == null) {
+        isLoadingImage.value = false;
+        return;
+      }
+
+      // Create a temporary scanner controller for image analysis
+      final tempController = MobileScannerController();
+
+      try {
+        // Analyze the image for QR codes using the file path
+        final result = await tempController.analyzeImage(image.path);
+
+        if (result != null && result.barcodes.isNotEmpty) {
+          final rawValue = result.barcodes.first.rawValue;
+          if (rawValue != null) {
+            isLoadingImage.value = false;
+            await tempController.dispose();
+            handleBarcode(rawValue);
+            return;
+          }
+        }
+
+        // If no QR code found
+        await tempController.dispose();
+        isLoadingImage.value = false;
+
+        // Use Fluttertoast which doesn't require overlay
+        Fluttertoast.showToast(
+          msg:
+              'The selected image does not contain a valid QR code. Please try another image.',
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.orange,
+          textColor: Colors.white,
+        );
+      } catch (analyzeError) {
+        await tempController.dispose();
+        isLoadingImage.value = false;
+
+        // Use Fluttertoast which doesn't require overlay
+        Fluttertoast.showToast(
+          msg: 'Failed to process image. Please try again.',
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+        );
+      }
+    } catch (e) {
+      isLoadingImage.value = false;
+
+      // Use Fluttertoast which doesn't require overlay
+      Fluttertoast.showToast(
+        msg: 'Failed to access gallery. Please check permissions.',
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+      );
+    }
+  }
+
+  // Toggle flash on/off
+  Future<void> toggleFlash() async {
+    try {
+      final controller = mobileScannerController.value;
+      if (controller == null) return;
+
+      // Toggle the torch
+      await controller.toggleTorch();
+      // Manually update the state since torchState listener is not available
+      isFlashOn.value = !isFlashOn.value;
+    } catch (e) {
+      print('Error toggling flash: $e');
+      Get.snackbar(
+        'Error',
+        'Failed to toggle flash. Please try again.',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+        margin: const EdgeInsets.all(16),
+        duration: Duration(seconds: 2),
       );
     }
   }

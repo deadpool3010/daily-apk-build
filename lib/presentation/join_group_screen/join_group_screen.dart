@@ -7,7 +7,12 @@ class GroupScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final List<GroupListItem> groups = _parseGroupArguments(Get.arguments);
     final qr_code_data = Get.arguments;
-    uniqueCode = qr_code_data['uniqueCode'];
+    // Safely handle null values
+    if (qr_code_data != null && qr_code_data is Map<String, dynamic>) {
+      uniqueCode = qr_code_data['uniqueCode']?.toString() ?? '';
+    } else {
+      uniqueCode = '';
+    }
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(

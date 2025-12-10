@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:bandhucare_new/routes/app_routes.dart';
 
 class AbhaCreatedController extends GetxController {
   // ABHA User Data (These would typically come from API response)
@@ -17,9 +18,14 @@ class AbhaCreatedController extends GetxController {
     // This data should come from the previous screen or API response
   }
 
-  // Handle Continue button
-  void handleContinue() {
-    // TODO: Navigate to home screen or next screen
-    // Get.offNamed(AppRoutes.homeScreen);
+  // Handle Scan to Join Group button
+  void handleScanToJoinGroup() {
+    Get.toNamed(AppRoutes.scanQrScreen);
+  }
+
+  // Handle Contact Us button
+  void handleContactUs() {
+    // TODO: Implement contact us functionality
+    // Could open email, phone dialer, or contact screen
   }
 }

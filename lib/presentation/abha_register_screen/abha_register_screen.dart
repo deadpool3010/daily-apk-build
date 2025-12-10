@@ -32,26 +32,7 @@ class AbhaRegisterScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Back Button
-                  GestureDetector(
-                    onTap: () {
-                      Get.toNamed(AppRoutes.registerHomescreen);
-                    },
-                    child: Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Color(0xFFE2E8F0), width: 1),
-                      ),
-                      child: Icon(
-                        Icons.arrow_back,
-                        color: Color(0xFF3864FD),
-                        size: 20,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 40),
 
                   // Title
                   Text(

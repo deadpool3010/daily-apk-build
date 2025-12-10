@@ -94,5 +94,6 @@ class EmailVerificationAbhaController extends GetxController {
       backgroundColor: Colors.blue,
       textColor: Colors.white,
     );
+    Get.toNamed(AppRoutes.createAbhaUsernameScreen);
   }
 }

@@ -18,89 +18,101 @@ class AbhaCreatedScreen extends StatelessWidget {
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         backgroundColor: Colors.white,
-        body: SafeArea(
-          child: Column(
-            children: [
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 24),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(height: 40),
-                        // Congratulations Header
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Congratulations!!!',
-                                    style: GoogleFonts.roboto(
-                                      fontSize: 22,
-                                      fontWeight: FontWeight.w600,
-                                      color: Color(0xFF3865FF),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    'Your ABHA ID is created.',
-                                    style: GoogleFonts.lato(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                      color: Color(0xFF64748B),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            // Logo on the right
-                            Image.asset(
-                              ImageConstant.appLogo,
-                              width: 60,
-                              height: 60,
-                              fit: BoxFit.contain,
-                              errorBuilder: (context, error, stackTrace) {
-                                return Container(
-                                  width: 60,
-                                  height: 60,
-                                  decoration: BoxDecoration(
-                                    color: Color(0xFF3865FF),
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                );
-                              },
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 40),
-                        // ABHA Card
-                        Center(child: _buildAbhaCard(controller)),
-                        const SizedBox(height: 40),
-                      ],
-                    ),
+        body: Column(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 40),
+                      // Welcome Header
+                      _buildWelcomeSection(controller),
+                      const SizedBox(height: 40),
+                      // ABHA Card
+                      Center(child: _buildAbhaCard(controller)),
+                      const SizedBox(height: 40),
+                      // How Scanning Works Section
+                      _buildHowScanningWorksSection(),
+                      const SizedBox(height: 40),
+                      // FAQ's Section
+                      _buildFaqSection(),
+                      const SizedBox(height: 40),
+                      // Need Further Assistance Section
+                      Center(child: _buildNeedFurtherAssistanceSection()),
+                      const SizedBox(height: 40),
+                    ],
                   ),
                 ),
               ),
-              // Continue Button at bottom
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-                child: DynamicButton(
-                  text: 'Continue',
+            ),
+            // Scan to Join Group Button at bottom
+            Container(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).padding.bottom > 0
+                    ? MediaQuery.of(context).padding.bottom
+                    : 16,
+                top: 8,
+                left: 24,
+                right: 24,
+              ),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(24),
+                  topRight: Radius.circular(24),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 12,
+                    offset: Offset(0, -4),
+                    spreadRadius: 0,
+                  ),
+                ],
+              ),
+              child: GestureDetector(
+                onTap: () {
+                  controller.handleScanToJoinGroup();
+                },
+                child: Container(
                   width: double.infinity,
-                  height: 50,
-                  fontSize: 16,
-                  onPressed: () {
-                    controller.handleContinue();
-                  },
+                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Color(0xFF0774E9), Color(0xFF0A7FF0)],
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight,
+                    ),
+                    borderRadius: BorderRadius.circular(100),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.qr_code_scanner,
+                        color: Colors.white,
+                        size: 24,
+                      ),
+                      const SizedBox(width: 12),
+                      Text(
+                        'Scan to Join Group',
+                        style: GoogleFonts.roboto(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Icon(Icons.arrow_forward, color: Colors.white, size: 20),
+                    ],
+                  ),
                 ),
               ),
-              const SizedBox(height: 30),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -350,6 +362,221 @@ class AbhaCreatedScreen extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  // Build Welcome Section
+  Widget _buildWelcomeSection(AbhaCreatedController controller) {
+    return Obx(() {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Glad you\'re here, ${controller.userName.value}.',
+            style: GoogleFonts.roboto(
+              fontSize: 22,
+              fontWeight: FontWeight.w600,
+              height: 20 / 22,
+              letterSpacing: 0,
+              color: Color(0xFF3864FD),
+            ),
+          ),
+          const SizedBox(height: 14),
+          Text(
+            'Bandhu Care — your trusted partner in wellness.',
+            style: GoogleFonts.lato(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              height: 16 / 14,
+              letterSpacing: 0,
+              color: Color(0xFF94A3B8),
+            ),
+          ),
+        ],
+      );
+    });
+  }
+
+  // Build How Scanning Works Section
+  Widget _buildHowScanningWorksSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 14),
+          child: Text(
+            'How Scanning Works',
+            style: GoogleFonts.roboto(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+              color: Color(0xFF334155),
+            ),
+          ),
+        ),
+        const SizedBox(height: 20),
+        Container(
+          margin: EdgeInsets.only(right: 1),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(24),
+            color: Color(0xFFE5EFFE),
+          ),
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                _buildStepItem(ImageConstant.step1, 'Scan'),
+                const SizedBox(width: 10),
+                Icon(Icons.arrow_forward, size: 24, color: Color(0xFF334155)),
+                const SizedBox(width: 10),
+                _buildStepItem(ImageConstant.step2, 'Join Community'),
+                const SizedBox(width: 10),
+                Icon(Icons.arrow_forward, size: 24, color: Color(0xFF334155)),
+                const SizedBox(width: 10),
+                _buildStepItem(ImageConstant.step3, 'Access Services'),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildStepItem(String imagePath, String stepText) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const SizedBox(height: 16),
+        Image.asset(
+          imagePath,
+          width: 70,
+          height: 70,
+          fit: BoxFit.contain,
+          errorBuilder: (context, error, stackTrace) {
+            return Container(
+              width: 70,
+              height: 70,
+              decoration: BoxDecoration(
+                color: Colors.grey[200],
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(Icons.image, size: 35, color: Colors.grey[400]),
+            );
+          },
+        ),
+        const SizedBox(height: 8),
+        Text(
+          stepText,
+          style: GoogleFonts.roboto(
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+            color: Color(0xFF334155),
+          ),
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 16),
+      ],
+    );
+  }
+
+  // Build FAQ Section
+  Widget _buildFaqSection() {
+    final faqQuestions = [
+      'How to Use Chatbot Feature in Bandhucare ?',
+      'How to Scan and join Communities ?',
+    ];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'FAQ\'s',
+          style: GoogleFonts.roboto(
+            fontSize: 18,
+            fontWeight: FontWeight.w700,
+            color: Color(0xFF334155),
+          ),
+        ),
+        const SizedBox(height: 16),
+        ...faqQuestions.map(
+          (question) => Container(
+            margin: const EdgeInsets.only(bottom: 12),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text(
+                    question,
+                    style: GoogleFonts.lato(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      color: Color(0xFF334155),
+                    ),
+                  ),
+                ),
+                Icon(
+                  Icons.arrow_forward_ios,
+                  size: 16,
+                  color: Color(0xFF334155),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  // Build Need Further Assistance Section
+  Widget _buildNeedFurtherAssistanceSection() {
+    final controller = Get.find<AbhaCreatedController>();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Text(
+          'Need Further Assistance ?',
+          style: GoogleFonts.roboto(
+            fontSize: 18,
+            fontWeight: FontWeight.w700,
+            color: Color(0xFF334155),
+          ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          'We are here to help you!',
+          style: GoogleFonts.lato(
+            fontSize: 14,
+            fontWeight: FontWeight.w400,
+            color: Color(0xFF94A3B8),
+          ),
+        ),
+        const SizedBox(height: 20),
+        GestureDetector(
+          onTap: () {
+            controller.handleContactUs();
+          },
+          child: Container(
+            width: 200,
+            height: 48,
+            decoration: BoxDecoration(
+              color: Color(0xFFFF9D00),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Center(
+              child: Text(
+                'Contact Us',
+                style: GoogleFonts.roboto(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
