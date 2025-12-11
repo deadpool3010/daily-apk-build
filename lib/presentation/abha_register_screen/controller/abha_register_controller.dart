@@ -325,6 +325,27 @@ class AbhaRegisterController extends GetxController
         mobileController.text.trim(),
       );
 
+      // Extract and update sessionId from response if available
+      if (result['data'] != null && result['data'] is Map) {
+        final data = result['data'] as Map<String, dynamic>;
+        final extractedSessionId = data['sessionId']?.toString() ?? '';
+        if (extractedSessionId.isNotEmpty) {
+          sessionId = extractedSessionId;
+          // Also save to global variable
+          vars.sessionId = extractedSessionId;
+          print('Session ID updated from verify OTP: $sessionId');
+        }
+      } else if (result['sessionId'] != null) {
+        // Check root level if not in data object
+        final extractedSessionId = result['sessionId']?.toString() ?? '';
+        if (extractedSessionId.isNotEmpty) {
+          sessionId = extractedSessionId;
+          // Also save to global variable
+          vars.sessionId = extractedSessionId;
+          print('Session ID updated from verify OTP: $sessionId');
+        }
+      }
+
       Fluttertoast.showToast(
         msg: result['message'] ?? "OTP verified successfully!",
         toastLength: Toast.LENGTH_SHORT,

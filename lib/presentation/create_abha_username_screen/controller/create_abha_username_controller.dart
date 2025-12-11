@@ -4,6 +4,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:bandhucare_new/routes/app_routes.dart';
 import 'package:bandhucare_new/core/network/api_services.dart';
 import 'package:bandhucare_new/services/variables.dart';
+import 'package:bandhucare_new/services/shared_pref_localization.dart';
 
 class CreateAbhaUsernameController extends GetxController {
   // Text Controller for username
@@ -192,29 +193,79 @@ class CreateAbhaUsernameController extends GetxController {
       );
 
       // Extract ABHA details from API response
-      // The response structure may vary, so we'll check multiple possible locations
+      // The response structure: result['data']['profileDetails']
       Map<String, dynamic>? abhaData;
+      String extractedAccessToken = '';
 
       print('Extracting ABHA details from API response...');
       print('Response keys: ${result.keys.toList()}');
 
-      // First, try to get data from result['data']
+      // First, try to get profileDetails from result['data']['profileDetails']
       if (result['data'] != null && result['data'] is Map) {
-        abhaData = result['data'] as Map<String, dynamic>;
-        print('Found ABHA data in result[\'data\']');
+        final data = result['data'] as Map<String, dynamic>;
+
+        // Extract accessToken from data
+        extractedAccessToken =
+            data['accessToken']?.toString() ?? data['token']?.toString() ?? '';
+
+        if (data['profileDetails'] != null && data['profileDetails'] is Map) {
+          abhaData = data['profileDetails'] as Map<String, dynamic>;
+          print('Found ABHA data in result[\'data\'][\'profileDetails\']');
+        } else {
+          // Fallback: check if data itself contains the profile info
+          abhaData = data;
+          print('Found ABHA data in result[\'data\']');
+        }
       }
       // If not found, check if the result itself contains the ABHA data
       else if (result.containsKey('abhaNumber') ||
           result.containsKey('abhaAddress')) {
         abhaData = result;
+        // Also check for accessToken at root level
+        if (extractedAccessToken.isEmpty) {
+          extractedAccessToken =
+              result['accessToken']?.toString() ??
+              result['token']?.toString() ??
+              '';
+        }
         print('Found ABHA data at root level');
       }
       // If still not found, try result['abhaData'] or similar
       else if (result['abhaData'] != null && result['abhaData'] is Map) {
         abhaData = result['abhaData'] as Map<String, dynamic>;
+        // Also check for accessToken at root level
+        if (extractedAccessToken.isEmpty) {
+          extractedAccessToken =
+              result['accessToken']?.toString() ??
+              result['token']?.toString() ??
+              '';
+        }
         print('Found ABHA data in result[\'abhaData\']');
       } else {
+        // Final fallback: check for accessToken at root level
+        if (extractedAccessToken.isEmpty) {
+          extractedAccessToken =
+              result['accessToken']?.toString() ??
+              result['token']?.toString() ??
+              '';
+        }
         print('Warning: Could not find ABHA data in expected locations');
+      }
+
+      // Store accessToken in global variable and SharedPreferences
+      if (extractedAccessToken.isNotEmpty) {
+        accessToken = extractedAccessToken;
+        print(
+          'AccessToken extracted and stored: ${accessToken.substring(0, 20)}...',
+        );
+
+        // Save to SharedPreferences
+        try {
+          await SharedPrefLocalization().saveTokens(accessToken, refreshToken);
+          print('AccessToken saved to SharedPreferences');
+        } catch (e) {
+          print('Error saving accessToken to SharedPreferences: $e');
+        }
       }
 
       // Format date of birth (DDMMYYYY)
@@ -264,11 +315,12 @@ class CreateAbhaUsernameController extends GetxController {
         'dob': formattedDob, // Formatted as DDMMYYYY
       };
 
-      // Navigate to ABHA Created screen with ABHA details
+      // Navigate to ABHA Created screen with ABHA details and accessToken
       Get.toNamed(
         AppRoutes.abhaCreatedScreen,
         arguments: {
           'abhaDetails': abhaDetails,
+          'accessToken': extractedAccessToken,
           'fromRegistration':
               false, // This is from ABHA creation, not registration
         },

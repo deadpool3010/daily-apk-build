@@ -28,7 +28,7 @@ class AbhaCreatedScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       controller.showAbhaCard.value
-                          ? const SizedBox(height: 40)
+                          ? const SizedBox(height: 80)
                           : SizedBox(height: 100),
                       // Welcome Header
                       _buildWelcomeSection(controller),
