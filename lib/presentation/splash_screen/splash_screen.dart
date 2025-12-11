@@ -1,11 +1,21 @@
 import 'package:bandhucare_new/core/app_exports.dart';
 import 'dart:math' as math;
+import 'package:bandhucare_new/core/utils/image_constant.dart';
 
 class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // Precache login header image for better user experience
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final imageProvider = AssetImage(ImageConstant.loginHeader);
+      precacheImage(imageProvider, context).catchError((error) {
+        // Silently handle errors - image will load normally when needed
+        debugPrint('Failed to precache login header image: $error');
+      });
+    });
+
     // GetX Controller
     final controller = Get.find<SplashController>();
     final screenWidth = MediaQuery.of(context).size.width;

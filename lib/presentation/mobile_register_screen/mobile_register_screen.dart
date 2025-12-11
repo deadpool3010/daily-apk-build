@@ -1,0 +1,367 @@
+import 'package:bandhucare_new/core/app_exports.dart';
+import 'package:bootstrap_icons/bootstrap_icons.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'controller/mobile_register_controller.dart';
+
+class MobileRegisterScreen extends StatelessWidget {
+  const MobileRegisterScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final controller = Get.find<MobileRegisterController>();
+
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.light,
+        statusBarBrightness: Brightness.light,
+        systemNavigationBarColor: Colors.transparent,
+      ),
+      child: Scaffold(
+        resizeToAvoidBottomInset: true,
+        backgroundColor: Colors.black,
+        body: GestureDetector(
+          onTap: () {
+            FocusScope.of(context).unfocus();
+          },
+          behavior: HitTestBehavior.translucent,
+          child: Builder(
+            builder: (context) {
+              final keyboardVisible =
+                  MediaQuery.of(context).viewInsets.bottom > 0;
+
+              if (keyboardVisible) {
+                return Stack(
+                  children: [
+                    Column(
+                      children: [_buildRegisterHeader(controller), Spacer()],
+                    ),
+                    Positioned(
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      child: _buildRegisterContentCard(
+                        context,
+                        controller,
+                        keyboardVisible,
+                      ),
+                    ),
+                  ],
+                );
+              } else {
+                return Stack(
+                  children: [
+                    // Header Section with Dark Blue Background
+                    _buildRegisterHeader(controller),
+
+                    // Content Card Section
+                    _buildRegisterContentCard(
+                      context,
+                      controller,
+                      keyboardVisible,
+                    ),
+                  ],
+                );
+              }
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
+  // Header Section with Dark Blue Background
+  Widget _buildRegisterHeader(MobileRegisterController controller) {
+    return CommonLoginRegisterHeader(
+      title: 'Go ahead and set\nup your account',
+      subtitleText: 'Already have an account? ',
+      actionText: 'Login',
+      onActionTap: () {
+        Get.toNamed(AppRoutes.mobilePasswordLoginScreen);
+      },
+      onBackTap: () {
+        Get.toNamed(AppRoutes.registerHomescreen);
+      },
+    );
+  }
+
+  // Content Card Section
+  Widget _buildRegisterContentCard(
+    BuildContext context,
+    MobileRegisterController controller,
+    bool keyboardVisible,
+  ) {
+    const double containerHeightPercentage = 0.68;
+
+    final contentWidget = SingleChildScrollView(
+      padding: EdgeInsets.only(left: 24, right: 24, top: 32, bottom: 24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Full Name Input
+          _buildFullNameInput(controller),
+          const SizedBox(height: 16),
+
+          // Mobile Number Input
+          _buildMobileNumberInput(controller),
+          const SizedBox(height: 16),
+
+          // Create Password Input
+          _buildCreatePasswordInput(controller),
+          const SizedBox(height: 16),
+
+          // Confirm Password Input
+          _buildConfirmPasswordInput(controller),
+          const SizedBox(height: 24),
+
+          // Get OTP Button
+          _buildGetOtpButton(controller),
+          const SizedBox(height: 24),
+
+          // Separator
+          Row(
+            children: [
+              Expanded(child: Divider(color: Color(0xFFCBD5E1), thickness: 1)),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Text(
+                  'Other options',
+                  style: TextStyle(
+                    fontFamily: 'Lato',
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: Color(0xFF94A3B8),
+                  ),
+                ),
+              ),
+              Expanded(child: Divider(color: Color(0xFFCBD5E1), thickness: 1)),
+            ],
+          ),
+          const SizedBox(height: 24),
+
+          // Alternative Registration Options
+          _buildAlternativeRegistrationOptions(),
+        ],
+      ),
+    );
+
+    final containerDecoration = BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.only(
+        topLeft: Radius.circular(30),
+        topRight: Radius.circular(30),
+      ),
+    );
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final availableHeight = constraints.maxHeight;
+
+        final containerHeight = keyboardVisible
+            ? availableHeight
+            : containerHeightPercentage * availableHeight;
+
+        return Stack(
+          children: [
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              height: containerHeight,
+              child: Container(
+                width: double.infinity,
+                decoration: containerDecoration,
+                child: contentWidget,
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // Full Name Input
+  Widget _buildFullNameInput(MobileRegisterController controller) {
+    return CustomTextField(
+      controller: controller.fullNameController,
+      hintText: 'Full Name',
+      hintStyle: GoogleFonts.lato(
+        fontWeight: FontWeight.w500,
+        color: Color(0xFF94A3B8),
+        fontSize: 14,
+      ),
+      icon: BootstrapIcons.person,
+      keyboardType: TextInputType.name,
+    );
+  }
+
+  // Mobile Number Input
+  Widget _buildMobileNumberInput(MobileRegisterController controller) {
+    return CustomTextField(
+      controller: controller.mobileController,
+      hintText: 'Mobile Number',
+      iconSize: 16,
+      icon: BootstrapIcons.telephone,
+      hintStyle: GoogleFonts.lato(
+        fontWeight: FontWeight.w500,
+        color: Color(0xFF94A3B8),
+        fontSize: 14,
+      ),
+      keyboardType: TextInputType.phone,
+      maxLength: 10,
+      onChanged: (value) {
+        if (value.length == 10) {
+          FocusScope.of(Get.context!).unfocus();
+        }
+      },
+    );
+  }
+
+  // Create Password Input
+  Widget _buildCreatePasswordInput(MobileRegisterController controller) {
+    return Obx(
+      () => CustomTextField(
+        controller: controller.createPasswordController,
+        hintText: 'Create Password',
+        icon: BootstrapIcons.lock,
+        hintStyle: GoogleFonts.lato(
+          fontWeight: FontWeight.w500,
+          color: Color(0xFF94A3B8),
+          fontSize: 14,
+        ),
+        keyboardType: TextInputType.visiblePassword,
+        obscureText: !controller.isCreatePasswordVisible.value,
+        showPasswordToggle: true,
+        onTogglePassword: () {
+          controller.toggleCreatePasswordVisibility();
+        },
+        contentPadding: EdgeInsets.symmetric(horizontal: 8),
+      ),
+    );
+  }
+
+  // Confirm Password Input
+  Widget _buildConfirmPasswordInput(MobileRegisterController controller) {
+    return Obx(
+      () => CustomTextField(
+        controller: controller.confirmPasswordController,
+        hintText: 'Confirm Password',
+        icon: BootstrapIcons.lock,
+        hintStyle: GoogleFonts.lato(
+          fontWeight: FontWeight.w500,
+          color: Color(0xFF94A3B8),
+          fontSize: 14,
+        ),
+        keyboardType: TextInputType.visiblePassword,
+        obscureText: !controller.isConfirmPasswordVisible.value,
+        showPasswordToggle: true,
+        onTogglePassword: () {
+          controller.toggleConfirmPasswordVisibility();
+        },
+        contentPadding: EdgeInsets.symmetric(horizontal: 8),
+      ),
+    );
+  }
+
+  // Get OTP Button
+  Widget _buildGetOtpButton(MobileRegisterController controller) {
+    return Obx(() {
+      final isLoading = controller.isLoading.value;
+
+      return DynamicButton(
+        text: isLoading ? '' : 'Sign Up',
+        width: double.infinity,
+        height: 50,
+        fontSize: 16,
+        onPressed: isLoading
+            ? null
+            : () {
+                controller.handleRegister();
+              },
+        leadingIcon: isLoading
+            ? LoadingAnimationWidget.horizontalRotatingDots(
+                color: Colors.white,
+                size: 24,
+              )
+            : null,
+      );
+    });
+  }
+
+  // Alternative Registration Options
+  Widget _buildAlternativeRegistrationOptions() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        _buildAlternativeRegistrationButton(
+          icon: Icons.g_mobiledata,
+          label: 'Google',
+          iconColor: Colors.orange,
+        ),
+        _buildAlternativeRegistrationButton(
+          label: 'Abha ID',
+          iconColor: Color(0xFF3864FD),
+          imagePath: ImageConstant.ayushmanBharat,
+        ),
+        _buildAlternativeRegistrationButton(
+          icon: BootstrapIcons.envelope,
+          label: 'E-Mail ID',
+          iconColor: Color(0xFF3864FD),
+        ),
+      ],
+    );
+  }
+
+  // Alternative Registration Button
+  Widget _buildAlternativeRegistrationButton({
+    IconData? icon,
+    required String label,
+    Color? iconColor,
+    String? imagePath,
+    Size? iconSize,
+  }) {
+    return GestureDetector(
+      onTap: () {
+        // Handle alternative registration options
+        if (label == 'Google') {
+          // Handle Google registration
+        } else if (label == 'E-Mail ID') {
+          // Navigate to email registration
+          Get.toNamed(AppRoutes.emailRegisterScreen);
+        } else if (label == 'Abha ID') {
+          // Handle Abha ID registration
+          Get.back();
+        }
+      },
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(32),
+          border: Border.all(color: Color(0xFFE2E8F0), width: 1),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if (label == 'Google')
+              Image.asset(ImageConstant.googleLogo, width: 20, height: 20)
+            else if (imagePath != null)
+              Image.asset(imagePath, width: 20, height: 20)
+            else
+              Icon(icon, color: iconColor, size: iconSize?.width ?? 20),
+            const SizedBox(width: 6),
+            Text(
+              label,
+              style: TextStyle(
+                fontFamily: 'Lato',
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: Colors.black87,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

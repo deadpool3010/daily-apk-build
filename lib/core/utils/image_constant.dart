@@ -29,7 +29,8 @@ class ImageConstant {
   static const String qrBorder = '${basePath}qr_border.png';
   static const String appLogo = '${basePath}app_logo.png';
   static const String bandhuCareLogo = '${basePath}bandhucare_logo.png';
-
+  static const String googleLogo = '${basePath}google_icon.png';
+  static const String blueLogo = '${basePath}blue_logo.png';
   static const String home_background_img =
       '${basePath}home_background_img.png';
 

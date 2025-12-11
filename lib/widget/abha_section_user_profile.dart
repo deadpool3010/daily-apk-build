@@ -76,10 +76,10 @@ Widget buildCardFront({double width = 360, double height = 198}) {
         ClipRRect(
           borderRadius: BorderRadius.circular(24 * scaleFactor),
           child: Image.asset(
-            'assets/blank_abha.png',
+            'assets/images/blank_abha.png',
             width: width,
             height: height,
-            fit: BoxFit.fill,
+            fit: BoxFit.fill, 
           ),
         ),
         Positioned.fill(

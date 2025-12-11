@@ -44,6 +44,8 @@ export 'package:bandhucare_new/widget/custom_calendar.dart';
 export 'package:bandhucare_new/widget/upcoming_previous_widget.dart';
 export 'package:bandhucare_new/widget/abha_section_user_profile.dart';
 export 'package:bandhucare_new/widget/logout_bottomsheet.dart';
+export 'package:bandhucare_new/widget/common_login_register_header.dart';
+export 'package:bandhucare_new/widget/custom_text_field.dart';
 // ==================== Utils ====================
 export 'package:bandhucare_new/core/utils/image_constant.dart';
 export 'package:bandhucare_new/theme/app_theme.dart';

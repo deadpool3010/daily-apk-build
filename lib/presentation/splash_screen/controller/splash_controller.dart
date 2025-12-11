@@ -4,6 +4,7 @@ import 'dart:async';
 import 'package:bandhucare_new/services/variables.dart';
 import 'package:bandhucare_new/routes/app_routes.dart';
 import 'package:bandhucare_new/services/shared_pref_localization.dart';
+import 'package:bandhucare_new/core/utils/image_constant.dart';
 
 class SplashController extends GetxController with GetTickerProviderStateMixin {
   // Navigation Timer
@@ -45,6 +46,22 @@ class SplashController extends GetxController with GetTickerProviderStateMixin {
     _initializeAnimations();
     _startAnimations();
     _startNavigationTimer();
+    _precacheLoginHeaderImage();
+  }
+
+  // Precache login header image for better user experience
+  void _precacheLoginHeaderImage() {
+    // Use post-frame callback to ensure context is available
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final context = Get.context;
+      if (context != null) {
+        final imageProvider = AssetImage(ImageConstant.loginHeader);
+        precacheImage(imageProvider, context).catchError((error) {
+          // Silently handle errors - image will load normally when needed
+          debugPrint('Failed to precache login header image: $error');
+        });
+      }
+    });
   }
 
   void _initializeAnimationControllers() {
@@ -284,7 +301,7 @@ class SplashController extends GetxController with GetTickerProviderStateMixin {
       }
     } else {
       if (Get.context != null && Get.currentRoute == AppRoutes.splashScreen) {
-        Get.offNamed(AppRoutes.consentFormScreen);
+        Get.offNamed(AppRoutes.chooseLanguageScreen);
       }
     }
   }
