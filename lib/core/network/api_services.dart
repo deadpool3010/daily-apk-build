@@ -103,7 +103,11 @@ Future<Map<String, dynamic>> signInApi(String mobileNumber) async {
 
     final response = await http.post(
       Uri.parse(url),
-      body: {"mobileNumber": mobileNumber, "signInWith": "abhaMobile"},
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        "mobileNumber": mobileNumber,
+        "signInWith": "abhaMobile",
+      }),
     );
 
     print('SignIn Response Status: ${response.statusCode}');
@@ -111,10 +115,20 @@ Future<Map<String, dynamic>> signInApi(String mobileNumber) async {
 
     final result = jsonDecode(response.body);
 
-    if (response.statusCode == 200) {
-      // Extract sessionId from nested data object
-      sessionId = result["data"]["sessionId"] as String;
-      print('Session ID saved: $sessionId');
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      // Extract sessionId from nested data object or root level
+      String? extractedSessionId;
+      if (result['data'] != null && result['data'] is Map) {
+        final data = result['data'] as Map<String, dynamic>;
+        extractedSessionId = data['sessionId']?.toString();
+      }
+      if (extractedSessionId == null || extractedSessionId.isEmpty) {
+        extractedSessionId = result['sessionId']?.toString();
+      }
+      if (extractedSessionId != null && extractedSessionId.isNotEmpty) {
+        sessionId = extractedSessionId;
+        print('Session ID saved: $sessionId');
+      }
       return result;
     } else {
       throw Exception(
@@ -263,18 +277,25 @@ Future<Map<String, dynamic>> verifyOtpforAadhaarNumberApi(
   try {
     final url = baseUrl + verifyOtp;
     print('VerifyOtpforAadhaarNumber API URL: $url');
-    print('OTP: $otp, SessionId: $sessionId');
+    print('OTP: $otp, SessionId: $sessionId, MobileNumber: $phoneNumber');
+
     final response = await http.post(
       Uri.parse(url),
-      body: {
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
         "otp": otp,
         "sessionId": sessionId,
         "verifyFor": "createAbha",
         "mobileNumber": phoneNumber,
-      },
+      }),
     );
-    if (response.statusCode == 200) {
-      final result = jsonDecode(response.body);
+
+    print('VerifyOtpforAadhaarNumber Response Status: ${response.statusCode}');
+    print('VerifyOtpforAadhaarNumber Response Body: ${response.body}');
+
+    final result = jsonDecode(response.body);
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
       // Check if OTP verification actually succeeded by examining the message
       String message = result['message'] ?? '';
       if (message.toLowerCase().contains('invalid') ||
@@ -283,15 +304,107 @@ Future<Map<String, dynamic>> verifyOtpforAadhaarNumberApi(
         throw Exception(message);
       }
 
+      // Extract and save sessionId from response
+      try {
+        // Try to get sessionId from data object first, then from root
+        String? extractedSessionId;
+        if (result['data'] != null && result['data'] is Map) {
+          final data = result['data'] as Map<String, dynamic>;
+          extractedSessionId = data['sessionId']?.toString();
+        }
+
+        // If not found in data, check root level
+        if (extractedSessionId == null || extractedSessionId.isEmpty) {
+          extractedSessionId = result['sessionId']?.toString();
+        }
+
+        // Save to global variable if found
+        if (extractedSessionId != null && extractedSessionId.isNotEmpty) {
+          sessionId = extractedSessionId;
+          print('Session ID saved from verify OTP: $sessionId');
+        }
+      } catch (e) {
+        print('VerifyOtpforAadhaarNumber sessionId save warning: $e');
+      }
+
       return result;
     } else {
-      final result = jsonDecode(response.body);
       throw Exception(
         "Failed to verify OTP: ${result['message'] ?? 'Unknown error'}",
       );
     }
   } catch (e) {
-    print('VerifyOtp Error: $e');
+    print('VerifyOtpforAadhaarNumber Error: $e');
+    throw Exception(e);
+  }
+}
+
+Future<Map<String, dynamic>> verifyOtpForUpdateMobileApi(
+  String otp,
+  String sessionId,
+) async {
+  try {
+    final url = baseUrl + verifyOtp;
+    print('VerifyOtpForUpdateMobile API URL: $url');
+    print('OTP: $otp, SessionId: $sessionId');
+
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        "otp": otp,
+        "sessionId": sessionId,
+        "verifyFor": "updateMobile",
+      }),
+    );
+
+    print('VerifyOtpForUpdateMobile Response Status: ${response.statusCode}');
+    print('VerifyOtpForUpdateMobile Response Body: ${response.body}');
+
+    final result = jsonDecode(response.body);
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      // Check if OTP verification actually succeeded by examining the message
+      String message = result['message'] ?? '';
+      if (message.toLowerCase().contains('invalid') ||
+          message.toLowerCase().contains('incorrect') ||
+          message.toLowerCase().contains('expired')) {
+        throw Exception(message);
+      }
+
+      // Extract and save sessionId from response
+      try {
+        // Try to get sessionId from data object first, then from root
+        String? extractedSessionId;
+        if (result['data'] != null && result['data'] is Map) {
+          final data = result['data'] as Map<String, dynamic>;
+          extractedSessionId = data['sessionId']?.toString();
+        }
+
+        // If not found in data, check root level
+        if (extractedSessionId == null || extractedSessionId.isEmpty) {
+          extractedSessionId = result['sessionId']?.toString();
+        }
+
+        // Save to global variable if found
+        if (extractedSessionId != null && extractedSessionId.isNotEmpty) {
+          sessionId = extractedSessionId;
+          print(
+            'Session ID saved from verify OTP for updateMobile: $sessionId',
+          );
+        }
+      } catch (e) {
+        print('VerifyOtpForUpdateMobile sessionId save warning: $e');
+      }
+
+      return result;
+    } else {
+      throw Exception(
+        "Failed to verify OTP: ${result['message'] ?? 'Unknown error'}",
+      );
+    }
+  } catch (e) {
+    print('VerifyOtpForUpdateMobile Error: $e');
     throw Exception(e);
   }
 }
@@ -307,21 +420,22 @@ Future<Map<String, dynamic>> selectAccountApi(
 
     final response = await http.post(
       Uri.parse(url),
-      body: {
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
         "abhaNumber": abhaNumber,
         "sessionId": sessionId,
         "signInWith": "abhaMobile",
-      },
+      }),
     );
 
     print('SelectAccount Response Status: ${response.statusCode}');
     print('SelectAccount Response Body: ${response.body}');
 
-    if (response.statusCode == 200) {
-      final result = jsonDecode(response.body);
+    final result = jsonDecode(response.body);
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
       return result;
     } else {
-      final result = jsonDecode(response.body);
       throw Exception(
         "Failed to select account: ${result['message'] ?? 'Unknown error'}",
       );
@@ -333,14 +447,25 @@ Future<Map<String, dynamic>> selectAccountApi(
 }
 
 Future<Map<String, dynamic>> createAbhaNumberApi(String adharNumber) async {
-  final url = baseUrl + createAbhaNumber;
   try {
+    final url = baseUrl + createAbhaNumber;
+    print('CreateAbhaNumber API URL: $url');
+    print(
+      'Aadhaar Number: ${adharNumber.substring(0, 4)}****${adharNumber.substring(8)}',
+    );
+
     final response = await http.post(
       Uri.parse(url),
-      body: {"aadhaarNumber": adharNumber},
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({"aadhaarNumber": adharNumber}),
     );
+
+    print('CreateAbhaNumber Response Status: ${response.statusCode}');
+    print('CreateAbhaNumber Response Body: ${response.body}');
+
     final result = jsonDecode(response.body);
-    if (response.statusCode == 200) {
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
       return result;
     } else {
       throw Exception(result['message'] ?? 'Unknown error');
@@ -379,17 +504,18 @@ Future<Map<String, dynamic>> createAbhaAddressApi(
 
     final response = await http.post(
       Uri.parse(url),
-      body: {"abhaAddress": abhaAddress, "sessionId": sessionId},
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({"abhaAddress": abhaAddress, "sessionId": sessionId}),
     );
 
     print('CreateAbhaAddress Response Status: ${response.statusCode}');
     print('CreateAbhaAddress Response Body: ${response.body}');
 
-    if (response.statusCode == 200) {
-      final result = jsonDecode(response.body);
+    final result = jsonDecode(response.body);
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
       return result;
     } else {
-      final result = jsonDecode(response.body);
       throw Exception(
         "Failed to create ABHA address: ${result['message'] ?? 'Unknown error'}",
       );
@@ -552,12 +678,22 @@ Future<Map<String, dynamic>> sendVerificationLinkApi(
 ) async {
   try {
     final url = baseUrl + sendVerificationLink;
+    print('SendVerificationLink API URL: $url');
+    print('Email: $email, SessionId: $sessionId');
+
     final response = await http.post(
       Uri.parse(url),
-      body: {"sessionId": sessionId, "email": email},
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({"sessionId": sessionId, "email": email}),
     );
+
+    print('SendVerificationLink Response Status: ${response.statusCode}');
+    print('SendVerificationLink Response Body: ${response.body}');
+
     final result = jsonDecode(response.body);
-    if (response.statusCode == 200) {
+
+    // Note: This API does NOT update sessionId - it only uses the existing one
+    if (response.statusCode == 200 || response.statusCode == 201) {
       return result;
     } else {
       throw Exception(result['message'] ?? 'Unknown error');
@@ -573,12 +709,20 @@ Future<Map<String, dynamic>> getAbhaAddressSuggestionsApi(
 ) async {
   try {
     final url = baseUrl + abhaAddressSuggestions(sessionId);
+    print('GetAbhaAddressSuggestions API URL: $url');
+    print('SessionId: $sessionId');
+
     final response = await http.get(
       Uri.parse(url),
       headers: {"Content-Type": "application/json"},
     );
+
+    print('GetAbhaAddressSuggestions Response Status: ${response.statusCode}');
+    print('GetAbhaAddressSuggestions Response Body: ${response.body}');
+
     final result = jsonDecode(response.body);
-    if (response.statusCode == 200) {
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
       print("Abha address suggestions: $result");
       return result;
     } else {

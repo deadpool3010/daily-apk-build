@@ -41,6 +41,8 @@ import '../presentation/create_abha_username_screen/create_abha_username_screen.
 import '../presentation/create_abha_username_screen/binding/create_abha_username_binding.dart';
 import '../presentation/abha_created_screen/abha_created_screen.dart';
 import '../presentation/abha_created_screen/binding/abha_created_binding.dart';
+import '../presentation/select_abha_address_screen/select_abha_address_screen.dart';
+import '../presentation/select_abha_address_screen/binding/select_abha_address_binding.dart';
 
 class AppRoutes {
   AppRoutes._();
@@ -72,6 +74,7 @@ class AppRoutes {
   static const emailVerificationAbhaScreen = '/email-verification-abha';
   static const createAbhaUsernameScreen = '/create-abha-username';
   static const abhaCreatedScreen = '/abha-created';
+  static const selectAbhaAddressScreen = '/select-abha-address';
 }
 
 class AppPages {
@@ -159,6 +162,12 @@ class AppPages {
       name: AppRoutes.abhaCreatedScreen,
       page: () => const AbhaCreatedScreen(),
       binding: AbhaCreatedBinding(),
+      transition: Transition.fadeIn,
+    ),
+    GetPage(
+      name: AppRoutes.selectAbhaAddressScreen,
+      page: () => const SelectAbhaAddressScreen(),
+      binding: SelectAbhaAddressBinding(),
       transition: Transition.fadeIn,
     ),
     GetPage(

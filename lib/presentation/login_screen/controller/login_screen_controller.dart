@@ -1,5 +1,8 @@
+import 'package:bandhucare_new/routes/app_routes.dart';
 import 'package:bandhucare_new/services/variables.dart';
 import 'package:bandhucare_new/core/network/api_services.dart';
+import 'package:bandhucare_new/services/shared_pref_localization.dart';
+import 'package:bandhucare_new/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
@@ -999,7 +1002,68 @@ class LoginController extends GetxController with GetTickerProviderStateMixin {
           print('📋 Stored ${abhaAccounts.length} ABHA accounts');
           print('🔑 Using SessionId: $sessionId');
           print('========================================');
+
+          // Navigate to select ABHA address screen if multiple accounts found
+          if (abhaAccounts.length > 1) {
+            Get.toNamed(
+              AppRoutes.selectAbhaAddressScreen,
+              arguments: {'abhaAccounts': abhaAccounts},
+            );
+          } else if (abhaAccounts.length == 1) {
+            // If only one account, select it automatically
+            final selectedAccount = abhaAccounts[0];
+            final abhaNumber = selectedAccount['abhaNumber']?.toString() ?? '';
+
+            // Call select account API automatically
+            try {
+              final selectResult = await selectAccountApi(
+                sessionId,
+                abhaNumber,
+              );
+
+              // Extract tokens
+              if (selectResult['data'] != null) {
+                final data = selectResult['data'] as Map<String, dynamic>;
+                String? extractedAccessToken =
+                    data['accessToken']?.toString() ??
+                    data['token']?.toString();
+                String? extractedRefreshToken = data['refreshToken']
+                    ?.toString();
+
+                if (extractedAccessToken != null &&
+                    extractedAccessToken.isNotEmpty) {
+                  accessToken = extractedAccessToken;
+                  await SharedPrefLocalization().saveTokens(
+                    extractedAccessToken,
+                    extractedRefreshToken ?? '',
+                  );
+                }
+                if (extractedRefreshToken != null &&
+                    extractedRefreshToken.isNotEmpty) {
+                  refreshToken = extractedRefreshToken;
+                }
+              }
+
+              Get.offAllNamed(AppRoutes.homeScreen);
+            } catch (e) {
+              print('Error auto-selecting account: $e');
+              // Navigate to select screen anyway
+              Get.toNamed(
+                AppRoutes.selectAbhaAddressScreen,
+                arguments: {'abhaAccounts': abhaAccounts},
+              );
+            }
+          } else {
+            // No accounts found, navigate to home
+            Get.offAllNamed(AppRoutes.homeScreen);
+          }
+        } else {
+          // No accounts in response, navigate to home
+          Get.offAllNamed(AppRoutes.homeScreen);
         }
+      } else {
+        // No data in response, navigate to home
+        Get.offAllNamed(AppRoutes.homeScreen);
       }
     } catch (e) {
       print('');

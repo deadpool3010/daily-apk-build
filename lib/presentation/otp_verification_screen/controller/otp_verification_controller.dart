@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:bandhucare_new/routes/app_routes.dart';
+import 'package:bandhucare_new/core/network/api_services.dart';
+import 'package:bandhucare_new/services/variables.dart';
 
 class OtpVerificationController extends GetxController {
   // Loading state
@@ -29,24 +31,32 @@ class OtpVerificationController extends GetxController {
       return;
     }
 
+    // Check if sessionId is available
+    if (sessionId.isEmpty) {
+      Fluttertoast.showToast(
+        msg: "Session ID is missing. Please try again.",
+        toastLength: Toast.LENGTH_SHORT,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+      );
+      return;
+    }
+
     isLoading.value = true;
     enteredOtp.value = otp;
 
     try {
-      // TODO: Implement API call for OTP verification
-      // final result = await verifyOtpApi(otp);
-
-      // Simulate API call
-      await Future.delayed(Duration(seconds: 2));
+      // Call verify OTP API for updateMobile with updated sessionId
+      final result = await verifyOtpForUpdateMobileApi(otp, sessionId);
 
       Fluttertoast.showToast(
-        msg: "OTP verified successfully!",
+        msg: result['message'] ?? "OTP verified successfully!",
         toastLength: Toast.LENGTH_SHORT,
         backgroundColor: Colors.green,
         textColor: Colors.white,
       );
 
-      // Navigate to email verification screen
+      // Navigate to email verification screen after successful verification
       Get.toNamed(AppRoutes.emailVerificationAbhaScreen);
     } catch (e) {
       String errorMessage = e.toString();

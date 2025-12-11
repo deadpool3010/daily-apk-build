@@ -2,6 +2,8 @@ import 'package:bandhucare_new/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:bandhucare_new/core/network/api_services.dart';
+import 'package:bandhucare_new/services/variables.dart';
 
 class EmailVerificationAbhaController extends GetxController {
   // Text Controller for email
@@ -47,23 +49,34 @@ class EmailVerificationAbhaController extends GetxController {
       return;
     }
 
+    // Check if sessionId is available
+    if (sessionId.isEmpty) {
+      Fluttertoast.showToast(
+        msg: "Session ID is missing. Please try again.",
+        toastLength: Toast.LENGTH_SHORT,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+      );
+      return;
+    }
+
     isLoading.value = true;
 
     try {
-      // TODO: Implement API call for email verification
-      // final result = await verifyEmailApi(email);
-
-      // Simulate API call
-      await Future.delayed(Duration(seconds: 2));
+      // Call send verification link API (does NOT update sessionId, only uses it)
+      final result = await sendVerificationLinkApi(
+        email,
+        sessionId, // Use existing sessionId from global variable
+      );
 
       Fluttertoast.showToast(
-        msg: "Email verified successfully!",
+        msg: result['message'] ?? "Verification link sent successfully!",
         toastLength: Toast.LENGTH_SHORT,
         backgroundColor: Colors.green,
         textColor: Colors.white,
       );
 
-      // TODO: Navigate to next screen
+      // Navigate to create ABHA username screen
       Get.offNamed(AppRoutes.createAbhaUsernameScreen);
     } catch (e) {
       String errorMessage = e.toString();

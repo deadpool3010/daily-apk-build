@@ -2,6 +2,8 @@ import 'package:bandhucare_new/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:bandhucare_new/core/network/api_services.dart';
+import 'package:bandhucare_new/services/variables.dart' as vars;
 
 class AbhaRegisterController extends GetxController
     with GetTickerProviderStateMixin {
@@ -184,15 +186,23 @@ class AbhaRegisterController extends GetxController
     isLoadingGetOtp.value = true;
 
     try {
-      // TODO: Implement API call
-      // final result = await createAbhaNumberApi(aadhaarNumber);
-      // sessionId = result['data']['sessionId'] as String;
+      // Call create ABHA API with Aadhaar number
+      final result = await createAbhaNumberApi(aadhaarNumber);
 
-      // Simulate API call
-      await Future.delayed(Duration(seconds: 2));
+      // Extract sessionId from response
+      if (result['data'] != null && result['data'] is Map) {
+        final data = result['data'] as Map<String, dynamic>;
+        final extractedSessionId = data['sessionId']?.toString() ?? '';
+        if (extractedSessionId.isNotEmpty) {
+          sessionId = extractedSessionId;
+          // Also save to global variable
+          vars.sessionId = extractedSessionId;
+          print('Session ID saved: $sessionId');
+        }
+      }
 
       Fluttertoast.showToast(
-        msg: "OTP sent successfully!",
+        msg: result['message'] ?? "OTP sent successfully!",
         toastLength: Toast.LENGTH_SHORT,
         backgroundColor: Colors.green,
         textColor: Colors.white,
@@ -295,26 +305,45 @@ class AbhaRegisterController extends GetxController
       return;
     }
 
+    if (sessionId.isEmpty) {
+      Fluttertoast.showToast(
+        msg: "Session ID is missing. Please try again.",
+        toastLength: Toast.LENGTH_SHORT,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+      );
+      return;
+    }
+
     isLoadingVerifyOtp.value = true;
 
     try {
-      // TODO: Implement API call
-      // final result = await verifyOtpforAadhaarNumberApi(
-      //   enteredAadhaarOtp.value,
-      //   sessionId,
-      //   mobileController.text.trim(),
-      // );
-
-      // Simulate API call
-      await Future.delayed(Duration(seconds: 2));
+      // Call verify OTP API for Aadhaar with createAbha as verifyFor
+      final result = await verifyOtpforAadhaarNumberApi(
+        enteredAadhaarOtp.value,
+        sessionId,
+        mobileController.text.trim(),
+      );
 
       Fluttertoast.showToast(
-        msg: "OTP verified successfully!",
+        msg: result['message'] ?? "OTP verified successfully!",
         toastLength: Toast.LENGTH_SHORT,
         backgroundColor: Colors.green,
         textColor: Colors.white,
       );
-      Get.toNamed(AppRoutes.otpVerificationScreen);
+
+      // Check updateMobile in response to determine navigation
+      final updateMobile =
+          result['updateMobile'] ?? result['data']?['updateMobile'] ?? false;
+
+      // Navigate based on updateMobile value
+      if (updateMobile == true) {
+        // If updateMobile is true, navigate to OTP verification screen
+        Get.toNamed(AppRoutes.otpVerificationScreen);
+      } else {
+        // If updateMobile is false or not present, navigate to email verification screen
+        Get.toNamed(AppRoutes.emailVerificationAbhaScreen);
+      }
     } catch (e) {
       String errorMessage = e.toString();
       if (errorMessage.startsWith('Exception: Exception: ')) {
