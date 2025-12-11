@@ -3245,7 +3245,7 @@ class _LoginScreenState extends State<LoginScreen>
               left: 240,
               top: 13,
               child: Image.asset(
-                'assets/imagesbadge-check.png',
+                'assets/images/badge-check.png',
                 width: 24,
                 height: 24,
                 errorBuilder: (context, error, stackTrace) {
