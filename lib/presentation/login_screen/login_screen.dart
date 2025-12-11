@@ -70,9 +70,9 @@ class LoginScreen extends StatelessWidget {
   // Header Section with Dark Blue Background
   Widget _buildLoginHeader(LoginController controller) {
     return CommonLoginRegisterHeader(
-      title: 'Go ahead and set up your account',
-      subtitleText: "Don't have an account? ",
-      actionText: 'Register',
+      title: 'lbl_go_ahead_and_set_up_your_account'.tr,
+      subtitleText: 'lbl_dont_have_an_account'.tr,
+      actionText: 'lbl_register'.tr,
       onActionTap: () {
         Get.toNamed(AppRoutes.registerHomescreen);
       },
@@ -90,7 +90,7 @@ class LoginScreen extends StatelessWidget {
   ) {
     // Adjust this value to control container height when keyboard is not visible
     // When keyboard is visible: container will be full height automatically
-    const double containerHeightPercentage = 0.68;
+    const double containerHeightPercentage = 0.70; // Slightly increased for longer text
 
     final contentWidget = SingleChildScrollView(
       padding: EdgeInsets.only(left: 24, right: 24, top: 32, bottom: 24),
@@ -99,12 +99,14 @@ class LoginScreen extends StatelessWidget {
         children: [
           // Instruction Text
           Text(
-            'Enter the Mobile Number linked to your Abha Address',
+            'msg_enter_mobile_number_linked_to_abha'.tr,
             style: GoogleFonts.lato(
               fontSize: 14,
               fontWeight: FontWeight.w500,
               color: Color(0xFF94A3B8),
             ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
           ),
           const SizedBox(height: 16),
 
@@ -127,12 +129,14 @@ class LoginScreen extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Text(
-                  'Or login with',
+                  'lbl_or_login_with'.tr,
                   style: GoogleFonts.lato(
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
                     color: Color(0xFF94A3B8),
                   ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
               Expanded(child: Divider(color: Color(0xFFCBD5E1), thickness: 1)),
@@ -209,106 +213,115 @@ class LoginScreen extends StatelessWidget {
     );
   }
 
-  // OTP Input with Get OTP Button
+          // OTP Input with Get OTP Button
   Widget _buildOTPInputWithButton(LoginController controller) {
-    return Container(
-      height: 50,
-      decoration: BoxDecoration(
-        color: Color(0xFFF1F5F9),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Color(0xFFE2E8F0), width: 1),
-      ),
-      child: Stack(
-        children: [
-          Row(
+    return Column(
+      children: [
+        Container(
+          height: 50,
+          decoration: BoxDecoration(
+            color: Color(0xFFF1F5F9),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Color(0xFFE2E8F0), width: 1),
+          ),
+          child: Stack(
             children: [
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 16, right: 8),
-                  child: _buildPinCodeField(controller),
-                ),
-              ),
-              Obx(
-                () => Container(
-                  margin: const EdgeInsets.only(right: 8),
-                  child: ElevatedButton(
-                    onPressed: controller.isLoadingSignIn.value
-                        ? null
-                        : () => controller.handleGetOTP(),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFF3864FD),
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      elevation: 0,
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 8,
+              Row(
+                children: [
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 16, right: 8),
+                      child: _buildPinCodeField(controller),
+                    ),
+                  ),
+                  Obx(
+                    () => Container(
+                      margin: const EdgeInsets.only(right: 8),
+                      child: ElevatedButton(
+                        onPressed: controller.isLoadingSignIn.value
+                            ? null
+                            : () => controller.handleGetOTP(),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(0xFF3864FD),
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          elevation: 0,
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 12, // Reduced padding
+                            vertical: 8,
+                          ),
+                          minimumSize: Size(0, 0), // Allow button to shrink
+                        ),
+                        child: controller.isLoadingSignIn.value
+                            ? SizedBox(
+                                width: 16,
+                                height: 16,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    Colors.white,
+                                  ),
+                                ),
+                              )
+                            : FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: Text(
+                                  'lbl_get_otp'.tr,
+                                  style: GoogleFonts.lato(
+                                    fontSize: 13, // Slightly reduced
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.white,
+                                  ),
+                                  maxLines: 1,
+                                ),
+                              ),
                       ),
                     ),
-                    child: controller.isLoadingSignIn.value
-                        ? SizedBox(
-                            width: 16,
-                            height: 16,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                Colors.white,
-                              ),
-                            ),
-                          )
-                        : Text(
-                            'Get OTP',
-                            style: GoogleFonts.lato(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.white,
-                            ),
-                          ),
                   ),
-                ),
+                ],
               ),
             ],
           ),
-          // Hint overlay on OTP field
-          Obx(
-            () =>
-                controller.showGetOtpHint.value &&
-                    controller.enteredOtp.value.isEmpty
-                ? Positioned.fill(
-                    child: GestureDetector(
-                      onTap: () {
-                        controller.showGetOtpHint.value = false;
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.only(left: 16),
-                        alignment: Alignment.centerLeft,
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.info_outline,
-                              size: 14,
+        ),
+        // Hint text below OTP field instead of overlay
+        Obx(
+          () => controller.showGetOtpHint.value &&
+                  controller.enteredOtp.value.isEmpty
+              ? Padding(
+                  padding: const EdgeInsets.only(top: 8, left: 4),
+                  child: GestureDetector(
+                    onTap: () {
+                      controller.showGetOtpHint.value = false;
+                    },
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.info_outline,
+                          size: 14,
+                          color: Color(0xFF94A3B8),
+                        ),
+                        const SizedBox(width: 6),
+                        Expanded(
+                          child: Text(
+                            'msg_click_get_otp_to_receive_code'.tr,
+                            style: GoogleFonts.lato(
+                              fontSize: 11, // Slightly reduced
+                              fontWeight: FontWeight.w500,
                               color: Color(0xFF94A3B8),
                             ),
-                            const SizedBox(width: 6),
-                            Text(
-                              'Click "Get OTP" to receive code',
-                              style: GoogleFonts.lato(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                                color: Color(0xFF94A3B8),
-                              ),
-                            ),
-                          ],
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
-                      ),
+                      ],
                     ),
-                  )
-                : SizedBox.shrink(),
-          ),
-        ],
-      ),
+                  ),
+                )
+              : SizedBox.shrink(),
+        ),
+      ],
     );
   }
 
@@ -319,7 +332,7 @@ class LoginScreen extends StatelessWidget {
       final otpLength = controller.enteredOtp.value.length;
 
       return DynamicButton(
-        text: isLoading ? '' : 'Login',
+        text: isLoading ? '' : 'lbl_login'.tr,
         width: double.infinity,
         height: 50,
         fontSize: 16,
@@ -346,21 +359,32 @@ class LoginScreen extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        _buildAlternativeLoginButton(
-          icon: Icons.g_mobiledata,
-          label: 'Google',
-          iconColor: Colors.orange,
+        Expanded(
+          child: _buildAlternativeLoginButton(
+            icon: Icons.g_mobiledata,
+            label: 'lbl_google'.tr,
+            iconColor: Colors.orange,
+            route: null, // Google login handler
+          ),
         ),
-        _buildAlternativeLoginButton(
-          icon: BootstrapIcons.telephone_fill,
-          label: 'Mobile',
-          iconSize: Size(16, 16),
-          iconColor: Color(0xFF3864FD),
+        const SizedBox(width: 12),
+        Expanded(
+          child: _buildAlternativeLoginButton(
+            icon: BootstrapIcons.telephone_fill,
+            label: 'lbl_mobile'.tr,
+            iconSize: Size(16, 16),
+            iconColor: Color(0xFF3864FD),
+            route: AppRoutes.mobilePasswordLoginScreen,
+          ),
         ),
-        _buildAlternativeLoginButton(
-          icon: TablerIcons.mail,
-          label: 'E-Mail ID',
-          iconColor: Color(0xFF3864FD),
+        const SizedBox(width: 12),
+        Expanded(
+          child: _buildAlternativeLoginButton(
+            icon: TablerIcons.mail,
+            label: 'lbl_email_id'.tr,
+            iconColor: Color(0xFF3864FD),
+            route: AppRoutes.emailPasswordLoginScreen,
+          ),
         ),
       ],
     );
@@ -372,21 +396,18 @@ class LoginScreen extends StatelessWidget {
     required String label,
     required Color iconColor,
     Size? iconSize,
+    String? route,
   }) {
     return GestureDetector(
       onTap: () {
         // Handle alternative login options
-        if (label == 'Google') {
-          // Handle Google login
-        } else if (label == 'Mobile') {
-          Get.toNamed(AppRoutes.mobilePasswordLoginScreen);
-        } else if (label == 'E-Mail ID') {
-          // Navigate to email/password login screen
-          Get.toNamed(AppRoutes.emailPasswordLoginScreen);
+        if (route != null) {
+          Get.toNamed(route);
         }
+        // Google login can be handled separately if needed
       },
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 12), // Reduced padding
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(32),
@@ -394,18 +415,24 @@ class LoginScreen extends StatelessWidget {
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: [
-            if (label == 'Google')
-              Image.asset(ImageConstant.googleLogo, width: 20, height: 20)
+            if (label == 'lbl_google'.tr)
+              Image.asset(ImageConstant.googleLogo, width: 18, height: 18) // Slightly smaller
             else
-              Icon(icon, color: iconColor, size: iconSize?.width ?? 20),
-            const SizedBox(width: 6),
-            Text(
-              label,
-              style: GoogleFonts.lato(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                color: Colors.black87,
+              Icon(icon, color: iconColor, size: (iconSize?.width ?? 18).clamp(16.0, 18.0)), // Smaller icon
+            const SizedBox(width: 4), // Reduced spacing
+            Flexible(
+              child: Text(
+                label,
+                style: GoogleFonts.lato(
+                  fontSize: 12, // Reduced font size
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black87,
+                ),
+                maxLines: 2, // Allow 2 lines for longer text
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
               ),
             ),
           ],

@@ -71,9 +71,9 @@ class MobilePasswordLoginScreen extends StatelessWidget {
   // Header Section with Dark Blue Background
   Widget _buildLoginHeader(MobilePasswordLoginController controller) {
     return CommonLoginRegisterHeader(
-      title: 'Go ahead and set\nup your account',
-      subtitleText: "Don't have an account? ",
-      actionText: 'Register',
+      title: 'lbl_go_ahead_and_set_up_account'.tr,
+      subtitleText: 'lbl_dont_have_an_account'.tr,
+      actionText: 'lbl_register'.tr,
       onActionTap: () {
         Get.toNamed(AppRoutes.registerHomescreen);
       },
@@ -119,13 +119,15 @@ class MobilePasswordLoginScreen extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Text(
-                  'Or login with',
+                  'lbl_or_login_with'.tr,
                   style: TextStyle(
                     fontFamily: 'Lato',
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
                     color: Color(0xFF94A3B8),
                   ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
               Expanded(child: Divider(color: Color(0xFFCBD5E1), thickness: 1)),
@@ -195,7 +197,7 @@ class MobilePasswordLoginScreen extends StatelessWidget {
     return Obx(
       () => CustomTextField(
         controller: controller.passwordController,
-        hintText: 'Password',
+        hintText: 'lbl_password'.tr,
         icon: BootstrapIcons.lock,
         keyboardType: TextInputType.visiblePassword,
         obscureText: !controller.isPasswordVisible.value,
@@ -244,13 +246,17 @@ class MobilePasswordLoginScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 8),
-              Text(
-                'Remember me',
-                style: TextStyle(
-                  fontFamily: 'Lato',
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.black87,
+              Flexible(
+                child: Text(
+                  'lbl_remember_me'.tr,
+                  style: TextStyle(
+                    fontFamily: 'Lato',
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black87,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],
@@ -263,13 +269,15 @@ class MobilePasswordLoginScreen extends StatelessWidget {
             // controller.goToForgetPassword();
           },
           child: Text(
-            'Forget Password?',
+            'lbl_forget_password'.tr,
             style: TextStyle(
               fontFamily: 'Lato',
               fontSize: 14,
               fontWeight: FontWeight.w500,
               color: Color(0xFF3864FD),
             ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
         ),
       ],
@@ -282,7 +290,7 @@ class MobilePasswordLoginScreen extends StatelessWidget {
       final isLoading = controller.isLoading.value;
 
       return DynamicButton(
-        text: isLoading ? '' : 'Login',
+        text: isLoading ? '' : 'lbl_login'.tr,
         width: double.infinity,
         height: 50,
         fontSize: 16,
@@ -306,20 +314,28 @@ class MobilePasswordLoginScreen extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        _buildAlternativeLoginButton(
-          icon: Icons.g_mobiledata,
-          label: 'Google',
-          iconColor: Colors.orange,
+        Expanded(
+          child: _buildAlternativeLoginButton(
+            icon: Icons.g_mobiledata,
+            label: 'lbl_google'.tr,
+            iconColor: Colors.orange,
+          ),
         ),
-        _buildAlternativeLoginButton(
-          label: 'Abha ID',
-          iconColor: Color(0xFF3864FD),
-          imagePath: ImageConstant.ayushmanBharat,
+        const SizedBox(width: 12),
+        Expanded(
+          child: _buildAlternativeLoginButton(
+            label: 'lbl_abha_id'.tr,
+            iconColor: Color(0xFF3864FD),
+            imagePath: ImageConstant.ayushmanBharat,
+          ),
         ),
-        _buildAlternativeLoginButton(
-          icon: TablerIcons.mail,
-          label: 'E-Mail ID',
-          iconColor: Color(0xFF3864FD),
+        const SizedBox(width: 12),
+        Expanded(
+          child: _buildAlternativeLoginButton(
+            icon: TablerIcons.mail,
+            label: 'lbl_email_id'.tr,
+            iconColor: Color(0xFF3864FD),
+          ),
         ),
       ],
     );
@@ -336,12 +352,12 @@ class MobilePasswordLoginScreen extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         // Handle alternative login options
-        if (label == 'Google') {
+        if (label == 'lbl_google'.tr) {
           // Handle Google login
-        } else if (label == 'E-Mail ID') {
+        } else if (label == 'lbl_email_id'.tr) {
           // Navigate to email login
           Get.offNamed(AppRoutes.emailPasswordLoginScreen);
-        } else if (label == 'Abha ID') {
+        } else if (label == 'lbl_abha_id'.tr) {
           Get.back();
         }
       },
@@ -354,21 +370,27 @@ class MobilePasswordLoginScreen extends StatelessWidget {
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: [
-            if (label == 'Google')
+            if (label == 'lbl_google'.tr)
               Image.asset(ImageConstant.googleLogo, width: 20, height: 20)
             else if (imagePath != null)
               Image.asset(imagePath, width: 20, height: 20)
             else
               Icon(icon, color: iconColor, size: iconSize?.width ?? 20),
             const SizedBox(width: 6),
-            Text(
-              label,
-              style: TextStyle(
-                fontFamily: 'Lato',
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                color: Colors.black87,
+            Flexible(
+              child: Text(
+                label,
+                style: TextStyle(
+                  fontFamily: 'Lato',
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black87,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
               ),
             ),
           ],

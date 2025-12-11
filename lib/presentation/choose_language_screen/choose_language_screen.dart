@@ -1,6 +1,5 @@
 import 'package:bandhucare_new/core/app_exports.dart';
 import 'package:bandhucare_new/presentation/choose_language_screen/controller/choose_language_controller.dart';
-import 'package:get/get.dart';
 import 'package:heroicons/heroicons.dart';
 
 class ChooseLanguageScreen extends StatelessWidget {
@@ -106,7 +105,7 @@ class ChooseLanguageScreen extends StatelessWidget {
         children: [
           // "Choose Language" text
           Text(
-            'Choose Language',
+            'lbl_choose_language'.tr,
             style: TextStyle(
               fontFamily: 'Roboto',
               fontSize: 22,
@@ -121,7 +120,7 @@ class ChooseLanguageScreen extends StatelessWidget {
 
           // "What language would you like the app to be in?" text
           Text(
-            'What language would you like the app to be in?',
+            'lbl_what_language_would_you_like'.tr,
             style: TextStyle(
               fontFamily: 'Lato',
               fontSize: 14,
@@ -176,7 +175,7 @@ class ChooseLanguageScreen extends StatelessWidget {
                   children: [
                     Obx(
                       () => Text(
-                        controller.selectedLanguage.value,
+                        controller.selectedLanguageKey.value.tr,
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
@@ -234,15 +233,16 @@ class ChooseLanguageScreen extends StatelessWidget {
                     ),
                     child: Obx(
                       () => Column(
-                        children: controller.languages
+                        children: controller.languageKeys
                             .where(
-                              (lang) =>
-                                  lang != controller.selectedLanguage.value,
+                              (langKey) =>
+                                  langKey !=
+                                  controller.selectedLanguageKey.value,
                             )
-                            .map((language) {
+                            .map((languageKey) {
                               return GestureDetector(
                                 onTap: () {
-                                  controller.selectLanguage(language);
+                                  controller.selectLanguage(languageKey);
                                 },
                                 child: Container(
                                   width: double.infinity,
@@ -251,7 +251,7 @@ class ChooseLanguageScreen extends StatelessWidget {
                                     vertical: 12,
                                   ),
                                   child: Text(
-                                    language,
+                                    languageKey.tr,
                                     style: const TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w400,

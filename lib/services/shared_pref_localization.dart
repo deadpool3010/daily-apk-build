@@ -61,6 +61,16 @@ class SharedPrefLocalization {
     return prefs.getString('appLanguage') ?? 'English';
   }
 
+  Future<void> saveAppLocale(String localeCode) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString('appLocale', localeCode);
+  }
+
+  Future<String> getAppLocale() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('appLocale') ?? 'en_US';
+  }
+
   Future<String> getMitraLanguage() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString('mitraLanguage') ?? 'English';

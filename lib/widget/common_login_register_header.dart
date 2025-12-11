@@ -21,7 +21,7 @@ class CommonLoginRegisterHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 360,
+      height: 400, // Increased height to accommodate longer text
       width: double.infinity,
       margin: EdgeInsets.only(bottom: 0),
       decoration: BoxDecoration(
@@ -70,11 +70,13 @@ class CommonLoginRegisterHeader extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 24),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
+                          flex: 3,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
                             children: [
                               Hero(
                                 transitionOnUserGestures: true,
@@ -85,51 +87,61 @@ class CommonLoginRegisterHeader extends StatelessWidget {
                                     title,
                                     style: TextStyle(
                                       fontFamily: 'Roboto',
-                                      fontSize: 24,
+                                      fontSize:
+                                          22, // Slightly reduced for longer text
                                       fontWeight: FontWeight.w700,
                                       color: Colors.white,
-                                      height: 1.2,
+                                      height: 1.3,
                                     ),
+                                    maxLines: 3, // Increased to 3 lines
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
                               ),
                               if (subtitleText != null || actionText != null)
-                                const SizedBox(height: 12),
+                                const SizedBox(height: 10),
                               if (subtitleText != null || actionText != null)
                                 GestureDetector(
                                   behavior: HitTestBehavior.opaque,
                                   onTap: onActionTap,
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
+                                  child: Wrap(
+                                    crossAxisAlignment:
+                                        WrapCrossAlignment.center,
+                                    spacing: 4,
                                     children: [
                                       if (subtitleText != null)
                                         Text(
                                           subtitleText!,
                                           style: TextStyle(
                                             fontFamily: 'Lato',
-                                            fontSize: 14,
+                                            fontSize: 13, // Slightly reduced
                                             fontWeight: FontWeight.w500,
                                             color: Colors.white.withOpacity(
                                               0.9,
                                             ),
                                           ),
+                                          maxLines: 2, // Allow 2 lines
+                                          overflow: TextOverflow.ellipsis,
                                         ),
                                       if (actionText != null)
                                         Hero(
-                                          tag: actionText == 'Register'
-                                              ? 'register_to_abha'
-                                              : 'login_text',
+                                          tag:
+                                              'action_${actionText!.hashCode}',
                                           child: Material(
                                             color: Colors.transparent,
                                             child: Text(
                                               actionText!,
                                               style: TextStyle(
                                                 fontFamily: 'Lato',
-                                                fontSize: 14,
+                                                fontSize:
+                                                    13, // Slightly reduced
                                                 fontWeight: FontWeight.w700,
                                                 color: Colors.white,
-                                                decoration: TextDecoration.none,
+                                                decoration:
+                                                    TextDecoration.none,
                                               ),
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
                                             ),
                                           ),
                                         ),
@@ -140,9 +152,10 @@ class CommonLoginRegisterHeader extends StatelessWidget {
                           ),
                         ),
                         if (showLogo) ...[
+                          const SizedBox(width: 12),
                           SizedBox(
-                            width: 60,
-                            height: 60,
+                            width: 50, // Slightly reduced
+                            height: 50, // Slightly reduced
                             child: ClipOval(
                               child: Image.asset(
                                 ImageConstant.blueLogo,
@@ -151,7 +164,7 @@ class CommonLoginRegisterHeader extends StatelessWidget {
                                   return Icon(
                                     Icons.medical_services,
                                     color: Colors.white,
-                                    size: 30,
+                                    size: 28,
                                   );
                                 },
                               ),

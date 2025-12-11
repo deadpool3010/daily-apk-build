@@ -110,15 +110,6 @@ class _HomepageScreenState extends State<HomepageScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'Namaste',
-                                    style: GoogleFonts.roboto(
-                                      textStyle: TextStyle(
-                                        color: AppColors.orangeColor,
-                                        fontSize: 24.0,
-                                      ),
-                                    ),
-                                  ),
-                                  Text(
                                     'Siddharth Ji',
                                     style: GoogleFonts.roboto(
                                       textStyle: TextStyle(
@@ -147,13 +138,17 @@ class _HomepageScreenState extends State<HomepageScreen> {
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: Row(
                           children: [
-                            Text(
-                              'Daily check-in with Mitra ',
-                              style: GoogleFonts.roboto(
-                                textStyle: TextStyle(
-                                  color: AppColors.black,
-                                  fontSize: 18.0,
+                            Flexible(
+                              child: Text(
+                                'lbl_daily_check_in_with_mitra'.tr,
+                                style: GoogleFonts.roboto(
+                                  textStyle: TextStyle(
+                                    color: AppColors.black,
+                                    fontSize: 18.0,
+                                  ),
                                 ),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
                             Image.asset(
@@ -182,13 +177,15 @@ class _HomepageScreenState extends State<HomepageScreen> {
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: Text(
-                          "Categories",
+                          'lbl_categories'.tr,
                           style: GoogleFonts.roboto(
                             textStyle: TextStyle(
                               color: AppColors.black,
                               fontSize: 18.0,
                             ),
                           ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                       const SizedBox(height: 14),
@@ -198,13 +195,17 @@ class _HomepageScreenState extends State<HomepageScreen> {
                       const SizedBox(height: 30),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: Text(
-                          "Daily Affirmation/Remainders",
-                          style: GoogleFonts.roboto(
-                            textStyle: TextStyle(
-                              color: AppColors.black,
-                              fontSize: 18.0,
+                        child: Flexible(
+                          child: Text(
+                            'lbl_daily_affirmation_remainders'.tr,
+                            style: GoogleFonts.roboto(
+                              textStyle: TextStyle(
+                                color: AppColors.black,
+                                fontSize: 18.0,
+                              ),
                             ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                       ),
@@ -228,13 +229,17 @@ class _HomepageScreenState extends State<HomepageScreen> {
                       // Warriors section
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: Text(
-                          "Meet Our Strong Warriors",
-                          style: GoogleFonts.roboto(
-                            textStyle: TextStyle(
-                              color: AppColors.black,
-                              fontSize: 18.0,
+                        child: Flexible(
+                          child: Text(
+                            'lbl_meet_our_strong_warriors'.tr,
+                            style: GoogleFonts.roboto(
+                              textStyle: TextStyle(
+                                color: AppColors.black,
+                                fontSize: 18.0,
+                              ),
                             ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                       ),
@@ -258,14 +263,14 @@ class _HomepageScreenState extends State<HomepageScreen> {
                           ),
                           itemBuilder: (context, index) {
                             final titles = [
-                              "Sita Amma's Journey",
-                              "Natasha's Journey",
-                              "Prashanth's Story",
+                              'lbl_sita_ammas_journey'.tr,
+                              'lbl_natashas_journey'.tr,
+                              'lbl_prashanths_story'.tr,
                             ];
                             final rotations = [0.05, -0.02, -0.05];
                             return _buildWarriorCard(
                               titles[index],
-                              "After her 6-month treatment, Sita Amma began walking every morning again. She says, \"I found my strength in small steps and big smiles.\"",
+                              'msg_sita_amma_description'.tr,
                               rotations[index],
                             );
                           },
@@ -325,14 +330,14 @@ Widget categories() {
       children: [
         _buildCategoryItem(
           ImageConstant.healthCalander,
-          'Health \nCalander',
+          'lbl_health_calendar'.tr,
           onTap: () {
             Get.toNamed(AppRoutes.healthCalendar);
           },
         ),
-        _buildCategoryItem(ImageConstant.fileManager, 'Manage \nFiles'),
-        _buildCategoryItem(ImageConstant.robot, 'Mitra'),
-        _buildCategoryItem(ImageConstant.myClinic, 'My Clinic'),
+        _buildCategoryItem(ImageConstant.fileManager, 'lbl_manage_files'.tr),
+        _buildCategoryItem(ImageConstant.robot, 'lbl_mitra'.tr),
+        _buildCategoryItem(ImageConstant.myClinic, 'lbl_my_clinic'.tr),
       ],
     ),
   );
@@ -415,13 +420,17 @@ Widget _buildWarriorCard(String title, String description, double rotation) {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(
-                        title,
-                        style: GoogleFonts.roboto(
-                          textStyle: TextStyle(
-                            color: AppColors.black,
-                            fontSize: 13.0,
+                      Flexible(
+                        child: Text(
+                          title,
+                          style: GoogleFonts.roboto(
+                            textStyle: TextStyle(
+                              color: AppColors.black,
+                              fontSize: 13.0,
+                            ),
                           ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                       const SizedBox(height: 6),
@@ -451,13 +460,15 @@ Widget _buildWarriorCard(String title, String description, double rotation) {
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Text(
-                            'Read Story',
+                            'lbl_read_story'.tr,
                             style: GoogleFonts.lato(
                               textStyle: TextStyle(
                                 color: AppColors.white,
                                 fontSize: 11.0,
                               ),
                             ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                       ),
@@ -534,7 +545,7 @@ Widget DailyAffirmation() {
                 width: 108,
                 height: 18,
                 child: Text(
-                  '-Misty Copeland',
+                  'lbl_misty_copeland'.tr,
                   textAlign: TextAlign.right,
                   style: GoogleFonts.lato(
                     textStyle: TextStyle(
@@ -542,6 +553,8 @@ Widget DailyAffirmation() {
                       fontSize: 14.0,
                     ),
                   ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ),
@@ -569,7 +582,7 @@ Widget DailyAffirmation() {
                     SizedBox(
                       width: 249,
                       child: Text(
-                        '"Be strong, be fearless, be happy. And believe that anything is possible when you have the right people there to support you."',
+                        'msg_daily_affirmation_quote'.tr,
                         textAlign: TextAlign.justify,
                         style: GoogleFonts.lato(
                           textStyle: TextStyle(
@@ -577,6 +590,8 @@ Widget DailyAffirmation() {
                             fontSize: 13.0,
                           ),
                         ),
+                        maxLines: 6,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ],

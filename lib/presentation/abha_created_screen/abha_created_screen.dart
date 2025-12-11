@@ -108,12 +108,16 @@ class AbhaCreatedScreen extends StatelessWidget {
                         size: 24,
                       ),
                       const SizedBox(width: 12),
-                      Text(
-                        'Scan to Join Group',
-                        style: GoogleFonts.roboto(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
+                      Flexible(
+                        child: Text(
+                          'lbl_scan_to_join_group'.tr,
+                          style: GoogleFonts.roboto(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                       const SizedBox(width: 12),
@@ -264,21 +268,21 @@ class AbhaCreatedScreen extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               _buildCardText(
-                                'Name: ',
+                                'lbl_name'.tr,
                                 controller.userName.value,
                                 12,
                                 isValueBold: true,
                               ),
                               const SizedBox(height: 6),
                               _buildCardText(
-                                'Abha No: ',
+                                'lbl_abha_no'.tr,
                                 controller.abhaNumber.value,
                                 11,
                                 isValueBold: true,
                               ),
                               const SizedBox(height: 6),
                               _buildCardText(
-                                'Abha Address: ',
+                                'lbl_abha_address'.tr,
                                 controller.abhaAddress.value,
                                 11,
                                 isValueBold: true,
@@ -315,23 +319,29 @@ class AbhaCreatedScreen extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        _buildCardText(
-                          'Gender: ',
-                          controller.gender.value,
-                          11,
-                          isValueBold: true,
+                        Expanded(
+                          child: _buildCardText(
+                            'lbl_gender'.tr,
+                            controller.gender.value,
+                            11,
+                            isValueBold: true,
+                          ),
                         ),
-                        _buildCardText(
-                          'DOB: ',
-                          controller.dob.value,
-                          11,
-                          isValueBold: true,
+                        Expanded(
+                          child: _buildCardText(
+                            'lbl_dob'.tr,
+                            controller.dob.value,
+                            11,
+                            isValueBold: true,
+                          ),
                         ),
-                        _buildCardText(
-                          'Mobile: ',
-                          controller.mobile.value,
-                          11,
-                          isValueBold: true,
+                        Expanded(
+                          child: _buildCardText(
+                            'lbl_mobile'.tr + ': ',
+                            controller.mobile.value,
+                            11,
+                            isValueBold: true,
+                          ),
                         ),
                       ],
                     ),
@@ -381,9 +391,13 @@ class AbhaCreatedScreen extends StatelessWidget {
     return Obx(() {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            'Glad you\'re here, ${controller.userName.value}.',
+            'msg_glad_youre_here'.tr.replaceAll(
+              '{name}',
+              controller.userName.value,
+            ),
             style: GoogleFonts.roboto(
               fontSize: 22,
               fontWeight: FontWeight.w600,
@@ -391,10 +405,12 @@ class AbhaCreatedScreen extends StatelessWidget {
               letterSpacing: 0,
               color: Color(0xFF3864FD),
             ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
           ),
           const SizedBox(height: 14),
           Text(
-            'Bandhu Care — your trusted partner in wellness.',
+            'lbl_bandhu_care_tagline'.tr,
             style: GoogleFonts.lato(
               fontSize: 14,
               fontWeight: FontWeight.w500,
@@ -402,6 +418,8 @@ class AbhaCreatedScreen extends StatelessWidget {
               letterSpacing: 0,
               color: Color(0xFF94A3B8),
             ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
           ),
         ],
       );
@@ -416,12 +434,14 @@ class AbhaCreatedScreen extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 14),
           child: Text(
-            'How Scanning Works',
+            'lbl_how_scanning_works'.tr,
             style: GoogleFonts.roboto(
               fontSize: 16,
               fontWeight: FontWeight.w500,
               color: Color(0xFF334155),
             ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
         ),
         const SizedBox(height: 20),
@@ -437,15 +457,15 @@ class AbhaCreatedScreen extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                _buildStepItem(ImageConstant.step1, 'Scan'),
+                _buildStepItem(ImageConstant.step1, 'lbl_scan'.tr),
                 const SizedBox(width: 10),
                 Icon(Icons.arrow_forward, size: 24, color: Color(0xFF334155)),
                 const SizedBox(width: 10),
-                _buildStepItem(ImageConstant.step2, 'Join Community'),
+                _buildStepItem(ImageConstant.step2, 'lbl_join_community'.tr),
                 const SizedBox(width: 10),
                 Icon(Icons.arrow_forward, size: 24, color: Color(0xFF334155)),
                 const SizedBox(width: 10),
-                _buildStepItem(ImageConstant.step3, 'Access Services'),
+                _buildStepItem(ImageConstant.step3, 'lbl_access_services'.tr),
               ],
             ),
           ),
@@ -486,6 +506,8 @@ class AbhaCreatedScreen extends StatelessWidget {
             color: Color(0xFF334155),
           ),
           textAlign: TextAlign.center,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
         ),
         const SizedBox(height: 16),
       ],
@@ -495,20 +517,22 @@ class AbhaCreatedScreen extends StatelessWidget {
   // Build FAQ Section
   Widget _buildFaqSection() {
     final faqQuestions = [
-      'How to Use Chatbot Feature in Bandhucare ?',
-      'How to Scan and join Communities ?',
+      'lbl_how_to_use_chatbot'.tr,
+      'lbl_how_to_scan_and_join'.tr,
     ];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'FAQ\'s',
+          'lbl_faqs'.tr,
           style: GoogleFonts.roboto(
             fontSize: 18,
             fontWeight: FontWeight.w700,
             color: Color(0xFF334155),
           ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
         ),
         const SizedBox(height: 16),
         ...faqQuestions.map(
@@ -525,6 +549,8 @@ class AbhaCreatedScreen extends StatelessWidget {
                       fontWeight: FontWeight.w400,
                       color: Color(0xFF334155),
                     ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
                 Icon(
@@ -547,21 +573,25 @@ class AbhaCreatedScreen extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Text(
-          'Need Further Assistance ?',
+          'lbl_need_further_assistance'.tr,
           style: GoogleFonts.roboto(
             fontSize: 18,
             fontWeight: FontWeight.w700,
             color: Color(0xFF334155),
           ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
         ),
         const SizedBox(height: 8),
         Text(
-          'We are here to help you!',
+          'msg_we_are_here_to_help'.tr,
           style: GoogleFonts.lato(
             fontSize: 14,
             fontWeight: FontWeight.w400,
             color: Color(0xFF94A3B8),
           ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
         ),
         const SizedBox(height: 20),
         GestureDetector(
@@ -577,12 +607,14 @@ class AbhaCreatedScreen extends StatelessWidget {
             ),
             child: Center(
               child: Text(
-                'Contact Us',
+                'lbl_contact_us'.tr,
                 style: GoogleFonts.roboto(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                   color: Colors.white,
                 ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ),

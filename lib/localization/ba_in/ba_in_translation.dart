@@ -1,1 +1,23 @@
-
+final Map<String, String> baIn = {
+  'lbl_choose_language': 'ভাষা নির্বাচন করুন',
+  'lbl_what_language_would_you_like': 'আপনি কোন ভাষায় অ্যাপটি চান?',
+  'lbl_english': 'English',
+  'lbl_hindi': 'हिंदी',
+  'lbl_bengali': 'বাংলা',
+  'lbl_tamil': 'தமிழ்',
+  'lbl_telugu': 'తెలుగు',
+  'lbl_gujarati': 'ગુજરાતી',
+  'lbl_malayalam': 'മലയാളം',
+  'lbl_go_ahead_and_set_up_your_account': 'এগিয়ে যান এবং আপনার অ্যাকাউন্ট সেটআপ করুন',
+  'lbl_dont_have_an_account': 'অ্যাকাউন্ট নেই? ',
+  'lbl_register': 'নিবন্ধন করুন',
+  'msg_enter_mobile_number_linked_to_abha':
+      'আপনার Abha ঠিকানার সাথে সংযুক্ত মোবাইল নম্বর লিখুন',
+  'lbl_get_otp': 'OTP পান',
+  'msg_click_get_otp_to_receive_code': 'কোড পেতে "Get OTP" এ ক্লিক করুন',
+  'lbl_login': 'লগইন',
+  'lbl_or_login_with': 'অথবা এর সাথে লগইন করুন',
+  'lbl_google': 'Google',
+  'lbl_mobile': 'মোবাইল',
+  'lbl_email_id': 'ই-মেইল ID',
+};

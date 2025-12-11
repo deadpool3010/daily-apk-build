@@ -58,7 +58,7 @@ class SelectAbhaAddressScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Yes! So,',
+            'lbl_yes_so'.tr,
             style: GoogleFonts.roboto(
               fontSize: 24,
               fontWeight: FontWeight.w600,
@@ -67,13 +67,19 @@ class SelectAbhaAddressScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-          Text(
-            'We found $count ABHA Address${count != 1 ? 'es' : ''}. Please choose one.',
-            style: GoogleFonts.lato(
-              fontSize: 14,
-              fontWeight: FontWeight.w400,
-              color: Color(0xFF94A3B8),
-              height: 1.4,
+          Flexible(
+            child: Text(
+              'msg_we_found_abha_addresses'.tr
+                  .replaceAll('{count}', count.toString())
+                  .replaceAll('{plural}', count != 1 ? 'es' : ''),
+              style: GoogleFonts.lato(
+                fontSize: 14,
+                fontWeight: FontWeight.w400,
+                color: Color(0xFF94A3B8),
+                height: 1.4,
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
         ],
@@ -132,8 +138,10 @@ class SelectAbhaAddressScreen extends StatelessWidget {
     if (controller.abhaAccounts.isEmpty) {
       return Center(
         child: Text(
-          'No ABHA addresses found',
+          'lbl_no_abha_addresses_found'.tr,
           style: GoogleFonts.lato(fontSize: 14, color: Color(0xFF94A3B8)),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
         ),
       );
     }
@@ -194,6 +202,8 @@ class SelectAbhaAddressScreen extends StatelessWidget {
                       color: Color(0xFF3865FF),
                       height: 1.3,
                     ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 6),
                   // Name
@@ -205,6 +215,8 @@ class SelectAbhaAddressScreen extends StatelessWidget {
                       color: Color(0xFF94A3B8),
                       height: 1.3,
                     ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
@@ -277,7 +289,7 @@ class SelectAbhaAddressScreen extends StatelessWidget {
       return Padding(
         padding: const EdgeInsets.all(8.0),
         child: DynamicButton(
-          text: isLoading ? '' : 'Continue',
+          text: isLoading ? '' : 'lbl_continue'.tr,
           width: double.infinity,
           height: 50,
           fontSize: 16,

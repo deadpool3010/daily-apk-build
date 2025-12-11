@@ -42,13 +42,15 @@ class EmailVerificationAbhaScreen extends StatelessWidget {
                             const SizedBox(width: 8),
                             Expanded(
                               child: Text(
-                                'Mobile Number has been saved and will be used for all your ABHA communications.',
+                                'msg_mobile_number_saved_for_abha'.tr,
                                 style: GoogleFonts.lato(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w400,
                                   color: Colors.green,
                                   height: 1.4,
                                 ),
+                                maxLines: 3,
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
                           ],
@@ -78,7 +80,7 @@ class EmailVerificationAbhaScreen extends StatelessWidget {
                           children: [
                             // Heading
                             Text(
-                              'Enter Email Address',
+                              'lbl_enter_email_address'.tr,
                               style: GoogleFonts.roboto(
                                 fontSize: 20,
                                 fontWeight: FontWeight.w600,
@@ -86,11 +88,13 @@ class EmailVerificationAbhaScreen extends StatelessWidget {
                                 letterSpacing: 0,
                                 color: Color(0xFF3865FF),
                               ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
                             const SizedBox(height: 8),
                             // Description in red
                             Text(
-                              'This Email address will be used for all communications\nrelated to ABHA.',
+                              'msg_email_will_be_used_for_abha'.tr,
                               style: GoogleFonts.lato(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
@@ -98,6 +102,8 @@ class EmailVerificationAbhaScreen extends StatelessWidget {
                                 letterSpacing: 0,
                                 color: Colors.red,
                               ),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ],
                         ),
@@ -133,7 +139,7 @@ class EmailVerificationAbhaScreen extends StatelessWidget {
                     Obx(() {
                       final isLoading = controller.isLoading.value;
                       return DynamicButton(
-                        text: isLoading ? '' : 'Verify',
+                        text: isLoading ? '' : 'lbl_verify'.tr,
                         width: double.infinity,
                         height: 50,
                         fontSize: 16,
@@ -158,12 +164,14 @@ class EmailVerificationAbhaScreen extends StatelessWidget {
                           controller.handleSkip();
                         },
                         child: Text(
-                          'Skip for now',
+                          'lbl_skip_for_now'.tr,
                           style: GoogleFonts.lato(
                             fontSize: 14,
                             fontWeight: FontWeight.w500,
                             color: Color(0xFF333333),
                           ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ),

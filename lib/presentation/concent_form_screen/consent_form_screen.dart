@@ -67,49 +67,49 @@ class ConsentFormScreen extends StatelessWidget {
                             height: 32,
                           ),
                           const SizedBox(width: 8),
-                          const Text(
-                            'Bandhu Care',
+                          Text(
+                            'lbl_bandhu_care'.tr,
                             style: TextStyle(
                               fontFamily: 'Paggoda',
                               fontSize: 18,
                               fontWeight: FontWeight.w600,
                               color: Color(0xFF111827),
                             ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ],
                       ),
                       const SizedBox(height: 35),
-                      const Text(
-                        'Consent Form',
+                      Text(
+                        'lbl_consent_form'.tr,
                         style: TextStyle(
                           fontFamily: 'Lato',
                           fontSize: 20,
                           fontWeight: FontWeight.w700,
                           color: Color(0xFF111827),
                         ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                       const SizedBox(height: 16),
-                      const Text(
-                        'By proceeding, you confirm that you:',
+                      Text(
+                        'msg_by_proceeding_you_confirm'.tr,
                         style: TextStyle(
                           fontFamily: 'Lato',
                           fontSize: 14,
                           fontWeight: FontWeight.w700,
                           color: Color(0xFF334155),
                         ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
                       const SizedBox(height: 20),
-                      _buildBulletPoint(
-                        'Authorize the hospital to share your medical updates within this group.',
-                      ),
+                      _buildBulletPoint('msg_authorize_hospital_to_share'.tr),
                       const SizedBox(height: 12),
-                      _buildBulletPoint(
-                        'Understand this group may include doctors, nurses, and administrative staff relevant to your case.',
-                      ),
+                      _buildBulletPoint('msg_understand_group_may_include'.tr),
                       const SizedBox(height: 12),
-                      _buildBulletPoint(
-                        'Agree to the hospital\'s privacy policy and data handling practices.',
-                      ),
+                      _buildBulletPoint('msg_agree_to_hospital_privacy'.tr),
                       const SizedBox(height: 24),
                       Container(
                         width: double.infinity,
@@ -125,21 +125,23 @@ class ConsentFormScreen extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
-                              'You will be added to:',
+                            Text(
+                              'msg_you_will_be_added_to'.tr,
                               style: TextStyle(
                                 fontFamily: 'Lato',
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
                                 color: Color(0xFF111827),
                               ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
                             const SizedBox(height: 12),
-                            _buildInfoItem('Department: [Department Name]'),
+                            _buildInfoItem('lbl_department'.tr),
                             const SizedBox(height: 8),
-                            _buildInfoItem('Section: [Section Name]'),
+                            _buildInfoItem('lbl_section'.tr),
                             const SizedBox(height: 8),
-                            _buildInfoItem('Unit: [Unit Name]'),
+                            _buildInfoItem('lbl_unit'.tr),
                           ],
                         ),
                       ),
@@ -186,15 +188,19 @@ class ConsentFormScreen extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(width: 12),
-                          GestureDetector(
-                            onTap: () => controller.toggleAgreement(),
-                            child: const Text(
-                              'I Agree to the above terms',
-                              style: TextStyle(
-                                fontFamily: 'Lato',
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                                color: Color(0xFF2563EB),
+                          Flexible(
+                            child: GestureDetector(
+                              onTap: () => controller.toggleAgreement(),
+                              child: Text(
+                                'lbl_i_agree_to_terms'.tr,
+                                style: TextStyle(
+                                  fontFamily: 'Lato',
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  color: Color(0xFF2563EB),
+                                ),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
                           ),
@@ -239,7 +245,7 @@ class ConsentFormScreen extends StatelessWidget {
                               ),
                               child: Center(
                                 child: Text(
-                                  'Continue',
+                                  'lbl_continue'.tr,
                                   style: TextStyle(
                                     fontFamily: 'Lato',
                                     fontSize: 15,
@@ -248,6 +254,8 @@ class ConsentFormScreen extends StatelessWidget {
                                         ? Colors.white
                                         : Colors.white.withOpacity(0.7),
                                   ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ),
                             ),
@@ -288,6 +296,8 @@ class ConsentFormScreen extends StatelessWidget {
               height: 1.4,
               fontWeight: FontWeight.w400,
             ),
+            maxLines: 3,
+            overflow: TextOverflow.ellipsis,
           ),
         ),
       ],
@@ -306,12 +316,16 @@ class ConsentFormScreen extends StatelessWidget {
             color: Color(0xFF111827),
           ),
         ),
-        Text(
-          text,
-          style: const TextStyle(
-            fontFamily: 'Lato',
-            fontSize: 13,
-            color: Color(0xFF111827),
+        Flexible(
+          child: Text(
+            text,
+            style: const TextStyle(
+              fontFamily: 'Lato',
+              fontSize: 13,
+              color: Color(0xFF111827),
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
         ),
       ],

@@ -1,21 +1,38 @@
 import 'package:bandhucare_new/services/variables.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:bandhucare_new/localization/app_localization.dart';
+import 'package:bandhucare_new/services/shared_pref_localization.dart';
 import 'routes/app_routes.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const MyApp());
-  await Firebase.initializeApp();
 
-  // Initialize Firebase Messaging
+  // Load saved locale before app starts
+  final prefs = SharedPrefLocalization();
+  final savedLocale = await prefs.getAppLocale();
+  final locale = _parseLocale(savedLocale);
+  await Firebase.initializeApp();
   await _initializeFirebaseMessaging();
+  runApp(MyApp(initialLocale: locale));
+}
+
+// Helper function to parse locale string to Locale object
+Locale _parseLocale(String localeString) {
+  final parts = localeString.split('_');
+  if (parts.length == 2) {
+    return Locale(parts[0], parts[1]);
+  }
+  return const Locale('en', 'US');
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final Locale initialLocale;
+
+  const MyApp({super.key, required this.initialLocale});
+
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
@@ -24,6 +41,9 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF1E3A8A)),
         useMaterial3: true,
       ),
+      translations: AppLocalization(),
+      locale: initialLocale,
+      fallbackLocale: const Locale('en', 'US'),
       initialRoute: AppRoutes.splashScreen,
       getPages: AppPages.pages,
     );

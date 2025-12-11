@@ -11,9 +11,15 @@ class GroupScreen extends StatelessWidget {
     final qr_code_data = Get.arguments;
     // Safely handle null values
     String extractedUniqueCode = '';
+    String groupId = '';
+    String hospitalName = '';
     if (qr_code_data != null && qr_code_data is Map<String, dynamic>) {
       extractedUniqueCode = qr_code_data['uniqueCode']?.toString() ?? '';
+      groupId = qr_code_data['groupId']?.toString() ?? '';
+      hospitalName = qr_code_data['hospitalName']?.toString() ?? '';
       uniqueCode = extractedUniqueCode;
+      groupId = groupId;
+      hospitalName = hospitalName;
     } else {
       uniqueCode = '';
     }
@@ -443,22 +449,87 @@ List<GroupListItem> _parseGroupArguments(dynamic args) {
     }
   }
 
+  // Handle API response structure - check if data field exists
   if (args is Map<String, dynamic>) {
-    rawGroups = [args];
+    // If args has a 'data' field, use that
+    if (args.containsKey('data') && args['data'] != null) {
+      if (args['data'] is Map<String, dynamic>) {
+        // If data is a Map, merge it with the root args (keeping root fields)
+        Map<String, dynamic> mergedData = Map<String, dynamic>.from(args);
+        mergedData.addAll(args['data'] as Map<String, dynamic>);
+        rawGroups = [mergedData];
+      } else if (args['data'] is List) {
+        // If data is a List, use that
+        rawGroups = (args['data'] as List)
+            .whereType<Map<String, dynamic>>()
+            .toList();
+      } else {
+        rawGroups = [args];
+      }
+    } else {
+      // No data field, use args directly
+      rawGroups = [args];
+    }
   } else if (args is List) {
     rawGroups = args.whereType<Map<String, dynamic>>().toList();
   }
 
+  print("Parsed groups for display: $rawGroups");
+
   return rawGroups.map((group) {
-    final createdAt = group['createdAt'] as String?;
+    final createdAt =
+        group['createdAt'] as String? ??
+        group['created_at'] as String? ??
+        group['createdOn'] as String? ??
+        (group['group'] is Map
+            ? (group['group'] as Map)['createdAt'] as String?
+            : null) ??
+        (group['group'] is Map
+            ? (group['group'] as Map)['created_at'] as String?
+            : null);
     final formattedDate = createdAt != null
         ? _formatDate(createdAt)
         : 'Created date unavailable';
+
+    // Try multiple possible field names for group name
+    // Check nested group object first, then top-level
+    String? groupName;
+    if (group['group'] is Map<String, dynamic>) {
+      final nestedGroup = group['group'] as Map<String, dynamic>;
+      groupName =
+          nestedGroup['name']?.toString() ??
+          nestedGroup['groupName']?.toString() ??
+          nestedGroup['group_name']?.toString() ??
+          nestedGroup['title']?.toString() ??
+          nestedGroup['groupTitle']?.toString();
+    }
+    groupName ??= group['name']?.toString();
+    groupName ??= 'Unnamed Group';
+
+    // Try multiple possible field names for hospital/facility name
+    final hospitalName =
+        group['hospitalName']?.toString() ??
+        group['hospital_name']?.toString() ??
+        group['facilityName']?.toString() ??
+        group['facility_name']?.toString() ??
+        group['hospital']?.toString() ??
+        'Unknown Facility';
+
+    // Get groupId from nested group object if available, otherwise from top level
+    final groupId =
+        (group['group'] is Map
+            ? (group['group'] as Map)['_id']?.toString()
+            : null) ??
+        group['groupId']?.toString() ??
+        group['group_id']?.toString() ??
+        group['id']?.toString() ??
+        '';
+
     return GroupListItem(
-      title: group['groupName']?.toString() ?? 'Unnamed Group',
+      title: groupName,
       createdOn: formattedDate,
-      hospital: group['name']?.toString() ?? 'Unknown Facility',
-      groupId: group['groupId']?.toString() ?? '',
+      hospital: hospitalName,
+      groupId: groupId,
     );
   }).toList();
 }

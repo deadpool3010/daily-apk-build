@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:bandhucare_new/core/network/api_services.dart';
 import 'package:bandhucare_new/routes/app_routes.dart';
+import 'package:bandhucare_new/services/shared_pref_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
@@ -106,7 +108,118 @@ class ScanQrController extends GetxController {
       try {
         dynamic parsedData = jsonDecode(rawValue);
         print("parsedData:::::::::::::::::::: $parsedData");
-        Get.offNamed(AppRoutes.joinGroupScreen, arguments: parsedData);
+
+        // Extract groupId and uniqueCode from QR data
+        String? groupId;
+        String? uniqueCode;
+
+        if (parsedData is Map<String, dynamic>) {
+          groupId = parsedData['groupId']?.toString();
+          uniqueCode = parsedData['uniqueCode']?.toString();
+        }
+
+        // Call get-group-info API if we have groupId and uniqueCode
+        if (groupId != null &&
+            groupId.isNotEmpty &&
+            uniqueCode != null &&
+            uniqueCode.isNotEmpty) {
+          try {
+            // Show loading indicator
+            Get.dialog(
+              Center(child: CircularProgressIndicator()),
+              barrierDismissible: false,
+            );
+
+            // Get current language from SharedPreferences (saved in ChooseLanguageScreen)
+            final prefs = SharedPrefLocalization();
+            final savedLocale = await prefs
+                .getAppLocale(); // Returns format like "en_US", "gu_IN", etc.
+            // Convert to lowercase: "en_us", "gu_in", etc., with fallback to "en_us"
+            final languageCode =
+                (savedLocale.isNotEmpty ? savedLocale : 'en_US').toLowerCase();
+            print(
+              'Retrieved language from SharedPreferences: "$savedLocale" -> "$languageCode"',
+            );
+
+            final groupInfoResult = await getGroupInfo(
+              groupId: groupId,
+              uniqueCode: uniqueCode,
+              language: languageCode,
+            );
+
+            // Close loading dialog
+            Get.back();
+
+            // Merge API response with original QR data
+            Map<String, dynamic> finalData = {};
+            if (parsedData is Map<String, dynamic>) {
+              finalData = Map<String, dynamic>.from(parsedData);
+            }
+
+            // Add/update with API response data
+            Map<String, dynamic>? apiDataMap;
+
+            if (groupInfoResult['data'] != null) {
+              if (groupInfoResult['data'] is Map) {
+                apiDataMap = Map<String, dynamic>.from(
+                  groupInfoResult['data'] as Map<String, dynamic>,
+                );
+              } else if (groupInfoResult['data'] is List &&
+                  (groupInfoResult['data'] as List).isNotEmpty) {
+                // If data is a list, use the first item
+                final firstItem = (groupInfoResult['data'] as List).first;
+                if (firstItem is Map<String, dynamic>) {
+                  apiDataMap = Map<String, dynamic>.from(firstItem);
+                }
+              }
+            } else {
+              // If response doesn't have 'data' wrapper, use response directly
+              apiDataMap = Map<String, dynamic>.from(groupInfoResult);
+              // Remove metadata fields that shouldn't be in the group data
+              apiDataMap.remove('success');
+              apiDataMap.remove('message');
+              apiDataMap.remove('status');
+            }
+
+            // Merge API data into finalData (API data takes precedence)
+            if (apiDataMap != null) {
+              finalData.addAll(apiDataMap);
+            }
+
+            // Preserve original QR data fields (don't override if API provided them)
+            if (!finalData.containsKey('groupId') ||
+                finalData['groupId'] == null) {
+              finalData['groupId'] = groupId;
+            }
+            if (!finalData.containsKey('uniqueCode') ||
+                finalData['uniqueCode'] == null) {
+              finalData['uniqueCode'] = uniqueCode;
+            }
+
+            print("API Response: $groupInfoResult");
+            print("Final data with API response: $finalData");
+            Get.offNamed(AppRoutes.joinGroupScreen, arguments: finalData);
+          } catch (apiError) {
+            // Close loading dialog if still open
+            if (Get.isDialogOpen ?? false) {
+              Get.back();
+            }
+
+            // If API fails, still navigate with original QR data
+            print("API Error: $apiError");
+            Fluttertoast.showToast(
+              msg: 'Group information unavailable. Showing QR data.',
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              backgroundColor: Colors.orange,
+              textColor: Colors.white,
+            );
+            Get.offNamed(AppRoutes.joinGroupScreen, arguments: parsedData);
+          }
+        } else {
+          // If groupId or uniqueCode is missing, navigate with original data
+          Get.offNamed(AppRoutes.joinGroupScreen, arguments: parsedData);
+        }
       } catch (e) {
         isScanning.value = true;
         _lastScannedCode = null; // Reset to allow retry

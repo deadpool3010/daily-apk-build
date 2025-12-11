@@ -18,6 +18,15 @@ String getMessagesApi({int page = 1, int limit = 10}) {
 }
 
 String addMemberToGroup = "groups/add-members";
+String getGroupInfoApi(String groupId, String uniqueCode, [String? language]) {
+  String url = "groups/get-group-info/$groupId?uniqueCode=$uniqueCode";
+  if (language != null && language.trim().isNotEmpty) {
+    url += "&language=${Uri.encodeComponent(language.trim())}";
+  }
+  print('getGroupInfoApi - language parameter: "$language", final URL: $url');
+  return url;
+}
+
 String getCommunityApi(String groupId) =>
     "community?groupId=$groupId&search=&page&limit&sort&uniqueCode=$uniqueCode";
 String sendVerificationLink = "auth/send-verification-link";
