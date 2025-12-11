@@ -518,7 +518,10 @@ Future<Map<String, dynamic>> createAbhaAddressApi(
     print('CreateAbhaAddress Response Body: ${response.body}');
 
     final result = jsonDecode(response.body);
-
+    print('CreateAbhaAddress Result: $result');
+    await SharedPrefLocalization().saveUserInfo(
+      result['data']['profileDetails'],
+    );
     if (response.statusCode == 200 || response.statusCode == 201) {
       return result;
     } else {
