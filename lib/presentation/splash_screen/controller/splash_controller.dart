@@ -42,8 +42,39 @@ class SplashController extends GetxController with GetTickerProviderStateMixin {
   @override
   void onInit() {
     super.onInit();
+    // Initialize controllers first to prevent LateInitializationError
+    // They will be disposed if we navigate away immediately
     _initializeAnimationControllers();
     _initializeAnimations();
+    _checkUserPersistence();
+  }
+
+  Future<void> _checkUserPersistence() async {
+    final sharedPrefs = SharedPrefLocalization();
+    final hasUser = await sharedPrefs.hasPersistedUser();
+
+    if (hasUser) {
+      // User is logged in, restore session and go directly to home
+      final tokens = await sharedPrefs.getTokens();
+      accessToken = tokens['accessToken'] ?? '';
+      refreshToken = tokens['refreshToken'] ?? '';
+      final cachedUser = await sharedPrefs.getUserInfoMap();
+
+      print('');
+      print('========================================');
+      print('👤 Restored persisted user session from storage');
+      print('🔑 Access token available: ${accessToken.isNotEmpty}');
+      print('📄 Cached profile: $cachedUser');
+      print('========================================');
+
+      // Navigate immediately to home, skip splash animation
+      if (Get.context != null) {
+        Get.offNamed(AppRoutes.homeScreen);
+        return;
+      }
+    }
+
+    // No persisted user, show splash animation
     _startAnimations();
     _startNavigationTimer();
     _precacheLoginHeaderImage();

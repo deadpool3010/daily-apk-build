@@ -436,6 +436,10 @@ Future<Map<String, dynamic>> selectAccountApi(
 
     if (response.statusCode == 200 || response.statusCode == 201) {
       print('SelectAccount Response: $result');
+      print('Profile Details: ${result['data']['profileDetails']}');
+      await SharedPrefLocalization().saveUserInfo(
+        result['data']['profileDetails'],
+      );
       return result;
     } else {
       throw Exception(
