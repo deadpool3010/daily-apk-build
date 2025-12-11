@@ -50,7 +50,7 @@ class CreateAbhaUsernameScreen extends StatelessWidget {
                         const SizedBox(height: 40),
                         // Title
                         Text(
-                          'Create Your Unique ABHA Address',
+                          'lbl_create_your_unique_abha_address'.tr,
                           style: GoogleFonts.roboto(
                             fontSize: 20,
                             fontWeight: FontWeight.w600,
@@ -58,6 +58,8 @@ class CreateAbhaUsernameScreen extends StatelessWidget {
                             letterSpacing: 0,
                             color: Color(0xFF3865FF),
                           ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                         ),
                         const SizedBox(height: 16),
                         // Instructions
@@ -65,12 +67,10 @@ class CreateAbhaUsernameScreen extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             _buildBulletPoint(
-                              'It\'s a unique username for sharing and accessing digital health records, similar to an email but only for health records.',
+                              'msg_unique_username_for_health_records'.tr,
                             ),
                             const SizedBox(height: 12),
-                            _buildBulletPoint(
-                              'It must have a minimum of 8 characters, a maximum of 18 characters, and allows one dot (.) and/or one underscore (_) as special characters.',
-                            ),
+                            _buildBulletPoint('msg_username_requirements'.tr),
                           ],
                         ),
                         const SizedBox(height: 32),
@@ -83,12 +83,14 @@ class CreateAbhaUsernameScreen extends StatelessWidget {
                           child: Row(
                             children: [
                               Text(
-                                'Suggestions:',
+                                'lbl_suggestions'.tr,
                                 style: GoogleFonts.lato(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w500,
                                   color: Color(0xFF64748B),
                                 ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                               ),
                               const SizedBox(width: 8),
                               Obx(
@@ -111,7 +113,7 @@ class CreateAbhaUsernameScreen extends StatelessWidget {
                 child: Obx(() {
                   final isLoading = controller.isLoading.value;
                   return DynamicButton(
-                    text: isLoading ? '' : 'Submit',
+                    text: isLoading ? '' : 'lbl_submit'.tr,
                     width: double.infinity,
                     height: 50,
                     fontSize: 16,
@@ -159,6 +161,8 @@ class CreateAbhaUsernameScreen extends StatelessWidget {
               height: 1.5,
               color: Color(0xFF64748B),
             ),
+            maxLines: 4,
+            overflow: TextOverflow.ellipsis,
           ),
         ),
       ],
@@ -188,7 +192,7 @@ class CreateAbhaUsernameScreen extends StatelessWidget {
                   color: AppColors.black,
                 ),
                 decoration: InputDecoration(
-                  hintText: 'Enter username',
+                  hintText: 'lbl_enter_username'.tr,
                   hintStyle: GoogleFonts.roboto(
                     fontSize: 14,
                     fontWeight: FontWeight.w500,

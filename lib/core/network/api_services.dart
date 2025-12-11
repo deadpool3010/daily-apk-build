@@ -668,6 +668,42 @@ Future<Map<String, dynamic>> sendMessage({
   }
 }
 
+Future<Map<String, dynamic>> getGroupInfo({
+  required String groupId,
+  required String uniqueCode,
+  String? language,
+}) async {
+  try {
+    final url = baseUrl + getGroupInfoApi(groupId, uniqueCode, language);
+    print('GetGroupInfo API URL: $url');
+    print('GroupId: $groupId, UniqueCode: $uniqueCode, Language: $language');
+
+    final response = await http.get(
+      Uri.parse(url),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $accessToken",
+      },
+    );
+
+    print('GetGroupInfo Response Status: ${response.statusCode}');
+    print('GetGroupInfo Response Body: ${response.body}');
+
+    final result = jsonDecode(response.body);
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return result;
+    } else {
+      throw Exception(
+        "Failed to get group info: ${result['message'] ?? 'Unknown error'}",
+      );
+    }
+  } catch (e) {
+    print('GetGroupInfo Error: $e');
+    throw Exception(e);
+  }
+}
+
 Future<Map<String, dynamic>> joinGroupApi({
   required String groupId,
   required List<Map<String, dynamic>> users,

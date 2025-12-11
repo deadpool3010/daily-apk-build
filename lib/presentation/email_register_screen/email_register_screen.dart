@@ -73,9 +73,9 @@ class EmailRegisterScreen extends StatelessWidget {
   // Header Section with Dark Blue Background
   Widget _buildRegisterHeader(EmailRegisterController controller) {
     return CommonLoginRegisterHeader(
-      title: 'Go ahead and set\nup your account',
-      subtitleText: 'Already have an account? ',
-      actionText: 'Login',
+      title: 'lbl_go_ahead_and_set_up_account'.tr,
+      subtitleText: 'lbl_already_have_an_account'.tr,
+      actionText: 'lbl_login'.tr,
       onActionTap: () {
         Get.toNamed(AppRoutes.emailPasswordLoginScreen);
       },
@@ -125,13 +125,15 @@ class EmailRegisterScreen extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Text(
-                  'Other options',
+                  'lbl_other_options'.tr,
                   style: TextStyle(
                     fontFamily: 'Lato',
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
                     color: Color(0xFF94A3B8),
                   ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
               Expanded(child: Divider(color: Color(0xFFCBD5E1), thickness: 1)),
@@ -184,7 +186,7 @@ class EmailRegisterScreen extends StatelessWidget {
   Widget _buildFullNameInput(EmailRegisterController controller) {
     return CustomTextField(
       controller: controller.fullNameController,
-      hintText: 'Full Name',
+      hintText: 'lbl_full_name'.tr,
       icon: BootstrapIcons.person,
       keyboardType: TextInputType.name,
     );
@@ -194,7 +196,7 @@ class EmailRegisterScreen extends StatelessWidget {
   Widget _buildEmailInput(EmailRegisterController controller) {
     return CustomTextField(
       controller: controller.emailController,
-      hintText: 'E-mail ID',
+      hintText: 'lbl_email_id'.tr,
       icon: BootstrapIcons.envelope,
       keyboardType: TextInputType.emailAddress,
     );
@@ -205,7 +207,7 @@ class EmailRegisterScreen extends StatelessWidget {
     return Obx(
       () => CustomTextField(
         controller: controller.createPasswordController,
-        hintText: 'Create Password',
+        hintText: 'lbl_create_password'.tr,
         icon: BootstrapIcons.lock,
         keyboardType: TextInputType.visiblePassword,
         obscureText: !controller.isCreatePasswordVisible.value,
@@ -223,7 +225,7 @@ class EmailRegisterScreen extends StatelessWidget {
     return Obx(
       () => CustomTextField(
         controller: controller.confirmPasswordController,
-        hintText: 'Confirm Password',
+        hintText: 'lbl_confirm_password'.tr,
         icon: BootstrapIcons.lock,
         keyboardType: TextInputType.visiblePassword,
         obscureText: !controller.isConfirmPasswordVisible.value,
@@ -242,7 +244,7 @@ class EmailRegisterScreen extends StatelessWidget {
       final isLoading = controller.isLoading.value;
 
       return DynamicButton(
-        text: isLoading ? '' : 'Continue',
+        text: isLoading ? '' : 'lbl_continue'.tr,
         width: double.infinity,
         height: 50,
         fontSize: 16,
@@ -266,21 +268,29 @@ class EmailRegisterScreen extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        _buildAlternativeRegistrationButton(
-          icon: Icons.g_mobiledata,
-          label: 'Google',
-          iconColor: Colors.orange,
+        Expanded(
+          child: _buildAlternativeRegistrationButton(
+            icon: Icons.g_mobiledata,
+            label: 'lbl_google'.tr,
+            iconColor: Colors.orange,
+          ),
         ),
-        _buildAlternativeRegistrationButton(
-          label: 'Abha ID',
-          iconColor: Color(0xFF3864FD),
-          imagePath: ImageConstant.ayushmanBharat,
+        const SizedBox(width: 12),
+        Expanded(
+          child: _buildAlternativeRegistrationButton(
+            label: 'lbl_abha_id'.tr,
+            iconColor: Color(0xFF3864FD),
+            imagePath: ImageConstant.ayushmanBharat,
+          ),
         ),
-        _buildAlternativeRegistrationButton(
-          icon: BootstrapIcons.telephone_fill,
-          label: 'Mobile',
-          iconSize: Size(16, 16),
-          iconColor: Color(0xFF3864FD),
+        const SizedBox(width: 12),
+        Expanded(
+          child: _buildAlternativeRegistrationButton(
+            icon: BootstrapIcons.telephone_fill,
+            label: 'lbl_mobile'.tr,
+            iconSize: Size(16, 16),
+            iconColor: Color(0xFF3864FD),
+          ),
         ),
       ],
     );
@@ -297,14 +307,14 @@ class EmailRegisterScreen extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         // Handle alternative registration options
-        if (label == 'Google') {
+        if (label == 'lbl_google'.tr) {
           // Handle Google registration
-        } else if (label == 'Mobile') {
+        } else if (label == 'lbl_mobile'.tr) {
           // Navigate to mobile registration
           Get.toNamed(AppRoutes.mobileRegisterScreen);
-        } else if (label == 'Abha ID') {
+        } else if (label == 'lbl_abha_id'.tr) {
           // Handle Abha ID registration
-          Get.back();
+          Get.toNamed(AppRoutes.abhaRegisterScreen);
         }
       },
       child: Container(
@@ -316,21 +326,27 @@ class EmailRegisterScreen extends StatelessWidget {
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: [
-            if (label == 'Google')
+            if (label == 'lbl_google'.tr)
               Image.asset(ImageConstant.googleLogo, width: 20, height: 20)
             else if (imagePath != null)
               Image.asset(imagePath, width: 20, height: 20)
             else
               Icon(icon, color: iconColor, size: iconSize?.width ?? 20),
-            const SizedBox(width: 6),
-            Text(
-              label,
-              style: TextStyle(
-                fontFamily: 'Lato',
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                color: Colors.black87,
+            const SizedBox(width: 4),
+            Flexible(
+              child: Text(
+                label,
+                style: TextStyle(
+                  fontFamily: 'Lato',
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black87,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
               ),
             ),
           ],

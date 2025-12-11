@@ -65,12 +65,15 @@ class RegisterHomescreen extends StatelessWidget {
 
                       // Tagline
                       Text(
-                        'Your trusted partner in wellness.',
+                        'lbl_your_trusted_partner_in_wellness'.tr,
                         style: GoogleFonts.lato(
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
                           color: Color(0xFF94A3B8),
                         ),
+                        textAlign: TextAlign.center,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
 
                       const SizedBox(height: 100),
@@ -100,12 +103,17 @@ class RegisterHomescreen extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           SizedBox(width: 8),
-                          Text(
-                            'Please Select your preferred way to register',
-                            style: GoogleFonts.roboto(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              color: Color(0xFF94A3B8),
+                          Expanded(
+                            child: Text(
+                              'msg_please_select_your_preferred_way_to_register'
+                                  .tr,
+                              style: GoogleFonts.roboto(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                color: Color(0xFF94A3B8),
+                              ),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         ],
@@ -115,7 +123,7 @@ class RegisterHomescreen extends StatelessWidget {
 
                       // Abha ID Button (with Hero animation from Register text)
                       _buildRegistrationButton(
-                        label: 'Abha ID',
+                        label: 'lbl_abha_id'.tr,
                         imagePath: ImageConstant.ayushmanBharat,
                         onTap: () {
                           controller.handleAbhaIdRegistration();
@@ -137,7 +145,7 @@ class RegisterHomescreen extends StatelessWidget {
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 16),
                             child: Text(
-                              'Or',
+                              'lbl_or'.tr,
                               style: GoogleFonts.lato(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
@@ -158,7 +166,7 @@ class RegisterHomescreen extends StatelessWidget {
 
                       // Google Button
                       _buildRegistrationButton(
-                        label: 'Google',
+                        label: 'lbl_google'.tr,
                         imagePath: ImageConstant.googleLogo,
                         onTap: () {
                           controller.handleGoogleRegistration();
@@ -169,7 +177,7 @@ class RegisterHomescreen extends StatelessWidget {
 
                       // Mobile Button
                       _buildRegistrationButton(
-                        label: 'Mobile',
+                        label: 'lbl_mobile'.tr,
                         icon: BootstrapIcons.telephone_fill,
                         iconColor: Color(0xFF3864FD),
                         onTap: () {
@@ -182,7 +190,7 @@ class RegisterHomescreen extends StatelessWidget {
 
                       // E-Mail ID Button
                       _buildRegistrationButton(
-                        label: 'E-Mail ID',
+                        label: 'lbl_email_id'.tr,
                         icon: TablerIcons.mail,
                         iconColor: Color(0xFF3864FD),
                         onTap: () {
@@ -273,12 +281,17 @@ class RegisterHomescreen extends StatelessWidget {
                     size: size?.width ?? 24,
                   ),
                 const SizedBox(width: 12),
-                Text(
-                  label,
-                  style: GoogleFonts.lato(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: Color(0xFF1E293B),
+                Flexible(
+                  child: Text(
+                    label,
+                    style: GoogleFonts.lato(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: Color(0xFF1E293B),
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.center,
                   ),
                 ),
               ],

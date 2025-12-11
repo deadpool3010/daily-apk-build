@@ -1,0 +1,23 @@
+final Map<String, String> guIn = {
+  'lbl_choose_language': 'ભાષા પસંદ કરો',
+  'lbl_what_language_would_you_like': 'તમે એપ્લિકેશન કઈ ભાષામાં જોઈએ છો?',
+  'lbl_english': 'English',
+  'lbl_hindi': 'हिंदी',
+  'lbl_bengali': 'বাংলা',
+  'lbl_tamil': 'தமிழ்',
+  'lbl_telugu': 'తెలుగు',
+  'lbl_gujarati': 'ગુજરાતી',
+  'lbl_malayalam': 'മലയാളം',
+  'lbl_go_ahead_and_set_up_your_account': 'આગળ વધો અને તમારું એકાઉન્ટ સેટ અપ કરો',
+  'lbl_dont_have_an_account': 'એકાઉન્ટ નથી? ',
+  'lbl_register': 'નોંધાવો',
+  'msg_enter_mobile_number_linked_to_abha':
+      'તમારા Abha સરનામા સાથે લિંક કરેલ મોબાઇલ નંબર દાખલ કરો',
+  'lbl_get_otp': 'OTP મેળવો',
+  'msg_click_get_otp_to_receive_code': 'કોડ મેળવવા માટે "Get OTP" પર ક્લિક કરો',
+  'lbl_login': 'લૉગિન',
+  'lbl_or_login_with': 'અથવા આ સાથે લૉગિન કરો',
+  'lbl_google': 'Google',
+  'lbl_mobile': 'મોબાઇલ',
+  'lbl_email_id': 'ઇ-મેઇલ ID',
+};

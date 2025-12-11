@@ -52,7 +52,7 @@ class OtpVerificationScreen extends StatelessWidget {
                   children: [
                     // OTP Verification heading
                     Text(
-                      'OTP Verification',
+                      'lbl_otp_verification'.tr,
                       style: GoogleFonts.roboto(
                         fontSize: 20,
                         fontWeight: FontWeight.w600,
@@ -60,11 +60,13 @@ class OtpVerificationScreen extends StatelessWidget {
                         letterSpacing: 0,
                         color: Color(0xFF3865FF),
                       ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 8),
                     // Description text
                     Text(
-                      'An OTP has been sent to your number.\nPlease enter it here.',
+                      'msg_otp_has_been_sent'.tr,
                       style: GoogleFonts.lato(
                         fontSize: 14,
                         fontWeight: FontWeight.w400,
@@ -72,6 +74,8 @@ class OtpVerificationScreen extends StatelessWidget {
                         letterSpacing: 0,
                         color: Color(0xFF64748B),
                       ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),
@@ -93,7 +97,7 @@ class OtpVerificationScreen extends StatelessWidget {
                 child: Obx(() {
                   final isLoading = controller.isLoading.value;
                   return DynamicButton(
-                    text: isLoading ? '' : 'Submit',
+                    text: isLoading ? '' : 'lbl_submit'.tr,
                     width: 360,
                     height: 50,
                     fontSize: 16,

@@ -36,23 +36,27 @@ class AbhaRegisterScreen extends StatelessWidget {
 
                   // Title
                   Text(
-                    'Create your ABHA',
+                    'lbl_create_your_abha'.tr,
                     style: GoogleFonts.roboto(
                       fontSize: 22,
                       fontWeight: FontWeight.w700,
                       color: Color(0xFF3864FD),
                     ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 8),
 
                   // Subtitle
                   Text(
-                    'No ABHA Address Found under this number',
+                    'msg_no_abha_address_found'.tr,
                     style: GoogleFonts.lato(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
                       color: Color(0xFF94A3B8),
                     ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 32),
 
@@ -392,15 +396,19 @@ class AbhaRegisterScreen extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            _buildCardText('Name: ', '...........', 12),
+                            _buildCardText('lbl_name'.tr, '...........', 12),
                             const SizedBox(height: 6),
                             _buildCardText(
-                              'Abha No: ',
+                              'lbl_abha_no'.tr,
                               '........  ........  ........  ........',
                               11,
                             ),
                             const SizedBox(height: 6),
-                            _buildCardText('Abha Address: ', '...........', 11),
+                            _buildCardText(
+                              'lbl_abha_address'.tr,
+                              '...........',
+                              11,
+                            ),
                           ],
                         ),
                       ),
@@ -413,9 +421,9 @@ class AbhaRegisterScreen extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      _buildCardText('Gender: ', '........', 11),
-                      _buildCardText('DOB: ', '..........', 11),
-                      _buildCardText('Mobile: ', '..........', 11),
+                      _buildCardText('lbl_gender'.tr, '........', 11),
+                      _buildCardText('lbl_dob'.tr, '..........', 11),
+                      _buildCardText('lbl_mobile'.tr + ': ', '..........', 11),
                     ],
                   ),
                 ],
@@ -462,7 +470,7 @@ class AbhaRegisterScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Aadhar Number',
+            'lbl_aadhar_number'.tr,
             style: GoogleFonts.lato(
               fontSize: 14,
               fontWeight: FontWeight.w500,
@@ -493,19 +501,21 @@ class AbhaRegisterScreen extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            'OTP will be sent to the number which is linked to the Aadhar ID',
+            'msg_otp_will_be_sent_to_aadhar'.tr,
             style: GoogleFonts.lato(
               fontSize: 12,
               fontWeight: FontWeight.w400,
               color: Color(0xFF94A3B8),
             ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
           ),
           const SizedBox(height: 24),
           // Get OTP Button
           Obx(() {
             final isLoading = controller.isLoadingGetOtp.value;
             return DynamicButton(
-              text: isLoading ? '' : 'Get OTP',
+              text: isLoading ? '' : 'lbl_get_otp'.tr,
               width: double.infinity,
               height: 50,
               fontSize: 14,
@@ -530,13 +540,15 @@ class AbhaRegisterScreen extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Text(
-                  'Other options',
+                  'lbl_other_options'.tr,
                   style: TextStyle(
                     fontFamily: 'Lato',
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
                     color: Color(0xFF94A3B8),
                   ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
               Expanded(child: Divider(color: Color(0xFFCBD5E1), thickness: 1)),
@@ -627,12 +639,14 @@ class AbhaRegisterScreen extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'OTP sent to Aadhaar registered mobile number',
+          'msg_otp_sent_to_aadhaar_mobile'.tr,
           style: GoogleFonts.lato(
             fontSize: 12,
             fontWeight: FontWeight.w500,
             color: Color(0xFF94A3B8),
           ),
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
         ),
         const SizedBox(height: 16),
         // OTP Input
@@ -650,12 +664,14 @@ class AbhaRegisterScreen extends StatelessWidget {
         ),
         const SizedBox(height: 24),
         Text(
-          'Enter the Number to link with your Abha',
+          'msg_enter_number_to_link_abha'.tr,
           style: GoogleFonts.lato(
             fontSize: 12,
             fontWeight: FontWeight.w500,
             color: Color(0xFF94A3B8),
           ),
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
         ),
         const SizedBox(height: 16),
         // Mobile Number Input
@@ -678,7 +694,7 @@ class AbhaRegisterScreen extends StatelessWidget {
         Obx(() {
           final isLoading = controller.isLoadingVerifyOtp.value;
           return DynamicButton(
-            text: isLoading ? '' : 'Verify',
+            text: isLoading ? '' : 'lbl_verify'.tr,
             width: double.infinity,
             height: 50,
             fontSize: 16,
@@ -745,18 +761,18 @@ class AbhaRegisterScreen extends StatelessWidget {
       children: [
         _buildAlternativeRegistrationButton(
           icon: Icons.g_mobiledata,
-          label: 'Google',
+          label: 'lbl_google'.tr,
           iconColor: Colors.orange,
         ),
         _buildAlternativeRegistrationButton(
           icon: BootstrapIcons.telephone_fill,
-          label: 'Mobile',
+          label: 'lbl_mobile'.tr,
           iconSize: Size(16, 16),
           iconColor: Color(0xFF3864FD),
         ),
         _buildAlternativeRegistrationButton(
           icon: BootstrapIcons.envelope,
-          label: 'E-Mail ID',
+          label: 'lbl_email_id'.tr,
           iconColor: Color(0xFF3864FD),
         ),
       ],
@@ -772,11 +788,11 @@ class AbhaRegisterScreen extends StatelessWidget {
   }) {
     return GestureDetector(
       onTap: () {
-        if (label == 'Google') {
+        if (label == 'lbl_google'.tr) {
           // Handle Google registration
-        } else if (label == 'Mobile') {
+        } else if (label == 'lbl_mobile'.tr) {
           Get.toNamed(AppRoutes.mobileRegisterScreen);
-        } else if (label == 'E-Mail ID') {
+        } else if (label == 'lbl_email_id'.tr) {
           Get.toNamed(AppRoutes.emailRegisterScreen);
         }
       },
@@ -790,7 +806,7 @@ class AbhaRegisterScreen extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            if (label == 'Google')
+            if (label == 'lbl_google'.tr)
               Image.asset(ImageConstant.googleLogo, width: 20, height: 20)
             else
               Icon(icon, color: iconColor, size: iconSize?.width ?? 20),
@@ -803,6 +819,9 @@ class AbhaRegisterScreen extends StatelessWidget {
                 fontWeight: FontWeight.w500,
                 color: Colors.black87,
               ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
             ),
           ],
         ),

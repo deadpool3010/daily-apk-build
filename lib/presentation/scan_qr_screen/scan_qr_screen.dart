@@ -133,13 +133,18 @@ class ScanQrScreen extends StatelessWidget {
               child: Icon(Icons.arrow_back, color: Colors.white, size: 24),
             ),
           ),
-          Text(
-            'Scan QR',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 20,
-              fontFamily: 'Lato',
-              fontWeight: FontWeight.w600,
+          Flexible(
+            child: Text(
+              'lbl_scan_qr'.tr,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+                fontFamily: 'Lato',
+                fontWeight: FontWeight.w600,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
             ),
           ),
           Image.asset(ImageConstant.bandhuCareLogo, width: 44, height: 44),
@@ -318,14 +323,18 @@ class ScanQrScreen extends StatelessWidget {
                           size: 20,
                         ),
                       SizedBox(width: 8),
-                      Text(
-                        controller.isLoadingImage.value
-                            ? 'Processing...'
-                            : 'Gallery',
-                        style: GoogleFonts.roboto(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xFF3865FF),
+                      Flexible(
+                        child: Text(
+                          controller.isLoadingImage.value
+                              ? 'lbl_processing'.tr
+                              : 'lbl_gallery'.tr,
+                          style: GoogleFonts.roboto(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFF3865FF),
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ],

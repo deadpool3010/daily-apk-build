@@ -1,5 +1,6 @@
 import 'package:bandhucare_new/core/app_exports.dart';
 import 'package:flutter/material.dart';
+import 'package:bandhucare_new/services/shared_pref_localization.dart';
 
 class ChooseLanguageController extends GetxController
     with GetSingleTickerProviderStateMixin {
@@ -7,19 +8,41 @@ class ChooseLanguageController extends GetxController
   late AnimationController dropdownAnimationController;
   late Animation<double> dropdownAnimation;
 
+  final _prefs = SharedPrefLocalization();
+
   // Reactive variables using .obs
-  final selectedLanguage = 'English'.obs;
+  final selectedLanguageKey = 'lbl_english'.obs;
   final isDropdownExpanded = false.obs;
 
-  // Languages list
-  final List<String> languages = [
-    'English',
-    'Telugu',
-    'Gujarati',
-    'Tamil',
-    'Hindi',
-    'Malayalam',
+  // Languages list - storing keys instead of translated values
+  final List<String> languageKeys = [
+    'lbl_english',
+    'lbl_telugu',
+    'lbl_gujarati',
+    'lbl_tamil',
+    'lbl_hindi',
+    'lbl_malayalam',
   ];
+
+  // Mapping language keys to locale codes
+  Map<String, Locale> _languageKeyToLocale = {
+    'lbl_english': Locale('en', 'US'),
+    'lbl_hindi': Locale('hi', 'IN'),
+    'lbl_tamil': Locale('ta', 'IN'),
+    'lbl_telugu': Locale('te', 'IN'),
+    'lbl_gujarati': Locale('gu', 'IN'),
+    'lbl_malayalam': Locale('ml', 'IN'),
+  };
+
+  // Mapping language keys to locale code strings for storage
+  Map<String, String> _languageKeyToLocaleString = {
+    'lbl_english': 'en_US',
+    'lbl_hindi': 'hi_IN',
+    'lbl_tamil': 'ta_IN',
+    'lbl_telugu': 'te_IN',
+    'lbl_gujarati': 'gu_IN',
+    'lbl_malayalam': 'ml_IN',
+  };
 
   @override
   void onInit() {
@@ -32,6 +55,20 @@ class ChooseLanguageController extends GetxController
       parent: dropdownAnimationController,
       curve: Curves.easeInOut,
     );
+    _loadSavedLanguage();
+  }
+
+  // Load saved language preference
+  Future<void> _loadSavedLanguage() async {
+    final savedLocale = await _prefs.getAppLocale();
+    // Find the language key from locale string
+    final languageKey = _languageKeyToLocaleString.entries
+        .firstWhere(
+          (entry) => entry.value == savedLocale,
+          orElse: () => MapEntry('lbl_english', 'en_US'),
+        )
+        .key;
+    selectedLanguageKey.value = languageKey;
   }
 
   @override
@@ -51,14 +88,36 @@ class ChooseLanguageController extends GetxController
   }
 
   // Select a language
-  void selectLanguage(String language) {
-    selectedLanguage.value = language;
+  Future<void> selectLanguage(String languageKey) async {
+    selectedLanguageKey.value = languageKey;
     isDropdownExpanded.value = false;
     dropdownAnimationController.reverse();
+
+    // Save the selected language
+    final localeString = _languageKeyToLocaleString[languageKey] ?? 'en_US';
+    await _prefs.saveAppLocale(localeString);
+
+    // Update GetX locale after a microtask to avoid build phase issues
+    final locale = _languageKeyToLocale[languageKey] ?? Locale('en', 'US');
+    Future.microtask(() {
+      Get.updateLocale(locale);
+    });
   }
 
   // Navigate to login screen
-  void proceedToLogin() {
+  Future<void> proceedToLogin() async {
+    // Ensure language is saved before navigating
+    final localeString =
+        _languageKeyToLocaleString[selectedLanguageKey.value] ?? 'en_US';
+    await _prefs.saveAppLocale(localeString);
+
+    // Update GetX locale after a microtask to avoid build phase issues
+    final locale =
+        _languageKeyToLocale[selectedLanguageKey.value] ?? Locale('en', 'US');
+    Future.microtask(() {
+      Get.updateLocale(locale);
+    });
+
     Get.offNamed(AppRoutes.loginScreen);
   }
 }
