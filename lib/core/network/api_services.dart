@@ -435,6 +435,7 @@ Future<Map<String, dynamic>> selectAccountApi(
     final result = jsonDecode(response.body);
 
     if (response.statusCode == 200 || response.statusCode == 201) {
+      print('SelectAccount Response: $result');
       return result;
     } else {
       throw Exception(
@@ -606,7 +607,9 @@ Future<Map<String, dynamic>> sendMessage({
           await http.MultipartFile.fromPath(
             'file',
             file.path,
-            filename: file.path.split('/').last, // Ensure .wav extension in filename
+            filename: file.path
+                .split('/')
+                .last, // Ensure .wav extension in filename
           ),
         );
         final streamedResponse = await request.send();

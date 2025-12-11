@@ -2,7 +2,6 @@ import 'package:bandhucare_new/routes/app_routes.dart';
 import 'package:bandhucare_new/services/variables.dart';
 import 'package:bandhucare_new/core/network/api_services.dart';
 import 'package:bandhucare_new/services/shared_pref_localization.dart';
-import 'package:bandhucare_new/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
@@ -79,42 +78,122 @@ class LoginController extends GetxController with GetTickerProviderStateMixin {
     });
   }
 
+  bool _controllersInitialized = false;
+
+  void _disposeTextControllers() {
+    // Only dispose if controllers have been initialized
+    if (!_controllersInitialized) return;
+
+    // Safely dispose text controllers
+    try {
+      phoneController.dispose();
+    } catch (e) {
+      // Controller already disposed, ignore
+    }
+
+    try {
+      emailAddressController.dispose();
+    } catch (e) {
+      // Controller already disposed, ignore
+    }
+
+    try {
+      abhaAddressController.dispose();
+    } catch (e) {
+      // Controller already disposed, ignore
+    }
+
+    try {
+      for (var controller in otpControllers) {
+        controller.dispose();
+      }
+    } catch (e) {
+      // Controllers already disposed, ignore
+    }
+
+    try {
+      for (var controller in abhaNumberControllers) {
+        controller.dispose();
+      }
+    } catch (e) {
+      // Controllers already disposed, ignore
+    }
+
+    try {
+      for (var controller in aadhaarNumberControllers) {
+        controller.dispose();
+      }
+    } catch (e) {
+      // Controllers already disposed, ignore
+    }
+
+    try {
+      for (var controller in verificationOtpControllers) {
+        controller.dispose();
+      }
+    } catch (e) {
+      // Controllers already disposed, ignore
+    }
+
+    _controllersInitialized = false;
+  }
+
   @override
   void onClose() {
-    // Dispose text controllers
-    phoneController.dispose();
-    emailAddressController.dispose();
-    abhaAddressController.dispose();
-    for (var controller in otpControllers) {
-      controller.dispose();
-    }
-    for (var controller in abhaNumberControllers) {
-      controller.dispose();
-    }
-    for (var controller in aadhaarNumberControllers) {
-      controller.dispose();
-    }
-    for (var controller in verificationOtpControllers) {
-      controller.dispose();
-    }
+    // Dispose text controllers safely
+    _disposeTextControllers();
+
     // Dispose focus nodes
-    for (var focusNode in otpFocusNodes) {
-      focusNode.dispose();
+    try {
+      for (var focusNode in otpFocusNodes) {
+        focusNode.dispose();
+      }
+    } catch (e) {
+      // Focus nodes already disposed
     }
+
     // Dispose animation controllers
-    slideController.dispose();
-    flipController.dispose();
-    dropdownController.dispose();
-    for (var controller in otpAnimationControllers) {
-      controller.dispose();
+    try {
+      slideController.dispose();
+    } catch (e) {
+      // Already disposed
     }
-    for (var controller in verificationOtpAnimationControllers) {
-      controller.dispose();
+
+    try {
+      flipController.dispose();
+    } catch (e) {
+      // Already disposed
     }
+
+    try {
+      dropdownController.dispose();
+    } catch (e) {
+      // Already disposed
+    }
+
+    try {
+      for (var controller in otpAnimationControllers) {
+        controller.dispose();
+      }
+    } catch (e) {
+      // Already disposed
+    }
+
+    try {
+      for (var controller in verificationOtpAnimationControllers) {
+        controller.dispose();
+      }
+    } catch (e) {
+      // Already disposed
+    }
+
     super.onClose();
   }
 
   void _initializeTextControllers() {
+    // Dispose existing controllers if any (in case of reinitialization)
+    _disposeTextControllers();
+
     phoneController = TextEditingController();
     emailAddressController = TextEditingController();
     abhaAddressController = TextEditingController();
@@ -127,6 +206,8 @@ class LoginController extends GetxController with GetTickerProviderStateMixin {
       6,
       (index) => TextEditingController(),
     );
+
+    _controllersInitialized = true;
   }
 
   void toggleCardFlip() {
@@ -1004,66 +1085,11 @@ class LoginController extends GetxController with GetTickerProviderStateMixin {
           print('========================================');
 
           // Navigate to select ABHA address screen if multiple accounts found
-          if (abhaAccounts.length > 1) {
-            Get.toNamed(
-              AppRoutes.selectAbhaAddressScreen,
-              arguments: {'abhaAccounts': abhaAccounts},
-            );
-          } else if (abhaAccounts.length == 1) {
-            // If only one account, select it automatically
-            final selectedAccount = abhaAccounts[0];
-            final abhaNumber = selectedAccount['abhaNumber']?.toString() ?? '';
-
-            // Call select account API automatically
-            try {
-              final selectResult = await selectAccountApi(
-                sessionId,
-                abhaNumber,
-              );
-
-              // Extract tokens
-              if (selectResult['data'] != null) {
-                final data = selectResult['data'] as Map<String, dynamic>;
-                String? extractedAccessToken =
-                    data['accessToken']?.toString() ??
-                    data['token']?.toString();
-                String? extractedRefreshToken = data['refreshToken']
-                    ?.toString();
-
-                if (extractedAccessToken != null &&
-                    extractedAccessToken.isNotEmpty) {
-                  accessToken = extractedAccessToken;
-                  await SharedPrefLocalization().saveTokens(
-                    extractedAccessToken,
-                    extractedRefreshToken ?? '',
-                  );
-                }
-                if (extractedRefreshToken != null &&
-                    extractedRefreshToken.isNotEmpty) {
-                  refreshToken = extractedRefreshToken;
-                }
-              }
-
-              Get.offAllNamed(AppRoutes.homeScreen);
-            } catch (e) {
-              print('Error auto-selecting account: $e');
-              // Navigate to select screen anyway
-              Get.toNamed(
-                AppRoutes.selectAbhaAddressScreen,
-                arguments: {'abhaAccounts': abhaAccounts},
-              );
-            }
-          } else {
-            // No accounts found, navigate to home
-            Get.offAllNamed(AppRoutes.homeScreen);
-          }
-        } else {
-          // No accounts in response, navigate to home
-          Get.offAllNamed(AppRoutes.homeScreen);
+          Get.toNamed(
+            AppRoutes.selectAbhaAddressScreen,
+            arguments: {'abhaAccounts': abhaAccounts},
+          );
         }
-      } else {
-        // No data in response, navigate to home
-        Get.offAllNamed(AppRoutes.homeScreen);
       }
     } catch (e) {
       print('');

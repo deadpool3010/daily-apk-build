@@ -68,30 +68,44 @@ class SelectAbhaAddressController extends GetxController {
       final abhaNumber = selectedAccount['abhaNumber']?.toString() ?? '';
 
       // Call select account API
+      print("helfloo");
       final result = await selectAccountApi(sessionId, abhaNumber);
 
       print('SelectAccount API Response: $result');
 
       // Extract tokens from response
-      if (result['data'] != null) {
+      String extractedAccessToken = '';
+
+      if (result['data'] != null && result['data'] is Map) {
         final data = result['data'] as Map<String, dynamic>;
 
         // Extract accessToken and refreshToken
-        String? extractedAccessToken =
+        extractedAccessToken =
             data['accessToken']?.toString() ??
             data['token']?.toString() ??
-            result['accessToken']?.toString();
+            result['accessToken']?.toString() ??
+            '';
         String? extractedRefreshToken =
             data['refreshToken']?.toString() ??
             result['refreshToken']?.toString();
 
-        if (extractedAccessToken != null && extractedAccessToken.isNotEmpty) {
+        // Store accessToken in global variable and SharedPreferences
+        if (extractedAccessToken.isNotEmpty) {
           accessToken = extractedAccessToken;
-          // Save to SharedPreferences
-          await SharedPrefLocalization().saveTokens(
-            extractedAccessToken,
-            extractedRefreshToken ?? '',
+          print(
+            'AccessToken extracted and stored: ${accessToken.substring(0, 20)}...',
           );
+
+          // Save to SharedPreferences
+          try {
+            await SharedPrefLocalization().saveTokens(
+              extractedAccessToken,
+              extractedRefreshToken ?? '',
+            );
+            print('AccessToken saved to SharedPreferences');
+          } catch (e) {
+            print('Error saving accessToken to SharedPreferences: $e');
+          }
         }
 
         if (extractedRefreshToken != null && extractedRefreshToken.isNotEmpty) {
@@ -106,24 +120,36 @@ class SelectAbhaAddressController extends GetxController {
         textColor: Colors.white,
       );
 
-      // Extract newRegistration flag from response
-      bool newRegistration = false;
-      if (result['data'] != null && result['data'] is Map) {
-        final data = result['data'] as Map<String, dynamic>;
-        newRegistration = data['newRegistration'] as bool? ?? false;
-      } else {
-        newRegistration = result['newRegistration'] as bool? ?? false;
-      }
+      // Profile details are extracted and stored in abhaData if needed for future use
+      // Currently not used as we navigate directly to scanQrScreen or homeScreen
 
-      // Navigate to ABHA Created screen with newRegistration flag
-      Get.toNamed(
-        AppRoutes.abhaCreatedScreen,
-        arguments: {
-          'newRegistration': newRegistration,
-          'fromRegistration': false,
-        },
-      );
+      // Extract newRegistration flag from response
+      final newRegistration =
+          result['newRegistration'] ??
+          result['data']?['newRegistration'] ??
+          false;
+
+      print('========================================');
+      print('New Registration: $newRegistration');
+      print('Full Response: $result');
+      print('========================================');
+
+      // Set loading to false before navigation
+      isLoading.value = false;
+
+      // Navigate after a short delay to ensure UI updates complete
+      await Future.delayed(Duration(milliseconds: 300));
+
+      // If newRegistration is true, navigate to scan QR screen, otherwise home screen
+      if (newRegistration == true) {
+        print('Navigating to scan QR screen...');
+        Get.offAllNamed(AppRoutes.scanQrScreen);
+      } else {
+        print('Navigating to home screen...');
+        Get.offAllNamed(AppRoutes.homeScreen);
+      }
     } catch (e) {
+      isLoading.value = false;
       String errorMessage = e.toString();
       if (errorMessage.startsWith('Exception: Exception: ')) {
         errorMessage = errorMessage.replaceFirst('Exception: Exception: ', '');
@@ -137,8 +163,6 @@ class SelectAbhaAddressController extends GetxController {
         backgroundColor: Colors.red,
         textColor: Colors.white,
       );
-    } finally {
-      isLoading.value = false;
     }
   }
 

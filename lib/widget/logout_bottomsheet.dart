@@ -1,5 +1,6 @@
 import 'package:bandhucare_new/routes/app_routes.dart';
 import 'package:bandhucare_new/presentation/user_profile_screen/bottomsheet.dart';
+import 'package:bandhucare_new/presentation/login_screen/controller/login_screen_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -7,6 +8,19 @@ import 'package:shared_preferences/shared_preferences.dart';
 Future<void> logoutFunction() async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   await prefs.clear();
+
+  // Explicitly delete LoginController to ensure fresh instance
+  try {
+    if (Get.isRegistered<LoginController>()) {
+      Get.delete<LoginController>();
+    }
+  } catch (e) {
+    print('Error deleting LoginController: $e');
+  }
+
+  // Use a small delay to ensure cleanup completes before navigation
+  await Future.delayed(Duration(milliseconds: 100));
+
   Get.offAllNamed(AppRoutes.loginScreen);
 }
 

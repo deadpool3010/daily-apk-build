@@ -29,26 +29,21 @@ class AbhaCreatedController extends GetxController {
       }
 
       // Check newRegistration flag and navigate accordingly
-      // Only navigate if newRegistration is explicitly set (not null)
+      // Only auto-navigate if newRegistration is explicitly true
+      // When false or coming from select_abha_address, user stays on screen
       if (arguments.containsKey('newRegistration')) {
         final newRegistration = arguments['newRegistration'] as bool? ?? false;
         if (newRegistration) {
-          // If newRegistration is true, navigate to scan QR screen
+          // If newRegistration is true, navigate to scan QR screen after 2 seconds
           WidgetsBinding.instance.addPostFrameCallback((_) {
             Future.delayed(Duration(milliseconds: 2000), () {
               // Show screen for 2 seconds before navigating
               Get.offAllNamed(AppRoutes.scanQrScreen);
             });
           });
-        } else {
-          // If newRegistration is false, navigate to home screen
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            Future.delayed(Duration(milliseconds: 2000), () {
-              // Show screen for 2 seconds before navigating
-              Get.offAllNamed(AppRoutes.homeScreen);
-            });
-          });
         }
+        // If newRegistration is false, don't auto-navigate
+        // User can manually click "Scan to Join Group" button
       }
     }
   }
@@ -75,16 +70,41 @@ class AbhaCreatedController extends GetxController {
         abhaAddress.value = abhaAddr;
       }
 
-      // Extract gender
-      final genderValue = abhaDetails['gender']?.toString().trim();
+      // Extract and format gender (M -> Male, F -> Female, etc.)
+      final genderValue = abhaDetails['gender']?.toString().trim().toUpperCase();
       if (genderValue != null && genderValue.isNotEmpty) {
-        gender.value = genderValue;
+        switch (genderValue) {
+          case 'M':
+            gender.value = 'Male';
+            break;
+          case 'F':
+            gender.value = 'Female';
+            break;
+          case 'O':
+            gender.value = 'Other';
+            break;
+          default:
+            gender.value = genderValue;
+        }
       }
 
-      // Extract formatted DOB (already formatted as DDMMYYYY)
+      // Extract and format DOB
+      // First check if dob is already formatted (DDMMYYYY)
       final dobValue = abhaDetails['dob']?.toString().trim();
       if (dobValue != null && dobValue.isNotEmpty) {
         dob.value = dobValue;
+      } else {
+        // If not formatted, try to build from dayOfBirth, monthOfBirth, yearOfBirth
+        final dayOfBirth = abhaDetails['dayOfBirth']?.toString().trim() ?? '';
+        final monthOfBirth = abhaDetails['monthOfBirth']?.toString().trim() ?? '';
+        final yearOfBirth = abhaDetails['yearOfBirth']?.toString().trim() ?? '';
+        
+        if (dayOfBirth.isNotEmpty && monthOfBirth.isNotEmpty && yearOfBirth.isNotEmpty) {
+          // Format as DDMMYYYY
+          final day = dayOfBirth.padLeft(2, '0');
+          final month = monthOfBirth.padLeft(2, '0');
+          dob.value = '$day$month$yearOfBirth';
+        }
       }
 
       // Extract mobile number
@@ -103,6 +123,10 @@ class AbhaCreatedController extends GetxController {
       print('Name: ${userName.value}');
       print('ABHA Number: ${abhaNumber.value}');
       print('ABHA Address: ${abhaAddress.value}');
+      print('Gender: ${gender.value}');
+      print('DOB: ${dob.value}');
+      print('Mobile: ${mobile.value}');
+      print('Profile Photo: ${profileImageUrl.value}');
     } catch (e) {
       print('Error loading ABHA details: $e');
     }

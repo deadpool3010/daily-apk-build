@@ -117,9 +117,6 @@ class EmailVerificationAbhaScreen extends StatelessWidget {
                             color: AppColors.hintTextColor,
                           ),
                           keyboardType: TextInputType.emailAddress,
-                          onChanged: (value) {
-                            controller.handleVerifyEmail();
-                          },
                         ),
                         const SizedBox(height: 40),
                       ],
