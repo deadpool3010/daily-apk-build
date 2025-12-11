@@ -15,7 +15,8 @@ void main() async {
   final prefs = SharedPrefLocalization();
   final savedLocale = await prefs.getAppLocale();
   final locale = _parseLocale(savedLocale);
-
+  await Firebase.initializeApp();
+  await _initializeFirebaseMessaging();
   runApp(MyApp(initialLocale: locale));
 }
 
@@ -26,11 +27,6 @@ Locale _parseLocale(String localeString) {
     return Locale(parts[0], parts[1]);
   }
   return const Locale('en', 'US');
-  runApp(const MyApp());
-  await Firebase.initializeApp();
-
-  // Initialize Firebase Messaging
-  await _initializeFirebaseMessaging();
 }
 
 class MyApp extends StatelessWidget {
