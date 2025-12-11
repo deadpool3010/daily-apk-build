@@ -1,6 +1,5 @@
 import 'package:bandhucare_new/services/variables.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'routes/app_routes.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -42,7 +41,7 @@ Future<void> _initializeFirebaseMessaging() async {
           carPlay: false,
           criticalAlert: false,
           provisional: true,
-          sound: true,
+          sound: true
         );
 
     print(

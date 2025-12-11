@@ -5,3 +5,4 @@ String uniqueCode = "";
 String userData = "";
 String appLanguage = "";
 String mitraLanguage = "";
+String? fcmToken;
