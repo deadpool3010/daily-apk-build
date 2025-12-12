@@ -212,48 +212,51 @@ class EmailPasswordLoginScreen extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         // Remember me checkbox
-        GestureDetector(
-          onTap: () {
-            controller.toggleRememberMe();
-          },
-          child: Row(
-            children: [
-              Obx(
-                () => Container(
-                  width: 20,
-                  height: 20,
-                  decoration: BoxDecoration(
-                    color: controller.rememberMe.value
-                        ? Color(0xFF3864FD)
-                        : Colors.transparent,
-                    borderRadius: BorderRadius.circular(4),
-                    border: Border.all(
+        Flexible(
+          child: GestureDetector(
+            onTap: () {
+              controller.toggleRememberMe();
+            },
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Obx(
+                  () => Container(
+                    width: 20,
+                    height: 20,
+                    decoration: BoxDecoration(
                       color: controller.rememberMe.value
                           ? Color(0xFF3864FD)
-                          : Color(0xFFE2E8F0),
-                      width: 2,
+                          : Colors.transparent,
+                      borderRadius: BorderRadius.circular(4),
+                      border: Border.all(
+                        color: controller.rememberMe.value
+                            ? Color(0xFF3864FD)
+                            : Color(0xFFE2E8F0),
+                        width: 2,
+                      ),
                     ),
+                    child: controller.rememberMe.value
+                        ? Icon(Icons.check, color: Colors.white, size: 14)
+                        : null,
                   ),
-                  child: controller.rememberMe.value
-                      ? Icon(Icons.check, color: Colors.white, size: 14)
-                      : null,
                 ),
-              ),
-              const SizedBox(width: 8),
-              Flexible(
-                child: Text(
-                  'lbl_remember_me'.tr,
-                  style: TextStyle(
-                    fontFamily: 'Lato',
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.black87,
+                const SizedBox(width: 8),
+                Flexible(
+                  child: Text(
+                    'lbl_remember_me'.tr,
+                    style: TextStyle(
+                      fontFamily: 'Lato',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black87,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
         // Forget Password link
@@ -365,6 +368,7 @@ class EmailPasswordLoginScreen extends StatelessWidget {
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: [
             if (label == 'lbl_google'.tr)
               Image.asset(ImageConstant.googleLogo, width: 20, height: 20)
@@ -373,17 +377,19 @@ class EmailPasswordLoginScreen extends StatelessWidget {
             else
               Icon(icon, color: iconColor, size: iconSize?.width ?? 20),
             const SizedBox(width: 4),
-            Text(
-              label,
-              style: TextStyle(
-                fontFamily: 'Lato',
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                color: Colors.black87,
+            Flexible(
+              child: Text(
+                label,
+                style: TextStyle(
+                  fontFamily: 'Lato',
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black87,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
               ),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              textAlign: TextAlign.center,
             ),
           ],
         ),
