@@ -22,6 +22,12 @@ class AbhaCreatedController extends GetxController {
       final fromRegistration = arguments['fromRegistration'] as bool? ?? false;
       showAbhaCard.value = !fromRegistration;
 
+      // Load user name from arguments if available (from email/mobile registration)
+      final userNameFromArgs = arguments['userName'] as String?;
+      if (userNameFromArgs != null && userNameFromArgs.isNotEmpty) {
+        userName.value = _extractFirstName(userNameFromArgs.trim());
+      }
+
       // Load ABHA details from arguments if available
       final abhaDetails = arguments['abhaDetails'] as Map<String, dynamic>?;
       if (abhaDetails != null) {
@@ -54,7 +60,7 @@ class AbhaCreatedController extends GetxController {
       // Extract and format name
       final name = abhaDetails['name']?.toString().trim();
       if (name != null && name.isNotEmpty) {
-        userName.value = name;
+        userName.value = _extractFirstName(name);
       }
 
       // Extract and format ABHA number (add spaces for readability if needed)
@@ -71,7 +77,10 @@ class AbhaCreatedController extends GetxController {
       }
 
       // Extract and format gender (M -> Male, F -> Female, etc.)
-      final genderValue = abhaDetails['gender']?.toString().trim().toUpperCase();
+      final genderValue = abhaDetails['gender']
+          ?.toString()
+          .trim()
+          .toUpperCase();
       if (genderValue != null && genderValue.isNotEmpty) {
         switch (genderValue) {
           case 'M':
@@ -96,10 +105,13 @@ class AbhaCreatedController extends GetxController {
       } else {
         // If not formatted, try to build from dayOfBirth, monthOfBirth, yearOfBirth
         final dayOfBirth = abhaDetails['dayOfBirth']?.toString().trim() ?? '';
-        final monthOfBirth = abhaDetails['monthOfBirth']?.toString().trim() ?? '';
+        final monthOfBirth =
+            abhaDetails['monthOfBirth']?.toString().trim() ?? '';
         final yearOfBirth = abhaDetails['yearOfBirth']?.toString().trim() ?? '';
-        
-        if (dayOfBirth.isNotEmpty && monthOfBirth.isNotEmpty && yearOfBirth.isNotEmpty) {
+
+        if (dayOfBirth.isNotEmpty &&
+            monthOfBirth.isNotEmpty &&
+            yearOfBirth.isNotEmpty) {
           // Format as DDMMYYYY
           final day = dayOfBirth.padLeft(2, '0');
           final month = monthOfBirth.padLeft(2, '0');
@@ -130,6 +142,19 @@ class AbhaCreatedController extends GetxController {
     } catch (e) {
       print('Error loading ABHA details: $e');
     }
+  }
+
+  // Extract first name from full name (text before first space)
+  String _extractFirstName(String fullName) {
+    if (fullName.isEmpty) return fullName;
+    final trimmedName = fullName.trim();
+    final firstSpaceIndex = trimmedName.indexOf(' ');
+    if (firstSpaceIndex == -1) {
+      // No space found, return the whole name
+      return trimmedName;
+    }
+    // Return text before first space
+    return trimmedName.substring(0, firstSpaceIndex);
   }
 
   // Handle Scan to Join Group button

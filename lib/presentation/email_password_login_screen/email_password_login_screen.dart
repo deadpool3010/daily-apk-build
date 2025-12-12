@@ -382,7 +382,7 @@ class EmailPasswordLoginScreen extends StatelessWidget {
                 label,
                 style: TextStyle(
                   fontFamily: 'Lato',
-                  fontSize: 14,
+                  fontSize: 12,
                   fontWeight: FontWeight.w500,
                   color: Colors.black87,
                 ),

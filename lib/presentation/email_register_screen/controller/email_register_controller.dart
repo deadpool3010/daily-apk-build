@@ -140,7 +140,10 @@ class EmailRegisterController extends GetxController {
           Future.delayed(Duration(milliseconds: 300), () {
             Get.offAllNamed(
               AppRoutes.abhaCreatedScreen,
-              arguments: {'fromRegistration': true},
+              arguments: {
+                'fromRegistration': true,
+                'userName': fullName,
+              },
             );
           });
         });
