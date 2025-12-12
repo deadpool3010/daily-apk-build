@@ -32,3 +32,4 @@ String getCommunityApi(String groupId) =>
 String sendVerificationLink = "auth/send-verification-link";
 String abhaAddressSuggestions(String sessionId) =>
     "auth/abha-address-suggestions/$sessionId";
+String updateFcmToken = "auth/update-fcm";

@@ -55,6 +55,7 @@ class SelectAbhaAddressScreen extends StatelessWidget {
     return Obx(() {
       final count = controller.abhaAccounts.length;
       return Column(
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
@@ -67,20 +68,18 @@ class SelectAbhaAddressScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-          Flexible(
-            child: Text(
-              'msg_we_found_abha_addresses'.tr
-                  .replaceAll('{count}', count.toString())
-                  .replaceAll('{plural}', count != 1 ? 'es' : ''),
-              style: GoogleFonts.lato(
-                fontSize: 14,
-                fontWeight: FontWeight.w400,
-                color: Color(0xFF94A3B8),
-                height: 1.4,
-              ),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
+          Text(
+            'msg_we_found_abha_addresses'.tr
+                .replaceAll('{count}', count.toString())
+                .replaceAll('{plural}', count != 1 ? 'es' : ''),
+            style: GoogleFonts.lato(
+              fontSize: 14,
+              fontWeight: FontWeight.w400,
+              color: Color(0xFF94A3B8),
+              height: 1.4,
             ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
           ),
         ],
       );
@@ -89,6 +88,7 @@ class SelectAbhaAddressScreen extends StatelessWidget {
 
   Widget _buildLogoSection() {
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
         // Circular Logo with Dashed Circles
         Stack(
@@ -147,6 +147,7 @@ class SelectAbhaAddressScreen extends StatelessWidget {
     }
 
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: List.generate(controller.abhaAccounts.length, (index) {
         final account = controller.abhaAccounts[index];
         final isSelected = controller.selectedIndex.value == index;
@@ -191,6 +192,7 @@ class SelectAbhaAddressScreen extends StatelessWidget {
           children: [
             Expanded(
               child: Column(
+                mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // ABHA Address

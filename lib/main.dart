@@ -16,14 +16,17 @@ void main() async {
   final locale = _parseLocale(savedLocale);
 
   // Initialize Firebase with error handling
+  // Firebase is optional - app will work without it if google-services.json is not configured
   try {
+    print("Initializing Firebase...");
     await Firebase.initializeApp();
     await _initializeFirebaseMessaging();
+    print("Firebase initialized successfully");
   } catch (e) {
-    print('Firebase initialization error: $e');
-    print(
-      'Note: Make sure google-services.json is placed in android/app/ directory',
-    );
+    // Firebase is optional - app continues without push notifications
+    print('Firebase not configured (this is optional):');
+    print('  - To enable Firebase, add google-services.json to android/app/');
+    print('  - App will continue to work without Firebase');
     // Continue app initialization even if Firebase fails
   }
 

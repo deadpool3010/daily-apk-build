@@ -1,4 +1,4 @@
-package com.example.bandhucare_new
+package com.bandhucare.app
 
 import android.os.Build
 import android.view.View
@@ -30,3 +30,4 @@ class MainActivity : FlutterActivity() {
         }
     }
 }
+

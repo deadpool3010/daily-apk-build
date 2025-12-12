@@ -1,8 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:bandhucare_new/core/network/api_services.dart';
-import 'package:bandhucare_new/routes/app_routes.dart';
+import 'package:bandhucare_new/core/app_exports.dart';
 
 class JoinGroupController extends GetxController {
   final isLoading = false.obs;
@@ -50,6 +46,14 @@ class JoinGroupController extends GetxController {
           backgroundColor: Colors.green,
           textColor: Colors.white,
         );
+        accessToken = result['data']['accessToken'] ?? '';
+        refreshToken = result['data']['refreshToken'] ?? '';
+
+        await SharedPrefLocalization().saveTokens(
+          accessToken,
+          refreshToken ?? '',
+        );
+        await updateFcmTokenApi(fcmToken!);
 
         // Use post-frame callback to ensure proper widget disposal before navigation
         WidgetsBinding.instance.addPostFrameCallback((_) {

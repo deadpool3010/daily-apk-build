@@ -186,7 +186,7 @@ class _ChatScreenAppBarState extends State<ChatScreenAppBar> {
         title: Padding(
           padding: const EdgeInsets.only(top: 41, bottom: 25),
           child: Image.asset(
-            ImageConstant.mitra_logo_header,
+            ImageConstant.bandhu_chat,
             height: 20,
             fit: BoxFit.contain,
           ),

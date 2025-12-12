@@ -836,3 +836,49 @@ Future<Map<String, dynamic>> getAbhaAddressSuggestionsApi(
     throw Exception("Error getting abha address suggestions: $e");
   }
 }
+
+Future<Map<String, dynamic>> updateFcmTokenApi(String fcmToken) async {
+  try {
+    final url = baseUrl + updateFcmToken;
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $accessToken",
+      },
+      body: jsonEncode({"fcmToken": fcmToken}),
+    );
+
+    print("FCM Token Update Response Status: ${response.statusCode}");
+    print("FCM Token Update Response Body: ${response.body}");
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      // Handle empty response body
+      if (response.body.isEmpty || response.body.trim().isEmpty) {
+        return {"success": true, "message": "FCM token updated successfully"};
+      }
+
+      // Decode JSON only if body is not empty
+      final result = jsonDecode(response.body) as Map<String, dynamic>;
+      print("FCM Token Update Result: $result");
+      return result;
+    } else {
+      // Try to parse error message if body exists
+      Map<String, dynamic> errorResult = {};
+      if (response.body.isNotEmpty && response.body.trim().isNotEmpty) {
+        try {
+          errorResult = jsonDecode(response.body) as Map<String, dynamic>;
+        } catch (_) {
+          // If parsing fails, use raw body as message
+        }
+      }
+      throw Exception(
+        errorResult['message']?.toString() ??
+            'Failed to update FCM token. Status: ${response.statusCode}',
+      );
+    }
+  } catch (e) {
+    print("Error updating fcm token: $e");
+    rethrow;
+  }
+}
