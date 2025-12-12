@@ -100,7 +100,7 @@ class AbhaCreatedScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(100),
                   ),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       Icon(
                         Icons.qr_code_scanner,
@@ -121,7 +121,18 @@ class AbhaCreatedScreen extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 12),
-                      Icon(Icons.arrow_forward, color: Colors.white, size: 20),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(100),
+                        ),
+                        margin: EdgeInsets.only(right: 10),
+                        child: Icon(
+                          Icons.arrow_forward,
+                          color: Colors.black,
+                          size: 20,
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -446,28 +457,33 @@ class AbhaCreatedScreen extends StatelessWidget {
         ),
         const SizedBox(height: 20),
         Container(
-          margin: EdgeInsets.only(right: 1),
+          margin: const EdgeInsets.only(right: 1),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(24),
             color: Color(0xFFE5EFFE),
           ),
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                _buildStepItem(ImageConstant.step1, 'lbl_scan'.tr),
-                const SizedBox(width: 10),
-                Icon(Icons.arrow_forward, size: 24, color: Color(0xFF334155)),
-                const SizedBox(width: 10),
-                _buildStepItem(ImageConstant.step2, 'lbl_join_community'.tr),
-                const SizedBox(width: 10),
-                Icon(Icons.arrow_forward, size: 24, color: Color(0xFF334155)),
-                const SizedBox(width: 10),
-                _buildStepItem(ImageConstant.step3, 'lbl_access_services'.tr),
-              ],
-            ),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Flexible(
+                child: _buildStepItem(ImageConstant.step1, 'lbl_scan'.tr),
+              ),
+              Icon(Icons.arrow_forward, size: 24, color: Color(0xFF334155)),
+              Flexible(
+                child: _buildStepItem(
+                  ImageConstant.step2,
+                  'lbl_join_community'.tr,
+                ),
+              ),
+              Icon(Icons.arrow_forward, size: 24, color: Color(0xFF334155)),
+              Flexible(
+                child: _buildStepItem(
+                  ImageConstant.step3,
+                  'lbl_access_services'.tr,
+                ),
+              ),
+            ],
           ),
         ),
       ],
@@ -498,16 +514,18 @@ class AbhaCreatedScreen extends StatelessWidget {
           },
         ),
         const SizedBox(height: 8),
-        Text(
-          stepText,
-          style: GoogleFonts.roboto(
-            fontSize: 12,
-            fontWeight: FontWeight.w500,
-            color: Color(0xFF334155),
+        Flexible(
+          child: Text(
+            stepText,
+            style: GoogleFonts.roboto(
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+              color: Color(0xFF334155),
+            ),
+            textAlign: TextAlign.center,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
           ),
-          textAlign: TextAlign.center,
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
         ),
         const SizedBox(height: 16),
       ],
@@ -603,7 +621,7 @@ class AbhaCreatedScreen extends StatelessWidget {
             height: 48,
             decoration: BoxDecoration(
               color: Color(0xFFFF9D00),
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(50),
             ),
             child: Center(
               child: Text(

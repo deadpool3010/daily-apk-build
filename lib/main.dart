@@ -21,10 +21,10 @@ void main() async {
     await _initializeFirebaseMessaging();
   } catch (e) {
     print('Firebase initialization error: $e');
-    print('Note: If you are not using Firebase, you can ignore this error.');
     print(
-      'To fix: Add google-services.json (Android) or GoogleService-Info.plist (iOS) to your project.',
+      'Note: Make sure google-services.json is placed in android/app/ directory',
     );
+    // Continue app initialization even if Firebase fails
   }
 
   runApp(MyApp(initialLocale: locale));
@@ -103,12 +103,17 @@ Future<void> _initializeFirebaseMessaging() async {
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   } catch (e) {
     print('Error initializing Firebase Messaging: $e');
+    // Continue without Firebase Messaging if initialization fails
   }
 }
 
 // Background message handler
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp();
-  print('Handling a background message: ${message.messageId}');
+  try {
+    await Firebase.initializeApp();
+    print('Handling a background message: ${message.messageId}');
+  } catch (e) {
+    print('Error initializing Firebase in background handler: $e');
+  }
 }
