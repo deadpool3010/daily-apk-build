@@ -195,18 +195,16 @@ class _HomepageScreenState extends State<HomepageScreen> {
                       const SizedBox(height: 30),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: Flexible(
-                          child: Text(
-                            'lbl_daily_affirmation_remainders'.tr,
-                            style: GoogleFonts.roboto(
-                              textStyle: TextStyle(
-                                color: AppColors.black,
-                                fontSize: 18.0,
-                              ),
+                        child: Text(
+                          'lbl_daily_affirmation_remainders'.tr,
+                          style: GoogleFonts.roboto(
+                            textStyle: TextStyle(
+                              color: AppColors.black,
+                              fontSize: 18.0,
                             ),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
                           ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                       const SizedBox(height: 14),
@@ -229,18 +227,16 @@ class _HomepageScreenState extends State<HomepageScreen> {
                       // Warriors section
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: Flexible(
-                          child: Text(
-                            'lbl_meet_our_strong_warriors'.tr,
-                            style: GoogleFonts.roboto(
-                              textStyle: TextStyle(
-                                color: AppColors.black,
-                                fontSize: 18.0,
-                              ),
+                        child: Text(
+                          'lbl_meet_our_strong_warriors'.tr,
+                          style: GoogleFonts.roboto(
+                            textStyle: TextStyle(
+                              color: AppColors.black,
+                              fontSize: 18.0,
                             ),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
                           ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                       const SizedBox(height: 12),

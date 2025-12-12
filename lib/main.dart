@@ -14,8 +14,19 @@ void main() async {
   final prefs = SharedPrefLocalization();
   final savedLocale = await prefs.getAppLocale();
   final locale = _parseLocale(savedLocale);
-  await Firebase.initializeApp();
-  await _initializeFirebaseMessaging();
+
+  // Initialize Firebase with error handling
+  try {
+    await Firebase.initializeApp();
+    await _initializeFirebaseMessaging();
+  } catch (e) {
+    print('Firebase initialization error: $e');
+    print('Note: If you are not using Firebase, you can ignore this error.');
+    print(
+      'To fix: Add google-services.json (Android) or GoogleService-Info.plist (iOS) to your project.',
+    );
+  }
+
   runApp(MyApp(initialLocale: locale));
 }
 
@@ -61,7 +72,7 @@ Future<void> _initializeFirebaseMessaging() async {
           carPlay: false,
           criticalAlert: false,
           provisional: true,
-          sound: true
+          sound: true,
         );
 
     print(
