@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:bandhucare_new/services/variables.dart';
 import 'package:bandhucare_new/core/network/api_constant.dart';
 import 'package:bandhucare_new/services/shared_pref_localization.dart';

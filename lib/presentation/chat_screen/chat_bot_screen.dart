@@ -321,8 +321,24 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
           bottom: 110, // 90 (bottom bar height) + 20 (extra space)
         ),
         reverse: true,
-        itemCount: controller.messages.length,
+        itemCount:
+            controller.messages.length +
+            (controller.isLoadingMore.value ? 1 : 0),
         itemBuilder: (context, index) {
+          // Show loading indicator at the top (end of reversed list)
+          if (controller.isLoadingMore.value &&
+              index == controller.messages.length) {
+            return Padding(
+              padding: const EdgeInsets.only(top: 15, bottom: 15),
+              child: Center(
+                child: CircularProgressIndicator(
+                  color: const Color(0xFF3865FF),
+                  strokeWidth: 2,
+                ),
+              ),
+            );
+          }
+
           final message = controller.messages[index];
           return Padding(
             padding: EdgeInsets.only(top: 15),
