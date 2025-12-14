@@ -9,6 +9,6 @@ class ConsentFormController extends GetxController {
   }
 
   void navigateToGroupScreen() {
-    Get.toNamed(AppRoutes.homeScreen);
+    Get.offAllNamed(AppRoutes.homeScreen);
   }
 }

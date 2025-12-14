@@ -217,7 +217,7 @@ class ConsentFormScreen extends StatelessWidget {
                           child: InkWell(
                             onTap: controller.isAgreed.value
                                 ? () {
-                                    Get.toNamed(AppRoutes.homeScreen);
+                                    Get.offAllNamed(AppRoutes.homeScreen);
                                   }
                                 : null,
                             borderRadius: BorderRadius.circular(30),
