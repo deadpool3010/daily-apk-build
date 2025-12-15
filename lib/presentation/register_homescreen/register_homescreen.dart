@@ -209,7 +209,7 @@ class RegisterHomescreen extends StatelessWidget {
                 top: 20,
                 child: GestureDetector(
                   onTap: () {
-                    Get.back();
+                    Get.offNamed(AppRoutes.loginScreen);
                   },
                   child: Container(
                     width: 40,

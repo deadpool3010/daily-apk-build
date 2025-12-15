@@ -25,7 +25,7 @@ class ChooseLanguageController extends GetxController
   ];
 
   // Mapping language keys to locale codes
-  Map<String, Locale> _languageKeyToLocale = {
+  final Map<String, Locale> _languageKeyToLocale = {
     'lbl_english': Locale('en', 'US'),
     'lbl_hindi': Locale('hi', 'IN'),
     'lbl_tamil': Locale('ta', 'IN'),
@@ -35,7 +35,7 @@ class ChooseLanguageController extends GetxController
   };
 
   // Mapping language keys to locale code strings for storage
-  Map<String, String> _languageKeyToLocaleString = {
+  final Map<String, String> _languageKeyToLocaleString = {
     'lbl_english': 'en_US',
     'lbl_hindi': 'hi_IN',
     'lbl_tamil': 'ta_IN',
