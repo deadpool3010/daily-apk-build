@@ -54,7 +54,7 @@ class SplashController extends GetxController with GetTickerProviderStateMixin {
     final hasUser = await sharedPrefs.hasPersistedUser();
 
     if (hasUser) {
-      // User is logged in, restore session and go directly to home
+      // User is logged in, restore session but still show splash screen
       final tokens = await sharedPrefs.getTokens();
       accessToken = tokens['accessToken'] ?? '';
       refreshToken = tokens['refreshToken'] ?? '';
@@ -66,15 +66,9 @@ class SplashController extends GetxController with GetTickerProviderStateMixin {
       print('🔑 Access token available: ${accessToken.isNotEmpty}');
       print('📄 Cached profile: $cachedUser');
       print('========================================');
-
-      // Navigate immediately to home, skip splash animation
-      if (Get.context != null) {
-        Get.offNamed(AppRoutes.homeScreen);
-        return;
-      }
     }
 
-    // No persisted user, show splash animation
+    // Always show splash animation, regardless of user persistence
     _startAnimations();
     _startNavigationTimer();
     _precacheLoginHeaderImage();
@@ -328,7 +322,7 @@ class SplashController extends GetxController with GetTickerProviderStateMixin {
       print('========================================');
 
       if (Get.context != null && Get.currentRoute == AppRoutes.splashScreen) {
-        Get.offNamed(AppRoutes.homeScreen);
+        Get.offAllNamed(AppRoutes.homeScreen);
       }
     } else {
       if (Get.context != null && Get.currentRoute == AppRoutes.splashScreen) {

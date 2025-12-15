@@ -1,6 +1,7 @@
 import 'package:bandhucare_new/core/app_exports.dart';
 import 'package:bandhucare_new/presentation/chat_screen/controller/chat_screeen_controller.dart';
 import 'package:bandhucare_new/widget/custom_chat_bubbles.dart';
+import 'package:bandhucare_new/widget/qustion_suggetion.dart';
 
 class ChatMessage {
   final String text;
@@ -91,6 +92,25 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
                           ),
                         )
                       : _buildChatView(),
+                ),
+              ),
+              // Question suggestions - positioned above input field
+              // Only show when at bottom (newest messages visible) - hide when scrolling up
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom:
+                    90, // Position above the input field (bottom bar height)
+                child: Obx(
+                  () =>
+                      controller.messages.isNotEmpty &&
+                          controller.shouldAutoScroll.value
+                      ? QuestionSuggestions(
+                          onQuestionTap: (question) {
+                            controller.sendChatMessage(question);
+                          },
+                        )
+                      : const SizedBox.shrink(),
                 ),
               ),
               Positioned(
@@ -317,12 +337,28 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
           left: 25,
           right: 25,
           top: 90, // Space for header (80px) + extra spacing (10px)
-          // Extra bottom padding so messages are not hidden behind bottom bar
-          bottom: 110, // 90 (bottom bar height) + 20 (extra space)
+          // Extra bottom padding: suggestions (90px) + bottom bar (90px) + extra space (20px)
+          bottom: controller.messages.isNotEmpty ? 200 : 110,
         ),
         reverse: true,
-        itemCount: controller.messages.length,
+        itemCount:
+            controller.messages.length +
+            (controller.isLoadingMore.value ? 1 : 0),
         itemBuilder: (context, index) {
+          // Show loading indicator at the top (end of reversed list)
+          if (controller.isLoadingMore.value &&
+              index == controller.messages.length) {
+            return Padding(
+              padding: const EdgeInsets.only(top: 15, bottom: 15),
+              child: Center(
+                child: CircularProgressIndicator(
+                  color: const Color(0xFF3865FF),
+                  strokeWidth: 2,
+                ),
+              ),
+            );
+          }
+
           final message = controller.messages[index];
           return Padding(
             padding: EdgeInsets.only(top: 15),

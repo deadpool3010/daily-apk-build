@@ -216,7 +216,7 @@ class _ChatbotSplashLoadingScreenState extends State<ChatbotSplashLoadingScreen>
                 ),
                 child: Center(
                   child: Image(
-                    image: AssetImage(ImageConstant.mitra),
+                    image: AssetImage(ImageConstant.bandhu_splash),
                     fit: BoxFit.contain,
                     height: 28,
                     width: 99,

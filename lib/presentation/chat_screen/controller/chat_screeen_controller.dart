@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:bandhucare_new/core/app_exports.dart';
@@ -22,29 +23,59 @@ class ChatScreenController extends GetxController {
   var selectedLanguage = 'eng'.obs;
   var shouldAutoScroll = true.obs;
 
+  // Pagination variables
+  int currentPage = 1;
+  final int pageLimit = 10;
+  var hasMoreMessages = true.obs;
+  var isLoadingMore = false.obs;
+  var isInitialLoad = true.obs;
+
+  // Scroll debouncing to prevent rapid-fire loading
+  Timer? _scrollDebouncer;
+  bool _isLoadingInBackground = false;
+
   @override
   void onInit() {
     super.onInit();
-
     loadChatHistory();
+    scrollController.addListener(_onScroll);
+  }
 
-    scrollController.addListener(() {
-      // reversed = true → bottom offset = MIN
-      if (scrollController.hasClients &&
-          scrollController.offset >
-              scrollController.position.minScrollExtent + 50) {
-        shouldAutoScroll.value = false;
-      } else {
-        shouldAutoScroll.value = true;
+  void _onScroll() {
+    if (!scrollController.hasClients || _isLoadingInBackground) return;
+
+    // Cancel previous debouncer
+    _scrollDebouncer?.cancel();
+
+    // Update auto-scroll state
+    if (scrollController.offset > 50) {
+      shouldAutoScroll.value = false;
+    } else {
+      shouldAutoScroll.value = true;
+    }
+
+    // Debounce the load more check
+    _scrollDebouncer = Timer(const Duration(milliseconds: 300), () {
+      if (!scrollController.hasClients ||
+          _isLoadingInBackground ||
+          isLoadingMore.value ||
+          !hasMoreMessages.value ||
+          isLoading.value ||
+          isInitialLoad.value) {
+        return;
+      }
+
+      // Load more when near top (oldest messages)
+      if (scrollController.offset >=
+          scrollController.position.maxScrollExtent - 200) {
+        loadMoreMessages();
       }
     });
   }
 
-  // -------------------------------
-  // Dispose controllers
-  // -------------------------------
   @override
   void onClose() {
+    _scrollDebouncer?.cancel();
     messageController.dispose();
     scrollController.dispose();
     audioRecorderController.dispose();
@@ -53,13 +84,12 @@ class ChatScreenController extends GetxController {
 
   Future<void> startAudioRecording(BuildContext context) async {
     isRecordingAudio.value = true;
-    amplitudeList.value = []; // Clear previous data
+    amplitudeList.value = [];
 
     await audioRecorderController.startRecording(context, (updatedList) {
-      // Always update with new list instance to trigger observable update
       if (updatedList.isNotEmpty) {
         amplitudeList.value = List.from(updatedList);
-        waveformUpdateCounter.value++; // Force widget rebuild
+        waveformUpdateCounter.value++;
       }
     });
   }
@@ -67,36 +97,61 @@ class ChatScreenController extends GetxController {
   Future<void> stopAudioRecording() async {
     await audioRecorderController.stopRecording();
     isRecordingAudio.value = false;
-    amplitudeList.value = []; // Clear waveform data
-    // Audio file is saved but not sent automatically
-    // TODO: Add UI to send audio file manually if needed
+    amplitudeList.value = [];
   }
 
   void scrollToBottom() {
-    if (shouldAutoScroll.value && scrollController.hasClients) {
+    if (scrollController.hasClients) {
       Future.delayed(Duration(milliseconds: 100), () {
-        scrollController.animateTo(
-          0,
-          duration: Duration(milliseconds: 300),
-          curve: Curves.easeOut,
-        );
+        if (scrollController.hasClients) {
+          scrollController.animateTo(
+            0.0,
+            duration: Duration(milliseconds: 300),
+            curve: Curves.easeOut,
+          );
+        }
       });
     }
   }
 
+  void scrollToTop({bool animate = true}) {
+    if (!scrollController.hasClients) return;
+
+    if (animate) {
+      scrollController.animateTo(
+        0.0,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOutQuad,
+      );
+    } else {
+      scrollController.jumpTo(0.0);
+    }
+  }
+
+  void scrollToTopAfterBuild() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (Get.isRegistered<ChatScreenController>() &&
+          scrollController.hasClients) {
+        scrollToTop(animate: true);
+      }
+    });
+  }
+
   Future<void> loadChatHistory() async {
     isLoading.value = true;
+    isInitialLoad.value = true;
+    currentPage = 1;
+    hasMoreMessages.value = true;
     print("Loading chat history...");
 
     try {
-      final response = await getChatHistory(page: 1, limit: 10);
+      final response = await getChatHistory(page: currentPage, limit: 10);
       print("Chat History Response: $response");
 
       if (response["success"] == true && response["data"] != null) {
         final data = response["data"];
         print("Data received: $data");
 
-        // Store conversationId
         if (data["conversationId"] != null) {
           conversationId.value = data["conversationId"];
           print("Conversation ID: ${conversationId.value}");
@@ -108,7 +163,6 @@ class ChatScreenController extends GetxController {
         if (messagesList != null && messagesList.isNotEmpty) {
           final List<Map<String, dynamic>> flattened = [];
 
-          // Flatten groups
           for (var dateGroup in messagesList) {
             final list = dateGroup["messages"] as List? ?? [];
             print("Date group messages: $list");
@@ -117,7 +171,6 @@ class ChatScreenController extends GetxController {
 
           print("Flattened messages count: ${flattened.length}");
 
-          // Sort DESC (because reversed list)
           if (flattened.isNotEmpty) {
             flattened.sort((a, b) {
               try {
@@ -131,74 +184,172 @@ class ChatScreenController extends GetxController {
             });
 
             messages.value = flattened.map((msg) {
-              final isUser = msg["senderType"] == "patient";
-              final fileData = msg["file"] as Map<String, dynamic>?;
-
-              // Build file info map only when it is a real file message
-              Map<String, dynamic>? fileInfo;
-              if (fileData != null &&
-                  fileData.isNotEmpty &&
-                  fileData["fileType"] != null &&
-                  fileData["fileUrl"] != null &&
-                  fileData["fileName"] != null) {
-                fileInfo = {
-                  'fileType': fileData["fileType"],
-                  'fileUrl': fileData["fileUrl"],
-                  'fileName': fileData["fileName"],
-                  'caption': fileData["caption"],
-                  'audioTranscript': fileData["audioTranscript"],
-                };
-              }
-
-              // For audio messages, use audioTranscript as text
-              String messageText;
-              if (fileInfo != null && fileInfo['fileType'] == 'audio') {
-                messageText =
-                    fileInfo['audioTranscript']?.toString() ??
-                    fileInfo['caption']?.toString() ??
-                    msg["content"]?.toString() ??
-                    "";
-              } else if (fileInfo != null && fileInfo['caption'] != null) {
-                messageText = fileInfo['caption'].toString();
-              } else {
-                messageText =
-                    msg["content"]?.toString() ?? msg["text"]?.toString() ?? "";
-              }
-
-              return ChatMessage(
-                text: messageText,
-                isUser: isUser,
-                timestamp:
-                    DateTime.tryParse(msg["createdAt"]?.toString() ?? "") ??
-                    DateTime.now(),
-                file: fileInfo,
-              );
+              return _processMessage(msg);
             }).toList();
 
             print("Messages set: ${messages.length}");
+
+            if (flattened.length < pageLimit) {
+              hasMoreMessages.value = false;
+            }
           }
 
           showSuggestions.value = messages.isEmpty;
         } else {
           print("No messages found, showing suggestions");
           showSuggestions.value = true;
+          hasMoreMessages.value = false;
         }
 
         isLoading.value = false;
+        isInitialLoad.value = false;
         print("Loading set to false");
-        scrollToBottom();
+        scrollToTopAfterBuild();
       } else {
         print("Response not successful or data is null");
         isLoading.value = false;
+        isInitialLoad.value = false;
         showSuggestions.value = true;
+        hasMoreMessages.value = false;
         print("Failed to load: ${response["message"]}");
       }
     } catch (e, stackTrace) {
       print("Error fetching chat history: $e");
       print("Stack trace: $stackTrace");
       isLoading.value = false;
+      isInitialLoad.value = false;
       showSuggestions.value = true;
+      hasMoreMessages.value = false;
     }
+  }
+
+  Future<void> loadMoreMessages() async {
+    if (isLoadingMore.value ||
+        !hasMoreMessages.value ||
+        _isLoadingInBackground) {
+      return;
+    }
+
+    // CRITICAL: Block scroll listener IMMEDIATELY
+    _isLoadingInBackground = true;
+    isLoadingMore.value = true;
+    currentPage++;
+    print("🔄 Loading page $currentPage silently in background...");
+
+    try {
+      final response = await getChatHistory(
+        page: currentPage,
+        limit: pageLimit,
+      );
+
+      if (response["success"] == true && response["data"] != null) {
+        final data = response["data"];
+        final messagesList = data["messages"] as List?;
+
+        if (messagesList != null && messagesList.isNotEmpty) {
+          final List<Map<String, dynamic>> flattened = [];
+
+          for (var dateGroup in messagesList) {
+            final list = dateGroup["messages"] as List? ?? [];
+            flattened.addAll(list.cast<Map<String, dynamic>>());
+          }
+
+          if (flattened.isNotEmpty) {
+            flattened.sort((a, b) {
+              try {
+                return DateTime.parse(
+                  b["createdAt"],
+                ).compareTo(DateTime.parse(a["createdAt"]));
+              } catch (e) {
+                return 0;
+              }
+            });
+
+            final newMessages = flattened.map((msg) {
+              return _processMessage(msg);
+            }).toList();
+
+            print("➕ Adding ${newMessages.length} older messages to list");
+
+            // Append older messages to the end - NO SCROLL MANIPULATION
+            // Just add messages silently, let Flutter handle scroll naturally
+            messages.addAll(newMessages);
+
+            if (flattened.length < pageLimit) {
+              hasMoreMessages.value = false;
+              print("✅ No more messages to load");
+            }
+
+            print("✅ Total messages now: ${messages.length}");
+          } else {
+            hasMoreMessages.value = false;
+          }
+        } else {
+          hasMoreMessages.value = false;
+        }
+      } else {
+        hasMoreMessages.value = false;
+      }
+    } catch (e, stackTrace) {
+      print("❌ Error loading more messages: $e");
+      print("Stack trace: $stackTrace");
+      currentPage--; // Revert on error
+      hasMoreMessages.value = false;
+    }
+
+    // Wait for UI to settle before allowing next load
+    await Future.delayed(const Duration(milliseconds: 600));
+
+    isLoadingMore.value = false;
+
+    // Small additional delay to ensure scroll position is stable
+    await Future.delayed(const Duration(milliseconds: 100));
+
+    _isLoadingInBackground = false;
+
+    print("✅ Background loading complete - scroll listener re-enabled");
+  }
+
+  ChatMessage _processMessage(Map<String, dynamic> msg) {
+    final isUser = msg["senderType"] == "patient";
+    final fileData = msg["file"] as Map<String, dynamic>?;
+
+    Map<String, dynamic>? fileInfo;
+    if (fileData != null &&
+        fileData.isNotEmpty &&
+        fileData["fileType"] != null &&
+        fileData["fileUrl"] != null &&
+        fileData["fileName"] != null) {
+      fileInfo = {
+        'fileType': fileData["fileType"],
+        'fileUrl': fileData["fileUrl"],
+        'fileName': fileData["fileName"],
+        'caption': fileData["caption"],
+        'audioTranscript': fileData["audioTranscript"],
+      };
+    }
+
+    String messageText;
+    if (fileInfo != null && fileInfo['fileType'] == 'audio') {
+      messageText =
+          fileInfo['audioTranscript']?.toString() ??
+          fileInfo['caption']?.toString() ??
+          msg["content"]?.toString() ??
+          "";
+    } else if (fileInfo != null && fileInfo['caption'] != null) {
+      messageText = fileInfo['caption'].toString();
+    } else {
+      messageText = msg["content"]?.toString() ?? msg["text"]?.toString() ?? "";
+    }
+
+    return ChatMessage(
+      text: messageText,
+      isUser: isUser,
+      timestamp:
+          DateTime.tryParse(msg["createdAt"]?.toString() ?? "") ??
+          DateTime.now(),
+      file: fileInfo,
+    );
   }
 
   Future<void> sendChatMessage(
@@ -220,16 +371,13 @@ class ChatScreenController extends GetxController {
     isSending.value = true;
     showSuggestions.value = false;
 
-    // Prepare file info for user message
     Map<String, dynamic>? fileInfo;
     if (file != null && fileType != null) {
       fileInfo = {'fileType': fileType, 'fileName': file.path.split('/').last};
     }
 
-    // Add user message instantly with file info
     messages.insert(0, ChatMessage(text: text, isUser: true, file: fileInfo));
-
-    scrollToBottom();
+    scrollToTopAfterBuild();
     messageController.clear();
 
     try {
@@ -250,13 +398,10 @@ class ChatScreenController extends GetxController {
           conversationId.value = data["conversationId"];
         }
 
-        // Update the user message with file info from response
-        // Handle both structures: data["userMessage"] or data with senderType: "patient"
         Map<String, dynamic>? userMessageData;
         if (data["userMessage"] != null) {
           userMessageData = data["userMessage"] as Map<String, dynamic>;
         } else if (data["senderType"] == "patient") {
-          // User message is directly in data
           userMessageData = data as Map<String, dynamic>;
         }
 
@@ -284,14 +429,10 @@ class ChatScreenController extends GetxController {
           }
         }
 
-        // Insert bot message - handle both response structures
-        // Structure 1: data["newMessage"] exists
-        // Structure 2: bot message directly in data with senderType: "bot"
         Map<String, dynamic>? botMessage;
         if (data["newMessage"] != null) {
           botMessage = data["newMessage"] as Map<String, dynamic>;
         } else if (data["senderType"] == "bot") {
-          // Bot message is directly in data
           botMessage = data as Map<String, dynamic>;
         }
 
@@ -328,7 +469,7 @@ class ChatScreenController extends GetxController {
           );
         }
 
-        scrollToBottom();
+        scrollToTopAfterBuild();
       } else {
         Fluttertoast.showToast(
           msg: response["message"] ?? "Failed to send message",
