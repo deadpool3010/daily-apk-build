@@ -2,6 +2,7 @@ import 'package:bandhucare_new/core/app_exports.dart';
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'controller/email_password_login_controller.dart';
+import 'package:bandhucare_new/widget/alternative_login_buttons.dart';
 
 class EmailPasswordLoginScreen extends StatelessWidget {
   const EmailPasswordLoginScreen({super.key});
@@ -136,7 +137,35 @@ class EmailPasswordLoginScreen extends StatelessWidget {
           const SizedBox(height: 24),
 
           // Alternative Login Options
-          _buildAlternativeLoginOptions(),
+          AlternativeLoginButtons(
+            buttons: [
+              AlternativeButtonConfig(
+                // icon: TablerIcons.phone,
+                label: 'lbl_google'.tr,
+                iconColor: Colors.orange,
+                onTap: () {
+                  // Handle Google login
+                },
+              ),
+              AlternativeButtonConfig(
+                label: 'lbl_abha_id'.tr,
+                iconColor: Color(0xFF3864FD),
+                imagePath: ImageConstant.ayushmanBharat,
+                onTap: () {
+                  Get.back();
+                },
+              ),
+              AlternativeButtonConfig(
+                icon: TablerIcons.phone,
+                label: 'lbl_mobile'.tr,
+                iconSize: Size(20, 20),
+                iconColor: Color(0xFF3864FD),
+                onTap: () {
+                  Get.offNamed(AppRoutes.mobilePasswordLoginScreen);
+                },
+              ),
+            ],
+          ),
         ],
       ),
     );
@@ -304,96 +333,5 @@ class EmailPasswordLoginScreen extends StatelessWidget {
             : null,
       );
     });
-  }
-
-  // Alternative Login Options
-  Widget _buildAlternativeLoginOptions() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Expanded(
-          child: _buildAlternativeLoginButton(
-            icon: Icons.g_mobiledata,
-            label: 'lbl_google'.tr,
-            iconColor: Colors.orange,
-          ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: _buildAlternativeLoginButton(
-            label: 'lbl_abha_id'.tr,
-            iconColor: Color(0xFF3864FD),
-            imagePath: ImageConstant.ayushmanBharat,
-          ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: _buildAlternativeLoginButton(
-            icon: BootstrapIcons.telephone_fill,
-            label: 'lbl_mobile'.tr,
-            iconSize: Size(16, 16),
-            iconColor: Color(0xFF3864FD),
-          ),
-        ),
-      ],
-    );
-  }
-
-  // Alternative Login Button
-  Widget _buildAlternativeLoginButton({
-    IconData? icon,
-    required String label,
-    Color? iconColor,
-    String? imagePath,
-    Size? iconSize,
-  }) {
-    return GestureDetector(
-      onTap: () {
-        // Handle alternative login options
-        if (label == 'lbl_google'.tr) {
-          // Handle Google login
-        } else if (label == 'lbl_mobile'.tr) {
-          // Navigate to mobile password login
-          Get.offNamed(AppRoutes.mobilePasswordLoginScreen);
-        } else if (label == 'lbl_abha_id'.tr) {
-          Get.back();
-        }
-      },
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 18, vertical: 14),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(32),
-          border: Border.all(color: Color(0xFFE2E8F0), width: 1),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (label == 'lbl_google'.tr)
-              Image.asset(ImageConstant.googleLogo, width: 20, height: 20)
-            else if (imagePath != null)
-              Image.asset(imagePath, width: 20, height: 20)
-            else
-              Icon(icon, color: iconColor, size: iconSize?.width ?? 20),
-            const SizedBox(width: 4),
-            Flexible(
-              child: Text(
-                label,
-                style: TextStyle(
-                  fontFamily: 'Lato',
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.black87,
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                textAlign: TextAlign.center,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }

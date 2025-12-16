@@ -556,7 +556,36 @@ class AbhaRegisterScreen extends StatelessWidget {
           ),
           const SizedBox(height: 24),
           // Alternative Registration Options
-          _buildAlternativeRegistrationOptions(),
+          AlternativeLoginButtons(
+            buttons: [
+              AlternativeButtonConfig(
+                icon: Icons.g_mobiledata,
+                label: 'lbl_google'.tr,
+                iconColor: Colors.orange,
+                onTap: () {
+                  // Handle Google registration
+                },
+              ),
+              AlternativeButtonConfig(
+                icon: TablerIcons.phone,
+                label: 'lbl_mobile'.tr,
+                iconSize: Size(20, 20),
+                iconColor: Color(0xFF3864FD),
+                onTap: () {
+                  Get.toNamed(AppRoutes.mobileRegisterScreen);
+                },
+              ),
+              AlternativeButtonConfig(
+                icon: TablerIcons.mail,
+                label: 'lbl_email_id'.tr,
+                iconSize: Size(20, 20),
+                iconColor: Color(0xFF3864FD),
+                onTap: () {
+                  Get.toNamed(AppRoutes.emailRegisterScreen);
+                },
+              ),
+            ],
+          ),
         ],
       ),
     );
@@ -751,81 +780,6 @@ class AbhaRegisterScreen extends StatelessWidget {
       onCompleted: (value) {
         controller.enteredAadhaarOtp.value = value;
       },
-    );
-  }
-
-  // Alternative Registration Options
-  Widget _buildAlternativeRegistrationOptions() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        _buildAlternativeRegistrationButton(
-          icon: Icons.g_mobiledata,
-          label: 'lbl_google'.tr,
-          iconColor: Colors.orange,
-        ),
-        _buildAlternativeRegistrationButton(
-          icon: BootstrapIcons.telephone_fill,
-          label: 'lbl_mobile'.tr,
-          iconSize: Size(16, 16),
-          iconColor: Color(0xFF3864FD),
-        ),
-        _buildAlternativeRegistrationButton(
-          icon: BootstrapIcons.envelope,
-          label: 'lbl_email_id'.tr,
-          iconColor: Color(0xFF3864FD),
-        ),
-      ],
-    );
-  }
-
-  // Alternative Registration Button
-  Widget _buildAlternativeRegistrationButton({
-    IconData? icon,
-    required String label,
-    Color? iconColor,
-    Size? iconSize,
-  }) {
-    return GestureDetector(
-      onTap: () {
-        if (label == 'lbl_google'.tr) {
-          // Handle Google registration
-        } else if (label == 'lbl_mobile'.tr) {
-          Get.toNamed(AppRoutes.mobileRegisterScreen);
-        } else if (label == 'lbl_email_id'.tr) {
-          Get.toNamed(AppRoutes.emailRegisterScreen);
-        }
-      },
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 18, vertical: 14),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(32),
-          border: Border.all(color: Color(0xFFE2E8F0), width: 1),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            if (label == 'lbl_google'.tr)
-              Image.asset(ImageConstant.googleLogo, width: 20, height: 20)
-            else
-              Icon(icon, color: iconColor, size: iconSize?.width ?? 20),
-            const SizedBox(width: 6),
-            Text(
-              label,
-              style: TextStyle(
-                fontFamily: 'Lato',
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                color: Colors.black87,
-              ),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

@@ -2,6 +2,7 @@ import 'package:bandhucare_new/core/app_exports.dart';
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'controller/mobile_password_login_controller.dart';
+import 'package:bandhucare_new/widget/alternative_login_buttons.dart';
 
 class MobilePasswordLoginScreen extends StatelessWidget {
   const MobilePasswordLoginScreen({super.key});
@@ -136,7 +137,34 @@ class MobilePasswordLoginScreen extends StatelessWidget {
           const SizedBox(height: 24),
 
           // Alternative Login Options
-          _buildAlternativeLoginOptions(),
+          AlternativeLoginButtons(
+            buttons: [
+              AlternativeButtonConfig(
+                icon: Icons.g_mobiledata,
+                label: 'lbl_google'.tr,
+                iconColor: Colors.orange,
+                onTap: () {
+                  // Handle Google login
+                },
+              ),
+              AlternativeButtonConfig(
+                label: 'lbl_abha_id'.tr,
+                iconColor: Color(0xFF3864FD),
+                imagePath: ImageConstant.ayushmanBharat,
+                onTap: () {
+                  Get.back();
+                },
+              ),
+              AlternativeButtonConfig(
+                icon: TablerIcons.mail,
+                label: 'lbl_email_id'.tr,
+                iconColor: Color(0xFF3864FD),
+                onTap: () {
+                  Get.offNamed(AppRoutes.emailPasswordLoginScreen);
+                },
+              ),
+            ],
+          ),
         ],
       ),
     );
@@ -218,48 +246,50 @@ class MobilePasswordLoginScreen extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         // Remember me checkbox
-        GestureDetector(
-          onTap: () {
-            controller.toggleRememberMe();
-          },
-          child: Row(
-            children: [
-              Obx(
-                () => Container(
-                  width: 20,
-                  height: 20,
-                  decoration: BoxDecoration(
-                    color: controller.rememberMe.value
-                        ? Color(0xFF3864FD)
-                        : Colors.transparent,
-                    borderRadius: BorderRadius.circular(4),
-                    border: Border.all(
+        Flexible(
+          child: GestureDetector(
+            onTap: () {
+              controller.toggleRememberMe();
+            },
+            child: Row(
+              children: [
+                Obx(
+                  () => Container(
+                    width: 20,
+                    height: 20,
+                    decoration: BoxDecoration(
                       color: controller.rememberMe.value
                           ? Color(0xFF3864FD)
-                          : Color(0xFFE2E8F0),
-                      width: 2,
+                          : Colors.transparent,
+                      borderRadius: BorderRadius.circular(4),
+                      border: Border.all(
+                        color: controller.rememberMe.value
+                            ? Color(0xFF3864FD)
+                            : Color(0xFFE2E8F0),
+                        width: 2,
+                      ),
                     ),
+                    child: controller.rememberMe.value
+                        ? Icon(Icons.check, color: Colors.white, size: 14)
+                        : null,
                   ),
-                  child: controller.rememberMe.value
-                      ? Icon(Icons.check, color: Colors.white, size: 14)
-                      : null,
                 ),
-              ),
-              const SizedBox(width: 8),
-              Flexible(
-                child: Text(
-                  'lbl_remember_me'.tr,
-                  style: TextStyle(
-                    fontFamily: 'Lato',
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.black87,
+                const SizedBox(width: 8),
+                Flexible(
+                  child: Text(
+                    'lbl_remember_me'.tr,
+                    style: TextStyle(
+                      fontFamily: 'Lato',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black87,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
         // Forget Password link
@@ -307,95 +337,5 @@ class MobilePasswordLoginScreen extends StatelessWidget {
             : null,
       );
     });
-  }
-
-  // Alternative Login Options
-  Widget _buildAlternativeLoginOptions() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Expanded(
-          child: _buildAlternativeLoginButton(
-            icon: Icons.g_mobiledata,
-            label: 'lbl_google'.tr,
-            iconColor: Colors.orange,
-          ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: _buildAlternativeLoginButton(
-            label: 'lbl_abha_id'.tr,
-            iconColor: Color(0xFF3864FD),
-            imagePath: ImageConstant.ayushmanBharat,
-          ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: _buildAlternativeLoginButton(
-            icon: TablerIcons.mail,
-            label: 'lbl_email_id'.tr,
-            iconColor: Color(0xFF3864FD),
-          ),
-        ),
-      ],
-    );
-  }
-
-  // Alternative Login Button
-  Widget _buildAlternativeLoginButton({
-    IconData? icon,
-    required String label,
-    Color? iconColor,
-    String? imagePath,
-    Size? iconSize,
-  }) {
-    return GestureDetector(
-      onTap: () {
-        // Handle alternative login options
-        if (label == 'lbl_google'.tr) {
-          // Handle Google login
-        } else if (label == 'lbl_email_id'.tr) {
-          // Navigate to email login
-          Get.offNamed(AppRoutes.emailPasswordLoginScreen);
-        } else if (label == 'lbl_abha_id'.tr) {
-          Get.back();
-        }
-      },
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 14),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(32),
-          border: Border.all(color: Color(0xFFE2E8F0), width: 1),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (label == 'lbl_google'.tr)
-              Image.asset(ImageConstant.googleLogo, width: 20, height: 20)
-            else if (imagePath != null)
-              Image.asset(imagePath, width: 20, height: 20)
-            else
-              Icon(icon, color: iconColor, size: iconSize?.width ?? 20),
-            const SizedBox(width: 6),
-            Flexible(
-              child: Text(
-                label,
-                style: TextStyle(
-                  fontFamily: 'Lato',
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.black87,
-                ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                textAlign: TextAlign.center,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }

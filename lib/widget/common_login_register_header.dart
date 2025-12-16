@@ -125,8 +125,7 @@ class CommonLoginRegisterHeader extends StatelessWidget {
                                         ),
                                       if (actionText != null)
                                         Hero(
-                                          tag:
-                                              'action_${actionText!.hashCode}',
+                                          tag: 'action_${actionText!.hashCode}',
                                           child: Material(
                                             color: Colors.transparent,
                                             child: Text(
@@ -137,8 +136,7 @@ class CommonLoginRegisterHeader extends StatelessWidget {
                                                     13, // Slightly reduced
                                                 fontWeight: FontWeight.w700,
                                                 color: Colors.white,
-                                                decoration:
-                                                    TextDecoration.none,
+                                                decoration: TextDecoration.none,
                                               ),
                                               maxLines: 1,
                                               overflow: TextOverflow.ellipsis,
@@ -154,8 +152,8 @@ class CommonLoginRegisterHeader extends StatelessWidget {
                         if (showLogo) ...[
                           const SizedBox(width: 12),
                           SizedBox(
-                            width: 50, // Slightly reduced
-                            height: 50, // Slightly reduced
+                            width: 70, // Slightly reduced
+                            height: 70, // Slightly reduced
                             child: ClipOval(
                               child: Image.asset(
                                 ImageConstant.blueLogo,

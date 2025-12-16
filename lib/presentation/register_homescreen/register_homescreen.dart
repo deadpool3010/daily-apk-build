@@ -1,6 +1,7 @@
 import 'package:bandhucare_new/core/app_exports.dart';
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'controller/register_homescreen_controller.dart';
+import 'package:bandhucare_new/widget/alternative_login_buttons.dart';
 
 class RegisterHomescreen extends StatelessWidget {
   const RegisterHomescreen({super.key});
@@ -122,13 +123,26 @@ class RegisterHomescreen extends StatelessWidget {
                       const SizedBox(height: 20),
 
                       // Abha ID Button (with Hero animation from Register text)
-                      _buildRegistrationButton(
-                        label: 'lbl_abha_id'.tr,
-                        imagePath: ImageConstant.ayushmanBharat,
-                        onTap: () {
-                          controller.handleAbhaIdRegistration();
-                        },
-                        heroTag: 'register_to_abha',
+                      Hero(
+                        tag: 'register_to_abha',
+                        child: Material(
+                          color: Colors.transparent,
+                          child: AlternativeLoginButton(
+                            label: 'lbl_abha_id'.tr,
+                            imagePath: ImageConstant.ayushmanBharat,
+                            iconColor: Color(0xFF3864FD),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 20,
+                              vertical: 16,
+                            ),
+                            width: double.infinity,
+                            imageSize: 24,
+                            spacing: 12,
+                            onTap: () {
+                              controller.handleAbhaIdRegistration();
+                            },
+                          ),
+                        ),
                       ),
 
                       const SizedBox(height: 30),
@@ -165,9 +179,16 @@ class RegisterHomescreen extends StatelessWidget {
                       const SizedBox(height: 30),
 
                       // Google Button
-                      _buildRegistrationButton(
+                      AlternativeLoginButton(
                         label: 'lbl_google'.tr,
                         imagePath: ImageConstant.googleLogo,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 16,
+                        ),
+                        width: double.infinity,
+                        imageSize: 24,
+                        spacing: 12,
                         onTap: () {
                           controller.handleGoogleRegistration();
                         },
@@ -176,23 +197,35 @@ class RegisterHomescreen extends StatelessWidget {
                       const SizedBox(height: 16),
 
                       // Mobile Button
-                      _buildRegistrationButton(
+                      AlternativeLoginButton(
                         label: 'lbl_mobile'.tr,
                         icon: BootstrapIcons.telephone_fill,
                         iconColor: Color(0xFF3864FD),
+                        iconSize: Size(18, 18),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 16,
+                        ),
+                        width: double.infinity,
+                        spacing: 12,
                         onTap: () {
                           controller.handleMobileRegistration();
                         },
-                        size: Size(18, 18),
                       ),
 
                       const SizedBox(height: 16),
 
                       // E-Mail ID Button
-                      _buildRegistrationButton(
+                      AlternativeLoginButton(
                         label: 'lbl_email_id'.tr,
                         icon: TablerIcons.mail,
                         iconColor: Color(0xFF3864FD),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 16,
+                        ),
+                        width: double.infinity,
+                        spacing: 12,
                         onTap: () {
                           controller.handleEmailRegistration();
                         },
@@ -227,75 +260,6 @@ class RegisterHomescreen extends StatelessWidget {
                 ),
               ),
             ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  // Registration Button Widget
-  Widget _buildRegistrationButton({
-    required String label,
-    String? imagePath,
-    IconData? icon,
-    Color? iconColor,
-    required VoidCallback onTap,
-    Size? size,
-    String? heroTag,
-  }) {
-    // Create unique hero tag based on label if not provided
-    final finalHeroTag =
-        heroTag ??
-        'register_button_${label.toLowerCase().replaceAll(' ', '_')}';
-
-    return Hero(
-      tag: finalHeroTag,
-      child: Material(
-        color: Colors.transparent,
-        child: GestureDetector(
-          onTap: onTap,
-          child: Container(
-            width: double.infinity,
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(32),
-              border: Border.all(color: Color(0xFFCBD5E1), width: 0.8),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                if (imagePath != null)
-                  Image.asset(
-                    imagePath,
-                    width: 24,
-                    height: 24,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Icon(Icons.image, size: 24, color: Colors.grey);
-                    },
-                  )
-                else if (icon != null)
-                  Icon(
-                    icon,
-                    color: iconColor ?? Color(0xFF3864FD),
-                    size: size?.width ?? 24,
-                  ),
-                const SizedBox(width: 12),
-                Flexible(
-                  child: Text(
-                    label,
-                    style: GoogleFonts.lato(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      color: Color(0xFF1E293B),
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ],
-            ),
           ),
         ),
       ),

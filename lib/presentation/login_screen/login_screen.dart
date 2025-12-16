@@ -1,6 +1,7 @@
 import 'package:bandhucare_new/core/app_exports.dart';
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:bandhucare_new/widget/alternative_login_buttons.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -90,7 +91,8 @@ class LoginScreen extends StatelessWidget {
   ) {
     // Adjust this value to control container height when keyboard is not visible
     // When keyboard is visible: container will be full height automatically
-    const double containerHeightPercentage = 0.70; // Slightly increased for longer text
+    const double containerHeightPercentage =
+        0.70; // Slightly increased for longer text
 
     final contentWidget = SingleChildScrollView(
       padding: EdgeInsets.only(left: 24, right: 24, top: 32, bottom: 24),
@@ -145,7 +147,36 @@ class LoginScreen extends StatelessWidget {
           const SizedBox(height: 24),
 
           // Alternative Login Options
-          _buildAlternativeLoginOptions(),
+          AlternativeLoginButtons(
+            buttons: [
+              AlternativeButtonConfig(
+                icon: Icons.g_mobiledata,
+                label: 'lbl_google'.tr,
+                iconColor: Colors.orange,
+                onTap: () {
+                  // Handle Google login
+                },
+              ),
+              AlternativeButtonConfig(
+                icon: TablerIcons.phone,
+                label: 'lbl_mobile'.tr,
+                iconSize: Size(20, 20),
+                iconColor: Color(0xFF3864FD),
+                onTap: () {
+                  Get.toNamed(AppRoutes.mobilePasswordLoginScreen);
+                },
+              ),
+              AlternativeButtonConfig(
+                icon: TablerIcons.mail,
+                label: 'lbl_email_id'.tr,
+                iconSize: Size(20, 20),
+                iconColor: Color(0xFF3864FD),
+                onTap: () {
+                  Get.toNamed(AppRoutes.emailPasswordLoginScreen);
+                },
+              ),
+            ],
+          ),
         ],
       ),
     );
@@ -213,7 +244,7 @@ class LoginScreen extends StatelessWidget {
     );
   }
 
-          // OTP Input with Get OTP Button
+  // OTP Input with Get OTP Button
   Widget _buildOTPInputWithButton(LoginController controller) {
     return Column(
       children: [
@@ -287,7 +318,8 @@ class LoginScreen extends StatelessWidget {
         ),
         // Hint text below OTP field instead of overlay
         Obx(
-          () => controller.showGetOtpHint.value &&
+          () =>
+              controller.showGetOtpHint.value &&
                   controller.enteredOtp.value.isEmpty
               ? Padding(
                   padding: const EdgeInsets.only(top: 8, left: 4),
@@ -352,93 +384,6 @@ class LoginScreen extends StatelessWidget {
             : null,
       );
     });
-  }
-
-  // Alternative Login Options
-  Widget _buildAlternativeLoginOptions() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Expanded(
-          child: _buildAlternativeLoginButton(
-            icon: Icons.g_mobiledata,
-            label: 'lbl_google'.tr,
-            iconColor: Colors.orange,
-            route: null, // Google login handler
-          ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: _buildAlternativeLoginButton(
-            icon: BootstrapIcons.telephone_fill,
-            label: 'lbl_mobile'.tr,
-            iconSize: Size(16, 16),
-            iconColor: Color(0xFF3864FD),
-            route: AppRoutes.mobilePasswordLoginScreen,
-          ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: _buildAlternativeLoginButton(
-            icon: TablerIcons.mail,
-            label: 'lbl_email_id'.tr,
-            iconColor: Color(0xFF3864FD),
-            route: AppRoutes.emailPasswordLoginScreen,
-          ),
-        ),
-      ],
-    );
-  }
-
-  // Alternative Login Button
-  Widget _buildAlternativeLoginButton({
-    required IconData icon,
-    required String label,
-    required Color iconColor,
-    Size? iconSize,
-    String? route,
-  }) {
-    return GestureDetector(
-      onTap: () {
-        // Handle alternative login options
-        if (route != null) {
-          Get.toNamed(route);
-        }
-        // Google login can be handled separately if needed
-      },
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 12), // Reduced padding
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(32),
-          border: Border.all(color: Color(0xFFE2E8F0), width: 1),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (label == 'lbl_google'.tr)
-              Image.asset(ImageConstant.googleLogo, width: 18, height: 18) // Slightly smaller
-            else
-              Icon(icon, color: iconColor, size: (iconSize?.width ?? 18).clamp(16.0, 18.0)), // Smaller icon
-            const SizedBox(width: 4), // Reduced spacing
-            Flexible(
-              child: Text(
-                label,
-                style: GoogleFonts.lato(
-                  fontSize: 12, // Reduced font size
-                  fontWeight: FontWeight.w500,
-                  color: Colors.black87,
-                ),
-                maxLines: 2, // Allow 2 lines for longer text
-                overflow: TextOverflow.ellipsis,
-                textAlign: TextAlign.center,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 
   // Build PinCodeTextField

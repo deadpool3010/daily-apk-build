@@ -41,7 +41,7 @@ final Map<String, String> enUs = {
   'lbl_abha_address': 'Abha Address: ',
   'lbl_gender': 'Gender: ',
   'lbl_dob': 'DOB: ',
-  'lbl_go_ahead_and_set_up_account': 'Go ahead and set\nup your account',
+  'lbl_go_ahead_and_set_up_account': 'Go ahead and set up your account',
   'lbl_already_have_an_account': 'Already have an account? ',
   'lbl_full_name': 'Full Name',
   'lbl_mobile_number': 'Mobile Number',

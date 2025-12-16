@@ -46,6 +46,7 @@ export 'package:bandhucare_new/widget/abha_section_user_profile.dart';
 export 'package:bandhucare_new/widget/logout_bottomsheet.dart';
 export 'package:bandhucare_new/widget/common_login_register_header.dart';
 export 'package:bandhucare_new/widget/custom_text_field.dart';
+export 'package:bandhucare_new/widget/alternative_login_buttons.dart';
 // ==================== Utils ====================
 export 'package:bandhucare_new/core/utils/image_constant.dart';
 export 'package:bandhucare_new/theme/app_theme.dart';
