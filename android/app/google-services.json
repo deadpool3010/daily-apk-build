@@ -1,26 +1,36 @@
 {
   "project_info": {
-    "project_number": "533981409629",
-    "project_id": "bandhucare-493b0",
-    "storage_bucket": "bandhucare-493b0.firebasestorage.app"
+    "project_number": "711750121236",
+    "project_id": "bandhucare-ebe55",
+    "storage_bucket": "bandhucare-ebe55.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:533981409629:android:042f7e7c0e3c0dca1cb8b4",
+        "mobilesdk_app_id": "1:711750121236:android:80a49f8c0953ae040f7401",
         "android_client_info": {
-          "package_name": "com.bandhucare.app"
+          "package_name": "com.bandhucare.newapp"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "711750121236-bmqlvjppt3lo2i1lbvac15nod0br20ip.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
-          "current_key": "AIzaSyDeDibS6dglB__fImwCWNbZ6f9NZU1E7IY"
+          "current_key": "AIzaSyBguoWaLUvv1O7eAOIQ9XSJMqAOLqtGNNo"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "711750121236-bmqlvjppt3lo2i1lbvac15nod0br20ip.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

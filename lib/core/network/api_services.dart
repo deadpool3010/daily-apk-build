@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:bandhucare_new/services/variables.dart';
 import 'package:bandhucare_new/core/network/api_constant.dart';
 import 'package:bandhucare_new/services/shared_pref_localization.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 
 Future<Map<String, dynamic>> signUpApi({
@@ -879,5 +880,118 @@ Future<Map<String, dynamic>> updateFcmTokenApi(String fcmToken) async {
   } catch (e) {
     print("Error updating fcm token: $e");
     rethrow;
+  }
+}
+
+class GoogleAuthService {
+  static const String webClientId =
+      '711750121236-bmqlvjppt3lo2i1lbvac15nod0br20ip.apps.googleusercontent.com';
+
+  // ✅ Use instance (NEW API – 2024+)
+  final GoogleSignIn _googleSignIn = GoogleSignIn.instance;
+
+  bool _isInitialized = false;
+
+  /// Initialize Google Sign-In (MUST be called before using signIn)
+  /// Call this once, usually in initState() or service constructor
+  Future<void> init() async {
+    if (_isInitialized) {
+      print('✅ Google Sign-In already initialized');
+      return;
+    }
+
+    try {
+      print('🔵 Initializing Google Sign-In...');
+      await _googleSignIn.initialize(
+        serverClientId:
+            '696005027039-20h7slaanur8amspfheva3736v05muoo.apps.googleusercontent.com',
+        clientId:
+            '696005027039-9cmiabdb89k15ha939spadfkdl6e5sq8.apps.googleusercontent.com',
+      );
+
+      _isInitialized = true;
+      print('✅ Google Sign-In initialized successfully');
+    } catch (e) {
+      print('❌ Failed to initialize Google Sign-In: $e');
+      rethrow;
+    }
+  }
+
+  /// Main Google Login function
+  /// Returns the backend response data on success, null if user cancelled
+  Future<Map<String, dynamic>?> signInWithGoogle() async {
+    try {
+      // Ensure Google Sign-In is initialized
+      if (!_isInitialized) {
+        await init();
+      }
+
+      // 1️⃣ Open Google account picker
+      print('🔵 Opening Google account picker...');
+      final GoogleSignInAccount? account = await _googleSignIn.authenticate();
+
+      if (account == null) {
+        print('⚠️ User cancelled Google login');
+        return null;
+      }
+
+      print('✅ Account selected: ${account.email}');
+
+      // 2️⃣ Get ID token
+      print('🔵 Requesting ID token...');
+      final GoogleSignInAuthentication auth = await account.authentication;
+
+      final String? idToken = auth.idToken;
+
+      if (idToken == null) {
+        throw Exception('ID Token is null - authentication failed');
+      }
+
+      print('✅ ID Token received successfully');
+
+      // 3️⃣ Send token to backend
+      final result = await _sendTokenToBackend(idToken);
+      return result;
+    } catch (e) {
+      print('❌ Google login failed: $e');
+      rethrow; // Re-throw to let caller handle the error
+    }
+  }
+
+  /// Send ID token to backend API
+  /// Returns the response data on success
+  Future<Map<String, dynamic>> _sendTokenToBackend(String idToken) async {
+    print('🔵 Sending ID token to backend...');
+
+    final response = await http.post(
+      Uri.parse('https://devbandhucareapis.revanai.in/v2/api/auth/google'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'idToken': idToken, 'userType': 'patient'}),
+    );
+
+    print('📡 Backend response status: ${response.statusCode}');
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      final result = jsonDecode(response.body);
+      print('✅ Backend login success');
+
+      // Save user info to shared preferences
+      if (result['data'] != null && result['data']['profileDetails'] != null) {
+        await SharedPrefLocalization().saveUserInfo(
+          result['data']['profileDetails'],
+        );
+        print('✅ User info saved to local storage');
+      }
+
+      print('📦 Response data: $result');
+      return result;
+    } else {
+      final errorBody = response.body;
+      print('❌ Backend login failed: Status ${response.statusCode}');
+      print('❌ Error response: $errorBody');
+      throw Exception(
+        'Backend login failed: ${response.statusCode} - $errorBody',
+      );
+    }
   }
 }

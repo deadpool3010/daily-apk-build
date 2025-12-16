@@ -3,16 +3,12 @@ plugins {
     id("kotlin-android")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
-}
-
-// Conditionally apply Google Services plugin only if google-services.json exists
-val googleServicesFile = file("google-services.json")
-if (googleServicesFile.exists()) {
-    apply(plugin = "com.google.gms.google-services")
+    // Add the Google services Gradle plugin
+    id("com.google.gms.google-services")
 }
 
 android {
-    namespace = "com.bandhucare.app"
+    namespace = "com.bandhucare.newapp"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -27,7 +23,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.bandhucare.app"
+        applicationId = "com.bandhucare.newapp"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion

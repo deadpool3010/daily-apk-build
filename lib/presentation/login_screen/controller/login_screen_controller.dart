@@ -1124,4 +1124,78 @@ class LoginController extends GetxController with GetTickerProviderStateMixin {
     createSubPage.value = 0;
     currentPage.value = 2;
   }
+
+  // Handle Google Login
+  Future<void> handleGoogleLogin() async {
+    try {
+      print('🔵 Starting Google login...');
+      
+      // Create GoogleAuthService instance
+      final googleAuthService = GoogleAuthService();
+      
+      // Call Google sign-in
+      final result = await googleAuthService.signInWithGoogle();
+      
+      if (result == null) {
+        // User cancelled login
+        print('⚠️ User cancelled Google login');
+        Fluttertoast.showToast(
+          msg: "Google login cancelled",
+          toastLength: Toast.LENGTH_SHORT,
+          backgroundColor: Colors.orange,
+          textColor: Colors.white,
+        );
+        return;
+      }
+
+      print('');
+      print('========================================');
+      print('✅ ✅ ✅ Google Login SUCCESS ✅ ✅ ✅');
+      print('========================================');
+      print('📦 Full Response: $result');
+      print('📊 Success: ${result['success']}');
+      print('📨 Message: ${result['message']}');
+      print('📋 Data: ${result['data']}');
+      print('========================================');
+      print('');
+
+      // Check if login was successful
+      if (result['success'] == true) {
+        Fluttertoast.showToast(
+          msg: result['message'] ?? "Google login successful!",
+          toastLength: Toast.LENGTH_SHORT,
+          backgroundColor: Colors.green,
+          textColor: Colors.white,
+        );
+
+        // Navigate to home screen after successful login
+        Get.offAllNamed(AppRoutes.homeScreen);
+      } else {
+        throw Exception(result['message'] ?? 'Google login failed');
+      }
+    } catch (e) {
+      print('');
+      print('========================================');
+      print('❌ ❌ ❌ Google Login FAILED ❌ ❌ ❌');
+      print('========================================');
+      print('Error: $e');
+      print('========================================');
+      print('');
+
+      // Extract the actual error message
+      String errorMessage = e.toString();
+      if (errorMessage.startsWith('Exception: Exception: ')) {
+        errorMessage = errorMessage.replaceFirst('Exception: Exception: ', '');
+      } else if (errorMessage.startsWith('Exception: ')) {
+        errorMessage = errorMessage.replaceFirst('Exception: ', '');
+      }
+
+      Fluttertoast.showToast(
+        msg: errorMessage,
+        toastLength: Toast.LENGTH_LONG,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+      );
+    }
+  }
 }

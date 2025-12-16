@@ -90,7 +90,8 @@ class LoginScreen extends StatelessWidget {
   ) {
     // Adjust this value to control container height when keyboard is not visible
     // When keyboard is visible: container will be full height automatically
-    const double containerHeightPercentage = 0.70; // Slightly increased for longer text
+    const double containerHeightPercentage =
+        0.70; // Slightly increased for longer text
 
     final contentWidget = SingleChildScrollView(
       padding: EdgeInsets.only(left: 24, right: 24, top: 32, bottom: 24),
@@ -145,7 +146,7 @@ class LoginScreen extends StatelessWidget {
           const SizedBox(height: 24),
 
           // Alternative Login Options
-          _buildAlternativeLoginOptions(),
+          _buildAlternativeLoginOptions(controller),
         ],
       ),
     );
@@ -213,7 +214,7 @@ class LoginScreen extends StatelessWidget {
     );
   }
 
-          // OTP Input with Get OTP Button
+  // OTP Input with Get OTP Button
   Widget _buildOTPInputWithButton(LoginController controller) {
     return Column(
       children: [
@@ -287,7 +288,8 @@ class LoginScreen extends StatelessWidget {
         ),
         // Hint text below OTP field instead of overlay
         Obx(
-          () => controller.showGetOtpHint.value &&
+          () =>
+              controller.showGetOtpHint.value &&
                   controller.enteredOtp.value.isEmpty
               ? Padding(
                   padding: const EdgeInsets.only(top: 8, left: 4),
@@ -355,12 +357,15 @@ class LoginScreen extends StatelessWidget {
   }
 
   // Alternative Login Options
-  Widget _buildAlternativeLoginOptions() {
+  Widget _buildAlternativeLoginOptions(LoginController controller) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Expanded(
           child: _buildAlternativeLoginButton(
+            onTap: () {
+              controller.handleGoogleLogin();
+            },
             icon: Icons.g_mobiledata,
             label: 'lbl_google'.tr,
             iconColor: Colors.orange,
@@ -397,17 +402,22 @@ class LoginScreen extends StatelessWidget {
     required Color iconColor,
     Size? iconSize,
     String? route,
+    VoidCallback? onTap,
   }) {
     return GestureDetector(
-      onTap: () {
-        // Handle alternative login options
-        if (route != null) {
-          Get.toNamed(route);
-        }
-        // Google login can be handled separately if needed
-      },
+      onTap:
+          onTap ??
+          () {
+            // Handle alternative login options
+            if (route != null) {
+              Get.toNamed(route);
+            }
+          },
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 12), // Reduced padding
+        padding: EdgeInsets.symmetric(
+          horizontal: 8,
+          vertical: 12,
+        ), // Reduced padding
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(32),
@@ -418,9 +428,17 @@ class LoginScreen extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             if (label == 'lbl_google'.tr)
-              Image.asset(ImageConstant.googleLogo, width: 18, height: 18) // Slightly smaller
+              Image.asset(
+                ImageConstant.googleLogo,
+                width: 18,
+                height: 18,
+              ) // Slightly smaller
             else
-              Icon(icon, color: iconColor, size: (iconSize?.width ?? 18).clamp(16.0, 18.0)), // Smaller icon
+              Icon(
+                icon,
+                color: iconColor,
+                size: (iconSize?.width ?? 18).clamp(16.0, 18.0),
+              ), // Smaller icon
             const SizedBox(width: 4), // Reduced spacing
             Flexible(
               child: Text(
