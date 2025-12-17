@@ -58,7 +58,7 @@ class ChooseLanguageScreen extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    GestureDetector(
+                    InkWell(
                       onTap: () {
                         controller.proceedToLogin();
                       },

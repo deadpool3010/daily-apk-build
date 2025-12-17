@@ -77,7 +77,7 @@ class LoginScreen extends StatelessWidget {
         Get.toNamed(AppRoutes.registerHomescreen);
       },
       onBackTap: () {
-        Get.offNamed(AppRoutes.chooseLanguageScreen);
+        Get.back();
       },
     );
   }

@@ -105,19 +105,19 @@ class ChooseLanguageController extends GetxController
   }
 
   // Navigate to login screen
+  // In ChooseLanguageController
   Future<void> proceedToLogin() async {
-    // Ensure language is saved before navigating
+    // Save locale
     final localeString =
         _languageKeyToLocaleString[selectedLanguageKey.value] ?? 'en_US';
     await _prefs.saveAppLocale(localeString);
 
-    // Update GetX locale after a microtask to avoid build phase issues
     final locale =
-        _languageKeyToLocale[selectedLanguageKey.value] ?? Locale('en', 'US');
-    Future.microtask(() {
-      Get.updateLocale(locale);
-    });
+        _languageKeyToLocale[selectedLanguageKey.value] ??
+        const Locale('en', 'US');
+    Get.updateLocale(locale);
 
-    Get.offNamed(AppRoutes.loginScreen);
+    // Navigate with custom transition
+    Get.toNamed(AppRoutes.loginScreen);
   }
 }

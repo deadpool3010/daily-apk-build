@@ -36,6 +36,17 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
     }
   }
 
+  void _scrollToBottom() {
+    if (!controller.scrollController.hasClients) return;
+    controller.scrollController.animateTo(
+      0.0, // Bottom in reversed ListView
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeOut,
+    );
+    // Enable auto-scroll when user manually scrolls to bottom
+    controller.shouldAutoScroll.value = true;
+  }
+
   @override
   void dispose() {
     // Remove controller when screen is disposed (only if we created it)
@@ -47,7 +58,14 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
+    // Check keyboard visibility using MediaQuery (will rebuild when keyboard appears)
+    final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
+    final isKeyboardVisible = keyboardHeight > 0;
+
+    // Debug print
+    print(
+      '🔑 Keyboard Height: $keyboardHeight, Is Visible: $isKeyboardVisible',
+    );
 
     // Get header background color to match status bar
     final headerColor = Color.fromARGB(
@@ -58,10 +76,10 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
     ); // Match the header container color
     final isLightColor = controller.isLightColor(headerColor);
 
-    // Set status bar to match header's background color
+    // Set status bar to transparent for blur effect
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
-        statusBarColor: headerColor,
+        statusBarColor: Colors.transparent, // Make status bar transparent
         statusBarIconBrightness: isLightColor
             ? Brightness.dark
             : Brightness.light,
@@ -71,19 +89,23 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
       ),
       child: Scaffold(
         backgroundColor: Colors.black,
+        resizeToAvoidBottomInset:
+            true, // Allow body to resize when keyboard appears
+        extendBodyBehindAppBar:
+            true, // THIS IS CRITICAL - extends content behind AppBar for blur effect
         appBar: ChatScreenAppBar(),
         body: Container(
           width: double.infinity,
           height: double.infinity,
           clipBehavior: Clip.antiAlias,
           decoration: ShapeDecoration(
-            color: Colors.white,
+            color: const Color.fromARGB(255, 235, 240, 249),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
           ),
           child: Stack(
             children: [
-              // Chat messages area - starts from top
-              Positioned(
+              // Chat messages area
+              Positioned.fill(
                 child: Obx(
                   () => controller.isLoading.value
                       ? Center(
@@ -91,28 +113,48 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
                             color: const Color(0xFF3865FF),
                           ),
                         )
-                      : _buildChatView(),
+                      : _buildChatView(keyboardHeight),
                 ),
               ),
-              // Question suggestions - positioned above input field
-              // Only show when at bottom (newest messages visible) - hide when scrolling up
+
+              // Question suggestions (hide when keyboard is open)
               Positioned(
                 left: 0,
                 right: 0,
-                bottom:
-                    90, // Position above the input field (bottom bar height)
-                child: Obx(
-                  () =>
-                      controller.messages.isNotEmpty &&
-                          controller.shouldAutoScroll.value
-                      ? QuestionSuggestions(
-                          onQuestionTap: (question) {
-                            controller.sendChatMessage(question);
-                          },
-                        )
-                      : const SizedBox.shrink(),
+                bottom: 90,
+                child: AnimatedSize(
+                  duration: const Duration(milliseconds: 200),
+                  curve: Curves.easeInOut,
+                  child: SizedBox(
+                    height: isKeyboardVisible
+                        ? 0
+                        : 90, // Collapse to 0 when keyboard opens
+                    child: ClipRect(
+                      clipBehavior: Clip.hardEdge,
+                      child: AnimatedOpacity(
+                        duration: const Duration(milliseconds: 200),
+                        opacity: isKeyboardVisible ? 0 : 1,
+                        child: IgnorePointer(
+                          ignoring: isKeyboardVisible,
+                          child: Obx(() {
+                            final shouldShow =
+                                controller.messages.isNotEmpty &&
+                                controller.shouldAutoScroll.value;
+                            return shouldShow
+                                ? QuestionSuggestions(
+                                    onQuestionTap: (question) {
+                                      controller.sendChatMessage(question);
+                                    },
+                                  )
+                                : const SizedBox.shrink();
+                          }),
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
               ),
+              // Bottom input field
               Positioned(
                 left: 0,
                 right: 0,
@@ -124,134 +166,42 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
                 ),
               ),
 
-              // Input field - moves up with keyboard
-              // Positioned(
-              //   left: 40,
-              //   bottom: keyboardHeight > 0
-              //       ? keyboardHeight + 19
-              //       : 69, // Move up when keyboard is open
-              //   child: Container(
-              //     width: 344,
-              //     height: 50,
-              //     clipBehavior: Clip.antiAlias,
-              //     decoration: ShapeDecoration(
-              //       color: const Color(0x216A8BF3),
-              //       shape: RoundedRectangleBorder(
-              //         borderRadius: BorderRadius.circular(30),
-              //       ),
-              //     ),
-              //     child: Stack(
-              //       children: [
-              //         Positioned(
-              //           left: 28,
-              //           top: 0,
-              //           bottom: 0,
-              //           child: Align(
-              //             alignment: Alignment.centerLeft,
-              //             child: SizedBox(
-              //               width: 250,
-              //               child: Material(
-              //                 color: Colors.transparent,
-              //                 child: TextField(
-              //                   controller: _messageController,
-              //                   textAlignVertical: TextAlignVertical.center,
-              //                   onSubmitted: (text) => _sendMessage(text),
-              //                   decoration: InputDecoration(
-              //                     hintText: 'Hi, How can i help you today?',
-              //                     hintStyle: TextStyle(
-              //                       color: Colors.black.withOpacity(0.32),
-              //                       fontSize: 16,
-              //                       fontFamily: 'Lato',
-              //                       fontWeight: FontWeight.w400,
-              //                     ),
-              //                     border: InputBorder.none,
-              //                     contentPadding: EdgeInsets.zero,
-              //                     isDense: true,
-              //                   ),
-              //                   style: TextStyle(
-              //                     color: Colors.black,
-              //                     fontSize: 16,
-              //                     fontFamily: 'Lato',
-              //                     fontWeight: FontWeight.w400,
-              //                     decoration: TextDecoration.none,
-              //                   ),
-              //                 ),
-              //               ),
-              //             ),
-              //           ),
-              //         ),
-              //         Positioned(
-              //           left: 296,
-              //           top: 7,
-              //           child: Material(
-              //             color: Colors.transparent,
-              //             child: InkWell(
-              //               onTap: () {
-              //                 _sendMessage(_messageController.text);
-              //               },
-              //               child: Container(
-              //                 width: 35,
-              //                 height: 35,
-              //                 padding: const EdgeInsets.all(5),
-              //                 decoration: ShapeDecoration(
-              //                   gradient: LinearGradient(
-              //                     begin: Alignment(0.41, 1.00),
-              //                     end: Alignment(0.51, 0.04),
-              //                     colors: [
-              //                       const Color(0xFF6595FF),
-              //                       const Color(0xFF3865FF),
-              //                     ],
-              //                   ),
-              //                   shape: RoundedRectangleBorder(
-              //                     borderRadius: BorderRadius.circular(17.50),
-              //                   ),
-              //                 ),
-              //                 child: Center(
-              //                   child: Image.asset(
-              //                     'assets/images/imagesarrow-big-up-lines.png',
-              //                     width: 24,
-              //                     height: 24,
-              //                     fit: BoxFit.contain,
-              //                     color: Colors.white,
-              //                     errorBuilder: (context, error, stackTrace) {
-              //                       return Icon(
-              //                         Icons.arrow_upward,
-              //                         color: Colors.white,
-              //                         size: 20,
-              //                       );
-              //                     },
-              //                   ),
-              //                 ),
-              //               ),
-              //             ),
-              //           ),
-              //         ),
-              //       ],
-              //     ),
-              //   ),
-              // ),
-              // Disclaimer text - moves up with keyboard
-              // Positioned(
-              //   left: 25,
-              //   bottom: keyboardHeight > 0
-              //       ? keyboardHeight - 12
-              //       : 38, // Move up when keyboard is open
-              //   child: SizedBox(
-              //     width: 359,
-              //     child: Text(
-              //       'Mitra can make mistakes. Contact doctor in emergency',
-              //       textAlign: TextAlign.center,
-              //       style: TextStyle(
-              //         color: const Color(0x4C263441),
-              //         fontSize: 12,
-              //         fontFamily: 'Lato',
-              //         fontWeight: FontWeight.w400,
-              //         height: 1.50,
-              //         decoration: TextDecoration.none,
-              //       ),
-              //     ),
-              //   ),
-              // ),
+              // Scroll to bottom button (appears when scrolled up)
+              Obx(
+                () => !controller.shouldAutoScroll.value
+                    ? Positioned(
+                        right: 16,
+                        bottom: 90, // Above the input field
+                        child: Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: _scrollToBottom,
+                            borderRadius: BorderRadius.circular(25),
+                            child: Container(
+                              width: 35,
+                              height: 35,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.2),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              child: const Icon(
+                                Icons.keyboard_arrow_down,
+                                color: Color(0xFF3865FF),
+                                size: 28,
+                              ),
+                            ),
+                          ),
+                        ),
+                      )
+                    : const SizedBox.shrink(),
+              ),
             ],
           ),
         ),
@@ -326,7 +276,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
   //   );
   // }
 
-  Widget _buildChatView() {
+  Widget _buildChatView(double keyboardHeight) {
     // Header height: 50 (image) + 15 (top padding) + 15 (bottom padding) = 80px
     // Add top padding so messages appear below header
 
@@ -336,9 +286,8 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
         padding: EdgeInsets.only(
           left: 25,
           right: 25,
-          top: 90, // Space for header (80px) + extra spacing (10px)
-          // Extra bottom padding: suggestions (90px) + bottom bar (90px) + extra space (20px)
-          bottom: controller.messages.isNotEmpty ? 200 : 110,
+          top: 90,
+          bottom: keyboardHeight > 0 ? 100 : 200,
         ),
         reverse: true,
         itemCount:
@@ -396,7 +345,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
               constraints: BoxConstraints(maxWidth: 300),
               padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
               decoration: ShapeDecoration(
-                color: Color(0xff3865FF),
+                color: const Color(0xFF3162DA),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(12),
@@ -474,7 +423,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
               constraints: BoxConstraints(maxWidth: 300),
               padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
               decoration: ShapeDecoration(
-                color: const Color(0xFFECF0FE),
+                color: const Color(0xFFD4DEF3),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(12),
@@ -486,7 +435,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
               child: Text(
                 message.text,
                 style: const TextStyle(
-                  color: Color(0xFF3865FF),
+                  color: Colors.black87,
                   fontSize: 16,
                   fontFamily: 'Lato',
                   fontWeight: FontWeight.w400,

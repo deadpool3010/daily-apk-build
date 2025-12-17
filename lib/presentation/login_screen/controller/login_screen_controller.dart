@@ -62,6 +62,11 @@ class LoginController extends GetxController with GetTickerProviderStateMixin {
   void onInit() {
     super.onInit();
     _initializeTextControllers();
+  }
+
+  @override
+  void onReady() {
+    super.onReady();
     _initializeAnimations();
 
     // Listen to currentPage changes and trigger animations when page 3 is reached
@@ -1129,13 +1134,13 @@ class LoginController extends GetxController with GetTickerProviderStateMixin {
   Future<void> handleGoogleLogin() async {
     try {
       print('🔵 Starting Google login...');
-      
+
       // Create GoogleAuthService instance
       final googleAuthService = GoogleAuthService();
-      
+
       // Call Google sign-in
       final result = await googleAuthService.signInWithGoogle();
-      
+
       if (result == null) {
         // User cancelled login
         print('⚠️ User cancelled Google login');

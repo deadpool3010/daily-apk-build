@@ -114,3 +114,4 @@ Remove-Item -Recurse -Force android\app\src\main\kotlin\com\bandhucare\app
 - Download the updated `google-services.json` after adding SHA-1
 - Make sure `oauth_client` array in `google-services.json` contains an Android client (`client_type: 1`)
 
+

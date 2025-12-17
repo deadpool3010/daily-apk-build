@@ -1,3 +1,6 @@
+// ============ ChatScreenAppBar with BackdropFilter ============
+import 'dart:ui';
+
 import 'package:bandhucare_new/core/utils/image_constant.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -36,7 +39,6 @@ class _ChatScreenAppBarState extends State<ChatScreenAppBar> {
   void initState() {
     super.initState();
     _controller = Get.find<ChatScreenController>();
-    // Listen to language changes and update UI
     _languageWorker = ever(_controller.selectedLanguage, (_) {
       if (mounted) {
         setState(() {});
@@ -54,7 +56,6 @@ class _ChatScreenAppBarState extends State<ChatScreenAppBar> {
     final sortedLanguages = List<Map<String, String>>.from(languages)
       ..sort((a, b) => a['name']!.compareTo(b['name']!));
 
-    // Find current selected language index
     int selectedIndex = sortedLanguages.indexWhere(
       (lang) => lang['code'] == _controller.selectedLanguage.value,
     );
@@ -73,7 +74,6 @@ class _ChatScreenAppBarState extends State<ChatScreenAppBar> {
           top: false,
           child: Column(
             children: [
-              // Header with Done button
               Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 16,
@@ -116,7 +116,6 @@ class _ChatScreenAppBarState extends State<ChatScreenAppBar> {
                   ],
                 ),
               ),
-              // Language picker
               Expanded(
                 child: DefaultTextStyle(
                   style: const TextStyle(
@@ -162,69 +161,75 @@ class _ChatScreenAppBarState extends State<ChatScreenAppBar> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.chatScreenHeader,
-        border: Border(
-          bottom: BorderSide(color: Colors.grey.withOpacity(0.35), width: 1.05),
-        ),
-      ),
-      child: AppBar(
-        scrolledUnderElevation: 0,
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 11, top: 41, bottom: 25),
-          child: InkWell(
-            onTap: () {
-              // Use Navigator for safe navigation without snackbar dependencies
-              if (Navigator.of(context).canPop()) {
-                Navigator.of(context).pop();
-              }
-            },
-            child: Icon(Icons.arrow_back_ios_new, size: 22),
-          ),
-        ),
-        title: Padding(
-          padding: const EdgeInsets.only(top: 41, bottom: 25),
-          child: Image.asset(
-            ImageConstant.bandhu_chat,
-            height: 20,
-            fit: BoxFit.contain,
-          ),
-        ),
-        centerTitle: true,
-        backgroundColor: Color(0xFFEDF2F7),
-        elevation: 0,
-        toolbarHeight: 90,
-        actions: [
-          // Language selector
-          InkWell(
-            onTap: () => _showLanguagePicker(context),
-            child: Padding(
-              padding: const EdgeInsets.only(right: 4, top: 41, bottom: 25),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.language, size: 22),
-                  const SizedBox(width: 4),
-                  Text(
-                    _getSelectedLanguageName(),
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
+    return ClipRRect(
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.90),
+            border: Border(
+              bottom: BorderSide(
+                color: Colors.grey.withOpacity(0.35),
+                width: 1.05,
               ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.only(right: 11, top: 41, bottom: 25),
-            child: InkWell(
-              onTap: () => _showLanguagePicker(context),
-              child: Icon(Icons.keyboard_arrow_down, size: 22),
+          child: AppBar(
+            scrolledUnderElevation: 0,
+            elevation: 0,
+            toolbarHeight: 90,
+            backgroundColor: Colors.transparent,
+
+            leading: Padding(
+              padding: const EdgeInsets.only(left: 11, top: 41, bottom: 25),
+              child: InkWell(
+                onTap: () {
+                  if (Navigator.of(context).canPop()) {
+                    Navigator.of(context).pop();
+                  }
+                },
+                child: const Icon(Icons.arrow_back_ios_new, size: 22),
+              ),
             ),
+
+            title: Padding(
+              padding: const EdgeInsets.only(top: 41, bottom: 25),
+              child: Image.asset(
+                ImageConstant.bandhu_chat,
+                height: 20,
+                fit: BoxFit.contain,
+              ),
+            ),
+
+            centerTitle: true,
+
+            actions: [
+              InkWell(
+                onTap: () => _showLanguagePicker(context),
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 4, top: 41, bottom: 25),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.language, size: 22),
+                      const SizedBox(width: 4),
+                      Text(
+                        _getSelectedLanguageName(),
+                        style: const TextStyle(fontSize: 14),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(right: 11, top: 41, bottom: 25),
+                child: InkWell(
+                  onTap: () => _showLanguagePicker(context),
+                  child: const Icon(Icons.keyboard_arrow_down, size: 22),
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
