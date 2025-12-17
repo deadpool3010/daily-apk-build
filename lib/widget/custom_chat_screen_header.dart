@@ -166,7 +166,7 @@ class _ChatScreenAppBarState extends State<ChatScreenAppBar> {
         filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.90),
+            color: Colors.white,
             border: Border(
               bottom: BorderSide(
                 color: Colors.grey.withOpacity(0.35),

@@ -131,24 +131,36 @@ class _ChatScreenBottomState extends State<ChatScreenBottom> {
                   );
                 },
                 borderRadius: BorderRadius.circular(22),
-                child: ClipOval(
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
-                    child: Container(
-                      width: 44,
-                      height: 44,
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.85),
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: Colors.white.withOpacity(0.2),
-                          width: 1,
-                        ),
+                child: Container(
+                  decoration: BoxDecoration(
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.30),
+                        blurRadius: 20,
+                        spreadRadius: 0,
+                        offset: Offset(0, -2),
                       ),
-                      child: const Icon(
-                        Icons.add,
-                        size: 26,
-                        color: Color(0xFF4A5568),
+                    ],
+                  ),
+                  child: ClipOval(
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
+                      child: Container(
+                        width: 44,
+                        height: 44,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: Colors.white.withOpacity(0.2),
+                            width: 1,
+                          ),
+                        ),
+                        child: const Icon(
+                          Icons.add,
+                          size: 26,
+                          color: Color(0xFF4A5568),
+                        ),
                       ),
                     ),
                   ),
@@ -160,254 +172,259 @@ class _ChatScreenBottomState extends State<ChatScreenBottom> {
 
             // TEXT FIELD + SEND BUTTON (Translucent iOS-style)
             Expanded(
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(30),
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
-                  child: Container(
-                    constraints: BoxConstraints(
-                      minHeight: 50,
-                      maxHeight:
-                          300, // Fixed max height, will scroll after this
+              child: Container(
+                constraints: BoxConstraints(
+                  minHeight: 50,
+                  maxHeight: 300, // Fixed max height, will scroll after this
+                ),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(30),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.30),
+                      blurRadius: 20,
+                      spreadRadius: 0,
+                      offset: Offset(0, -2),
                     ),
-
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.85),
-                      borderRadius: BorderRadius.circular(30),
-                      border: Border.all(
-                        color: Colors.white.withOpacity(0.2),
-                        width: 1,
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
-                          blurRadius: 10,
-                          offset: Offset(0, -2),
+                  ],
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(30),
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(30),
+                        border: Border.all(
+                          color: Colors.white.withOpacity(0.2),
+                          width: 1,
                         ),
-                      ],
-                    ),
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 0,
-                      vertical: hasPdf ? 8 : 0,
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Show selected PDF if available (inside the container)
-                        if (hasPdf && !_isRecording)
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-                            child: SelectedPdfFile(
-                              fileName: _pdfFileName!,
-                              fileSize: _pdfFileSize!,
-                              onDelete: _removePdfFile,
+                      ),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 0,
+                        vertical: hasPdf ? 8 : 0,
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Show selected PDF if available (inside the container)
+                          if (hasPdf && !_isRecording)
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                              child: SelectedPdfFile(
+                                fileName: _pdfFileName!,
+                                fileSize: _pdfFileSize!,
+                                onDelete: _removePdfFile,
+                              ),
                             ),
-                          ),
 
-                        // TEXT FIELD ROW or AUDIO WAVEFORM
-                        Flexible(
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              const SizedBox(width: 16),
+                          // TEXT FIELD ROW or AUDIO WAVEFORM
+                          Flexible(
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                const SizedBox(width: 16),
 
-                              // TEXT FIELD or AUDIO WAVEFORM
-                              Expanded(
-                                child: _isRecording
-                                    ? SizedBox(
-                                        height: 50,
-                                        child: AudioWaveformWidget(
-                                          key: _audioWaveformKey,
-                                          onRecordingStarted: () {
-                                            setState(() {
-                                              _isRecording = true;
-                                            });
-                                          },
-                                          onRecordingStopped: () {
-                                            setState(() {
-                                              _isRecording = false;
-                                            });
-                                          },
-                                          onAudioFileReady: (file) {
-                                            // Automatically send audio file when recording stops
-                                            if (file != null) {
-                                              widget.onSend(
-                                                '', // Empty content for audio
-                                                file: file,
-                                                fileType: 'audio',
-                                              );
-                                            }
-                                          },
-                                        ),
-                                      )
-                                    : IntrinsicHeight(
-                                        child: Stack(
-                                          children: [
-                                            // Always keep AudioWaveformWidget in tree for GlobalKey (hidden)
-                                            Opacity(
-                                              opacity: 0,
-                                              child: SizedBox(
-                                                height: 50,
-                                                child: AudioWaveformWidget(
-                                                  key: _audioWaveformKey,
-                                                  onRecordingStarted: () {
-                                                    setState(() {
-                                                      _isRecording = true;
-                                                    });
-                                                  },
-                                                  onRecordingStopped: () {
-                                                    setState(() {
-                                                      _isRecording = false;
-                                                    });
-                                                  },
-                                                  onAudioFileReady: (file) {
-                                                    // Automatically send audio file when recording stops
-                                                    if (file != null) {
-                                                      widget.onSend(
-                                                        '', // Empty content for audio
-                                                        file: file,
-                                                        fileType: 'audio',
-                                                      );
-                                                    }
-                                                  },
+                                // TEXT FIELD or AUDIO WAVEFORM
+                                Expanded(
+                                  child: _isRecording
+                                      ? SizedBox(
+                                          height: 50,
+                                          child: AudioWaveformWidget(
+                                            key: _audioWaveformKey,
+                                            onRecordingStarted: () {
+                                              setState(() {
+                                                _isRecording = true;
+                                              });
+                                            },
+                                            onRecordingStopped: () {
+                                              setState(() {
+                                                _isRecording = false;
+                                              });
+                                            },
+                                            onAudioFileReady: (file) {
+                                              // Automatically send audio file when recording stops
+                                              if (file != null) {
+                                                widget.onSend(
+                                                  '', // Empty content for audio
+                                                  file: file,
+                                                  fileType: 'audio',
+                                                );
+                                              }
+                                            },
+                                          ),
+                                        )
+                                      : IntrinsicHeight(
+                                          child: Stack(
+                                            children: [
+                                              // Always keep AudioWaveformWidget in tree for GlobalKey (hidden)
+                                              Opacity(
+                                                opacity: 0,
+                                                child: SizedBox(
+                                                  height: 50,
+                                                  child: AudioWaveformWidget(
+                                                    key: _audioWaveformKey,
+                                                    onRecordingStarted: () {
+                                                      setState(() {
+                                                        _isRecording = true;
+                                                      });
+                                                    },
+                                                    onRecordingStopped: () {
+                                                      setState(() {
+                                                        _isRecording = false;
+                                                      });
+                                                    },
+                                                    onAudioFileReady: (file) {
+                                                      // Automatically send audio file when recording stops
+                                                      if (file != null) {
+                                                        widget.onSend(
+                                                          '', // Empty content for audio
+                                                          file: file,
+                                                          fileType: 'audio',
+                                                        );
+                                                      }
+                                                    },
+                                                  ),
                                                 ),
                                               ),
-                                            ),
-                                            // TextField that can expand
-                                            TextField(
-                                              controller:
-                                                  widget.messageController,
-                                              textAlignVertical:
-                                                  TextAlignVertical.top,
-                                              maxLines: null,
-                                              minLines: 1,
-                                              keyboardType:
-                                                  TextInputType.multiline,
-                                              textInputAction:
-                                                  TextInputAction.newline,
-                                              onSubmitted: (text) {
-                                                // Don't send on enter, allow new lines
-                                              },
-                                              scrollController:
-                                                  ScrollController(),
-                                              scrollPhysics:
-                                                  const ClampingScrollPhysics(),
-                                              decoration: InputDecoration(
-                                                hintText:
-                                                    'Hi, How can I help you today?',
-                                                hintStyle: TextStyle(
-                                                  color: Colors.black
-                                                      .withOpacity(0.32),
+                                              // TextField that can expand
+                                              TextField(
+                                                controller:
+                                                    widget.messageController,
+                                                textAlignVertical:
+                                                    TextAlignVertical.top,
+                                                maxLines: null,
+                                                minLines: 1,
+                                                keyboardType:
+                                                    TextInputType.multiline,
+                                                textInputAction:
+                                                    TextInputAction.newline,
+                                                onSubmitted: (text) {
+                                                  // Don't send on enter, allow new lines
+                                                },
+                                                scrollController:
+                                                    ScrollController(),
+                                                scrollPhysics:
+                                                    const ClampingScrollPhysics(),
+                                                decoration: InputDecoration(
+                                                  hintText:
+                                                      'Hi, How can I help you today?',
+                                                  hintStyle: TextStyle(
+                                                    color: Colors.black
+                                                        .withOpacity(0.32),
+                                                    fontSize: 16,
+                                                    fontFamily: 'Lato',
+                                                    fontWeight: FontWeight.w400,
+                                                  ),
+                                                  border: InputBorder.none,
+                                                  isDense: true,
+                                                  contentPadding:
+                                                      EdgeInsets.symmetric(
+                                                        vertical: hasPdf
+                                                            ? 8
+                                                            : 12,
+                                                        horizontal: 0,
+                                                      ),
+                                                ),
+                                                style: const TextStyle(
+                                                  color: Colors.black,
                                                   fontSize: 16,
                                                   fontFamily: 'Lato',
                                                   fontWeight: FontWeight.w400,
                                                 ),
-                                                border: InputBorder.none,
-                                                isDense: true,
-                                                contentPadding:
-                                                    EdgeInsets.symmetric(
-                                                      vertical: hasPdf ? 8 : 12,
-                                                      horizontal: 0,
-                                                    ),
                                               ),
-                                              style: const TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 16,
-                                                fontFamily: 'Lato',
-                                                fontWeight: FontWeight.w400,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                              ),
-
-                              const SizedBox(width: 8),
-
-                              // SEND / MIC BUTTON
-                              Padding(
-                                padding: EdgeInsets.only(
-                                  bottom: (hasPdf && !_isRecording) ? 8 : 6,
-                                ),
-                                child: Material(
-                                  color: Colors.transparent,
-                                  child: GestureDetector(
-                                    onLongPressStart: (_) {
-                                      _audioWaveformKey.currentState
-                                          ?.startRecording();
-                                      _audioWaveformKey.currentState
-                                          ?.startRecording();
-                                    },
-                                    onLongPressEnd: (_) {
-                                      _audioWaveformKey.currentState
-                                          ?.stopRecording();
-                                    },
-                                    child: InkWell(
-                                      onTap: () {
-                                        if (_hasText ||
-                                            _selectedPdfFile != null) {
-                                          widget.onSend(
-                                            widget.messageController.text,
-                                            file: _selectedPdfFile,
-                                            fileType: _selectedPdfFile != null
-                                                ? 'document'
-                                                : null,
-                                          );
-                                          // Clear PDF after sending
-                                          _removePdfFile();
-                                        }
-                                      },
-                                      borderRadius: BorderRadius.circular(18),
-                                      child: Container(
-                                        width: 35,
-                                        height: 35,
-                                        padding: const EdgeInsets.all(5),
-                                        decoration: ShapeDecoration(
-                                          gradient: const LinearGradient(
-                                            begin: Alignment(0.41, 1.00),
-                                            end: Alignment(0.51, 0.04),
-                                            colors: [
-                                              Color(0xFF6595FF),
-                                              Color(0xFF3865FF),
                                             ],
                                           ),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              17.50,
+                                        ),
+                                ),
+
+                                const SizedBox(width: 8),
+
+                                // SEND / MIC BUTTON
+                                Padding(
+                                  padding: EdgeInsets.only(
+                                    bottom: (hasPdf && !_isRecording) ? 8 : 6,
+                                  ),
+                                  child: Material(
+                                    color: Colors.transparent,
+                                    child: GestureDetector(
+                                      onLongPressStart: (_) {
+                                        _audioWaveformKey.currentState
+                                            ?.startRecording();
+                                        _audioWaveformKey.currentState
+                                            ?.startRecording();
+                                      },
+                                      onLongPressEnd: (_) {
+                                        _audioWaveformKey.currentState
+                                            ?.stopRecording();
+                                      },
+                                      child: InkWell(
+                                        onTap: () {
+                                          if (_hasText ||
+                                              _selectedPdfFile != null) {
+                                            widget.onSend(
+                                              widget.messageController.text,
+                                              file: _selectedPdfFile,
+                                              fileType: _selectedPdfFile != null
+                                                  ? 'document'
+                                                  : null,
+                                            );
+                                            // Clear PDF after sending
+                                            _removePdfFile();
+                                          }
+                                        },
+                                        borderRadius: BorderRadius.circular(18),
+                                        child: Container(
+                                          width: 35,
+                                          height: 35,
+                                          padding: const EdgeInsets.all(5),
+                                          decoration: ShapeDecoration(
+                                            gradient: const LinearGradient(
+                                              begin: Alignment(0.41, 1.00),
+                                              end: Alignment(0.51, 0.04),
+                                              colors: [
+                                                Color(0xFF6595FF),
+                                                Color(0xFF3865FF),
+                                              ],
+                                            ),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(17.50),
                                             ),
                                           ),
-                                        ),
-                                        child: Center(
-                                          child: _isRecording
-                                              ? Icon(
-                                                  Icons.mic,
-                                                  color: Colors.white,
-                                                  size: 24,
-                                                )
-                                              : _hasText
-                                              ? Icon(
-                                                  Icons.arrow_upward,
-                                                  color: Colors.white,
-                                                  size: 24,
-                                                )
-                                              : Icon(
-                                                  Icons.mic_none,
-                                                  color: Colors.white,
-                                                  size: 24,
-                                                ),
+                                          child: Center(
+                                            child: _isRecording
+                                                ? Icon(
+                                                    Icons.mic,
+                                                    color: Colors.white,
+                                                    size: 24,
+                                                  )
+                                                : _hasText
+                                                ? Icon(
+                                                    Icons.arrow_upward,
+                                                    color: Colors.white,
+                                                    size: 24,
+                                                  )
+                                                : Icon(
+                                                    Icons.mic_none,
+                                                    color: Colors.white,
+                                                    size: 24,
+                                                  ),
+                                          ),
                                         ),
                                       ),
                                     ),
                                   ),
                                 ),
-                              ),
 
-                              const SizedBox(width: 12),
-                            ],
+                                const SizedBox(width: 12),
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),

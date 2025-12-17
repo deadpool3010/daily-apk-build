@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:bandhucare_new/core/app_exports.dart';
 import 'package:bandhucare_new/presentation/chat_screen/controller/chat_screeen_controller.dart';
 import 'package:bandhucare_new/widget/custom_chat_bubbles.dart';
@@ -99,7 +100,11 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
           height: double.infinity,
           clipBehavior: Clip.antiAlias,
           decoration: ShapeDecoration(
-            color: const Color.fromARGB(255, 235, 240, 249),
+            image: DecorationImage(
+              image: AssetImage(ImageConstant.chat_screen_background),
+              fit: BoxFit.cover,
+            ),
+            color: const Color.fromARGB(255, 243, 249, 255),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
           ),
           child: Stack(
@@ -154,11 +159,31 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
                   ),
                 ),
               ),
+              // Blur overlay for gap area below text field (messages visible through gap)
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom:
+                    -90, // Position above the text field to cover the gap area
+                height:
+                    165, // Height of the gap area to blur (covers messages visible through gap)
+                child: IgnorePointer(
+                  // Allow touches to pass through to messages/scroll
+                  ignoring: true,
+                  child: ClipRect(
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
+                      child: Container(color: Colors.transparent),
+                    ),
+                  ),
+                ),
+              ),
+
               // Bottom input field
               Positioned(
                 left: 0,
                 right: 0,
-                bottom: 0,
+                bottom: -10,
                 child: ChatScreenBottom(
                   messageController: controller.messageController,
                   onSend: (text, {file, fileType}) => controller
@@ -345,7 +370,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
               constraints: BoxConstraints(maxWidth: 300),
               padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
               decoration: ShapeDecoration(
-                color: const Color(0xFF3162DA),
+                color: const Color(0xFF3865FF),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(12),
@@ -423,7 +448,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
               constraints: BoxConstraints(maxWidth: 300),
               padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
               decoration: ShapeDecoration(
-                color: const Color(0xFFD4DEF3),
+                color: const Color(0xFFE6EBFD),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(12),
@@ -435,7 +460,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
               child: Text(
                 message.text,
                 style: const TextStyle(
-                  color: Colors.black87,
+                  color: Color(0xFF1D2873),
                   fontSize: 16,
                   fontFamily: 'Lato',
                   fontWeight: FontWeight.w400,

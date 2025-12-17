@@ -67,4 +67,5 @@ class ImageConstant {
 
   static const String bandhu_splash = '${basePath}Bandhu_splash.png';
   static const String bandhu_chat = '${basePath}Bandhu_chat.png';
+  static const String chat_screen_background = '${basePath}chat_screen_bg.png';
 }
