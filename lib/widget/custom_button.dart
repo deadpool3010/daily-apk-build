@@ -26,10 +26,10 @@ class DynamicButton extends StatelessWidget {
       width: width,
       height: height,
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          begin: Alignment.centerLeft,
-          end: Alignment.centerRight,
-          colors: [Color(0xFF076BE3), Color(0xFF098AF4)],
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [Color(0xFF3865FF), Color(0xFF223D99)],
         ),
         borderRadius: BorderRadius.circular(25),
         boxShadow: [

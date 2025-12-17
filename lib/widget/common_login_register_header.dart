@@ -152,8 +152,8 @@ class CommonLoginRegisterHeader extends StatelessWidget {
                         if (showLogo) ...[
                           const SizedBox(width: 12),
                           SizedBox(
-                            width: 50, // Slightly reduced
-                            height: 50, // Slightly reduced
+                            width: 70, // Slightly reduced
+                            height: 70, // Slightly reduced
                             child: ClipOval(
                               child: Image.asset(
                                 ImageConstant.blueLogo,
