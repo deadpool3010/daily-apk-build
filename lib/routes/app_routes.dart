@@ -186,6 +186,7 @@ class AppPages {
       page: () => const HomepageScreen(),
       transition: Transition.rightToLeftWithFade,
       binding: HomepageBinding(),
+      transitionDuration: const Duration(milliseconds: 400),
     ),
     GetPage(
       name: AppRoutes.scanQrScreen,

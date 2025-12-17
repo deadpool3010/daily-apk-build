@@ -3,6 +3,7 @@ import 'package:bandhucare_new/core/app_exports.dart';
 import 'package:bandhucare_new/presentation/chat_screen/controller/chat_screeen_controller.dart';
 import 'package:bandhucare_new/widget/custom_chat_bubbles.dart';
 import 'package:bandhucare_new/widget/qustion_suggetion.dart';
+import 'package:bandhucare_new/widget/like_deslike_tts.dart';
 
 class ChatMessage {
   final String text;
@@ -399,75 +400,156 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
       alignment: Alignment.centerLeft,
       child: message.file != null && message.file!['fileType'] != null
           ? message.file!['fileType'] == 'audio'
-                ? AudioChatBubble(
-                    audioUrl: message.file!['fileUrl']?.toString(),
-                    audioTranscript:
-                        message.file!['audioTranscript']?.toString() ??
-                        message.text,
-                    isLoading: message.file!['fileUrl'] == null,
+                ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      AudioChatBubble(
+                        audioUrl: message.file!['fileUrl']?.toString(),
+                        audioTranscript:
+                            message.file!['audioTranscript']?.toString() ??
+                            message.text,
+                        isLoading: message.file!['fileUrl'] == null,
+                      ),
+                      LikeDislikeTTS(
+                        messageText:
+                            message.file!['audioTranscript']?.toString() ??
+                            message.text,
+                        onLikeChanged: (isLiked) {
+                          print(
+                            'Message feedback: ${isLiked ? "liked" : "disliked"}',
+                          );
+                        },
+                        onTTS: () {
+                          print('TTS triggered for audio message');
+                        },
+                      ),
+                    ],
                   )
                 : message.file!['fileType'] == 'document'
-                ? ChatBubblePdf(
-                    fileName:
-                        message.file!['fileName']?.toString() ?? 'Document.pdf',
-                    fileUrl: message.file!['fileUrl']?.toString(),
-                    caption:
-                        message.file!['caption']?.toString() ?? message.text,
-                    fileSize: null,
-                    isLoading: message.file!['fileUrl'] == null,
+                ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      ChatBubblePdf(
+                        fileName:
+                            message.file!['fileName']?.toString() ??
+                            'Document.pdf',
+                        fileUrl: message.file!['fileUrl']?.toString(),
+                        caption:
+                            message.file!['caption']?.toString() ??
+                            message.text,
+                        fileSize: null,
+                        isLoading: message.file!['fileUrl'] == null,
+                      ),
+                      LikeDislikeTTS(
+                        messageText:
+                            message.file!['caption']?.toString() ??
+                            message.text,
+                        onLikeChanged: (isLiked) {
+                          print(
+                            'Message feedback: ${isLiked ? "liked" : "disliked"}',
+                          );
+                        },
+                        onTTS: () {
+                          print('TTS triggered for document message');
+                        },
+                      ),
+                    ],
                   )
-                : Container(
-                    constraints: BoxConstraints(maxWidth: 300),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 15,
-                      vertical: 10,
-                    ),
-                    decoration: ShapeDecoration(
-                      color: const Color(0xFFECF0FE),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(12),
-                          topRight: Radius.circular(12),
-                          bottomRight: Radius.circular(12),
+                : Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        constraints: BoxConstraints(maxWidth: 300),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 15,
+                          vertical: 10,
+                        ),
+                        decoration: ShapeDecoration(
+                          color: const Color(0xFFECF0FE),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(12),
+                              topRight: Radius.circular(12),
+                              bottomRight: Radius.circular(12),
+                            ),
+                          ),
+                        ),
+                        child: Text(
+                          message.text,
+                          style: const TextStyle(
+                            color: Color(0xFF3865FF),
+                            fontSize: 16,
+                            fontFamily: 'Lato',
+                            fontWeight: FontWeight.w400,
+                            height: 1.44,
+                            decoration: TextDecoration.none,
+                          ),
                         ),
                       ),
-                    ),
-                    child: Text(
-                      message.text,
-                      style: const TextStyle(
-                        color: Color(0xFF3865FF),
-                        fontSize: 16,
-                        fontFamily: 'Lato',
-                        fontWeight: FontWeight.w400,
-                        height: 1.44,
-                        decoration: TextDecoration.none,
+                      LikeDislikeTTS(
+                        messageText: message.text,
+                        onLikeChanged: (isLiked) {
+                          // Handle like/dislike feedback
+                          print(
+                            'Message feedback: ${isLiked ? "liked" : "disliked"}',
+                          );
+                        },
+                        onTTS: () {
+                          // Handle text-to-speech
+                          print('TTS triggered for: ${message.text}');
+                        },
+                      ),
+                    ],
+                  )
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  constraints: BoxConstraints(maxWidth: 300),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 15,
+                    vertical: 10,
+                  ),
+                  decoration: ShapeDecoration(
+                    color: const Color(0xFFE6EBFD),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(12),
+                        topRight: Radius.circular(12),
+                        bottomRight: Radius.circular(12),
                       ),
                     ),
-                  )
-          : Container(
-              constraints: BoxConstraints(maxWidth: 300),
-              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-              decoration: ShapeDecoration(
-                color: const Color(0xFFE6EBFD),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(12),
-                    topRight: Radius.circular(12),
-                    bottomRight: Radius.circular(12),
+                  ),
+                  child: Text(
+                    message.text,
+                    style: const TextStyle(
+                      color: Color(0xFF1D2873),
+                      fontSize: 16,
+                      fontFamily: 'Lato',
+                      fontWeight: FontWeight.w400,
+                      height: 1.44,
+                      decoration: TextDecoration.none,
+                    ),
                   ),
                 ),
-              ),
-              child: Text(
-                message.text,
-                style: const TextStyle(
-                  color: Color(0xFF1D2873),
-                  fontSize: 16,
-                  fontFamily: 'Lato',
-                  fontWeight: FontWeight.w400,
-                  height: 1.44,
-                  decoration: TextDecoration.none,
+                LikeDislikeTTS(
+                  messageText: message.text,
+                  onLikeChanged: (isLiked) {
+                    // Handle like/dislike feedback
+                    print(
+                      'Message feedback: ${isLiked ? "liked" : "disliked"}',
+                    );
+                  },
+                  onTTS: () {
+                    // Handle text-to-speech
+                    print('TTS triggered for: ${message.text}');
+                  },
                 ),
-              ),
+              ],
             ),
     );
   }
