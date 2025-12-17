@@ -46,14 +46,29 @@ class JoinGroupController extends GetxController {
           backgroundColor: Colors.green,
           textColor: Colors.white,
         );
-        accessToken = result['data']['accessToken'] ?? '';
-        refreshToken = result['data']['refreshToken'] ?? '';
 
-        await SharedPrefLocalization().saveTokens(
-          accessToken,
-          refreshToken ?? '',
-        );
-        await updateFcmTokenApi(fcmToken!);
+        // Safely access data field
+        if (result['data'] != null && result['data'] is Map<String, dynamic>) {
+          final data = result['data'] as Map<String, dynamic>;
+          accessToken = data['accessToken']?.toString() ?? '';
+          refreshToken = data['refreshToken']?.toString() ?? '';
+        } else {
+          accessToken = '';
+          refreshToken = '';
+        }
+
+        await SharedPrefLocalization().saveTokens(accessToken, refreshToken);
+
+        // Only update FCM token if it's available
+        final currentFcmToken = fcmToken;
+        if (currentFcmToken != null && currentFcmToken.isNotEmpty) {
+          try {
+            await updateFcmTokenApi(currentFcmToken);
+          } catch (e) {
+            // Log error but don't block the flow if FCM token update fails
+            print('Failed to update FCM token: $e');
+          }
+        }
 
         // Use post-frame callback to ensure proper widget disposal before navigation
         WidgetsBinding.instance.addPostFrameCallback((_) {
