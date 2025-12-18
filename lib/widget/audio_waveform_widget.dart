@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:bandhucare_new/helperClasses/play_sound_helpler.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:record/record.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:audioplayers/audioplayers.dart';
 
 class AudioWaveformWidget extends StatefulWidget {
   final VoidCallback? onRecordingStarted;
@@ -33,6 +35,7 @@ class AudioWaveformWidgetState extends State<AudioWaveformWidget> {
 
   Future<void> startRecording() async {
     // Show UI immediately for instant feedback
+
     final screenWidth = MediaQuery.of(context).size.width;
     const double desiredSpacing = 10.0;
     final int itemCount = (screenWidth / desiredSpacing).ceil().clamp(100, 500);
@@ -60,6 +63,8 @@ class AudioWaveformWidgetState extends State<AudioWaveformWidget> {
     widget.onRecordingStarted?.call();
 
     // Do async work in background
+    await UiSoundPlayer.playAsset('sounds/start_recording.mp3', volume: 1.0);
+    await Future.delayed(const Duration(milliseconds: 800));
     _startRecordingAsync();
   }
 
@@ -176,6 +181,30 @@ class AudioWaveformWidgetState extends State<AudioWaveformWidget> {
 
     widget.onRecordingStopped?.call();
     widget.onAudioFileReady?.call(audioFile);
+  }
+
+  Future<void> cancelRecording() async {
+    await UiSoundPlayer.playAsset('sounds/delete_recording2.mp3', volume: 1.0);
+
+    _amplitudeTimer?.cancel();
+    _amplitudeTimer = null;
+    if (await _recorder.isRecording()) {
+      await _recorder.stop();
+      if (_recordingPath != null) {
+        final file = File(_recordingPath!);
+        if (await file.exists()) {
+          await file.delete();
+        }
+      }
+    }
+
+    if (mounted) {
+      setState(() {
+        isRecording = false;
+      });
+    }
+
+    widget.onRecordingStopped?.call();
   }
 
   @override

@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:io';
-
 import 'package:bandhucare_new/core/app_exports.dart';
 import 'package:bandhucare_new/widget/audio_record_animation.dart';
 import 'package:get/get.dart';
@@ -33,6 +32,7 @@ class ChatScreenController extends GetxController {
   // Scroll debouncing to prevent rapid-fire loading
   Timer? _scrollDebouncer;
   bool _isLoadingInBackground = false;
+  Timer? _recordTimer;
 
   @override
   void onInit() {
@@ -79,6 +79,7 @@ class ChatScreenController extends GetxController {
     messageController.dispose();
     scrollController.dispose();
     audioRecorderController.dispose();
+    _recordTimer?.cancel();
     super.onClose();
   }
 
@@ -496,39 +497,17 @@ class ChatScreenController extends GetxController {
   bool isLightColor(Color color) {
     return color.computeLuminance() > 0.5;
   }
-}
 
-class ChatController extends GetxController {
-  // Your existing chat logic
-  final messageController = TextEditingController();
-
-  // Add record button logic here
-  final isHolding = false.obs;
-  Timer? _recordTimer;
-
-  void startHoldToRecord(VoidCallback onStartRecording) {
-    isHolding.value = true;
-    _recordTimer = Timer(Duration(milliseconds: 150), () {
-      if (isHolding.value) {
-        onStartRecording();
-      }
-    });
+  void onPointerDown(VoidCallback callback) {
+    _recordTimer = Timer(Duration(milliseconds: 150), callback);
   }
 
-  void endHoldToRecord(VoidCallback onTap, VoidCallback onStopRecording) {
+  void onPointerUp(VoidCallback onTap, VoidCallback onStopRecord) {
     if (_recordTimer?.isActive ?? false) {
       _recordTimer?.cancel();
       onTap();
     } else {
-      onStopRecording();
+      onStopRecord();
     }
-    isHolding.value = false;
-  }
-
-  @override
-  void onClose() {
-    _recordTimer?.cancel();
-    messageController.dispose();
-    super.onClose();
   }
 }

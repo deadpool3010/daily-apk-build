@@ -109,6 +109,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
           ),
           child: Stack(
+            clipBehavior: Clip.none,
             children: [
               // Chat messages area
               Positioned.fill(
@@ -179,6 +180,8 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
                   ),
                 ),
               ),
+
+              // ✅ DELETE UI - Add here in main Stack (BEFORE ChatScreenBottom)
 
               // Bottom input field
               Positioned(

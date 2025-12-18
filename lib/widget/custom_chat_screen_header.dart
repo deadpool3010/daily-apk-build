@@ -4,7 +4,6 @@ import 'dart:ui';
 import 'package:bandhucare_new/core/utils/image_constant.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:bandhucare_new/theme/app_theme.dart';
 import 'package:get/get.dart';
 import 'package:bandhucare_new/presentation/chat_screen/controller/chat_screeen_controller.dart';
 

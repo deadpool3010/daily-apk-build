@@ -50,6 +50,7 @@ dependencies:
   firebase_messaging: ^15.0.0
   app_links: ^6.3.2
   google_sign_in: ^7.2.0
+  audioplayers: ^6.5.1
   
 
   
@@ -80,6 +81,7 @@ flutter:
   assets:
     - assets/
     - assets/images/
+    - assets/sounds/
     - assets/animation/
     
   # An image asset can refer to one or more resolution-specific "variants", see
