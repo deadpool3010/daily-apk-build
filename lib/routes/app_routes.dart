@@ -222,6 +222,11 @@ class AppPages {
       name: AppRoutes.chatbotSplashLoadingScreen,
       page: () => const ChatbotSplashLoadingScreen(),
     ),
-    GetPage(name: AppRoutes.healthCalendar, page: () => const HealthCalendar()),
+    GetPage(
+      name: AppRoutes.healthCalendar,
+      page: () => const HealthCalendar(),
+      transition: Transition.rightToLeftWithFade,
+      transitionDuration: const Duration(milliseconds: 500),
+    ),
   ];
 }

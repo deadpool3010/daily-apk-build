@@ -497,3 +497,38 @@ class ChatScreenController extends GetxController {
     return color.computeLuminance() > 0.5;
   }
 }
+
+class ChatController extends GetxController {
+  // Your existing chat logic
+  final messageController = TextEditingController();
+
+  // Add record button logic here
+  final isHolding = false.obs;
+  Timer? _recordTimer;
+
+  void startHoldToRecord(VoidCallback onStartRecording) {
+    isHolding.value = true;
+    _recordTimer = Timer(Duration(milliseconds: 150), () {
+      if (isHolding.value) {
+        onStartRecording();
+      }
+    });
+  }
+
+  void endHoldToRecord(VoidCallback onTap, VoidCallback onStopRecording) {
+    if (_recordTimer?.isActive ?? false) {
+      _recordTimer?.cancel();
+      onTap();
+    } else {
+      onStopRecording();
+    }
+    isHolding.value = false;
+  }
+
+  @override
+  void onClose() {
+    _recordTimer?.cancel();
+    messageController.dispose();
+    super.onClose();
+  }
+}
