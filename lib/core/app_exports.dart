@@ -38,6 +38,7 @@ export 'package:bandhucare_new/widget/toggle_switch.dart';
 export 'package:bandhucare_new/widget/custom_bottom_navbar.dart';
 export 'package:bandhucare_new/widget/custom_bottom_text.dart';
 export 'package:bandhucare_new/widget/custom_feelings_widget.dart';
+export 'package:bandhucare_new/widget/custom_journey_cards.dart';
 export 'package:bandhucare_new/widget/choose_language_drop_down.dart';
 export 'package:bandhucare_new/widget/custom_button.dart';
 export 'package:bandhucare_new/widget/custom_calendar.dart';
