@@ -33,3 +33,5 @@ String sendVerificationLink = "auth/send-verification-link";
 String abhaAddressSuggestions(String sessionId) =>
     "auth/abha-address-suggestions/$sessionId";
 String updateFcmToken = "auth/update-fcm";
+String getFormSessions = "form/sessions";
+String getFormQuestion(String sessionId) => "form/get-question/$sessionId";

@@ -88,7 +88,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
                 slivers: [
                   // SliverAppBar with flexible space for header image
                   SliverAppBar(
-                    expandedHeight: size.height * 0.11,
+                    expandedHeight: size.height * 0.13,
                     floating: false,
                     pinned: false,
                     snap: false,
@@ -175,7 +175,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
                       children: [
                         // Horizontal scrollable feelings cards
                         SizedBox(
-                          height: 330,
+                          height: 310,
                           child: ListView(
                             scrollDirection: Axis.horizontal,
                             padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -430,34 +430,51 @@ class _HomepageScreenState extends State<HomepageScreen> {
         _buildQuickActionItem(
           image: ImageConstant.health_calendar,
           label: 'Health Calendar',
+          route: AppRoutes.healthCalendar,
         ),
         _buildQuickActionItem(
           image: ImageConstant.mitra_robot,
           label: 'Bandhu',
+          // route: Routes.bandhu,
         ),
-        _buildQuickActionItem(image: ImageConstant.care_hub, label: 'Care Hub'),
+        _buildQuickActionItem(
+          image: ImageConstant.care_hub,
+          label: 'Care Hub',
+          // route: Routes.careHub,
+        ),
       ],
     );
   }
 
-  Widget _buildQuickActionItem({required String label, required String image}) {
+  Widget _buildQuickActionItem({
+    required String label,
+    required String image,
+    String? route,
+  }) {
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 4),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: const Color(0xFFE4EEFE),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Image.asset(
-                image,
-                width: 50,
-                height: 50,
-                fit: BoxFit.contain,
+            GestureDetector(
+              onTap: () {
+                if (route != null) {
+                  Get.toNamed(route);
+                }
+              },
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFE4EEFE),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Image.asset(
+                  image,
+                  width: 50,
+                  height: 50,
+                  fit: BoxFit.contain,
+                ),
               ),
             ),
             const SizedBox(height: 8),

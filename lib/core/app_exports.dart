@@ -56,6 +56,7 @@ export 'package:bandhucare_new/theme/app_theme.dart';
 export 'package:bandhucare_new/presentation/chat_screen/chat_bot_screen.dart';
 export 'package:bandhucare_new/presentation/my_appointment_screen/my_appointment.dart';
 export 'package:bandhucare_new/presentation/your_reminders_screen/your_reminders_screen.dart';
+export 'package:bandhucare_new/presentation/your_reminders_screen/controller/your_reminders_controller.dart';
 export 'package:bandhucare_new/presentation/home_screen/home_screen.dart';
 export 'package:bandhucare_new/presentation/home_screen/controller/home_screen_controller.dart';
 export 'package:bandhucare_new/routes/app_routes.dart';
