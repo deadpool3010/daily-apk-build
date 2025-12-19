@@ -10,9 +10,13 @@ class YourReminders extends StatefulWidget {
 }
 
 class _YourRemindersState extends State<YourReminders> {
-  String selectedMonth = 'November 2025';
-  String selectedFilter = 'Unfinished';
-  DateTime selectedDate = DateTime(2025, 11, 2); // Today is 02 Nov
+  late final YourRemindersController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = Get.put(YourRemindersController());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,25 +36,70 @@ class _YourRemindersState extends State<YourReminders> {
               // Daily Reminders Header with Filter
               _buildDailyRemindersHeader(),
               const SizedBox(height: 16),
-              // Reminder Cards
-              _buildReminderCard(
-                date: 'Today',
-                completed: 2,
-                total: 3,
-                percentage: 75,
-                isCompleted: false,
-                doctorName: 'Dr. Raghu',
-              ),
-              const SizedBox(height: 16),
-              _buildReminderCard(
-                date: '01/11/25',
-                completed: 4,
-                total: 4,
-                percentage: 100,
-                isCompleted: true,
-                doctorName: 'Dr. Raghu',
-              ),
-              const SizedBox(height: 20),
+              // Reminder Cards from API
+              Obx(() {
+                if (controller.isLoading.value) {
+                  return const Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(32.0),
+                      child: CircularProgressIndicator(),
+                    ),
+                  );
+                }
+
+                if (controller.errorMessage.value.isNotEmpty) {
+                  return Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(32.0),
+                      child: Text(
+                        controller.errorMessage.value,
+                        style: const TextStyle(color: Colors.red),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  );
+                }
+
+                final filteredReminders = controller.filteredReminders;
+
+                if (filteredReminders.isEmpty) {
+                  return const Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(32.0),
+                      child: Text(
+                        'No reminders found',
+                        style: TextStyle(color: Color(0xFF64748B)),
+                      ),
+                    ),
+                  );
+                }
+
+                return Column(
+                  children: [
+                    ...filteredReminders.asMap().entries.map((entry) {
+                      final index = entry.key;
+                      final reminder = entry.value;
+                      return Column(
+                        children: [
+                          _buildReminderCard(
+                            date: reminder['date'] ?? '',
+                            completed: reminder['completed'] ?? 0,
+                            total: reminder['total'] ?? 0,
+                            percentage: reminder['percentage'] ?? 0,
+                            isCompleted: reminder['isCompleted'] ?? false,
+                            title: reminder['title'] ?? 'Questionnaire',
+                            description: reminder['description'] ?? '',
+                            reminderId: reminder['id'] ?? '',
+                          ),
+                          if (index < filteredReminders.length - 1)
+                            const SizedBox(height: 16),
+                        ],
+                      );
+                    }).toList(),
+                    const SizedBox(height: 20),
+                  ],
+                );
+              }),
             ]),
           ),
         ),
@@ -59,27 +108,29 @@ class _YourRemindersState extends State<YourReminders> {
   }
 
   Widget _buildCalendarHeader() {
-    return Row(
-      children: [
-        Text(
-          selectedMonth,
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-            color: Color(0xFF1E293B),
+    return Obx(
+      () => Row(
+        children: [
+          Text(
+            controller.selectedMonth.value,
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: Color(0xFF1E293B),
+            ),
           ),
-        ),
-        IconButton(
-          onPressed: () {
-            // Navigate to next month
-          },
-          icon: const Icon(
-            Icons.arrow_forward_ios,
-            size: 18,
-            color: Color(0xFF64748B),
+          IconButton(
+            onPressed: () {
+              // Navigate to next month
+            },
+            icon: const Icon(
+              Icons.arrow_forward_ios,
+              size: 18,
+              color: Color(0xFF64748B),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -106,9 +157,7 @@ class _YourRemindersState extends State<YourReminders> {
 
           return GestureDetector(
             onTap: () {
-              setState(() {
-                selectedDate = DateTime(2025, 11, date['day']);
-              });
+              controller.selectDate(DateTime(2025, 11, date['day']));
             },
             child: Container(
               width: 50,
@@ -184,69 +233,69 @@ class _YourRemindersState extends State<YourReminders> {
   }
 
   Widget _buildDailyRemindersHeader() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        const Text(
-          'Daily Reminders',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-            color: Color(0xFF1E293B),
-          ),
-        ),
-        // Filter Dropdown - Pill shaped
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-          decoration: BoxDecoration(
-            color: const Color(0xFFF3F4F6), // Light grey background
-            borderRadius: BorderRadius.circular(24), // Pill shape
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.06),
-                blurRadius: 4,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: DropdownButton<String>(
-            value: selectedFilter,
-            underline: const SizedBox(),
-            isDense: true,
-            icon: const Padding(
-              padding: EdgeInsets.only(left: 8),
-              child: Icon(
-                Icons.keyboard_arrow_down,
-                size: 18,
-                color: Color(0xFF1F2937),
-              ),
+    return Obx(
+      () => Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          const Text(
+            'Daily Reminders',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: Color(0xFF1E293B),
             ),
-            style: const TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w500,
-              color: Color(0xFF1F2937), // Dark text color
-              fontFamily: 'Roboto',
-            ),
-            dropdownColor: Colors.white,
-            borderRadius: BorderRadius.circular(12),
-            items: ['Unfinished', 'Completed', 'All']
-                .map(
-                  (String value) => DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  ),
-                )
-                .toList(),
-            onChanged: (String? newValue) {
-              if (newValue != null) {
-                setState(() {
-                  selectedFilter = newValue;
-                });
-              }
-            },
           ),
-        ),
-      ],
+          // Filter Dropdown - Pill shaped
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF3F4F6), // Light grey background
+              borderRadius: BorderRadius.circular(24), // Pill shape
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.06),
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: DropdownButton<String>(
+              value: controller.selectedFilter.value,
+              underline: const SizedBox(),
+              isDense: true,
+              icon: const Padding(
+                padding: EdgeInsets.only(left: 8),
+                child: Icon(
+                  Icons.keyboard_arrow_down,
+                  size: 18,
+                  color: Color(0xFF1F2937),
+                ),
+              ),
+              style: const TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+                color: Color(0xFF1F2937), // Dark text color
+                fontFamily: 'Roboto',
+              ),
+              dropdownColor: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              items: ['Unfinished', 'Completed', 'All']
+                  .map(
+                    (String value) => DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    ),
+                  )
+                  .toList(),
+              onChanged: (String? newValue) {
+                if (newValue != null) {
+                  controller.updateFilter(newValue);
+                }
+              },
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -256,7 +305,9 @@ class _YourRemindersState extends State<YourReminders> {
     required int total,
     required int percentage,
     required bool isCompleted,
-    required String doctorName,
+    String? title,
+    String? description,
+    String? reminderId,
   }) {
     final isToday = date.toLowerCase() == 'today';
     return Container(
@@ -368,14 +419,26 @@ class _YourRemindersState extends State<YourReminders> {
               children: [
                 // Main Content
                 Text(
-                  '$doctorName have sent a Questionnaire. Please fill it.',
+                  title ?? 'Questionnaire',
                   style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
                     color: Color(0xFF1E293B),
                     height: 1.5,
                   ),
                 ),
+                if (description != null && description.isNotEmpty) ...[
+                  const SizedBox(height: 8),
+                  Text(
+                    description,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      color: Color(0xFF64748B),
+                      height: 1.5,
+                    ),
+                  ),
+                ],
                 const SizedBox(height: 16),
                 // Bottom Actions
                 Row(
@@ -384,7 +447,9 @@ class _YourRemindersState extends State<YourReminders> {
                     // View Response Button
                     GestureDetector(
                       onTap: () {
-                        // Handle view response
+                        if (reminderId != null) {
+                          controller.viewResponse(reminderId);
+                        }
                       },
                       child: Row(
                         children: [
@@ -409,48 +474,69 @@ class _YourRemindersState extends State<YourReminders> {
                     ),
                     // Continue Button (only for unfinished)
                     if (!isCompleted)
-                      GestureDetector(
-                        onTap: () {
-                          HapticFeedback.lightImpact();
-                          // Handle continue action
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 10,
-                          ),
-                          decoration: BoxDecoration(
-                            gradient: const LinearGradient(
-                              colors: [Color(0xFF3B82F6), Color(0xFF2563EB)],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
+                      Obx(
+                        () => GestureDetector(
+                          onTap: controller.isContinuing.value
+                              ? null
+                              : () {
+                                  HapticFeedback.lightImpact();
+                                  if (reminderId != null) {
+                                    controller.continueQuestionnaire(
+                                      reminderId,
+                                    );
+                                  }
+                                },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 10,
                             ),
-                            borderRadius: BorderRadius.circular(40),
-                            boxShadow: [
-                              BoxShadow(
-                                color: const Color(0xFF3B82F6).withOpacity(0.3),
-                                blurRadius: 8,
-                                offset: const Offset(0, 2),
+                            decoration: BoxDecoration(
+                              gradient: const LinearGradient(
+                                colors: [Color(0xFF3B82F6), Color(0xFF2563EB)],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
                               ),
-                            ],
-                          ),
-                          child: const Row(
-                            children: [
-                              Text(
-                                'Continue',
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.white,
+                              borderRadius: BorderRadius.circular(40),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: const Color(
+                                    0xFF3B82F6,
+                                  ).withOpacity(0.3),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 2),
                                 ),
-                              ),
-                              SizedBox(width: 4),
-                              Icon(
-                                Icons.arrow_forward,
-                                size: 16,
-                                color: Colors.white,
-                              ),
-                            ],
+                              ],
+                            ),
+                            child: controller.isContinuing.value
+                                ? const SizedBox(
+                                    width: 16,
+                                    height: 16,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                        Colors.white,
+                                      ),
+                                    ),
+                                  )
+                                : const Row(
+                                    children: [
+                                      Text(
+                                        'Continue',
+                                        style: TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      SizedBox(width: 4),
+                                      Icon(
+                                        Icons.arrow_forward,
+                                        size: 16,
+                                        color: Colors.white,
+                                      ),
+                                    ],
+                                  ),
                           ),
                         ),
                       ),

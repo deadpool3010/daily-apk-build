@@ -37,7 +37,14 @@ class ChatScreenController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    loadChatHistory();
+    // Only load chat history if we don't already have messages (coming from reminders)
+    if (messages.isEmpty && conversationId.value == null) {
+      loadChatHistory();
+    } else if (messages.isNotEmpty) {
+      // If we have messages already (from reminders), skip loading history
+      isLoading.value = false;
+      isInitialLoad.value = false;
+    }
     scrollController.addListener(_onScroll);
   }
 

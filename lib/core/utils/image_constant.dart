@@ -49,6 +49,8 @@ class ImageConstant {
   static const String avatar = '${basePath}Avatar.png';
   static const String flowerImage = '${basePath}flower.png';
   static const String treeImage = '${basePath}treeimage.png';
+  static const String home_screen_img_1 = '${basePath}home_screen_img_1.png';
+  static const String home_screen_img_2 = '${basePath}home_screen_img_2.png';
 
   // Feelings Screen Images
   static const String happyImage = '${basePath}happy_emoji.png';
@@ -62,10 +64,14 @@ class ImageConstant {
   static const String chatIcon = '${basePath}chat_icon.png';
   static const String community_icon = '${basePath}community_icon.png';
   static const String introducing = '${basePath}Introducing.png';
-
+  static const String my_clinic = '${basePath}my_clinic.png';
   static const String mitra_robot = '${basePath}mitra_robot.png';
+  static const String health_calendar = '${basePath}health_calander.png';
+  static const String bandhu = '${basePath}bandhu.png';
+  static const String care_hub = '${basePath}care_hub_img.png';
 
   static const String bandhu_splash = '${basePath}Bandhu_splash.png';
   static const String bandhu_chat = '${basePath}Bandhu_chat.png';
+  static const String pin_icon = '${basePath}pin_icon.png';
   static const String chat_screen_background = '${basePath}chat_screen_bg.png';
 }

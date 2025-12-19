@@ -883,6 +883,69 @@ Future<Map<String, dynamic>> updateFcmTokenApi(String fcmToken) async {
   }
 }
 
+Future<Map<String, dynamic>> getFormSessionsApi() async {
+  try {
+    final url = baseUrl + getFormSessions;
+    print('GetFormSessions API URL: $url');
+
+    final response = await http.get(
+      Uri.parse(url),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $accessToken",
+      },
+    );
+
+    print('GetFormSessions Response Status: ${response.statusCode}');
+    print('GetFormSessions Response Body: ${response.body}');
+
+    final result = jsonDecode(response.body);
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return result;
+    } else {
+      throw Exception(
+        "Failed to get form sessions: ${result['message'] ?? 'Unknown error'}",
+      );
+    }
+  } catch (e) {
+    print('GetFormSessions Error: $e');
+    throw Exception(e);
+  }
+}
+
+Future<Map<String, dynamic>> getFormQuestionApi(String sessionId) async {
+  try {
+    final url = baseUrl + getFormQuestion(sessionId);
+    print('GetFormQuestion API URL: $url');
+    print('SessionId: $sessionId');
+
+    final response = await http.get(
+      Uri.parse(url),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $accessToken",
+      },
+    );
+
+    print('GetFormQuestion Response Status: ${response.statusCode}');
+    print('GetFormQuestion Response Body: ${response.body}');
+
+    final result = jsonDecode(response.body);
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return result;
+    } else {
+      throw Exception(
+        "Failed to get form question: ${result['message'] ?? 'Unknown error'}",
+      );
+    }
+  } catch (e) {
+    print('GetFormQuestion Error: $e');
+    throw Exception(e);
+  }
+}
+
 class GoogleAuthService {
   static const String webClientId =
       '711750121236-bmqlvjppt3lo2i1lbvac15nod0br20ip.apps.googleusercontent.com';
