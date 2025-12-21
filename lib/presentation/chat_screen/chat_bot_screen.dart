@@ -238,79 +238,92 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
     );
   }
 
-  // Widget _buildSuggestionsView() {
-  //   // Header height: 50 (image) + 15 (top padding) + 15 (bottom padding) = 80px
-  //   // Add top padding so content appears below header
-  //   return SingleChildScrollView(
-  //     padding: EdgeInsets.only(
-  //       left: 25,
-  //       right: 25,
-  //       top: 90, // Space for header (80px) + extra spacing (10px)
-  //     ),
-  //     child: Column(
-  //       crossAxisAlignment: CrossAxisAlignment.start,
-  //       children: [
-  //         SizedBox(height: 20),
-  //         Text(
-  //           'Ask me Anything.',
-  //           style: TextStyle(
-  //             color: Colors.black,
-  //             fontSize: 18,
-  //             fontFamily: 'Roboto',
-  //             fontWeight: FontWeight.w500,
-  //             height: 1.33,
-  //             decoration: TextDecoration.none,
-  //           ),
-  //         ),
-  //         SizedBox(height: 20),
-  //         ...controller.chatbotDemoQustionAns.asMap().entries.map((entry) {
-  //           int index = entry.key;
-  //           String question = entry.value;
-  //           return Padding(
-  //             padding: EdgeInsets.only(bottom: index < 2 ? 15 : 0),
-  //             child: GestureDetector(
-  //               onTap: () => _handleSuggestionTap(question),
-  //               child: Container(
-  //                 padding: const EdgeInsets.symmetric(
-  //                   horizontal: 15,
-  //                   vertical: 10,
-  //                 ),
-  //                 decoration: ShapeDecoration(
-  //                   color: const Color(0xFFECF0FE),
-  //                   shape: RoundedRectangleBorder(
-  //                     borderRadius: BorderRadius.only(
-  //                       topLeft: Radius.circular(12),
-  //                       topRight: Radius.circular(12),
-  //                       bottomRight: Radius.circular(12),
-  //                     ),
-  //                   ),
-  //                 ),
-  //                 child: Text(
-  //                   question,
-  //                   style: TextStyle(
-  //                     color: const Color(0xFF3865FF),
-  //                     fontSize: 16,
-  //                     fontFamily: 'Lato',
-  //                     fontWeight: FontWeight.w400,
-  //                     height: 1.44,
-  //                     decoration: TextDecoration.none,
-  //                   ),
-  //                 ),
-  //               ),
-  //             ),
-  //           );
-  //         }).toList(),
-  //       ],
-  //     ),
-  //   );
-  // }
+  // Demo questions to show when there are no messages
+  final List<String> _demoQuestions = [
+    'I forgot to take my tablet in the morning. Should I take it now?',
+    'Why do I feel dizzy after my injection?',
+    'Is it okay to take my medicine after food instead of before?',
+  ];
+
+  void _handleSuggestionTap(String question) {
+    controller.sendChatMessage(question);
+  }
+
+  Widget _buildSuggestionsView() {
+    return Center(
+      child: SingleChildScrollView(
+        padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Ask me Anything.',
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 18,
+                fontFamily: 'Roboto',
+                fontWeight: FontWeight.w500,
+                height: 1.33,
+                decoration: TextDecoration.none,
+              ),
+            ),
+            SizedBox(height: 20),
+            ..._demoQuestions.asMap().entries.map((entry) {
+              int index = entry.key;
+              String question = entry.value;
+              return Padding(
+                padding: EdgeInsets.only(bottom: index < 2 ? 15 : 0),
+                child: GestureDetector(
+                  onTap: () => _handleSuggestionTap(question),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 15,
+                      vertical: 10,
+                    ),
+                    decoration: ShapeDecoration(
+                      color: const Color(0xFFECF0FE),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(12),
+                          topRight: Radius.circular(12),
+                          bottomRight: Radius.circular(12),
+                        ),
+                      ),
+                    ),
+                    child: Text(
+                      question,
+                      style: TextStyle(
+                        color: const Color(0xFF3865FF),
+                        fontSize: 16,
+                        fontFamily: 'Lato',
+                        fontWeight: FontWeight.w400,
+                        height: 1.44,
+                        decoration: TextDecoration.none,
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            }).toList(),
+          ],
+        ),
+      ),
+    );
+  }
 
   Widget _buildChatView(double keyboardHeight) {
     // Header height: 50 (image) + 15 (top padding) + 15 (bottom padding) = 80px
     // Add top padding so messages appear below header
 
-    return Obx(
-      () => ListView.builder(
+    return Obx(() {
+      // Show suggestions view when there are no messages
+      if (controller.messages.isEmpty) {
+        return _buildSuggestionsView();
+      }
+
+      // Show messages list when there are messages
+      return ListView.builder(
         controller: controller.scrollController,
         padding: EdgeInsets.only(
           left: 25,
@@ -345,8 +358,8 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
                 : _buildBotMessage(message),
           );
         },
-      ),
-    );
+      );
+    });
   }
 
   Widget _buildUserMessage(ChatMessage message) {

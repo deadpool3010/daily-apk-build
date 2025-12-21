@@ -184,7 +184,7 @@ class AudioWaveformWidgetState extends State<AudioWaveformWidget> {
   }
 
   Future<void> cancelRecording() async {
-    await UiSoundPlayer.playAsset('sounds/delete_recording2.mp3', volume: 1.0);
+    await UiSoundPlayer.playAsset('sounds/delete_recording2.mp3', volume: 0.8);
 
     _amplitudeTimer?.cancel();
     _amplitudeTimer = null;
