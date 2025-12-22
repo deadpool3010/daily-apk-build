@@ -45,14 +45,36 @@ class AbhaCreatedScreen extends StatelessWidget {
                         }
                         return const SizedBox.shrink();
                       }),
-                      // How Scanning Works Section
-                      _buildHowScanningWorksSection(),
-                      const SizedBox(height: 40),
-                      // FAQ's Section
-                      _buildFaqSection(),
-                      const SizedBox(height: 40),
-                      // Need Further Assistance Section
-                      Center(child: _buildNeedFurtherAssistanceSection()),
+                      // Animated sections that appear after card flip
+                      AnimatedBuilder(
+                        animation: controller.flipAnimation,
+                        builder: (context, child) {
+                          final flipProgress = controller.flipAnimation.value;
+                          // Only show sections when flip is complete (front side is showing)
+                          // Start fading in when flipProgress > 0.8 (80% complete)
+                          final opacity = flipProgress > 0.8
+                              ? ((flipProgress - 0.8) / 0.2).clamp(0.0, 1.0)
+                              : 0.0;
+                          return Opacity(
+                            opacity: opacity,
+                            child: IgnorePointer(
+                              ignoring: opacity < 1.0,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  _buildHowScanningWorksSection(),
+                                  const SizedBox(height: 32),
+                                  _buildFaqSection(),
+                                  const SizedBox(height: 32),
+                                  Center(
+                                    child: _buildNeedFurtherAssistanceSection(),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
                       const SizedBox(height: 40),
                     ],
                   ),
@@ -144,226 +166,420 @@ class AbhaCreatedScreen extends StatelessWidget {
     );
   }
 
-  // Build ABHA Card (Front)
+  // Build ABHA Card with flip animation (back to front)
   Widget _buildAbhaCard(AbhaCreatedController controller) {
-    return Obx(() {
-      return Container(
-        width: 360,
-        height: 198,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(24),
-          color: Colors.white,
-          border: Border.all(color: Colors.black.withOpacity(0.1)),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 10,
-              offset: Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Column(
-          children: [
-            // Blue header section
-            Container(
-              height: 60,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(24),
-                  topRight: Radius.circular(24),
-                ),
-                image: DecorationImage(
-                  image: AssetImage(ImageConstant.cardUpDesign),
-                  fit: BoxFit.cover,
-                ),
+    return AnimatedBuilder(
+      animation: Listenable.merge([
+        controller.slideAnimation,
+        controller.flipAnimation,
+      ]),
+      builder: (context, child) {
+        // Slide animation: move from left (-200) to center (0)
+        final slideProgress = controller.slideAnimation.value;
+        final slideOffsetX = -200 * (1 - slideProgress);
+
+        // Flip animation: 3D rotation
+        final flipProgress = controller.flipAnimation.value;
+        final angle = flipProgress * 3.14159; // 0 to π (180 degrees)
+        final isFrontVisible = angle > 1.5708; // π/2 (90 degrees)
+
+        // Enhanced flip animation with scale
+        final scale =
+            1.0 -
+            (0.1 *
+                (flipProgress < 0.5
+                    ? flipProgress * 2
+                    : (1 - flipProgress) * 2));
+
+        return Transform.translate(
+          offset: Offset(slideOffsetX, 0),
+          child: Transform.scale(
+            scale: scale,
+            child: Transform(
+              alignment: Alignment.center,
+              transform: Matrix4.identity()
+                ..setEntry(3, 2, 0.001) // Perspective
+                ..rotateY(angle),
+              child: Container(
+                width: 360,
+                height: 198,
+                child: isFrontVisible
+                    ? Transform(
+                        alignment: Alignment.center,
+                        transform: Matrix4.identity()..rotateY(3.14159),
+                        child: _buildCardFront(controller),
+                      )
+                    : _buildCardBack(),
               ),
-              child: Stack(
-                children: [
-                  // National Health Authority Logo (Left)
-                  Positioned(
-                    left: 12,
-                    top: 14,
-                    child: Image.asset(
-                      ImageConstant.nationalHealthAuthorityLogo,
-                      width: 70,
-                      height: 30,
-                      fit: BoxFit.contain,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Container(
-                          width: 50,
-                          height: 44,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          child: Icon(
-                            Icons.health_and_safety,
-                            size: 24,
-                            color: Colors.black,
-                          ),
-                        );
-                      },
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  // Card Back (Blank with logo)
+  Widget _buildCardBack() {
+    return Container(
+      width: 360,
+      height: 198,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: Colors.black.withOpacity(0.1)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 16,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Stack(
+        children: [
+          // Top Blue Section with Design Pattern
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            height: 60,
+            child: Stack(
+              children: [
+                Container(
+                  height: 60,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(24),
+                      topRight: Radius.circular(24),
+                    ),
+                    image: DecorationImage(
+                      image: AssetImage(ImageConstant.cardUpDesign),
+                      fit: BoxFit.cover,
                     ),
                   ),
-                  // Ayushman Bharat Logo (Right)
-                  Positioned(
-                    right: 22,
-                    top: 10,
-                    child: Image.asset(
+                ),
+                // Top Left - Small Ayushman Bharat Logo
+                Positioned(
+                  left: 12,
+                  top: 8,
+                  child: Image.asset(
+                    ImageConstant.ayushmanBharat,
+                    width: 40,
+                    height: 40,
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Icon(
+                          Icons.medical_information,
+                          size: 24,
+                          color: Colors.green,
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                // Top Right - National Health Authority Logo
+                Positioned(
+                  right: 12,
+                  top: 8,
+                  child: Image.asset(
+                    ImageConstant.nationalHealthAuthorityLogo,
+                    width: 50,
+                    height: 44,
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        width: 50,
+                        height: 44,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Icon(
+                          Icons.health_and_safety,
+                          size: 24,
+                          color: Colors.black,
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // Main White Section
+          Positioned(
+            top: 60,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(24),
+                  bottomRight: Radius.circular(24),
+                ),
+              ),
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 8),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset(
                       ImageConstant.ayushmanBharat,
-                      width: 40,
-                      height: 40,
-                      fit: BoxFit.contain,
+                      width: 100,
+                      height: 100,
+                      fit: BoxFit.cover,
                       errorBuilder: (context, error, stackTrace) {
                         return Container(
-                          width: 40,
-                          height: 40,
+                          width: 70,
+                          height: 70,
                           decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(20),
+                            color: Colors.grey[200],
+                            shape: BoxShape.circle,
                           ),
                           child: Icon(
                             Icons.medical_information,
-                            size: 24,
+                            size: 45,
                             color: Colors.green,
                           ),
                         );
                       },
                     ),
-                  ),
-                ],
-              ),
-            ),
-            // White body section
-            Expanded(
-              child: Padding(
-                padding: EdgeInsets.only(
-                  left: 20,
-                  right: 20,
-                  top: 12,
-                  bottom: 16,
-                ),
-                child: Column(
-                  children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Profile Picture
-                        Container(
-                          width: 62,
-                          height: 64,
-                          decoration: BoxDecoration(
-                            color: Colors.grey[300],
-                            borderRadius: BorderRadius.circular(12),
-                            image: controller.profileImageUrl.value.isNotEmpty
-                                ? DecorationImage(
-                                    image: NetworkImage(
-                                      controller.profileImageUrl.value,
-                                    ),
-                                    fit: BoxFit.cover,
-                                  )
-                                : null,
-                          ),
-                          child: controller.profileImageUrl.value.isEmpty
-                              ? Icon(
-                                  Icons.person_outline,
-                                  size: 40,
-                                  color: Colors.grey[400],
-                                )
-                              : null,
-                        ),
-                        const SizedBox(width: 12),
-                        // User Details
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              _buildCardText(
-                                'lbl_name'.tr,
-                                controller.userName.value,
-                                12,
-                                isValueBold: true,
-                              ),
-                              const SizedBox(height: 6),
-                              _buildCardText(
-                                'lbl_abha_no'.tr,
-                                controller.abhaNumber.value,
-                                11,
-                                isValueBold: true,
-                              ),
-                              const SizedBox(height: 6),
-                              _buildCardText(
-                                'lbl_abha_address'.tr,
-                                controller.abhaAddress.value,
-                                11,
-                                isValueBold: true,
-                              ),
-                            ],
-                          ),
-                        ),
-                        // QR Code
-                        Image.asset(
-                          ImageConstant.qrCode,
-                          width: 60,
-                          height: 60,
-                          fit: BoxFit.contain,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Container(
-                              width: 60,
-                              height: 60,
-                              decoration: BoxDecoration(
-                                color: Colors.grey[200],
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Icon(
-                                Icons.qr_code,
-                                size: 30,
-                                color: Colors.grey[400],
-                              ),
-                            );
-                          },
-                        ),
-                      ],
-                    ),
-                    Spacer(),
-                    // Bottom row details
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Expanded(
-                          child: _buildCardText(
-                            'lbl_gender'.tr,
-                            controller.gender.value,
-                            11,
-                            isValueBold: true,
-                          ),
-                        ),
-                        Expanded(
-                          child: _buildCardText(
-                            'lbl_dob'.tr,
-                            controller.dob.value,
-                            11,
-                            isValueBold: true,
-                          ),
-                        ),
-                        Expanded(
-                          child: _buildCardText(
-                            'lbl_mobile'.tr + ': ',
-                            controller.mobile.value,
-                            11,
-                            isValueBold: true,
-                          ),
-                        ),
-                      ],
-                    ),
                   ],
                 ),
               ),
             ),
-          ],
-        ),
-      );
-    });
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Card Front (with user details)
+  Widget _buildCardFront(AbhaCreatedController controller) {
+    return Container(
+      width: 360,
+      height: 198,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(24),
+        color: Colors.white,
+        border: Border.all(color: Colors.black.withOpacity(0.1)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 10,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          // Blue header section
+          Container(
+            height: 60,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(24),
+                topRight: Radius.circular(24),
+              ),
+              image: DecorationImage(
+                image: AssetImage(ImageConstant.cardUpDesign),
+                fit: BoxFit.cover,
+              ),
+            ),
+            child: Stack(
+              children: [
+                // National Health Authority Logo (Left)
+                Positioned(
+                  left: 12,
+                  top: 14,
+                  child: Image.asset(
+                    ImageConstant.nationalHealthAuthorityLogo,
+                    width: 70,
+                    height: 30,
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        width: 50,
+                        height: 44,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Icon(
+                          Icons.health_and_safety,
+                          size: 24,
+                          color: Colors.black,
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                // Ayushman Bharat Logo (Right)
+                Positioned(
+                  right: 22,
+                  top: 10,
+                  child: Image.asset(
+                    ImageConstant.ayushmanBharat,
+                    width: 40,
+                    height: 40,
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Icon(
+                          Icons.medical_information,
+                          size: 24,
+                          color: Colors.green,
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // White body section
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.only(
+                left: 20,
+                right: 20,
+                top: 12,
+                bottom: 16,
+              ),
+              child: Column(
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Profile Picture
+                      Container(
+                        width: 62,
+                        height: 64,
+                        decoration: BoxDecoration(
+                          color: Colors.grey[300],
+                          borderRadius: BorderRadius.circular(12),
+                          image: controller.profileImageUrl.value.isNotEmpty
+                              ? DecorationImage(
+                                  image: NetworkImage(
+                                    controller.profileImageUrl.value,
+                                  ),
+                                  fit: BoxFit.cover,
+                                )
+                              : null,
+                        ),
+                        child: controller.profileImageUrl.value.isEmpty
+                            ? Icon(
+                                Icons.person_outline,
+                                size: 40,
+                                color: Colors.grey[400],
+                              )
+                            : null,
+                      ),
+                      const SizedBox(width: 12),
+                      // User Details
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _buildCardText(
+                              'lbl_name'.tr,
+                              controller.userName.value,
+                              12,
+                              isValueBold: true,
+                            ),
+                            const SizedBox(height: 6),
+                            _buildCardText(
+                              'lbl_abha_no'.tr,
+                              controller.abhaNumber.value,
+                              11,
+                              isValueBold: true,
+                            ),
+                            const SizedBox(height: 6),
+                            _buildCardText(
+                              'lbl_abha_address'.tr,
+                              controller.abhaAddress.value,
+                              11,
+                              isValueBold: true,
+                            ),
+                          ],
+                        ),
+                      ),
+                      // QR Code
+                      Image.asset(
+                        ImageConstant.qrCode,
+                        width: 60,
+                        height: 60,
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            width: 60,
+                            height: 60,
+                            decoration: BoxDecoration(
+                              color: Colors.grey[200],
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Icon(
+                              Icons.qr_code,
+                              size: 30,
+                              color: Colors.grey[400],
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                  Spacer(),
+                  // Bottom row details
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Expanded(
+                        child: _buildCardText(
+                          'lbl_gender'.tr,
+                          controller.gender.value,
+                          11,
+                          isValueBold: true,
+                        ),
+                      ),
+                      Expanded(
+                        child: _buildCardText(
+                          'lbl_dob'.tr,
+                          controller.dob.value,
+                          11,
+                          isValueBold: true,
+                        ),
+                      ),
+                      Expanded(
+                        child: _buildCardText(
+                          'lbl_mobile'.tr + ': ',
+                          controller.mobile.value,
+                          11,
+                          isValueBold: true,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   // Helper method to build card text

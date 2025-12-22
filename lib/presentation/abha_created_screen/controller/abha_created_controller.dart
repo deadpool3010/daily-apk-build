@@ -2,20 +2,31 @@ import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:bandhucare_new/routes/app_routes.dart';
 
-class AbhaCreatedController extends GetxController {
+class AbhaCreatedController extends GetxController
+    with GetTickerProviderStateMixin {
   // ABHA User Data (These would typically come from API response)
-  final userName = 'Siddharth'.obs;
-  final abhaNumber = '91 1234 5678 9101'.obs;
-  final abhaAddress = 'Sid2000@abdm'.obs;
-  final gender = 'Male'.obs;
-  final dob = '03032004'.obs;
-  final mobile = '1234567891'.obs;
+  final userName = ''.obs;
+  final abhaNumber = ''.obs;
+  final abhaAddress = ''.obs;
+  final gender = ''.obs;
+  final dob = ''.obs;
+  final mobile = ''.obs;
   final profileImageUrl = ''.obs; // URL for profile image if available
   final showAbhaCard = true.obs; // Flag to show/hide ABHA card
+
+  // Animation controllers
+  late AnimationController slideController;
+  late Animation<double> slideAnimation;
+  late AnimationController flipController;
+  late Animation<double> flipAnimation;
+  final isCardFlipped = false.obs;
 
   @override
   void onInit() {
     super.onInit();
+    // Initialize animations first so they're available when widget builds
+    _initializeAnimations();
+
     // Check if screen was opened from mobile/email registration
     final arguments = Get.arguments;
     if (arguments != null && arguments is Map<String, dynamic>) {
@@ -52,6 +63,76 @@ class AbhaCreatedController extends GetxController {
         // User can manually click "Scan to Join Group" button
       }
     }
+  }
+
+  @override
+  void onReady() {
+    super.onReady();
+    // Start animations when screen is ready
+    Future.delayed(const Duration(milliseconds: 100), () {
+      if (!slideController.isAnimating && !flipController.isAnimating) {
+        startCardAnimations();
+      }
+    });
+  }
+
+  void _initializeAnimations() {
+    // Slide animation (left to center)
+    slideController = AnimationController(
+      duration: const Duration(milliseconds: 600),
+      vsync: this,
+    );
+    slideAnimation = Tween<double>(begin: 0, end: 1).animate(
+      CurvedAnimation(parent: slideController, curve: Curves.easeOutCubic),
+    );
+
+    // Flip animation
+    flipController = AnimationController(
+      duration: const Duration(milliseconds: 800),
+      vsync: this,
+    );
+    flipAnimation = Tween<double>(begin: 0, end: 1).animate(
+      CurvedAnimation(parent: flipController, curve: Curves.easeInOutCubic),
+    );
+  }
+
+  void startCardAnimations() {
+    // Only start if not already animating or completed
+    if (slideController.isAnimating || flipController.isAnimating) {
+      return;
+    }
+
+    // Reset animations
+    slideController.reset();
+    flipController.reset();
+    isCardFlipped.value = false;
+
+    // Start slide animation (left to center)
+    slideController.forward().then((_) {
+      // After slide completes, start flip animation
+      Future.delayed(const Duration(milliseconds: 300), () {
+        if (!flipController.isAnimating) {
+          flipController.forward();
+          isCardFlipped.value = true;
+        }
+      });
+    });
+  }
+
+  @override
+  void onClose() {
+    // Safely dispose animation controllers
+    try {
+      slideController.dispose();
+    } catch (e) {
+      // Controller already disposed or not initialized
+    }
+    try {
+      flipController.dispose();
+    } catch (e) {
+      // Controller already disposed or not initialized
+    }
+    super.onClose();
   }
 
   // Load ABHA details from API response
