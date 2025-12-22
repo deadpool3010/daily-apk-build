@@ -1,6 +1,5 @@
 // ============ ChatScreenAppBar with BackdropFilter ============
 import 'dart:ui';
-
 import 'package:bandhucare_new/core/utils/image_constant.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -14,7 +13,7 @@ class ChatScreenAppBar extends StatefulWidget implements PreferredSizeWidget {
   State<ChatScreenAppBar> createState() => _ChatScreenAppBarState();
 
   @override
-  Size get preferredSize => const Size.fromHeight(90);
+  Size get preferredSize => const Size.fromHeight(80);
 }
 
 class _ChatScreenAppBarState extends State<ChatScreenAppBar> {
@@ -206,7 +205,7 @@ class _ChatScreenAppBarState extends State<ChatScreenAppBar> {
               InkWell(
                 onTap: () => _showLanguagePicker(context),
                 child: Padding(
-                  padding: const EdgeInsets.only(right: 4, top: 41, bottom: 25),
+                  padding: const EdgeInsets.only(right: 4, top: 41, bottom: 20),
                   child: Row(
                     children: [
                       const Icon(Icons.language, size: 22),
