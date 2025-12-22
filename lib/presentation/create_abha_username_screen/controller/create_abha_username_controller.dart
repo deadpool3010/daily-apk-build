@@ -268,6 +268,26 @@ class CreateAbhaUsernameController extends GetxController {
         }
       }
 
+      // After successful createAbhaAddressApi, call updateFcmTokenApi
+      // Use fcmToken from variables.dart
+      if (fcmToken != null && fcmToken!.isNotEmpty) {
+        try {
+          print(
+            'Calling updateFcmTokenApi after createAbhaAddressApi success...',
+          );
+          print(
+            'Using FCM Token from variables.dart: ${fcmToken!.substring(0, 20)}...',
+          );
+          await updateFcmTokenApi(fcmToken!);
+          print('FCM token updated successfully after ABHA address creation');
+        } catch (e) {
+          // Log error but don't fail the createAbhaAddressApi call
+          print('Error updating FCM token after createAbhaAddressApi: $e');
+        }
+      } else {
+        print('FCM token is null or empty, skipping updateFcmTokenApi call');
+      }
+
       // Format date of birth (DDMMYYYY)
       String formattedDob = '';
       if (abhaData != null) {

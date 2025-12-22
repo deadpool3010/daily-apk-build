@@ -1,7 +1,6 @@
 import 'package:bandhucare_new/core/app_exports.dart';
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:bandhucare_new/widget/alternative_login_buttons.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});

@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:bandhucare_new/core/network/api_services.dart';
 import 'package:bandhucare_new/routes/app_routes.dart';
+import 'package:bandhucare_new/services/variables.dart';
 
 class EmailRegisterController extends GetxController {
   late TextEditingController fullNameController;
@@ -134,6 +135,26 @@ class EmailRegisterController extends GetxController {
           backgroundColor: Colors.green,
           textColor: Colors.white,
         );
+
+        // After successful signUpApi, call updateFcmTokenApi
+        // Use fcmToken from variables.dart
+        if (fcmToken != null && fcmToken!.isNotEmpty) {
+          try {
+            print(
+              'Calling updateFcmTokenApi after signUpApi success...',
+            );
+            print(
+              'Using FCM Token from variables.dart: ${fcmToken!.substring(0, 20)}...',
+            );
+            await updateFcmTokenApi(fcmToken!);
+            print('FCM token updated successfully after email registration');
+          } catch (e) {
+            // Log error but don't fail the signUpApi call
+            print('Error updating FCM token after signUpApi: $e');
+          }
+        } else {
+          print('FCM token is null or empty, skipping updateFcmTokenApi call');
+        }
 
         // Use post-frame callback to ensure proper widget disposal before navigation
         WidgetsBinding.instance.addPostFrameCallback((_) {

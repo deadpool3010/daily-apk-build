@@ -440,6 +440,7 @@ Future<Map<String, dynamic>> selectAccountApi(
       await SharedPrefLocalization().saveUserInfo(
         result['data']['profileDetails'],
       );
+
       return result;
     } else {
       throw Exception(
