@@ -120,6 +120,24 @@ class SelectAbhaAddressController extends GetxController {
         textColor: Colors.white,
       );
 
+      // After successful selectAccountApi, call updateFcmTokenApi
+      // Use fcmToken from variables.dart
+      if (fcmToken != null && fcmToken!.isNotEmpty) {
+        try {
+          print('Calling updateFcmTokenApi after selectAccountApi success...');
+          print(
+            'Using FCM Token from variables.dart: ${fcmToken!.substring(0, 20)}...',
+          );
+          await updateFcmTokenApi(fcmToken!);
+          print('FCM token updated successfully after account selection');
+        } catch (e) {
+          // Log error but don't fail the selectAccountApi call
+          print('Error updating FCM token after selectAccountApi: $e');
+        }
+      } else {
+        print('FCM token is null or empty, skipping updateFcmTokenApi call');
+      }
+
       // Profile details are extracted and stored in abhaData if needed for future use
       // Currently not used as we navigate directly to scanQrScreen or homeScreen
 

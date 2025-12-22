@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:bandhucare_new/core/network/api_services.dart';
 import 'package:bandhucare_new/routes/app_routes.dart';
+import 'package:bandhucare_new/services/variables.dart';
 
 class EmailPasswordLoginController extends GetxController {
   late TextEditingController emailController;
@@ -94,6 +95,26 @@ class EmailPasswordLoginController extends GetxController {
           backgroundColor: Colors.green,
           textColor: Colors.white,
         );
+
+        // After successful signInWithCredentialsApi, call updateFcmTokenApi
+        // Use fcmToken from variables.dart
+        if (fcmToken != null && fcmToken!.isNotEmpty) {
+          try {
+            print(
+              'Calling updateFcmTokenApi after signInWithCredentialsApi success...',
+            );
+            print(
+              'Using FCM Token from variables.dart: ${fcmToken!.substring(0, 20)}...',
+            );
+            await updateFcmTokenApi(fcmToken!);
+            print('FCM token updated successfully after email login');
+          } catch (e) {
+            // Log error but don't fail the signInWithCredentialsApi call
+            print('Error updating FCM token after signInWithCredentialsApi: $e');
+          }
+        } else {
+          print('FCM token is null or empty, skipping updateFcmTokenApi call');
+        }
 
         // Check if newRegistration is true in response
         final newRegistration =
