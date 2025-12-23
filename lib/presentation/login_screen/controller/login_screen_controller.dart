@@ -1173,8 +1173,19 @@ class LoginController extends GetxController with GetTickerProviderStateMixin {
           textColor: Colors.white,
         );
 
+        accessToken = result['data']['accessToken'] as String;
+        if (fcmToken != null &&
+            fcmToken!.isNotEmpty &&
+            accessToken.isNotEmpty) {
+          await updateFcmTokenApi(fcmToken!);
+        }
         // Navigate to home screen after successful login
-        Get.offAllNamed(AppRoutes.homeScreen);
+        print('newRegistration: ${result['data']['newRegistration']}');
+        if (result['data']['newRegistration'] == true) {
+          Get.offAllNamed(AppRoutes.scanQrScreen);
+        } else {
+          Get.offAllNamed(AppRoutes.homeScreen);
+        }
       } else {
         throw Exception(result['message'] ?? 'Google login failed');
       }
