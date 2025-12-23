@@ -126,7 +126,7 @@ class _ChatScreenAppBarState extends State<ChatScreenAppBar> {
                     scrollController: FixedExtentScrollController(
                       initialItem: selectedIndex,
                     ),
-                    itemExtent: 50.0,
+                    itemExtent: 51.0,
                     onSelectedItemChanged: (int index) {
                       HapticFeedback.selectionClick();
                       SystemSound.play(SystemSoundType.click);
