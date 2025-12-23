@@ -435,6 +435,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
         _buildQuickActionItem(
           image: ImageConstant.mitra_robot,
           label: 'Bandhu',
+          route: AppRoutes.chatbotSplashLoadingScreen,
           // route: Routes.bandhu,
         ),
         _buildQuickActionItem(

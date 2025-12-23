@@ -81,6 +81,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
     // Set status bar to transparent for blur effect
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
+        systemNavigationBarColor: Colors.transparent,
         statusBarColor: Colors.transparent, // Make status bar transparent
         statusBarIconBrightness: isLightColor
             ? Brightness.dark
@@ -162,27 +163,48 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
                 ),
               ),
               // Blur overlay for gap area below text field (messages visible through gap)
+              // Positioned(
+              //   left: 0,
+              //   right: 0,
+              //   bottom: 0,
+              //   height: 150,
+              //   child: IgnorePointer(
+              //     child: BackdropFilter(
+              //       filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
+              //       child: Container(
+              //         decoration: BoxDecoration(
+              //           gradient: LinearGradient(
+              //             colors: [
+              //               Colors.transparent,
+              //               Colors.white.withOpacity(0.5),
+              //               Colors.white.withOpacity(0.9),
+              //             ],
+              //             stops: [0.0, 0.6, 1.0],
+              //           ),
+              //         ),
+              //       ),
+              //     ),
+              //   ),
+              // ),
+              // Telegram/iOS style seamless blur shadow from bottom
               Positioned(
                 left: 0,
                 right: 0,
-                bottom:
-                    -90, // Position above the text field to cover the gap area
-                height:
-                    165, // Height of the gap area to blur (covers messages visible through gap)
-                child: IgnorePointer(
-                  // Allow touches to pass through to messages/scroll
-                  ignoring: true,
-                  child: ClipRect(
-                    child: BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
-                      child: Container(color: Colors.transparent),
-                    ),
+                bottom: 0,
+                height: 70, // Height of blur shadow area
+                child: Container(
+                  decoration: BoxDecoration(
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.white.withOpacity(1),
+                        spreadRadius: 5,
+                        blurRadius: 50,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
                   ),
                 ),
               ),
-
-              // ✅ DELETE UI - Add here in main Stack (BEFORE ChatScreenBottom)
-
               // Bottom input field
               Positioned(
                 left: 0,

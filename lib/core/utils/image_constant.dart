@@ -66,7 +66,7 @@ class ImageConstant {
   static const String introducing = '${basePath}Introducing.png';
   static const String my_clinic = '${basePath}my_clinic.png';
   static const String mitra_robot = '${basePath}mitra_robot.png';
-  static const String health_calendar = '${basePath}health_calander.png';
+  static const String health_calendar = '${basePath}health_calander_2.png';
   static const String bandhu = '${basePath}bandhu.png';
   static const String care_hub = '${basePath}care_hub_img.png';
 
