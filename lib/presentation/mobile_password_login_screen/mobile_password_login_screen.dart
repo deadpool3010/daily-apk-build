@@ -9,6 +9,7 @@ class MobilePasswordLoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loginController = Get.find<LoginController>();
     final controller = Get.find<MobilePasswordLoginController>();
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
@@ -43,6 +44,7 @@ class MobilePasswordLoginScreen extends StatelessWidget {
                         context,
                         controller,
                         keyboardVisible,
+                        loginController,
                       ),
                     ),
                   ],
@@ -58,6 +60,7 @@ class MobilePasswordLoginScreen extends StatelessWidget {
                       context,
                       controller,
                       keyboardVisible,
+                      loginController,
                     ),
                   ],
                 );
@@ -89,6 +92,7 @@ class MobilePasswordLoginScreen extends StatelessWidget {
     BuildContext context,
     MobilePasswordLoginController controller,
     bool keyboardVisible,
+    LoginController loginController,
   ) {
     const double containerHeightPercentage = 0.68;
 
@@ -145,6 +149,7 @@ class MobilePasswordLoginScreen extends StatelessWidget {
                 iconColor: Colors.orange,
                 onTap: () {
                   // Handle Google login
+                  loginController.handleGoogleLogin();
                 },
               ),
               AlternativeButtonConfig(

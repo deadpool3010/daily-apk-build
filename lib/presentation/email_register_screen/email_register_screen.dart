@@ -93,7 +93,7 @@ class EmailRegisterScreen extends StatelessWidget {
     bool keyboardVisible,
   ) {
     const double containerHeightPercentage = 0.68;
-
+    final loginController = Get.find<LoginController>();
     final contentWidget = SingleChildScrollView(
       padding: EdgeInsets.only(left: 24, right: 24, top: 32, bottom: 24),
       child: Column(
@@ -151,6 +151,7 @@ class EmailRegisterScreen extends StatelessWidget {
                 iconColor: Colors.orange,
                 onTap: () {
                   // Handle Google registration
+                  loginController.handleGoogleLogin();
                 },
               ),
               AlternativeButtonConfig(

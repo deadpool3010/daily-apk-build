@@ -9,7 +9,7 @@ class RegisterHomescreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<RegisterHomescreenController>();
-
+    final loginController = Get.find<LoginController>();
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
@@ -190,7 +190,7 @@ class RegisterHomescreen extends StatelessWidget {
                         imageSize: 24,
                         spacing: 12,
                         onTap: () {
-                          controller.handleGoogleRegistration();
+                          loginController.handleGoogleLogin();
                         },
                       ),
 

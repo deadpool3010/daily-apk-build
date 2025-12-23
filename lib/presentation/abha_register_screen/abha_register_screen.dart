@@ -9,7 +9,7 @@ class AbhaRegisterScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<AbhaRegisterController>();
-
+    final loginController = Get.find<LoginController>();
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
@@ -61,7 +61,7 @@ class AbhaRegisterScreen extends StatelessWidget {
                   const SizedBox(height: 32),
 
                   // ABHA Card
-                  _buildAbhaCard(controller),
+                  _buildAbhaCard(controller, loginController),
                   const SizedBox(height: 32),
 
                   // Content based on current step (only show after animation completes)
@@ -70,7 +70,10 @@ class AbhaRegisterScreen extends StatelessWidget {
                       return SizedBox.shrink();
                     }
                     if (controller.currentStep.value == 0) {
-                      return _buildAadhaarInputStep(controller);
+                      return _buildAadhaarInputStep(
+                        controller,
+                        loginController,
+                      );
                     } else {
                       return _buildOtpAndMobileStep(controller);
                     }
@@ -85,7 +88,10 @@ class AbhaRegisterScreen extends StatelessWidget {
   }
 
   // ABHA Card with Slide and Flip Animation
-  Widget _buildAbhaCard(AbhaRegisterController controller) {
+  Widget _buildAbhaCard(
+    AbhaRegisterController controller,
+    LoginController loginController,
+  ) {
     return AnimatedBuilder(
       animation: Listenable.merge([
         controller.slideAnimation,
@@ -464,7 +470,10 @@ class AbhaRegisterScreen extends StatelessWidget {
   }
 
   // Aadhaar Number Input Step
-  Widget _buildAadhaarInputStep(AbhaRegisterController controller) {
+  Widget _buildAadhaarInputStep(
+    AbhaRegisterController controller,
+    LoginController loginController,
+  ) {
     return Builder(
       builder: (context) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -564,6 +573,7 @@ class AbhaRegisterScreen extends StatelessWidget {
                 iconColor: Colors.orange,
                 onTap: () {
                   // Handle Google registration
+                  loginController.handleGoogleLogin();
                 },
               ),
               AlternativeButtonConfig(
