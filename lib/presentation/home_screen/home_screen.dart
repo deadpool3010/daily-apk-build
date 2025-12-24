@@ -1,4 +1,5 @@
 import 'package:bandhucare_new/core/app_exports.dart';
+import 'package:bandhucare_new/core/controller/session_controller.dart';
 import 'package:flutter/services.dart';
 
 bool isBottomNavVisible = true;
@@ -32,13 +33,14 @@ class HomepageScreen extends StatefulWidget {
 class _HomepageScreenState extends State<HomepageScreen> {
   late final HomepageController controller;
   late final ScrollController scrollController;
+  late final SessionController sessionController;
 
   @override
   void initState() {
     super.initState();
     controller = Get.find<HomepageController>();
     scrollController = ScrollController();
-
+    sessionController = Get.find<SessionController>();
     scrollController.addListener(() {
       if (scrollController.position.userScrollDirection ==
           ScrollDirection.reverse) {
@@ -151,7 +153,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
-                                  'Siddharth!',
+                                  '${sessionController.user?['name']}',
                                   style: GoogleFonts.lato(
                                     textStyle: TextStyle(
                                       color: AppColors.black,

@@ -1,3 +1,4 @@
+import 'package:bandhucare_new/core/controller/session_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'dart:async';
@@ -54,11 +55,14 @@ class SplashController extends GetxController with GetTickerProviderStateMixin {
     final hasUser = await sharedPrefs.hasPersistedUser();
 
     if (hasUser) {
+      final sessionController = Get.find<SessionController>();
+      final Map<String, dynamic>? cachedUser = await sharedPrefs
+          .getUserInfoMap();
+      sessionController.loadFromCache(cachedUser!);
       // User is logged in, restore session but still show splash screen
       final tokens = await sharedPrefs.getTokens();
       accessToken = tokens['accessToken'] ?? '';
       refreshToken = tokens['refreshToken'] ?? '';
-      final cachedUser = await sharedPrefs.getUserInfoMap();
 
       print('');
       print('========================================');
