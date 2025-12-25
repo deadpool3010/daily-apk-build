@@ -52,6 +52,7 @@ dependencies:
   audioplayers: ^6.5.1
   flutter_plugin_android_lifecycle: ^2.0.33
   flutter_local_notifications: ^19.5.0
+  cached_network_image: ^3.4.1
   
   
 

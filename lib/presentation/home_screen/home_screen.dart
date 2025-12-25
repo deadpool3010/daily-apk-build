@@ -1,5 +1,6 @@
 import 'package:bandhucare_new/core/app_exports.dart';
 import 'package:bandhucare_new/core/controller/session_controller.dart';
+import 'package:bandhucare_new/core/utils/string_utils.dart';
 import 'package:flutter/services.dart';
 
 bool isBottomNavVisible = true;
@@ -33,14 +34,12 @@ class HomepageScreen extends StatefulWidget {
 class _HomepageScreenState extends State<HomepageScreen> {
   late final HomepageController controller;
   late final ScrollController scrollController;
-  late final SessionController sessionController;
 
   @override
   void initState() {
     super.initState();
     controller = Get.find<HomepageController>();
     scrollController = ScrollController();
-    sessionController = Get.find<SessionController>();
     scrollController.addListener(() {
       if (scrollController.position.userScrollDirection ==
           ScrollDirection.reverse) {
@@ -75,346 +74,354 @@ class _HomepageScreenState extends State<HomepageScreen> {
         // Close app when back is pressed on home screen
         SystemNavigator.pop();
       },
-      child: Scaffold(
-        backgroundColor: const Color(0xFFF3F9FF),
-        extendBodyBehindAppBar: true,
-        body: AnnotatedRegion<SystemUiOverlayStyle>(
-          value: SystemUiOverlayStyle(
-            systemNavigationBarColor: Colors.transparent,
-          ),
-          child: Stack(
-            children: [
-              // CustomScrollView with SliverAppBar
-              CustomScrollView(
-                controller: scrollController,
-                slivers: [
-                  // SliverAppBar with flexible space for header image
-                  SliverAppBar(
-                    expandedHeight: size.height * 0.13,
-                    floating: false,
-                    pinned: false,
-                    snap: false,
-                    backgroundColor: Colors.transparent,
-                    elevation: 0,
-                    automaticallyImplyLeading: false,
-                    flexibleSpace: FlexibleSpaceBar(
-                      background: Stack(
-                        fit: StackFit.expand,
-                        children: [
-                          // Header background image
-                          Positioned(
-                            top: statusBarHeight + 20,
-                            right: 20,
-                            child: Row(
-                              children: [
-                                // Bell Icon with light blue background
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 20,
-                                    vertical: 10,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFFE3F2FD),
-                                    borderRadius: BorderRadius.circular(50),
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      Icon(TablerIcons.bell, size: 26),
-                                      const SizedBox(width: 10),
-                                      SizedBox(
-                                        width: 38,
-                                        height: 38,
-                                        child: Image.asset(
-                                          ImageConstant.hospitalLogo,
-                                          fit: BoxFit.contain,
+      child: GetBuilder<SessionController>(
+        builder: (sessionController) => Scaffold(
+          backgroundColor: const Color(0xFFF3F9FF),
+          extendBodyBehindAppBar: true,
+          body: AnnotatedRegion<SystemUiOverlayStyle>(
+            value: SystemUiOverlayStyle(
+              systemNavigationBarColor: Colors.transparent,
+            ),
+            child: Stack(
+              children: [
+                // CustomScrollView with SliverAppBar
+                CustomScrollView(
+                  controller: scrollController,
+                  slivers: [
+                    // SliverAppBar with flexible space for header image
+                    SliverAppBar(
+                      expandedHeight: size.height * 0.13,
+                      floating: false,
+                      pinned: false,
+                      snap: false,
+                      backgroundColor: Colors.transparent,
+                      elevation: 0,
+                      automaticallyImplyLeading: false,
+                      flexibleSpace: FlexibleSpaceBar(
+                        background: Stack(
+                          fit: StackFit.expand,
+                          children: [
+                            // Header background image
+                            Positioned(
+                              top: statusBarHeight + 20,
+                              right: 20,
+                              child: Row(
+                                children: [
+                                  // Bell Icon with light blue background
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 20,
+                                      vertical: 10,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFFE3F2FD),
+                                      borderRadius: BorderRadius.circular(50),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Icon(TablerIcons.bell, size: 26),
+                                        const SizedBox(width: 10),
+                                        SizedBox(
+                                          width: 38,
+                                          height: 38,
+                                          child: Image.asset(
+                                            ImageConstant.hospitalLogo,
+                                            fit: BoxFit.contain,
+                                          ),
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
+                                ],
+                              ),
+                            ),
+                            Positioned(
+                              top: statusBarHeight + 20,
+                              left: 20,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Hello',
+                                    style: GoogleFonts.lato(
+                                      textStyle: TextStyle(
+                                        color: Color(0xFF898A8D),
+                                        fontSize: 16.0,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    '${StringUtils.getFirstName(sessionController.user?.name ?? '')}!',
+                                    style: GoogleFonts.lato(
+                                      textStyle: TextStyle(
+                                        color: AppColors.black,
+                                        fontSize: 20.0,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    // Scrollable content
+                    SliverToBoxAdapter(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Horizontal scrollable feelings cards
+                          SizedBox(
+                            height: 310,
+                            child: ListView(
+                              scrollDirection: Axis.horizontal,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                              ),
+                              children: [
+                                DailyCheckInCard(
+                                  cardType: CheckInCardType.feeling,
+                                  progress: '1/5',
+                                  backgroundImage:
+                                      ImageConstant.home_screen_img_1,
+                                  label: 'Daily Check-in with Mitra',
+                                  question: 'How are you feeling today?',
+                                  index: 0,
+                                ),
+                                const SizedBox(width: 16),
+                                DailyCheckInCard(
+                                  cardType: CheckInCardType.symptoms,
+                                  progress: '2/5',
+                                  backgroundImage:
+                                      ImageConstant.home_screen_img_2,
+                                  label: 'Daily Check-in',
+                                  question:
+                                      'Do you have any following Symptoms ?',
+                                  index: 1,
                                 ),
                               ],
                             ),
                           ),
-                          Positioned(
-                            top: statusBarHeight + 20,
-                            left: 20,
+                          const SizedBox(height: 30),
+
+                          // Quick Actions Section
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            child: Text(
+                              'Quick Actions',
+                              style: GoogleFonts.roboto(
+                                textStyle: TextStyle(
+                                  color: AppColors.black,
+                                  fontSize: 18.0,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            child: _buildQuickActions(),
+                          ),
+                          const SizedBox(height: 30),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            child: Text(
+                              'Daily Affirmations / Reminders',
+                              style: GoogleFonts.roboto(
+                                textStyle: TextStyle(
+                                  color: AppColors.black,
+                                  fontSize: 18.0,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 14),
+                          // Horizontal scrollable affirmation cards
+                          SizedBox(
+                            height: 250,
+                            child: ListView.separated(
+                              scrollDirection: Axis.horizontal,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                              ),
+                              itemCount: 3,
+                              separatorBuilder: (context, index) =>
+                                  const SizedBox(width: 16),
+                              itemBuilder: (context, index) {
+                                return DailyAffirmation();
+                              },
+                            ),
+                          ),
+                          const SizedBox(height: 40),
+
+                          // Meet Our Strong Warriors Section
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            child: Text(
+                              'Meet Our Strong Warriors',
+                              style: GoogleFonts.roboto(
+                                textStyle: TextStyle(
+                                  color: AppColors.black,
+                                  fontSize: 18.0,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 14),
+                          // Horizontal scrollable journey cards with thread background
+                          Container(
+                            height: 355,
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFF3F9FF),
+                            ),
+                            child: Stack(
+                              children: [
+                                // Background thread/string
+                                Positioned(
+                                  top: 25,
+                                  left: 0,
+                                  right: 0,
+                                  child: CustomPaint(painter: ThreadPainter()),
+                                ),
+                                // Journey cards
+                                ListView.separated(
+                                  scrollDirection: Axis.horizontal,
+                                  padding: const EdgeInsets.only(
+                                    left: 20,
+                                    right: 20,
+                                    top: 15,
+                                    bottom: 15,
+                                  ),
+                                  itemCount: 3,
+                                  separatorBuilder: (context, index) =>
+                                      const SizedBox(width: 50),
+                                  itemBuilder: (context, index) {
+                                    final journeyData = [
+                                      {
+                                        'imageUrl':
+                                            'https://t4.ftcdn.net/jpg/06/33/37/89/360_F_633378965_iRc8bqmOoxkrAlYKvNcBqUhqGXNBmfTB.jpg',
+                                        'title': 'Sita Amma\'s Journey',
+                                        'description':
+                                            'After her 6-month treatment, Sita Amma began walking every morning again. She says, "I found my strength in small steps and big smiles."',
+                                        'buttonText': 'Read her Story',
+                                        'rotation': 0.02,
+                                      },
+                                      {
+                                        'imageUrl':
+                                            'https://t4.ftcdn.net/jpg/06/33/37/89/360_F_633378965_iRc8bqmOoxkrAlYKvNcBqUhqGXNBmfTB.jpg',
+                                        'title': 'Natasha\'s Journey',
+                                        'description':
+                                            'After her 6-month treatment, Natasha began walking every morning again. She says, "I found my strength in small steps and big smiles."',
+                                        'buttonText': 'Read her Story',
+                                        'rotation': -0.02,
+                                      },
+                                      {
+                                        'imageUrl':
+                                            'https://t4.ftcdn.net/jpg/06/33/37/89/360_F_633378965_iRc8bqmOoxkrAlYKvNcBqUhqGXNBmfTB.jpg',
+                                        'title': 'Prashanth\'s Story',
+                                        'description':
+                                            'After his 6-month treatment, Prashanth began walking every morning again. He says, "I found my strength in small steps and big smiles."',
+                                        'buttonText': 'Read his Story',
+                                        'rotation': 0.03,
+                                      },
+                                    ];
+                                    final data = journeyData[index];
+                                    return JourneyCard(
+                                      imageUrl: data['imageUrl'] as String,
+                                      title: data['title'] as String,
+                                      description:
+                                          data['description'] as String,
+                                      buttonText: data['buttonText'] as String,
+                                      rotation: data['rotation'] as double,
+                                      index: index,
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                          // Shared with heart section
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              left: 24,
+                              right: 20,
+                              top: 30,
+                            ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  'Hello',
-                                  style: GoogleFonts.lato(
-                                    textStyle: TextStyle(
-                                      color: Color(0xFF898A8D),
-                                      fontSize: 16.0,
-                                      fontWeight: FontWeight.w500,
+                                // Main text "Shared with heart." with gradient
+                                ShaderMask(
+                                  shaderCallback: (bounds) => LinearGradient(
+                                    colors: [
+                                      Color(0xFF397BE9).withOpacity(0.4),
+                                      Color(0xFF0040FF).withOpacity(0.6),
+                                    ],
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter,
+                                  ).createShader(bounds),
+                                  child: Text(
+                                    'Shared\nwith heart.',
+                                    style: GoogleFonts.alumniSans(
+                                      textStyle: TextStyle(
+                                        fontSize: 85.0,
+                                        fontWeight: FontWeight.w700,
+                                        height:
+                                            62.84 /
+                                            80.0, // Line height: 62.84px
+                                        letterSpacing: 1.6, // 2% of 80px
+                                        color: Colors
+                                            .white, // Will be masked by gradient
+                                      ),
                                     ),
                                   ),
                                 ),
-                                const SizedBox(height: 4),
+                                const SizedBox(height: 8),
+                                // Subtitle "-Built for BandhuCare"
                                 Text(
-                                  '${sessionController.user?['name']}',
+                                  '-Built for BandhuCare',
                                   style: GoogleFonts.lato(
                                     textStyle: TextStyle(
-                                      color: AppColors.black,
-                                      fontSize: 20.0,
-                                      fontWeight: FontWeight.w500,
+                                      color: Color(0xFF4D7EE7),
+                                      fontSize: 16.0,
+                                      fontWeight: FontWeight.w700,
                                     ),
                                   ),
                                 ),
                               ],
                             ),
                           ),
+                          const SizedBox(height: 30),
                         ],
                       ),
                     ),
-                  ),
-
-                  // Scrollable content
-                  SliverToBoxAdapter(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Horizontal scrollable feelings cards
-                        SizedBox(
-                          height: 310,
-                          child: ListView(
-                            scrollDirection: Axis.horizontal,
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            children: [
-                              DailyCheckInCard(
-                                cardType: CheckInCardType.feeling,
-                                progress: '1/5',
-                                backgroundImage:
-                                    ImageConstant.home_screen_img_1,
-                                label: 'Daily Check-in with Mitra',
-                                question: 'How are you feeling today?',
-                                index: 0,
-                              ),
-                              const SizedBox(width: 16),
-                              DailyCheckInCard(
-                                cardType: CheckInCardType.symptoms,
-                                progress: '2/5',
-                                backgroundImage:
-                                    ImageConstant.home_screen_img_2,
-                                label: 'Daily Check-in',
-                                question:
-                                    'Do you have any following Symptoms ?',
-                                index: 1,
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 30),
-
-                        // Quick Actions Section
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: Text(
-                            'Quick Actions',
-                            style: GoogleFonts.roboto(
-                              textStyle: TextStyle(
-                                color: AppColors.black,
-                                fontSize: 18.0,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: _buildQuickActions(),
-                        ),
-                        const SizedBox(height: 30),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: Text(
-                            'Daily Affirmations / Reminders',
-                            style: GoogleFonts.roboto(
-                              textStyle: TextStyle(
-                                color: AppColors.black,
-                                fontSize: 18.0,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 14),
-                        // Horizontal scrollable affirmation cards
-                        SizedBox(
-                          height: 250,
-                          child: ListView.separated(
-                            scrollDirection: Axis.horizontal,
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            itemCount: 3,
-                            separatorBuilder: (context, index) =>
-                                const SizedBox(width: 16),
-                            itemBuilder: (context, index) {
-                              return DailyAffirmation();
-                            },
-                          ),
-                        ),
-                        const SizedBox(height: 40),
-
-                        // Meet Our Strong Warriors Section
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: Text(
-                            'Meet Our Strong Warriors',
-                            style: GoogleFonts.roboto(
-                              textStyle: TextStyle(
-                                color: AppColors.black,
-                                fontSize: 18.0,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 14),
-                        // Horizontal scrollable journey cards with thread background
-                        Container(
-                          height: 355,
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFF3F9FF),
-                          ),
-                          child: Stack(
-                            children: [
-                              // Background thread/string
-                              Positioned(
-                                top: 25,
-                                left: 0,
-                                right: 0,
-                                child: CustomPaint(painter: ThreadPainter()),
-                              ),
-                              // Journey cards
-                              ListView.separated(
-                                scrollDirection: Axis.horizontal,
-                                padding: const EdgeInsets.only(
-                                  left: 20,
-                                  right: 20,
-                                  top: 15,
-                                  bottom: 15,
-                                ),
-                                itemCount: 3,
-                                separatorBuilder: (context, index) =>
-                                    const SizedBox(width: 50),
-                                itemBuilder: (context, index) {
-                                  final journeyData = [
-                                    {
-                                      'imageUrl':
-                                          'https://t4.ftcdn.net/jpg/06/33/37/89/360_F_633378965_iRc8bqmOoxkrAlYKvNcBqUhqGXNBmfTB.jpg',
-                                      'title': 'Sita Amma\'s Journey',
-                                      'description':
-                                          'After her 6-month treatment, Sita Amma began walking every morning again. She says, "I found my strength in small steps and big smiles."',
-                                      'buttonText': 'Read her Story',
-                                      'rotation': 0.02,
-                                    },
-                                    {
-                                      'imageUrl':
-                                          'https://t4.ftcdn.net/jpg/06/33/37/89/360_F_633378965_iRc8bqmOoxkrAlYKvNcBqUhqGXNBmfTB.jpg',
-                                      'title': 'Natasha\'s Journey',
-                                      'description':
-                                          'After her 6-month treatment, Natasha began walking every morning again. She says, "I found my strength in small steps and big smiles."',
-                                      'buttonText': 'Read her Story',
-                                      'rotation': -0.02,
-                                    },
-                                    {
-                                      'imageUrl':
-                                          'https://t4.ftcdn.net/jpg/06/33/37/89/360_F_633378965_iRc8bqmOoxkrAlYKvNcBqUhqGXNBmfTB.jpg',
-                                      'title': 'Prashanth\'s Story',
-                                      'description':
-                                          'After his 6-month treatment, Prashanth began walking every morning again. He says, "I found my strength in small steps and big smiles."',
-                                      'buttonText': 'Read his Story',
-                                      'rotation': 0.03,
-                                    },
-                                  ];
-                                  final data = journeyData[index];
-                                  return JourneyCard(
-                                    imageUrl: data['imageUrl'] as String,
-                                    title: data['title'] as String,
-                                    description: data['description'] as String,
-                                    buttonText: data['buttonText'] as String,
-                                    rotation: data['rotation'] as double,
-                                    index: index,
-                                  );
-                                },
-                              ),
-                            ],
-                          ),
-                        ),
-                        // Shared with heart section
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            left: 24,
-                            right: 20,
-                            top: 30,
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // Main text "Shared with heart." with gradient
-                              ShaderMask(
-                                shaderCallback: (bounds) => LinearGradient(
-                                  colors: [
-                                    Color(0xFF397BE9).withOpacity(0.4),
-                                    Color(0xFF0040FF).withOpacity(0.6),
-                                  ],
-                                  begin: Alignment.topCenter,
-                                  end: Alignment.bottomCenter,
-                                ).createShader(bounds),
-                                child: Text(
-                                  'Shared\nwith heart.',
-                                  style: GoogleFonts.alumniSans(
-                                    textStyle: TextStyle(
-                                      fontSize: 85.0,
-                                      fontWeight: FontWeight.w700,
-                                      height:
-                                          62.84 / 80.0, // Line height: 62.84px
-                                      letterSpacing: 1.6, // 2% of 80px
-                                      color: Colors
-                                          .white, // Will be masked by gradient
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              // Subtitle "-Built for BandhuCare"
-                              Text(
-                                '-Built for BandhuCare',
-                                style: GoogleFonts.lato(
-                                  textStyle: TextStyle(
-                                    color: Color(0xFF4D7EE7),
-                                    fontSize: 16.0,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 30),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-
-              // Custom bottom navigation bar overlaid on top
-              Positioned(
-                left: 0,
-                right: 0,
-                bottom: 0,
-                child: AnimatedSlide(
-                  duration: Duration(milliseconds: 280),
-                  curve: Curves.easeInOut,
-                  // 👇 Slide down (hide) & slide up (show)
-                  offset: isBottomNavVisible ? Offset(0, 0) : Offset(0, 1),
-
-                  child: CustomBottomBar(controller: controller),
+                  ],
                 ),
-              ),
-            ],
+
+                // Custom bottom navigation bar overlaid on top
+                Positioned(
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  child: AnimatedSlide(
+                    duration: Duration(milliseconds: 280),
+                    curve: Curves.easeInOut,
+                    // 👇 Slide down (hide) & slide up (show)
+                    offset: isBottomNavVisible ? Offset(0, 0) : Offset(0, 1),
+
+                    child: CustomBottomBar(controller: controller),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

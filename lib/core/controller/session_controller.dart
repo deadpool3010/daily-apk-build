@@ -1,11 +1,12 @@
+import 'package:bandhucare_new/model/patientModel.dart';
 import 'package:get/get.dart';
 
 class SessionController extends GetxController {
-  Map<String, dynamic>? user;
+  PatientModel? user;
   bool isLoggedIn = false;
 
   void loadFromCache(Map<String, dynamic> cachedUser) {
-    user = cachedUser;
+    user = PatientModel.fromJson(cachedUser);
     isLoggedIn = true;
     update();
   }

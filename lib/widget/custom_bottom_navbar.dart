@@ -75,7 +75,7 @@ class CustomBottomBar extends StatelessWidget {
                     'Profile',
                     4,
                     onTap: () async {
-                      await Get.toNamed(AppRoutes.userProfile);
+                      await Get.toNamed(AppRoutes.userProfileScreen);
                     },
                     resetIndexOnReturn: 0,
                     // resetIndexOnReturn defaults to current index (4) if not specified
