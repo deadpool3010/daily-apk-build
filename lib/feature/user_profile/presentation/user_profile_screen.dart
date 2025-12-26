@@ -1,9 +1,9 @@
 import 'package:bandhucare_new/core/app_exports.dart';
-import 'package:bandhucare_new/feature/userProfile/sections/abha_section.dart';
-import 'package:bandhucare_new/feature/userProfile/sections/account_settings.dart';
-import 'package:bandhucare_new/feature/userProfile/sections/profile_header.dart';
-import 'package:bandhucare_new/feature/userProfile/widgets/seperator_line.dart';
-import 'package:bandhucare_new/feature/userProfile/widgets/userProfileAppbar.dart';
+import 'package:bandhucare_new/feature/user_profile/sections/abha_section.dart';
+import 'package:bandhucare_new/feature/user_profile/sections/account_settings.dart';
+import 'package:bandhucare_new/feature/user_profile/sections/profile_header.dart';
+import 'package:bandhucare_new/feature/user_profile/widgets/seperator_line.dart';
+import 'package:bandhucare_new/feature/user_profile/widgets/userProfileAppbar.dart';
 
 class UserProfileScreen extends StatelessWidget {
   const UserProfileScreen({super.key});

@@ -1,7 +1,7 @@
 import 'package:bandhucare_new/core/app_exports.dart';
 import 'package:bandhucare_new/core/controller/session_controller.dart';
-import 'package:bandhucare_new/feature/userProfile/widgets/abha_card_container.dart';
-import 'package:bandhucare_new/feature/userProfile/widgets/abha_card_front.dart';
+import 'package:bandhucare_new/feature/user_profile/widgets/abha_card_container.dart';
+import 'package:bandhucare_new/feature/user_profile/widgets/abha_card_front.dart';
 
 class AbhaSection extends StatelessWidget {
   const AbhaSection({super.key});
