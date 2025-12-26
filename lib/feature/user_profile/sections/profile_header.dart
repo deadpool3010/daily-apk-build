@@ -1,6 +1,6 @@
 import 'package:bandhucare_new/core/app_exports.dart';
 import 'package:bandhucare_new/core/controller/session_controller.dart';
-import 'package:bandhucare_new/feature/userProfile/widgets/avatar.dart';
+import 'package:bandhucare_new/feature/user_profile/widgets/avatar.dart';
 import 'package:flutter/material.dart';
 
 class ProfileHeaderSection extends StatelessWidget {

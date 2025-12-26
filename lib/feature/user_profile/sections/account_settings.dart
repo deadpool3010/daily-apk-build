@@ -1,7 +1,7 @@
-import 'package:bandhucare_new/feature/userProfile/presentation/models/profile_menu_model.dart';
-import 'package:bandhucare_new/feature/userProfile/widgets/logout_bottomsheet.dart';
-import 'package:bandhucare_new/feature/userProfile/widgets/profile_menu_item.dart';
-import 'package:bandhucare_new/feature/userProfile/widgets/seperator_line.dart';
+import 'package:bandhucare_new/feature/user_profile/presentation/models/profile_menu_model.dart';
+import 'package:bandhucare_new/feature/user_profile/widgets/logout_bottomsheet.dart';
+import 'package:bandhucare_new/feature/user_profile/widgets/profile_menu_item.dart';
+import 'package:bandhucare_new/feature/user_profile/widgets/seperator_line.dart';
 import 'package:bandhucare_new/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -14,7 +14,7 @@ class AccountSettingsSection extends StatelessWidget {
       ProfileMenuModel(
         icon: Icons.person_outline,
         label: 'Personal Information',
-        onTap: () => {},
+        onTap: () => {Get.toNamed(AppRoutes.personalInformationScreen)},
       ),
       ProfileMenuModel(
         icon: Icons.language,

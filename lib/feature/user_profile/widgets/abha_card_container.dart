@@ -1,5 +1,5 @@
 // lib/feature/profile/presentation/sections/widgets/abha_card_container.dart
-import 'package:bandhucare_new/feature/userProfile/widgets/abha_card_front.dart';
+import 'package:bandhucare_new/feature/user_profile/widgets/abha_card_front.dart';
 import 'package:bandhucare_new/model/patientModel.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';

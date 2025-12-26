@@ -1,4 +1,5 @@
-import 'package:bandhucare_new/feature/userProfile/presentation/user_profile_screen.dart';
+import 'package:bandhucare_new/feature/personal_information/presentation/personal_information.dart';
+import 'package:bandhucare_new/feature/user_profile/presentation/user_profile_screen.dart';
 import 'package:bandhucare_new/presentation/concent_form_screen/binding/consent_form_binding.dart';
 import 'package:bandhucare_new/presentation/concent_form_screen/consent_form_screen.dart';
 import 'package:bandhucare_new/presentation/scan_qr_screen/binding/scan_qr_binding.dart';
@@ -74,6 +75,7 @@ class AppRoutes {
   static const createAbhaUsernameScreen = '/create-abha-username';
   static const abhaCreatedScreen = '/abha-created';
   static const selectAbhaAddressScreen = '/select-abha-address';
+  static const personalInformationScreen = '/personal-information';
 }
 
 class AppPages {
@@ -225,6 +227,10 @@ class AppPages {
       page: () => const HealthCalendar(),
       transition: Transition.rightToLeftWithFade,
       transitionDuration: const Duration(milliseconds: 500),
+    ),
+    GetPage(
+      name: AppRoutes.personalInformationScreen,
+      page: () => const PersonalInformation(),
     ),
   ];
 }
