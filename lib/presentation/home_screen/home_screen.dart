@@ -449,7 +449,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
         _buildQuickActionItem(
           image: ImageConstant.care_hub,
           label: 'Care Hub',
-          // route: Routes.careHub,
+          route: AppRoutes.carehubHomeScreen,
         ),
       ],
     );

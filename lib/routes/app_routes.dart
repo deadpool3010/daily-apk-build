@@ -43,6 +43,8 @@ import '../presentation/abha_created_screen/abha_created_screen.dart';
 import '../presentation/abha_created_screen/binding/abha_created_binding.dart';
 import '../presentation/select_abha_address_screen/select_abha_address_screen.dart';
 import '../presentation/select_abha_address_screen/binding/select_abha_address_binding.dart';
+import '../presentation/carehub_home_screen/carehub_home_screen.dart';
+import '../presentation/carehub_home_screen/binding/carehub_home_screen_binding.dart';
 
 class AppRoutes {
   AppRoutes._();
@@ -76,6 +78,7 @@ class AppRoutes {
   static const abhaCreatedScreen = '/abha-created';
   static const selectAbhaAddressScreen = '/select-abha-address';
   static const personalInformationScreen = '/personal-information';
+  static const carehubHomeScreen = '/carehub-home';
 }
 
 class AppPages {
@@ -231,6 +234,13 @@ class AppPages {
     GetPage(
       name: AppRoutes.personalInformationScreen,
       page: () => const PersonalInformation(),
+    ),
+    GetPage(
+      name: AppRoutes.carehubHomeScreen,
+      page: () => const CarehubHomeScreen(),
+      binding: CarehubHomeScreenBinding(),
+      transition: Transition.rightToLeftWithFade,
+      transitionDuration: const Duration(milliseconds: 400),
     ),
   ];
 }
