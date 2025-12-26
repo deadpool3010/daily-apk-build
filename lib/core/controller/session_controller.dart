@@ -10,4 +10,16 @@ class SessionController extends GetxController {
     isLoggedIn = true;
     update();
   }
+
+  void setUser(PatientModel newUser) {
+    user = newUser;
+    isLoggedIn = true;
+    update();
+  }
+
+  void clearSession() {
+    user = null;
+    isLoggedIn = false;
+    update();
+  }
 }

@@ -1,8 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:bandhucare_new/core/controller/session_controller.dart';
+import 'package:bandhucare_new/model/patientModel.dart';
 import 'package:bandhucare_new/services/variables.dart';
 import 'package:bandhucare_new/core/network/api_constant.dart';
 import 'package:bandhucare_new/services/shared_pref_localization.dart';
+import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 
@@ -440,6 +443,9 @@ Future<Map<String, dynamic>> selectAccountApi(
       await SharedPrefLocalization().saveUserInfo(
         result['data']['profileDetails'],
       );
+      final userModel = PatientModel.fromJson(result['data']['profileDetails']);
+      final session = Get.find<SessionController>();
+      session.setUser(userModel);
 
       return result;
     } else {
