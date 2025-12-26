@@ -1,7 +1,6 @@
 import 'package:bandhucare_new/core/app_exports.dart';
 import 'package:bandhucare_new/core/controller/session_controller.dart';
 import 'package:bandhucare_new/core/utils/string_utils.dart';
-import 'package:flutter/services.dart';
 
 bool isBottomNavVisible = true;
 

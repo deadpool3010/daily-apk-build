@@ -6,7 +6,6 @@ import 'package:bandhucare_new/services/shared_pref_localization.dart';
 import 'routes/app_routes.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:bandhucare_new/helperClasses/logger_class.dart';
 import 'package:bandhucare_new/core/controller/session_controller.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'dart:io' show Platform;
