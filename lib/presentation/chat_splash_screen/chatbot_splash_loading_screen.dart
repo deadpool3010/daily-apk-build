@@ -1,5 +1,5 @@
 import 'dart:ui';
-import 'package:bandhucare_new/core/app_exports.dart';
+import 'package:bandhucare_new/core/export_file/app_exports.dart';
 
 class ChatbotSplashLoadingScreen extends StatefulWidget {
   const ChatbotSplashLoadingScreen({super.key});

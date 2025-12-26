@@ -1,5 +1,5 @@
 import 'dart:ui';
-import 'package:bandhucare_new/core/app_exports.dart';
+import 'package:bandhucare_new/core/export_file/app_exports.dart';
 import 'package:bandhucare_new/presentation/chat_screen/controller/chat_screeen_controller.dart';
 import 'package:bandhucare_new/widget/custom_chat_bubbles.dart';
 import 'package:bandhucare_new/widget/qustion_suggetion.dart';

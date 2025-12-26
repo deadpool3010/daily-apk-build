@@ -1,4 +1,4 @@
-import 'package:bandhucare_new/core/app_exports.dart';
+import 'package:bandhucare_new/core/export_file/app_exports.dart';
 
 /// Model class for alternative login/register button configuration
 class AlternativeButtonConfig {
