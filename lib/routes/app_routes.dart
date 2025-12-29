@@ -1,5 +1,7 @@
 import 'package:bandhucare_new/feature/personal_information/presentation/personal_information.dart';
 import 'package:bandhucare_new/feature/user_profile/presentation/user_profile_screen.dart';
+import 'package:bandhucare_new/presentation/chat_screen/binding/chat_screen_binding.dart';
+import 'package:bandhucare_new/presentation/chat_screen/chat_bot_screen.dart';
 import 'package:bandhucare_new/presentation/concent_form_screen/binding/consent_form_binding.dart';
 import 'package:bandhucare_new/presentation/concent_form_screen/consent_form_screen.dart';
 import 'package:bandhucare_new/presentation/scan_qr_screen/binding/scan_qr_binding.dart';
@@ -76,6 +78,7 @@ class AppRoutes {
   static const abhaCreatedScreen = '/abha-created';
   static const selectAbhaAddressScreen = '/select-abha-address';
   static const personalInformationScreen = '/personal-information';
+  static const chatScreen = '/chat-screen';
 }
 
 class AppPages {
@@ -231,6 +234,11 @@ class AppPages {
     GetPage(
       name: AppRoutes.personalInformationScreen,
       page: () => const PersonalInformation(),
+    ),
+    GetPage(
+      name: AppRoutes.chatScreen,
+      page: () => ChatBotScreen(),
+      binding: ChatScreenBinding(),
     ),
   ];
 }

@@ -6,12 +6,16 @@ class LocalNotificationService {
   static final _plugin = FlutterLocalNotificationsPlugin();
 
   static Future<void> init() async {
-    const settings = InitializationSettings(
-      android: AndroidInitializationSettings('@mipmap/ic_launcher'),
-    );
+    // const settings = InitializationSettings(
+    //   android: AndroidInitializationSettings('@mipmap/ic_launcher'),
+    // );
+    const AndroidInitializationSettings initializationSettingsAndroid =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
 
+    const InitializationSettings initializationSettings =
+        InitializationSettings(android: initializationSettingsAndroid);
     await _plugin.initialize(
-      settings,
+      initializationSettings,
       onDidReceiveNotificationResponse: (NotificationResponse response) {
         // Handle notification tap when app is in foreground
         print('Local notification tapped: ${response.payload}');

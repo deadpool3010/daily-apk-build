@@ -104,46 +104,36 @@ class _SimpleLanguageScreenState extends State<SimpleLanguageScreen> {
                 right: 29,
                 bottom: 140,
                 child: Center(
-                  child: SizedBox(
+                  child: DynamicButton(
                     width: 139,
                     height: 50,
-                    child: DynamicButton(
-                      trailingIcon: Container(
-                        width: 24,
-                        height: 24,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(color: Colors.white, width: 2),
-                        ),
-                        child: const Center(
-                          child: Icon(
-                            Icons.arrow_forward,
-                            color: Colors.white,
-                            size: 16,
-                          ),
-                        ),
+                    trailingIcon: const Center(
+                      child: Icon(
+                        Icons.arrow_forward,
+                        color: Colors.white,
+                        size: 18,
                       ),
-                      fontSize: 18,
-                      text: 'Continue',
-                      onPressed: () async {
-                        await controller.saveLanguages();
-                        if (mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Language updated successfully'),
-                              duration: Duration(seconds: 2),
-                            ),
-                          );
-                        }
-                        Get.back(
-                          result: {
-                            'appLanguage': controller.selectedAppLanguage.value,
-                            'mitraLanguage':
-                                controller.selectedMitraLanguage.value,
-                          },
-                        );
-                      },
                     ),
+                    fontSize: 18,
+                    text: 'Continue',
+                    onPressed: () async {
+                      await controller.saveLanguages();
+                      if (mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Language updated successfully'),
+                            duration: Duration(seconds: 2),
+                          ),
+                        );
+                      }
+                      Get.back(
+                        result: {
+                          'appLanguage': controller.selectedAppLanguage.value,
+                          'mitraLanguage':
+                              controller.selectedMitraLanguage.value,
+                        },
+                      );
+                    },
                   ),
                 ),
               ),

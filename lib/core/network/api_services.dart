@@ -214,7 +214,9 @@ Future<Map<String, dynamic>> signInWithCredentialsApi({
 
         // Optionally persist user info if provided
         if (dataMap != null && dataMap.isNotEmpty) {
-          await SharedPrefLocalization().saveUserInfo(dataMap);
+          await SharedPrefLocalization().saveUserInfo(
+            result['data']['profileDetails'],
+          );
         }
       } catch (e) {
         print('SignIn token save warning: $e');
@@ -584,7 +586,7 @@ Future<Map<String, dynamic>> getChatHistory({
   int page = 1,
   int limit = 10,
 }) async {
-  final url = baseUrl + getMessagesApi(page: page, limit: limit);
+  final url = baseUrl + getAllMessagesApi(page: page, limit: limit);
   try {
     final response = await http.get(
       Uri.parse(url),
@@ -890,9 +892,12 @@ Future<Map<String, dynamic>> updateFcmTokenApi(String fcmToken) async {
   }
 }
 
-Future<Map<String, dynamic>> getFormSessionsApi() async {
+Future<Map<String, dynamic>> getFormSessionsApi(
+  String date,
+  String status,
+) async {
   try {
-    final url = baseUrl + getFormSessions;
+    final url = baseUrl + getFormSessions(date, status);
     print('GetFormSessions API URL: $url');
 
     final response = await http.get(

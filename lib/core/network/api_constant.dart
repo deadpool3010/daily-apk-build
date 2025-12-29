@@ -13,9 +13,11 @@ String createAbhaNumber = "auth/create-abha";
 String verifyEmail = "auth/send-verification-link";
 String addMeTOCommunity = "community/add-me";
 String chatApi = "chat/answer";
-String getMessagesApi({int page = 1, int limit = 10}) {
+String getAllMessagesApi({int page = 1, int limit = 10}) {
   return "chat/?page=$page&limit=$limit";
 }
+
+String getFormQuestion(String sessionId) => "form/get-question/$sessionId";
 
 String addMemberToGroup = "groups/add-members";
 String getGroupInfoApi(String groupId, String uniqueCode, [String? language]) {
@@ -33,5 +35,5 @@ String sendVerificationLink = "auth/send-verification-link";
 String abhaAddressSuggestions(String sessionId) =>
     "auth/abha-address-suggestions/$sessionId";
 String updateFcmToken = "auth/update-fcm";
-String getFormSessions = "form/sessions";
-String getFormQuestion(String sessionId) => "form/get-question/$sessionId";
+String getFormSessions(String date, String status) =>
+    "form/sessions?date=$date&status=$status";

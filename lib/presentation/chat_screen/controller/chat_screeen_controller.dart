@@ -517,4 +517,13 @@ class ChatScreenController extends GetxController {
       onStopRecord();
     }
   }
+
+  // void handleBack() {
+  //   if (from == 'reminder') {
+
+  //   }
+  //   else if(from =='home'){
+
+  //   }
+  // }
 }

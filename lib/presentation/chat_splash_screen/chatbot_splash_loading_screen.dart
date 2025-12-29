@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:bandhucare_new/core/export_file/app_exports.dart';
+import 'package:bandhucare_new/presentation/chat_splash_screen/controller/controller.dart';
 
 class ChatbotSplashLoadingScreen extends StatefulWidget {
   const ChatbotSplashLoadingScreen({super.key});
@@ -11,6 +12,7 @@ class ChatbotSplashLoadingScreen extends StatefulWidget {
 
 class _ChatbotSplashLoadingScreenState extends State<ChatbotSplashLoadingScreen>
     with SingleTickerProviderStateMixin {
+  final controller = Get.put(ChatbotSplashScreenController());
   late AnimationController _animationController;
   Animation<double>? _bounceAnimation;
   bool _animationInitialized = false;
@@ -19,6 +21,7 @@ class _ChatbotSplashLoadingScreenState extends State<ChatbotSplashLoadingScreen>
   void initState() {
     super.initState();
     // Initialize controller first
+
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 800), // Faster transition
       vsync: this,
@@ -71,17 +74,7 @@ class _ChatbotSplashLoadingScreenState extends State<ChatbotSplashLoadingScreen>
 
     // Start animation and navigate when done
     _animationController.forward().then((_) {
-      // Wait a moment after animation completes, then navigate
-      if (mounted) {
-        Future.delayed(Duration(milliseconds: 200), () {
-          if (mounted) {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => ChatBotScreen()),
-            );
-          }
-        });
-      }
+      controller.onAnimationComplete();
     });
   }
 

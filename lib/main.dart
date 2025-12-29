@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:bandhucare_new/localization/app_localization.dart';
 import 'package:bandhucare_new/services/shared_pref_localization.dart';
+import 'package:toastification/toastification.dart';
 import 'routes/app_routes.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -73,7 +74,11 @@ void main() async {
   //   printNotificationPayload(initialMessage);
   // }
   Get.put(SessionController(), permanent: true);
-  runApp(MyApp(initialLocale: locale, initialMessage: initialMessage));
+  runApp(
+    ToastificationWrapper(
+      child: MyApp(initialLocale: locale, initialMessage: initialMessage),
+    ),
+  );
 }
 
 // Helper function to parse locale string to Locale object
