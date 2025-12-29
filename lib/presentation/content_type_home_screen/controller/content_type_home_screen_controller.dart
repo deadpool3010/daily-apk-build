@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class CarehubHomeScreenController extends GetxController
+class ContentTypeHomeScreenController extends GetxController
     with GetTickerProviderStateMixin {
   final ScrollController scrollController = ScrollController();
   final RxBool isAppBarCollapsed = false.obs;
@@ -10,10 +10,18 @@ class CarehubHomeScreenController extends GetxController
   late Animation<double> titleFadeAnimation;
   late Animation<double> searchBarFadeAnimation;
   late Animation<Offset> searchBarSlideAnimation;
+  
+  // Flag to determine if header image should be shown
+  bool showHeaderImage = true;
 
   @override
   void onInit() {
     super.onInit();
+    // Get the argument passed during navigation
+    final arguments = Get.arguments;
+    if (arguments != null && arguments is Map<String, dynamic>) {
+      showHeaderImage = arguments['showHeaderImage'] ?? true;
+    }
     scrollController.addListener(onScroll);
     titleAnimationController = AnimationController(
       vsync: this,
@@ -53,7 +61,10 @@ class CarehubHomeScreenController extends GetxController
     if (!scrollController.hasClients) return;
     
     final scrollOffset = scrollController.offset;
-    final threshold = (220 - kToolbarHeight - 30);
+    // Threshold based on typical screen height * 0.28 (expandedHeight) - toolbar
+    final screenHeight = Get.height;
+    final expandedHeight = screenHeight * 0.28;
+    final threshold = (expandedHeight - kToolbarHeight - 30);
     final isCollapsed = scrollOffset > threshold;
     
     if (isCollapsed != isAppBarCollapsed.value) {

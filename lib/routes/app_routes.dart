@@ -45,6 +45,12 @@ import '../presentation/select_abha_address_screen/select_abha_address_screen.da
 import '../presentation/select_abha_address_screen/binding/select_abha_address_binding.dart';
 import '../presentation/carehub_home_screen/carehub_home_screen.dart';
 import '../presentation/carehub_home_screen/binding/carehub_home_screen_binding.dart';
+import '../presentation/content_type_home_screen/content_type_home_screen.dart';
+import '../presentation/content_type_home_screen/binding/content_type_home_screen_binding.dart';
+import '../presentation/blog_screen/blog_screen.dart';
+import '../presentation/blog_screen/binding/blog_screen_binding.dart';
+import '../presentation/documents_screen/documents_screen.dart';
+import '../presentation/documents_screen/binding/documents_screen_binding.dart';
 
 class AppRoutes {
   AppRoutes._();
@@ -79,6 +85,9 @@ class AppRoutes {
   static const selectAbhaAddressScreen = '/select-abha-address';
   static const personalInformationScreen = '/personal-information';
   static const carehubHomeScreen = '/carehub-home';
+  static const contentTypeHomeScreen = '/content-type-home';
+  static const blogScreen = '/blog-screen';
+  static const documentsScreen = '/documents-screen';
 }
 
 class AppPages {
@@ -239,6 +248,27 @@ class AppPages {
       name: AppRoutes.carehubHomeScreen,
       page: () => const CarehubHomeScreen(),
       binding: CarehubHomeScreenBinding(),
+      transition: Transition.rightToLeftWithFade,
+      transitionDuration: const Duration(milliseconds: 400),
+    ),
+    GetPage(
+      name: AppRoutes.contentTypeHomeScreen,
+      page: () => const ContentTypeHomeScreen(),
+      binding: ContentTypeHomeScreenBinding(),
+      transition: Transition.rightToLeftWithFade,
+      transitionDuration: const Duration(milliseconds: 400),
+    ),
+    GetPage(
+      name: AppRoutes.blogScreen,
+      page: () => const BlogScreen(),
+      binding: BlogScreenBinding(),
+      transition: Transition.rightToLeftWithFade,
+      transitionDuration: const Duration(milliseconds: 400),
+    ),
+    GetPage(
+      name: AppRoutes.documentsScreen,
+      page: () => const DocumentsScreen(),
+      binding: DocumentsScreenBinding(),
       transition: Transition.rightToLeftWithFade,
       transitionDuration: const Duration(milliseconds: 400),
     ),

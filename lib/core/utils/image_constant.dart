@@ -78,6 +78,7 @@ class ImageConstant {
   static const String care_hub = '${basePath}care_hub_img.png';
   static const String care_hub_img_1 = '${basePath}care_hub_img_1.png';
   static const String care_hub_img_2 = '${basePath}care_hub_img_2.png';
+  static const String care_hub_img_3 = '${basePath}care_hub_img_3.png';
   static const String care_hub_people_img = '${basePath}care_hub_people_img.png';
   static const String care_hub_article_img = '${basePath}care_hub_article_img.png';
   static const String care_hub_affirmation_img = '${basePath}care_hub_affirmation_img.png';
@@ -86,4 +87,8 @@ class ImageConstant {
   static const String care_hub_new_treatments_img = '${basePath}care_hub_new_treatments_img.png';
   static const String care_hub_self_care_img = '${basePath}care_hub_self_care_img.png';
   static const String care_hub_basic_exercises_img = '${basePath}care_hub_basic_exercises_img.png';
+  static const String folder_icon = '${basePath}folder_icon.png';
+  
+  // Content Type Home Screen Images
+  static const String content_type_img_1 = '${basePath}content_type_img_1.png';
 }
