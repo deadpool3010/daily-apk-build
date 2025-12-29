@@ -152,7 +152,12 @@ class _HomepageScreenState extends State<HomepageScreen> {
                                   ),
                                   const SizedBox(height: 4),
                                   Text(
-                                    '${StringUtils.getFirstName(sessionController.user?.name ?? '')}!',
+                                    () {
+                                      final userName = sessionController.user?.name;
+                                      return userName != null && userName.isNotEmpty
+                                          ? '${StringUtils.getFirstName(userName)}!'
+                                          : 'Hello!';
+                                    }(),
                                     style: GoogleFonts.lato(
                                       textStyle: TextStyle(
                                         color: AppColors.black,
