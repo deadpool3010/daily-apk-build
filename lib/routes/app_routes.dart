@@ -51,6 +51,12 @@ import '../presentation/blog_screen/blog_screen.dart';
 import '../presentation/blog_screen/binding/blog_screen_binding.dart';
 import '../presentation/documents_screen/documents_screen.dart';
 import '../presentation/documents_screen/binding/documents_screen_binding.dart';
+import '../presentation/affirmations_screen/affirmations_screen.dart';
+import '../presentation/affirmations_screen/binding/affirmations_screen_binding.dart';
+import '../presentation/peoples_stories_splash_screen/peoples_stories_splash_screen.dart';
+import '../presentation/peoples_stories_splash_screen/binding/peoples_stories_splash_binding.dart';
+import '../presentation/peoples_stories_screen/peoples_stories_screen.dart';
+import '../presentation/peoples_stories_screen/binding/peoples_stories_screen_binding.dart';
 
 class AppRoutes {
   AppRoutes._();
@@ -88,6 +94,9 @@ class AppRoutes {
   static const contentTypeHomeScreen = '/content-type-home';
   static const blogScreen = '/blog-screen';
   static const documentsScreen = '/documents-screen';
+  static const affirmationsScreen = '/affirmations-screen';
+  static const peoplesStoriesSplashScreen = '/peoples-stories-splash-screen';
+  static const peoplesStoriesScreen = '/peoples-stories-screen';
 }
 
 class AppPages {
@@ -271,6 +280,27 @@ class AppPages {
       binding: DocumentsScreenBinding(),
       transition: Transition.rightToLeftWithFade,
       transitionDuration: const Duration(milliseconds: 400),
+    ),
+    GetPage(
+      name: AppRoutes.affirmationsScreen,
+      page: () => const AffirmationsScreen(),
+      binding: AffirmationsScreenBinding(),
+      transition: Transition.rightToLeftWithFade,
+      transitionDuration: const Duration(milliseconds: 400),
+    ),
+    GetPage(
+      name: AppRoutes.peoplesStoriesSplashScreen,
+      page: () => const PeoplesStoriesSplashScreen(),
+      binding: PeoplesStoriesSplashBinding(),
+      transition: Transition.fadeIn,
+      transitionDuration: const Duration(milliseconds: 300),
+    ),
+    GetPage(
+      name: AppRoutes.peoplesStoriesScreen,
+      page: () => const PeoplesStoriesScreen(),
+      binding: PeoplesStoriesScreenBinding(),
+      transition: Transition.rightToLeftWithFade,
+      transitionDuration: const Duration(milliseconds: 300),
     ),
   ];
 }

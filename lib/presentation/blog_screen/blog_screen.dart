@@ -10,19 +10,22 @@ class BlogScreen extends StatelessWidget {
     final article = Get.arguments as Map<String, dynamic>? ?? {};
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color(0xFFF3F9FF),
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: const Color(0xFFF3F9FF),
         elevation: 0,
+        surfaceTintColor: Colors.transparent,
+        shadowColor: Colors.transparent,
+        systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          statusBarIconBrightness: Brightness.dark,
+          statusBarBrightness: Brightness.dark,
+        ),
         leading: Padding(
           padding: const EdgeInsets.only(left: 20, top: 16),
           child: GestureDetector(
             onTap: () => Get.back(),
-            child: Icon(
-              JamIcons.chevronLeft,
-              size: 26,
-              color: AppColors.black,
-            ),
+            child: Icon(JamIcons.chevronLeft, size: 26, color: AppColors.black),
           ),
         ),
         leadingWidth: 50,
@@ -80,15 +83,15 @@ class BlogScreen extends StatelessWidget {
               const SizedBox(height: 24),
               // Author
               Padding(
-                padding: const EdgeInsets.only(left: 8,right: 6),
+                padding: const EdgeInsets.only(left: 8, right: 6),
                 child: Text(
-                '- ${article['author'] ?? 'Dr. Sohail Ali'}',
-                style: GoogleFonts.lato(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.primaryColor,
+                  '- ${article['author'] ?? 'Dr. Sohail Ali'}',
+                  style: GoogleFonts.lato(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.primaryColor,
+                  ),
                 ),
-              ),
               ),
               const SizedBox(height: 40),
             ],
@@ -102,7 +105,7 @@ class BlogScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: const Color(0xFFE5EFFE),
+        color: Color(0xFFF3F9FF),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
@@ -120,7 +123,7 @@ class BlogScreen extends StatelessWidget {
     return Obx(() {
       final currentPage = controller.currentImagePage.value;
       final images = controller.imagePages[currentPage];
-      
+
       return Column(
         children: [
           // 2x2 Grid
@@ -315,7 +318,7 @@ class BlogScreen extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.only(left: 8,right: 6),
+          padding: const EdgeInsets.only(left: 8, right: 6),
           child: Text(
             'I woke up to the soft light filtering through my window, and for the first time in a while, I didn\'t rush to check my phone. Instead, I took a deep breath and stretched, feeling my body wake up slowly.',
             style: GoogleFonts.lato(
@@ -323,7 +326,6 @@ class BlogScreen extends StatelessWidget {
               fontWeight: FontWeight.w500,
               color: AppColors.black,
               height: 1.5,
-              
             ),
             textAlign: TextAlign.justify,
           ),
@@ -332,19 +334,21 @@ class BlogScreen extends StatelessWidget {
         // Bullet Points
         _buildBulletPoint('The warmth of my morning tea'),
         _buildBulletPoint('A quiet moment to myself before the day starts'),
-        _buildBulletPoint('The kindness of a stranger who held the door open for me yesterday'),
+        _buildBulletPoint(
+          'The kindness of a stranger who held the door open for me yesterday',
+        ),
         const SizedBox(height: 16),
         Padding(
-          padding: const EdgeInsets.only(left: 8,right: 6),
+          padding: const EdgeInsets.only(left: 8, right: 6),
           child: Text(
-          'I woke up to the soft light filtering through my window, and for the first time in a while, I didn\'t rush to check my phone. Instead, I took a deep breath and stretched, feeling my body wake up slowly.',
-          style: GoogleFonts.lato(
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
-            color: AppColors.black,
-            height: 1.6,
-          ),
-          textAlign: TextAlign.justify,
+            'I woke up to the soft light filtering through my window, and for the first time in a while, I didn\'t rush to check my phone. Instead, I took a deep breath and stretched, feeling my body wake up slowly.',
+            style: GoogleFonts.lato(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+              color: AppColors.black,
+              height: 1.6,
+            ),
+            textAlign: TextAlign.justify,
           ),
         ),
       ],
@@ -353,7 +357,7 @@ class BlogScreen extends StatelessWidget {
 
   Widget _buildBulletPoint(String text) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8,left: 16,right: 16),
+      padding: const EdgeInsets.only(bottom: 8, left: 16, right: 16),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -383,4 +387,3 @@ class BlogScreen extends StatelessWidget {
     );
   }
 }
-

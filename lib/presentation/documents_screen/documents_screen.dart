@@ -7,21 +7,17 @@ class DocumentsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<DocumentsScreenController>();
-    
+
     return Scaffold(
       backgroundColor: const Color(0xFFF3F9FF),
       appBar: AppBar(
         backgroundColor: const Color(0xFFF3F9FF),
         elevation: 0,
         leading: Padding(
-          padding: const EdgeInsets.only(left: 20, top: 16),
+          padding: const EdgeInsets.only(left: 20),
           child: GestureDetector(
             onTap: () => Get.back(),
-            child: Icon(
-              JamIcons.chevronLeft,
-              size: 26,
-              color: AppColors.black,
-            ),
+            child: Icon(JamIcons.chevronLeft, size: 26, color: AppColors.black),
           ),
         ),
         leadingWidth: 50,
@@ -79,7 +75,10 @@ class DocumentsScreen extends StatelessWidget {
           ),
           filled: true,
           fillColor: const Color(0xFFFFFFFF),
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 14,
+          ),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(50),
             borderSide: BorderSide(
@@ -134,10 +133,7 @@ class DocumentsScreen extends StatelessWidget {
         'title': 'Basic Exercises',
         'previewImage': ImageConstant.care_hub_basic_exercises_img,
       },
-      {
-        'title': 'Others',
-        'previewImage': ImageConstant.care_hub_documents_img,
-      },
+      {'title': 'Others', 'previewImage': ImageConstant.care_hub_documents_img},
     ];
 
     return Builder(
@@ -157,7 +153,8 @@ class DocumentsScreen extends StatelessWidget {
             crossAxisCount: 2,
             crossAxisSpacing: gap,
             mainAxisSpacing: gap,
-            childAspectRatio: cardWidth / (cardHeight + 32), // cardHeight + title space
+            childAspectRatio:
+                cardWidth / (cardHeight + 32), // cardHeight + title space
           ),
           itemCount: folders.length,
           itemBuilder: (context, index) {
@@ -213,10 +210,7 @@ class DocumentsScreen extends StatelessWidget {
         Container(
           width: width,
           height: height,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-           
-          ),
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(20)),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(20),
             child: Stack(
@@ -229,7 +223,11 @@ class DocumentsScreen extends StatelessWidget {
                     errorBuilder: (context, error, stackTrace) {
                       return Container(
                         color: const Color(0xFFE5EFFE),
-                        child: const Icon(Icons.folder, size: 50, color: Colors.grey),
+                        child: const Icon(
+                          Icons.folder,
+                          size: 50,
+                          color: Colors.grey,
+                        ),
                       );
                     },
                   ),
@@ -238,21 +236,32 @@ class DocumentsScreen extends StatelessWidget {
                 Positioned(
                   top: 30,
                   right: 12,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: Image.asset(
-                      previewImage,
-                      width: width * 0.35,
-                      height: width * 0.35,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Container(
-                          width: width * 0.35,
-                          height: width * 0.35,
-                          color: Colors.grey[300],
-                          child: const Icon(Icons.image, size: 30, color: Colors.grey),
-                        );
-                      },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: AppColors.white,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    padding: EdgeInsets.all(2),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: Image.asset(
+                        previewImage,
+                        width: width * 0.35,
+                        height: width * 0.35,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            width: width * 0.35,
+                            height: width * 0.35,
+                            color: Colors.grey[300],
+                            child: const Icon(
+                              Icons.image,
+                              size: 30,
+                              color: Colors.grey,
+                            ),
+                          );
+                        },
+                      ),
                     ),
                   ),
                 ),
@@ -276,7 +285,11 @@ class DocumentsScreen extends StatelessWidget {
                           width: 40,
                           height: 40,
                           color: Colors.grey[300],
-                          child: const Icon(Icons.image, size: 25, color: Colors.grey),
+                          child: const Icon(
+                            Icons.image,
+                            size: 25,
+                            color: Colors.grey,
+                          ),
                         );
                       },
                     ),
@@ -304,4 +317,3 @@ class DocumentsScreen extends StatelessWidget {
     );
   }
 }
-
