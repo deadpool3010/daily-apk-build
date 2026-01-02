@@ -9,13 +9,15 @@ class ChatMessage {
   final String text;
   final bool isUser; // true for user, false for bot
   final DateTime timestamp;
-  final Map<String, dynamic>? file; // file information from API
+  final Map<String, dynamic>? file;
+  final String? formQuestionHeader; // file information from API
 
   ChatMessage({
     required this.text,
     required this.isUser,
     DateTime? timestamp,
     this.file,
+    this.formQuestionHeader,
   }) : timestamp = timestamp ?? DateTime.now();
 }
 
@@ -162,31 +164,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
                   ),
                 ),
               ),
-              // Blur overlay for gap area below text field (messages visible through gap)
-              // Positioned(
-              //   left: 0,
-              //   right: 0,
-              //   bottom: 0,
-              //   height: 150,
-              //   child: IgnorePointer(
-              //     child: BackdropFilter(
-              //       filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
-              //       child: Container(
-              //         decoration: BoxDecoration(
-              //           gradient: LinearGradient(
-              //             colors: [
-              //               Colors.transparent,
-              //               Colors.white.withOpacity(0.5),
-              //               Colors.white.withOpacity(0.9),
-              //             ],
-              //             stops: [0.0, 0.6, 1.0],
-              //           ),
-              //         ),
-              //       ),
-              //     ),
-              //   ),
-              // ),
-              // Telegram/iOS style seamless blur shadow from bottom
+
               Positioned(
                 left: 0,
                 right: 0,
@@ -546,6 +524,20 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
+                if (message.formQuestionHeader != null &&
+                    message.formQuestionHeader!.isNotEmpty) ...{
+                  Text(
+                    message.formQuestionHeader!,
+                    style: TextStyle(
+                      color: Color(0xFF979797),
+                      fontSize: 12,
+                      fontFamily: 'Roboto',
+                    ),
+                  ),
+                  SizedBox(height: 5),
+                } else ...{
+                  SizedBox.shrink(),
+                },
                 Container(
                   constraints: BoxConstraints(maxWidth: 300),
                   padding: const EdgeInsets.symmetric(

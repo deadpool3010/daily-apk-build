@@ -7,6 +7,7 @@ class ChatbotSplashScreenController extends GetxController {
   late String mode;
   bool _apiReady = false;
   bool _animationReady = false;
+  String? formQuestion;
 
   @override
   void onReady() {
@@ -23,6 +24,7 @@ class ChatbotSplashScreenController extends GetxController {
     if (mode == 'assignment') {
       print('sessionId: $sessionId');
       await getFormQuestionApi(sessionId);
+      //print('formQuestion: $formQuestion');
     }
 
     _apiReady = true;
@@ -35,8 +37,12 @@ class ChatbotSplashScreenController extends GetxController {
   }
 
   void _tryToNavigate() {
+    print('formQuestion: $formQuestion');
     if (_apiReady && _animationReady) {
-      Get.offNamed(AppRoutes.chatScreen);
+      Get.offNamed(
+        AppRoutes.chatScreen,
+        // arguments: {'textMessage': formQuestion},
+      );
     }
   }
 }

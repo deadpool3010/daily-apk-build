@@ -21,6 +21,7 @@ class ChatScreenController extends GetxController {
   var conversationId = RxnString();
   var selectedLanguage = 'eng'.obs;
   var shouldAutoScroll = true.obs;
+  var formQuestionHeader = ''.obs;
 
   // Pagination variables
   int currentPage = 1;
@@ -47,6 +48,12 @@ class ChatScreenController extends GetxController {
     }
     scrollController.addListener(_onScroll);
   }
+
+  // @override
+  // void onReady() {
+  //   final arg = Get.arguments ?? {};
+  //   formQuestionHeader = arg['textMessage'];
+  // }
 
   void _onScroll() {
     if (!scrollController.hasClients || _isLoadingInBackground) return;
@@ -321,6 +328,7 @@ class ChatScreenController extends GetxController {
   ChatMessage _processMessage(Map<String, dynamic> msg) {
     final isUser = msg["senderType"] == "patient";
     final fileData = msg["file"] as Map<String, dynamic>?;
+    final formQuestionHeader = msg['formTemplateName'] as String?;
 
     Map<String, dynamic>? fileInfo;
     if (fileData != null &&
@@ -351,6 +359,7 @@ class ChatScreenController extends GetxController {
     }
 
     return ChatMessage(
+      formQuestionHeader: formQuestionHeader,
       text: messageText,
       isUser: isUser,
       timestamp:
