@@ -251,6 +251,10 @@ class AffirmationsScreen extends StatelessWidget {
       ImageConstant.care_hub_new_treatments_img,
     ];
 
+    // Default description for all items (if not provided)
+    const defaultDescription =
+        'I woke up to the soft light filtering through my window, and for the first time in a while, I didn\'t rush to check my phone. Instead, I took a deep breath and stretched, feeling my body wake up slowly.';
+
     return Container(
       height: 100,
       decoration: BoxDecoration(
@@ -267,25 +271,48 @@ class AffirmationsScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         child: Row(
           mainAxisSize: MainAxisSize.max,
-          children: images.map((image) {
+          children: images.asMap().entries.map((entry) {
+            final index = entry.key;
+            final image = entry.value;
+            final heroTag = 'just_for_you_$index';
+
             return Expanded(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 1),
-                child: Image.asset(
-                  image,
-                  fit: BoxFit.cover,
-                  width: double.infinity,
-                  height: 100,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      color: Colors.grey[300],
-                      child: const Icon(
-                        Icons.image,
-                        size: 30,
-                        color: Colors.grey,
-                      ),
+                child: GestureDetector(
+                  onTap: () {
+                    Get.toNamed(
+                      AppRoutes.blogScreen,
+                      arguments: {
+                        'imageUrl': image,
+                        'heroTag': heroTag,
+                        'title': 'Affirmation Story',
+                        'author': 'CareHub Team',
+                        'date': DateTime.now().toString().split(' ')[0],
+                        'description': defaultDescription,
+                        'tags': ['Affirmations', 'Self Help', 'Motivation'],
+                      },
                     );
                   },
+                  child: Hero(
+                    tag: heroTag,
+                    child: Image.asset(
+                      image,
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                      height: 100,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          color: Colors.grey[300],
+                          child: const Icon(
+                            Icons.image,
+                            size: 30,
+                            color: Colors.grey,
+                          ),
+                        );
+                      },
+                    ),
+                  ),
                 ),
               ),
             );
@@ -303,6 +330,10 @@ class AffirmationsScreen extends StatelessWidget {
       ImageConstant.care_hub_new_treatments_img,
     ];
 
+    // Default description for all items (if not provided)
+    const defaultDescription =
+        'I woke up to the soft light filtering through my window, and for the first time in a while, I didn\'t rush to check my phone. Instead, I took a deep breath and stretched, feeling my body wake up slowly.';
+
     return Container(
       height: 100,
       decoration: BoxDecoration(
@@ -319,25 +350,48 @@ class AffirmationsScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         child: Row(
           mainAxisSize: MainAxisSize.max,
-          children: images.map((image) {
+          children: images.asMap().entries.map((entry) {
+            final index = entry.key;
+            final image = entry.value;
+            final heroTag = 'curated_$index';
+
             return Expanded(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 1),
-                child: Image.asset(
-                  image,
-                  fit: BoxFit.cover,
-                  width: double.infinity,
-                  height: 100,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      color: Colors.grey[300],
-                      child: const Icon(
-                        Icons.image,
-                        size: 30,
-                        color: Colors.grey,
-                      ),
+                child: GestureDetector(
+                  onTap: () {
+                    Get.toNamed(
+                      AppRoutes.blogScreen,
+                      arguments: {
+                        'imageUrl': image,
+                        'heroTag': heroTag,
+                        'title': 'Affirmation Story',
+                        'author': 'CareHub Team',
+                        'date': DateTime.now().toString().split(' ')[0],
+                        'description': defaultDescription,
+                        'tags': ['Affirmations', 'Self Help', 'Motivation'],
+                      },
                     );
                   },
+                  child: Hero(
+                    tag: heroTag,
+                    child: Image.asset(
+                      image,
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                      height: 100,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          color: Colors.grey[300],
+                          child: const Icon(
+                            Icons.image,
+                            size: 30,
+                            color: Colors.grey,
+                          ),
+                        );
+                      },
+                    ),
+                  ),
                 ),
               ),
             );

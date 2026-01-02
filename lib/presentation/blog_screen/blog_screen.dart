@@ -58,22 +58,23 @@ class BlogScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 16),
-              // Tags
+              // Tags (use tags from arguments if provided, otherwise use default)
               Wrap(
                 spacing: 8,
                 runSpacing: 8,
-                children: [
-                  _buildTag('Patient Reference'),
-                  _buildTag('Healthy Diet Articles'),
-                  _buildTag('Self Help'),
-                ],
+                children: _buildTags(article),
               ),
               const SizedBox(height: 24),
-              // Image Carousel
-              _buildImageCarousel(controller),
+              // Hero Image (shown when navigating from story cards)
+              if (article['heroTag'] != null && article['imageUrl'] != null)
+                _buildHeroImage(article),
+              // Image Carousel (shown when hero image is not present)
+              if (article['heroTag'] == null || article['imageUrl'] == null)
+                _buildImageCarousel(controller),
               const SizedBox(height: 16),
-              // Pagination Dots
-              _buildPaginationDots(controller),
+              // Pagination Dots (only shown with carousel)
+              if (article['heroTag'] == null || article['imageUrl'] == null)
+                _buildPaginationDots(controller),
               const SizedBox(height: 24),
               // Audio Player
               _buildAudioPlayer(controller),
@@ -101,11 +102,65 @@ class BlogScreen extends StatelessWidget {
     );
   }
 
+  List<Widget> _buildTags(Map<String, dynamic> article) {
+    // If tags are provided in arguments, use them
+    if (article['tags'] != null && article['tags'] is List) {
+      final tags = article['tags'] as List;
+      return tags.map((tag) => _buildTag(tag.toString())).toList();
+    }
+
+    // Default tags based on source or fallback to generic tags
+    final defaultTags = [
+      'Patient Reference',
+      'Healthy Diet Articles',
+      'Self Help',
+    ];
+
+    return defaultTags.map((tag) => _buildTag(tag)).toList();
+  }
+
+  Widget _buildHeroImage(Map<String, dynamic> article) {
+    final heroTag = article['heroTag'] as String;
+    final imageUrl = article['imageUrl'] as String;
+    
+    return Hero(
+      tag: heroTag,
+      child: Container(
+        width: double.infinity,
+        height: 200,
+        margin: const EdgeInsets.only(bottom: 24),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(16),
+          child: Image.asset(
+            imageUrl,
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) {
+              return Container(
+                color: Colors.grey[300],
+                child: const Icon(Icons.image, size: 40, color: Colors.grey),
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildTag(String text) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: Color(0xFFF3F9FF),
+        color: Color(0xFFE5EFFE),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
@@ -314,13 +369,17 @@ class BlogScreen extends StatelessWidget {
   }
 
   Widget _buildArticleText(Map<String, dynamic> article) {
+    // Use description from arguments if provided, otherwise use default
+    final description = article['description'] ??
+        'I woke up to the soft light filtering through my window, and for the first time in a while, I didn\'t rush to check my phone. Instead, I took a deep breath and stretched, feeling my body wake up slowly.';
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
           padding: const EdgeInsets.only(left: 8, right: 6),
           child: Text(
-            'I woke up to the soft light filtering through my window, and for the first time in a while, I didn\'t rush to check my phone. Instead, I took a deep breath and stretched, feeling my body wake up slowly.',
+            description,
             style: GoogleFonts.lato(
               fontSize: 16,
               fontWeight: FontWeight.w500,
@@ -341,7 +400,7 @@ class BlogScreen extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.only(left: 8, right: 6),
           child: Text(
-            'I woke up to the soft light filtering through my window, and for the first time in a while, I didn\'t rush to check my phone. Instead, I took a deep breath and stretched, feeling my body wake up slowly.',
+            description,
             style: GoogleFonts.lato(
               fontSize: 16,
               fontWeight: FontWeight.w500,

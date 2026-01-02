@@ -26,8 +26,8 @@ class CarehubHomeScreen extends StatelessWidget {
               shadowColor: Colors.transparent,
               pinned: true,
               expandedHeight: 220,
-              floating: true,
-              snap: true,
+              floating: false,
+              snap: false,
               systemOverlayStyle: SystemUiOverlayStyle(
                 statusBarColor: Colors.transparent,
                 statusBarIconBrightness: Brightness.dark,
@@ -152,7 +152,7 @@ class CarehubHomeScreen extends StatelessWidget {
                               },
                             ];
                             final article = articles[index];
-                            return _buildArticleCard(article);
+                            return _buildArticleCard(article, 'carehub_popular_article_$index');
                           },
                         ),
                       );
@@ -236,7 +236,8 @@ class CarehubHomeScreen extends StatelessWidget {
                             'title': 'People\'s Stories',
                             'count': '40+',
                             'onTap': () {
-                              Get.toNamed(AppRoutes.peoplesStoriesScreen);
+                              // Always show splash screen when navigating from home
+                              Get.toNamed(AppRoutes.peoplesStoriesSplashScreen);
                             },
                           },
                         ];
@@ -339,41 +340,56 @@ class CarehubHomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildArticleCard(Map<String, String> article) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          width: 200,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.08),
-                blurRadius: 15,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          child: ClipRRect(
-            borderRadius: const BorderRadius.all(Radius.circular(20)),
-            child: Image.asset(
-              article['image']!,
-              width: double.infinity,
-              height: 240,
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) {
-                return Container(
+  Widget _buildArticleCard(Map<String, String> article, String heroTag) {
+    return GestureDetector(
+      onTap: () {
+        final arguments = Map<String, dynamic>.from(article);
+        arguments['heroTag'] = heroTag;
+        arguments['imageUrl'] = article['image'];
+        // Add tags for article content type
+        arguments['tags'] = ['Patient Reference', 'Healthy Diet Articles', 'Self Help'];
+        Get.toNamed(
+          AppRoutes.blogScreen,
+          arguments: arguments,
+        );
+      },
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 200,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.08),
+                  blurRadius: 15,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: ClipRRect(
+              borderRadius: const BorderRadius.all(Radius.circular(20)),
+              child: Hero(
+                tag: heroTag,
+                child: Image.asset(
+                  article['image']!,
                   width: double.infinity,
-                  height: 140,
-                  color: Colors.grey[300],
-                  child: const Icon(Icons.image, size: 50, color: Colors.grey),
-                );
-              },
+                  height: 240,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      width: double.infinity,
+                      height: 240,
+                      color: Colors.grey[300],
+                      child: const Icon(Icons.image, size: 50, color: Colors.grey),
+                    );
+                  },
+                ),
+              ),
             ),
           ),
-        ),
         const SizedBox(height: 10),
         // Article Content
         Text(
@@ -409,6 +425,7 @@ class CarehubHomeScreen extends StatelessWidget {
           ),
         ),
       ],
+      ),
     );
   }
 

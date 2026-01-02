@@ -142,7 +142,7 @@ class ContentTypeHomeScreen extends StatelessWidget {
                           },
                         ];
                         final article = articles[index];
-                        return _buildArticleCard(article);
+                        return _buildArticleCard(article, 'popular_article_$index');
                       },
                     ),
                   );
@@ -317,12 +317,17 @@ class ContentTypeHomeScreen extends StatelessWidget {
   }
 
 
-  Widget _buildArticleCard(Map<String, String> article) {
+  Widget _buildArticleCard(Map<String, String> article, String heroTag) {
     return GestureDetector(
       onTap: () {
+        final arguments = Map<String, dynamic>.from(article);
+        arguments['heroTag'] = heroTag;
+        arguments['imageUrl'] = article['image'];
+        // Add tags for article content type
+        arguments['tags'] = ['Patient Reference', 'Healthy Diet Articles', 'Self Help'];
         Get.toNamed(
           AppRoutes.blogScreen,
-          arguments: article,
+          arguments: arguments,
         );
       },
       child: Column(
@@ -343,19 +348,22 @@ class ContentTypeHomeScreen extends StatelessWidget {
             ),
             child: ClipRRect(
               borderRadius: const BorderRadius.all(Radius.circular(20)),
-              child: Image.asset(
-                article['image']!,
-                width: double.infinity,
-                height: 240,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    width: double.infinity,
-                    height: 140,
-                    color: Colors.grey[300],
-                    child: const Icon(Icons.image, size: 50, color: Colors.grey),
-                  );
-                },
+              child: Hero(
+                tag: heroTag,
+                child: Image.asset(
+                  article['image']!,
+                  width: double.infinity,
+                  height: 240,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      width: double.infinity,
+                      height: 240,
+                      color: Colors.grey[300],
+                      child: const Icon(Icons.image, size: 50, color: Colors.grey),
+                    );
+                  },
+                ),
               ),
             ),
           ),
@@ -405,6 +413,10 @@ class ContentTypeHomeScreen extends StatelessWidget {
       ImageConstant.care_hub_new_treatments_img,
     ];
 
+    // Default description for all items
+    const defaultDescription =
+        'I woke up to the soft light filtering through my window, and for the first time in a while, I didn\'t rush to check my phone. Instead, I took a deep breath and stretched, feeling my body wake up slowly.';
+
     return Container(
       height: 100,
       decoration: BoxDecoration(
@@ -421,21 +433,44 @@ class ContentTypeHomeScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         child: Row(
           mainAxisSize: MainAxisSize.max,
-          children: images.map((image) {
+          children: images.asMap().entries.map((entry) {
+            final index = entry.key;
+            final image = entry.value;
+            final heroTag = 'content_just_for_you_$index';
+
             return Expanded(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 1),
-                child: Image.asset(
-                  image,
-                  fit: BoxFit.cover,
-                  width: double.infinity,
-                  height: 140,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      color: Colors.grey[300],
-                      child: const Icon(Icons.image, size: 30, color: Colors.grey),
+                child: GestureDetector(
+                  onTap: () {
+                    Get.toNamed(
+                      AppRoutes.blogScreen,
+                      arguments: {
+                        'imageUrl': image,
+                        'heroTag': heroTag,
+                        'title': 'Article Story',
+                        'author': 'CareHub Team',
+                        'date': DateTime.now().toString().split(' ')[0],
+                        'description': defaultDescription,
+                        'tags': ['Patient Reference', 'Healthy Diet Articles', 'Self Help'],
+                      },
                     );
                   },
+                  child: Hero(
+                    tag: heroTag,
+                    child: Image.asset(
+                      image,
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                      height: 100,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          color: Colors.grey[300],
+                          child: const Icon(Icons.image, size: 30, color: Colors.grey),
+                        );
+                      },
+                    ),
+                  ),
                 ),
               ),
             );
@@ -453,6 +488,10 @@ class ContentTypeHomeScreen extends StatelessWidget {
       ImageConstant.care_hub_new_treatments_img,
     ];
 
+    // Default description for all items
+    const defaultDescription =
+        'I woke up to the soft light filtering through my window, and for the first time in a while, I didn\'t rush to check my phone. Instead, I took a deep breath and stretched, feeling my body wake up slowly.';
+
     return Container(
       height: 100,
       decoration: BoxDecoration(
@@ -469,21 +508,44 @@ class ContentTypeHomeScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         child: Row(
           mainAxisSize: MainAxisSize.max,
-          children: images.map((image) {
+          children: images.asMap().entries.map((entry) {
+            final index = entry.key;
+            final image = entry.value;
+            final heroTag = 'content_curated_$index';
+
             return Expanded(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 1),
-                child: Image.asset(
-                  image,
-                  fit: BoxFit.cover,
-                  width: double.infinity,
-                  height: 100,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      color: Colors.grey[300],
-                      child: const Icon(Icons.image, size: 30, color: Colors.grey),
+                child: GestureDetector(
+                  onTap: () {
+                    Get.toNamed(
+                      AppRoutes.blogScreen,
+                      arguments: {
+                        'imageUrl': image,
+                        'heroTag': heroTag,
+                        'title': 'Article Story',
+                        'author': 'CareHub Team',
+                        'date': DateTime.now().toString().split(' ')[0],
+                        'description': defaultDescription,
+                        'tags': ['Patient Reference', 'Healthy Diet Articles', 'Self Help'],
+                      },
                     );
                   },
+                  child: Hero(
+                    tag: heroTag,
+                    child: Image.asset(
+                      image,
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                      height: 100,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          color: Colors.grey[300],
+                          child: const Icon(Icons.image, size: 30, color: Colors.grey),
+                        );
+                      },
+                    ),
+                  ),
                 ),
               ),
             );

@@ -91,4 +91,7 @@ class ImageConstant {
   
   // Content Type Home Screen Images
   static const String content_type_img_1 = '${basePath}content_type_img_1.png';
+
+  // Peoples Stories Screen Images
+  static const String peoples_stories_img_1 = '${basePath}people_img_1.png';
 }

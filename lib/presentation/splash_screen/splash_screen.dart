@@ -52,6 +52,7 @@ class SplashScreen extends StatelessWidget {
           value: SystemUiOverlayStyle(
             statusBarColor: statusBarColor,
             statusBarIconBrightness: statusBarBrightness,
+            systemNavigationBarColor: Colors.transparent,
             statusBarBrightness: statusBarBrightness,
           ),
           child: Scaffold(
