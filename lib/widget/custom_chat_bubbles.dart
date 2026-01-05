@@ -295,7 +295,7 @@ class _ChatBubblePdfState extends State<ChatBubblePdf> {
       ),
       child: LayoutBuilder(
         builder: (context, constraints) {
-          final double containerWidth = constraints.maxWidth;
+          // final double containerWidth = constraints.maxWidth;
 
           if (_loadingPreview) {
             return const Center(
@@ -869,26 +869,26 @@ class _AudioChatBubbleState extends State<AudioChatBubble> {
   }
 }
 
-Future<PdfPageImage?> _render(PdfPage page) async {
-  final double previewHeight = 140; // your container
-  final double cropHeight = page.height * 0.25; // top 25%
+// Future<PdfPageImage?> _render(PdfPage page) async {
+//   // final double previewHeight = 140; // your container
+//   final double cropHeight = page.height * 0.25; // top 25%
 
-  return page.render(
-    width: page.width, // keep full width (no scaling)
-    height: cropHeight, // crop only top part
-    format: PdfPageImageFormat.jpeg,
-    backgroundColor: '#FFFFFF',
+//   return page.render(
+//     width: page.width, // keep full width (no scaling)
+//     height: cropHeight, // crop only top part
+//     format: PdfPageImageFormat.jpeg,
+//     backgroundColor: '#FFFFFF',
 
-    // Crop TOP part of the page
-    cropRect: Rect.fromLTWH(
-      10,
-      50,
-      100,
-      100,
-      // cropped height
-    ),
-  );
-}
+//     // Crop TOP part of the page
+//     cropRect: Rect.fromLTWH(
+//       10,
+//       50,
+//       100,
+//       100,
+//       // cropped height
+//     ),
+//   );
+// }
 
 class _ProgressClipper extends CustomClipper<Rect> {
   final double progress;

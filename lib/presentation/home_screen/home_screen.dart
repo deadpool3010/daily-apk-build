@@ -1,7 +1,6 @@
 import 'package:bandhucare_new/core/export_file/app_exports.dart';
 import 'package:bandhucare_new/core/controller/session_controller.dart';
 import 'package:bandhucare_new/core/utils/string_utils.dart';
-import 'package:flutter/services.dart';
 
 bool isBottomNavVisible = true;
 
@@ -153,7 +152,12 @@ class _HomepageScreenState extends State<HomepageScreen> {
                                   ),
                                   const SizedBox(height: 4),
                                   Text(
-                                    '${StringUtils.getFirstName(sessionController.user?.name ?? '')}!',
+                                    () {
+                                      final userName = sessionController.user?.name;
+                                      return userName != null && userName.isNotEmpty
+                                          ? '${StringUtils.getFirstName(userName)}!'
+                                          : 'Hello!';
+                                    }(),
                                     style: GoogleFonts.lato(
                                       textStyle: TextStyle(
                                         color: AppColors.black,
@@ -450,7 +454,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
         _buildQuickActionItem(
           image: ImageConstant.care_hub,
           label: 'Care Hub',
-          // route: Routes.careHub,
+          route: AppRoutes.carehubHomeScreen,
         ),
       ],
     );

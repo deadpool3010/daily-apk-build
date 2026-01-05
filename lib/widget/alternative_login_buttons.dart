@@ -52,7 +52,7 @@ class AlternativeLoginButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final double effectiveImageSize = imageSize ?? 20;
     final double effectiveSpacing = spacing ?? 6;
-    final double effectiveFontSize = fontSize ?? 14;
+    final double effectiveFontSize = fontSize ?? 12;
 
     Widget buttonContent = Container(
       padding: padding ?? EdgeInsets.symmetric(horizontal: 10, vertical: 14),
@@ -94,12 +94,10 @@ class AlternativeLoginButton extends StatelessWidget {
           Flexible(
             child: Text(
               label,
-              style: TextStyle(
-                fontFamily: 'Lato',
+              style: GoogleFonts.lato(
                 fontSize: effectiveFontSize,
                 fontWeight: FontWeight.w500,
-                color: Colors.black87,
-              ),
+                color: Colors.black87,),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.center,

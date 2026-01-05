@@ -68,10 +68,30 @@ class ImageConstant {
   static const String mitra_robot = '${basePath}mitra_robot.png';
   static const String health_calendar = '${basePath}health_calander_2.png';
   static const String bandhu = '${basePath}bandhu.png';
-  static const String care_hub = '${basePath}care_hub_img.png';
 
   static const String bandhu_splash = '${basePath}Bandhu_splash.png';
   static const String bandhu_chat = '${basePath}Bandhu_chat.png';
   static const String pin_icon = '${basePath}pin_icon.png';
   static const String chat_screen_background = '${basePath}chat_screen_bg.png';
+
+  //care hub screen images
+  static const String care_hub = '${basePath}care_hub_img.png';
+  static const String care_hub_img_1 = '${basePath}care_hub_img_1.png';
+  static const String care_hub_img_2 = '${basePath}care_hub_img_2.png';
+  static const String care_hub_img_3 = '${basePath}care_hub_img_3.png';
+  static const String care_hub_people_img = '${basePath}care_hub_people_img.png';
+  static const String care_hub_article_img = '${basePath}care_hub_article_img.png';
+  static const String care_hub_affirmation_img = '${basePath}care_hub_affirmation_img.png';
+  static const String care_hub_documents_img = '${basePath}care_hub_documents_img.png';
+  static const String care_hub_healthy_diet_img = '${basePath}care_hub_healthy_diet_img.png';
+  static const String care_hub_new_treatments_img = '${basePath}care_hub_new_treatments_img.png';
+  static const String care_hub_self_care_img = '${basePath}care_hub_self_care_img.png';
+  static const String care_hub_basic_exercises_img = '${basePath}care_hub_basic_exercises_img.png';
+  static const String folder_icon = '${basePath}folder_icon.png';
+  
+  // Content Type Home Screen Images
+  static const String content_type_img_1 = '${basePath}content_type_img_1.png';
+
+  // Peoples Stories Screen Images
+  static const String peoples_stories_img_1 = '${basePath}people_img_1.png';
 }

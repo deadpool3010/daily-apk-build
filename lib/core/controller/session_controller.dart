@@ -6,7 +6,13 @@ class SessionController extends GetxController {
   bool isLoggedIn = false;
 
   void loadFromCache(Map<String, dynamic> cachedUser) {
-    user = PatientModel.fromJson(cachedUser);
+    // Extract profileDetails if it exists, otherwise use the cachedUser directly
+    Map<String, dynamic> userData = cachedUser;
+    if (cachedUser.containsKey('profileDetails') && 
+        cachedUser['profileDetails'] is Map<String, dynamic>) {
+      userData = cachedUser['profileDetails'] as Map<String, dynamic>;
+    }
+    user = PatientModel.fromJson(userData);
     isLoggedIn = true;
     update();
   }
