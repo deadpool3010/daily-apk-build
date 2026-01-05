@@ -103,146 +103,154 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
         extendBodyBehindAppBar:
             true, // THIS IS CRITICAL - extends content behind AppBar for blur effect
         appBar: ChatScreenAppBar(),
-        body: Container(
-          width: double.infinity,
-          height: double.infinity,
-          clipBehavior: Clip.antiAlias,
-          decoration: ShapeDecoration(
-            image: DecorationImage(
-              image: AssetImage(ImageConstant.chat_screen_background),
-              fit: BoxFit.cover,
-            ),
-            color: const Color.fromARGB(255, 243, 249, 255),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-          ),
-          child: Stack(
-            clipBehavior: Clip.none,
-            children: [
-              // Chat messages area
-              Positioned.fill(
-                child: Obx(
-                  () => controller.isLoading.value
-                      ? Center(
-                          child: CircularProgressIndicator(
-                            color: const Color(0xFF3865FF),
-                          ),
-                        )
-                      : _buildChatView(keyboardHeight),
-                ),
+        body: GestureDetector(
+          onTap: () {
+            // Dismiss keyboard when tapping outside
+            FocusScope.of(context).unfocus();
+          },
+          behavior: HitTestBehavior.translucent,
+          child: Container(
+            width: double.infinity,
+            height: double.infinity,
+            clipBehavior: Clip.antiAlias,
+            decoration: ShapeDecoration(
+              image: DecorationImage(
+                image: AssetImage(ImageConstant.chat_screen_background),
+                fit: BoxFit.cover,
               ),
+              color: const Color.fromARGB(255, 243, 249, 255),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+            ),
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                // Chat messages area
+                Positioned.fill(
+                  child: Obx(
+                    () => controller.isLoading.value
+                        ? Center(
+                            child: CircularProgressIndicator(
+                              color: const Color(0xFF3865FF),
+                            ),
+                          )
+                        : _buildChatView(keyboardHeight),
+                  ),
+                ),
 
-              // Question suggestions (hide when keyboard is open)
-              Positioned(
-                left: 0,
-                right: 0,
-                bottom: 90,
-                child: AnimatedSize(
-                  duration: const Duration(milliseconds: 200),
-                  curve: Curves.easeInOut,
-                  child: SizedBox(
-                    height: isKeyboardVisible
-                        ? 0
-                        : 90, // Collapse to 0 when keyboard opens
-                    child: ClipRect(
-                      clipBehavior: Clip.hardEdge,
-                      child: AnimatedOpacity(
-                        duration: const Duration(milliseconds: 200),
-                        opacity: isKeyboardVisible ? 0 : 1,
-                        child: IgnorePointer(
-                          ignoring: isKeyboardVisible,
-                          child: Obx(() {
-                            final shouldShow =
-                                controller.messages.isNotEmpty &&
-                                controller.shouldAutoScroll.value;
-                            return shouldShow
-                                ? QuestionSuggestions(
-                                    onQuestionTap: (question) {
-                                      controller.sendChatMessage(question);
-                                    },
-                                  )
-                                : const SizedBox.shrink();
-                          }),
+                // Question suggestions (hide when keyboard is open)
+                Positioned(
+                  left: 0,
+                  right: 0,
+                  bottom: 90,
+                  child: AnimatedSize(
+                    duration: const Duration(milliseconds: 200),
+                    curve: Curves.easeInOut,
+                    child: SizedBox(
+                      height: isKeyboardVisible
+                          ? 0
+                          : 90, // Collapse to 0 when keyboard opens
+                      child: ClipRect(
+                        clipBehavior: Clip.hardEdge,
+                        child: AnimatedOpacity(
+                          duration: const Duration(milliseconds: 200),
+                          opacity: isKeyboardVisible ? 0 : 1,
+                          child: IgnorePointer(
+                            ignoring: isKeyboardVisible,
+                            child: Obx(() {
+                              final shouldShow =
+                                  controller.messages.isNotEmpty &&
+                                  controller.shouldAutoScroll.value;
+                              return shouldShow
+                                  ? QuestionSuggestions(
+                                      onQuestionTap: (question) {
+                                        FocusScope.of(context).unfocus();
+                                        controller.sendChatMessage(question);
+                                      },
+                                    )
+                                  : const SizedBox.shrink();
+                            }),
+                          ),
                         ),
                       ),
                     ),
                   ),
                 ),
-              ),
 
-              Positioned(
-                left: 0,
-                right: 0,
-                bottom: 0,
-                height: 70, // Height of blur shadow area
-                child: Container(
-                  decoration: BoxDecoration(
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.white.withOpacity(1),
-                        spreadRadius: 5,
-                        blurRadius: 50,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
+                Positioned(
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  height: 70, // Height of blur shadow area
+                  child: Container(
+                    decoration: BoxDecoration(
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.white.withOpacity(1),
+                          spreadRadius: 5,
+                          blurRadius: 50,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              // Bottom input field
-              Positioned(
-                left: 0,
-                right: 0,
-                bottom: -10,
-                child: ChatScreenBottom(
-                  messageController: controller.messageController,
-                  onSend:
-                      (text, {file, fileType, originalTranscript, fileUrl}) =>
-                          controller.sendChatMessage(
-                            text,
-                            file: file,
-                            fileType: fileType,
-                            originalTranscript: originalTranscript,
-                            fileUrl: fileUrl,
-                          ),
+                // Bottom input field
+                Positioned(
+                  left: 0,
+                  right: 0,
+                  bottom: -10,
+                  child: ChatScreenBottom(
+                    messageController: controller.messageController,
+                    onSend:
+                        (text, {file, fileType, originalTranscript, fileUrl}) =>
+                            controller.sendChatMessage(
+                              text,
+                              file: file,
+                              fileType: fileType,
+                              originalTranscript: originalTranscript,
+                              fileUrl: fileUrl,
+                            ),
+                  ),
                 ),
-              ),
 
-              // Scroll to bottom button (appears when scrolled up)
-              Obx(
-                () => !controller.shouldAutoScroll.value
-                    ? Positioned(
-                        right: 16,
-                        bottom: 90, // Above the input field
-                        child: Material(
-                          color: Colors.transparent,
-                          child: InkWell(
-                            onTap: _scrollToBottom,
-                            borderRadius: BorderRadius.circular(25),
-                            child: Container(
-                              width: 35,
-                              height: 35,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                shape: BoxShape.circle,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.2),
-                                    blurRadius: 8,
-                                    offset: const Offset(0, 2),
-                                  ),
-                                ],
-                              ),
-                              child: const Icon(
-                                Icons.keyboard_arrow_down,
-                                color: Color(0xFF3865FF),
-                                size: 28,
+                // Scroll to bottom button (appears when scrolled up)
+                Obx(
+                  () => !controller.shouldAutoScroll.value
+                      ? Positioned(
+                          right: 16,
+                          bottom: 90, // Above the input field
+                          child: Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              onTap: _scrollToBottom,
+                              borderRadius: BorderRadius.circular(25),
+                              child: Container(
+                                width: 35,
+                                height: 35,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  shape: BoxShape.circle,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.2),
+                                      blurRadius: 8,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: const Icon(
+                                  Icons.keyboard_arrow_down,
+                                  color: Color(0xFF3865FF),
+                                  size: 28,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      )
-                    : const SizedBox.shrink(),
-              ),
-            ],
+                        )
+                      : const SizedBox.shrink(),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -257,6 +265,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
   ];
 
   void _handleSuggestionTap(String question) {
+    FocusScope.of(context).unfocus();
     controller.sendChatMessage(question);
   }
 

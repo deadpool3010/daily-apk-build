@@ -548,6 +548,8 @@ class _ChatScreenBottomState extends State<ChatScreenBottom>
                                 );
                                 _removeAudioFile();
                                 widget.messageController.clear();
+                                // Dismiss keyboard after sending
+                                FocusScope.of(context).unfocus();
                               }
                               // If there's a PDF file, send it as document
                               else if (_selectedPdfFile != null) {
@@ -558,6 +560,8 @@ class _ChatScreenBottomState extends State<ChatScreenBottom>
                                 );
                                 _removePdfFile();
                                 widget.messageController.clear();
+                                // Dismiss keyboard after sending
+                                FocusScope.of(context).unfocus();
                               }
                               // Send text only if there's text
                               else if (textToSend.isNotEmpty) {
@@ -567,6 +571,8 @@ class _ChatScreenBottomState extends State<ChatScreenBottom>
                                   fileType: null,
                                 );
                                 widget.messageController.clear();
+                                // Dismiss keyboard after sending
+                                FocusScope.of(context).unfocus();
                               }
                             },
 
