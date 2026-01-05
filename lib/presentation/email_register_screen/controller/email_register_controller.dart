@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:bandhucare_new/core/network/api_services.dart';
 import 'package:bandhucare_new/routes/app_routes.dart';
-import 'package:bandhucare_new/services/variables.dart';
+import 'package:bandhucare_new/core/constants/variables.dart';
 
 class EmailRegisterController extends GetxController {
   late TextEditingController fullNameController;
@@ -140,9 +140,7 @@ class EmailRegisterController extends GetxController {
         // Use fcmToken from variables.dart
         if (fcmToken != null && fcmToken!.isNotEmpty) {
           try {
-            print(
-              'Calling updateFcmTokenApi after signUpApi success...',
-            );
+            print('Calling updateFcmTokenApi after signUpApi success...');
             print(
               'Using FCM Token from variables.dart: ${fcmToken!.substring(0, 20)}...',
             );
@@ -161,10 +159,7 @@ class EmailRegisterController extends GetxController {
           Future.delayed(Duration(milliseconds: 300), () {
             Get.offAllNamed(
               AppRoutes.abhaCreatedScreen,
-              arguments: {
-                'fromRegistration': true,
-                'userName': fullName,
-              },
+              arguments: {'fromRegistration': true, 'userName': fullName},
             );
           });
         });

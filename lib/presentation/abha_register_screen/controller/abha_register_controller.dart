@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:bandhucare_new/core/network/api_services.dart';
-import 'package:bandhucare_new/services/variables.dart' as vars;
+import 'package:bandhucare_new/core/constants/variables.dart' as vars;
 
 class AbhaRegisterController extends GetxController
     with GetTickerProviderStateMixin {

@@ -49,6 +49,19 @@ class ChatScreenController extends GetxController {
     scrollController.addListener(_onScroll);
   }
 
+  void startBotStreaming(ChatMessage msg) {
+    String current = '';
+    Timer.periodic(const Duration(milliseconds: 28), (timer) {
+      if (current.length == msg.fullText?.length) {
+        timer.cancel();
+        return;
+      }
+      current += msg.fullText![current.length];
+      msg.streamedText = current;
+      messages.refresh(); // GetX magic
+    });
+  }
+
   // @override
   // void onReady() {
   //   final arg = Get.arguments ?? {};
@@ -373,6 +386,8 @@ class ChatScreenController extends GetxController {
     String text, {
     File? file,
     String? fileType,
+    String? originalTranscript,
+    String? fileUrl,
   }) async {
     if (text.trim().isEmpty && file == null || isSending.value) return;
 
@@ -404,6 +419,8 @@ class ChatScreenController extends GetxController {
         targetLanguage: selectedLanguage.value,
         file: file,
         fileType: fileType,
+        fileUrl: fileUrl,
+        transcript: originalTranscript,
       );
 
       print("Send Message Response: $response");
@@ -467,23 +484,39 @@ class ChatScreenController extends GetxController {
               'audioTranscript': botMessageFile["audioTranscript"],
             };
           }
+          final full =
+              botMessage["content"]?.toString() ??
+              botMessage["text"]?.toString() ??
+              "No response";
+          final botMsg = ChatMessage(
+            text: full,
+            fullText: full,
+            isUser: false,
+            timestamp:
+                DateTime.tryParse(botMessage["createdAt"]?.toString() ?? "") ??
+                DateTime.now(),
+            file: botFile,
+          );
 
           messages.insert(
             0,
-            ChatMessage(
-              text:
-                  botMessage["content"]?.toString() ??
-                  botMessage["text"]?.toString() ??
-                  "No response",
-              isUser: false,
-              timestamp:
-                  DateTime.tryParse(
-                    botMessage["createdAt"]?.toString() ?? "",
-                  ) ??
-                  DateTime.now(),
-              file: botFile,
-            ),
+            botMsg,
+
+            // ChatMessage(
+            //   text:
+            //       botMessage["content"]?.toString() ??
+            //       botMessage["text"]?.toString() ??
+            //       "No response",
+            //   isUser: false,
+            //   timestamp:
+            //       DateTime.tryParse(
+            //         botMessage["createdAt"]?.toString() ?? "",
+            //       ) ??
+            //       DateTime.now(),
+            //   file: botFile,
+            // ),
           );
+          startBotStreaming(botMsg);
         }
 
         scrollToTopAfterBuild();

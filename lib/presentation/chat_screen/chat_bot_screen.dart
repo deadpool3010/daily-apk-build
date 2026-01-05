@@ -10,7 +10,9 @@ class ChatMessage {
   final bool isUser; // true for user, false for bot
   final DateTime timestamp;
   final Map<String, dynamic>? file;
-  final String? formQuestionHeader; // file information from API
+  final String? formQuestionHeader;
+  String streamedText;
+  String? fullText; // Text streamed from bot
 
   ChatMessage({
     required this.text,
@@ -18,6 +20,8 @@ class ChatMessage {
     DateTime? timestamp,
     this.file,
     this.formQuestionHeader,
+    this.streamedText = '',
+    this.fullText = '',
   }) : timestamp = timestamp ?? DateTime.now();
 }
 
@@ -190,8 +194,15 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
                 bottom: -10,
                 child: ChatScreenBottom(
                   messageController: controller.messageController,
-                  onSend: (text, {file, fileType}) => controller
-                      .sendChatMessage(text, file: file, fileType: fileType),
+                  onSend:
+                      (text, {file, fileType, originalTranscript, fileUrl}) =>
+                          controller.sendChatMessage(
+                            text,
+                            file: file,
+                            fileType: fileType,
+                            originalTranscript: originalTranscript,
+                            fileUrl: fileUrl,
+                          ),
                 ),
               ),
 
@@ -363,52 +374,78 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
   }
 
   Widget _buildUserMessage(ChatMessage message) {
-    return Align(
-      alignment: Alignment.centerRight,
-      child: message.file != null
-          ? message.file!['fileType'] == 'audio'
-                ? AudioChatBubble(
-                    audioUrl: message.file!['fileUrl']?.toString(),
-                    audioTranscript:
-                        message.file!['audioTranscript']?.toString() ??
-                        message.text,
-                    isLoading: message.file!['fileUrl'] == null,
-                  )
-                : ChatBubblePdf(
-                    fileName:
-                        message.file!['fileName']?.toString() ?? 'Document.pdf',
-                    fileUrl: message.file!['fileUrl']?.toString(),
-                    caption:
-                        message.file!['caption']?.toString() ?? message.text,
-                    fileSize: null, // Can be extracted from file if needed
-                    isLoading: message.file!['fileUrl'] == null,
-                  )
-          : Container(
-              constraints: BoxConstraints(maxWidth: 300),
-              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-              decoration: ShapeDecoration(
-                color: const Color(0xFF3865FF),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(12),
-                    topRight: Radius.circular(12),
-                    bottomLeft: Radius.circular(12),
-                  ),
-                ),
-              ),
-              child: Text(
-                message.text,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontFamily: 'Lato',
-                  fontWeight: FontWeight.w400,
-                  height: 1.44,
-                  decoration: TextDecoration.none,
-                ),
-              ),
+    final hasValidFile =
+        message.file != null &&
+        message.file!['fileType'] != null &&
+        message.file!['fileType'].toString().isNotEmpty;
+
+    // Debug prints
+    print('🔍 _buildUserMessage DEBUG:');
+    print('   message.text: ${message.text}');
+    print('   message.file: ${message.file}');
+    print('   message.file != null: ${message.file != null}');
+    if (message.file != null) {
+      print('   message.file![\'fileType\']: ${message.file!['fileType']}');
+      print(
+        '   message.file![\'fileType\'] != null: ${message.file!['fileType'] != null}',
+      );
+      print(
+        '   message.file![\'fileType\'].toString().isNotEmpty: ${message.file!['fileType']?.toString().isNotEmpty}',
+      );
+    }
+    print('   hasValidFile: $hasValidFile');
+
+    Widget messageWidget;
+
+    if (hasValidFile) {
+      if (message.file!['fileType'] == 'audio') {
+        print('✅ RENDERING: AudioChatBubble');
+        messageWidget = AudioChatBubble(
+          audioUrl: message.file!['fileUrl']?.toString(),
+          audioTranscript:
+              message.text, // Use text field content (may be edited)
+          isLoading: message.file!['fileUrl'] == null,
+        );
+      } else {
+        print('✅ RENDERING: ChatBubblePdf (PDF/Document)');
+        messageWidget = ChatBubblePdf(
+          fileName: message.file!['fileName']?.toString() ?? 'Document.pdf',
+          fileUrl: message.file!['fileUrl']?.toString(),
+          caption: message.file!['caption']?.toString() ?? message.text,
+          fileSize: null, // Can be extracted from file if needed
+          isLoading: message.file!['fileUrl'] == null,
+        );
+      }
+    } else {
+      print('✅ RENDERING: Normal Text Message');
+      messageWidget = Container(
+        constraints: BoxConstraints(maxWidth: 300),
+        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+        decoration: ShapeDecoration(
+          color: const Color(0xFF3865FF),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(12),
+              topRight: Radius.circular(12),
+              bottomLeft: Radius.circular(12),
             ),
-    );
+          ),
+        ),
+        child: Text(
+          message.text,
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 16,
+            fontFamily: 'Lato',
+            fontWeight: FontWeight.w400,
+            height: 1.44,
+            decoration: TextDecoration.none,
+          ),
+        ),
+      );
+    }
+
+    return Align(alignment: Alignment.centerRight, child: messageWidget);
   }
 
   Widget _buildBotMessage(ChatMessage message) {
@@ -422,15 +459,12 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
                     children: [
                       AudioChatBubble(
                         audioUrl: message.file!['fileUrl']?.toString(),
-                        audioTranscript:
-                            message.file!['audioTranscript']?.toString() ??
-                            message.text,
+                        audioTranscript: message
+                            .text, // Use message text (may be edited for user messages)
                         isLoading: message.file!['fileUrl'] == null,
                       ),
                       LikeDislikeTTS(
-                        messageText:
-                            message.file!['audioTranscript']?.toString() ??
-                            message.text,
+                        messageText: message.text,
                         onLikeChanged: (isLiked) {
                           print(
                             'Message feedback: ${isLiked ? "liked" : "disliked"}',
@@ -555,7 +589,9 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
                     ),
                   ),
                   child: Text(
-                    message.text,
+                    message.streamedText.isNotEmpty
+                        ? message.streamedText
+                        : message.text,
                     style: const TextStyle(
                       color: Color(0xFF1D2873),
                       fontSize: 16,

@@ -2,9 +2,9 @@ import 'package:bandhucare_new/core/controller/session_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'dart:async';
-import 'package:bandhucare_new/services/variables.dart';
+import 'package:bandhucare_new/core/constants/variables.dart';
 import 'package:bandhucare_new/routes/app_routes.dart';
-import 'package:bandhucare_new/services/shared_pref_localization.dart';
+import 'package:bandhucare_new/core/services/shared_pref_localization.dart';
 import 'package:bandhucare_new/core/utils/image_constant.dart';
 
 class SplashController extends GetxController with GetTickerProviderStateMixin {

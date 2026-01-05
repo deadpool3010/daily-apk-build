@@ -1,11 +1,11 @@
 import 'package:bandhucare_new/core/notifications/local_notification_service.dart';
 import 'package:bandhucare_new/core/notifications/notification_router.dart';
 import 'package:bandhucare_new/core/notifications/notification_service.dart';
-import 'package:bandhucare_new/services/variables.dart';
+import 'package:bandhucare_new/core/constants/variables.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:bandhucare_new/localization/app_localization.dart';
-import 'package:bandhucare_new/services/shared_pref_localization.dart';
+import 'package:bandhucare_new/core/services/shared_pref_localization.dart';
 import 'package:toastification/toastification.dart';
 import 'routes/app_routes.dart';
 import 'package:firebase_core/firebase_core.dart';

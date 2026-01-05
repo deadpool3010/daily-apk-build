@@ -1,4 +1,4 @@
-import 'package:bandhucare_new/services/variables.dart';
+import 'package:bandhucare_new/core/constants/variables.dart';
 
 String baseUrl = "https://devbandhucareapis.revanai.in/v2/api/";
 // String createAbhaNumber = "auth/create-abha";
@@ -12,7 +12,7 @@ String selectAccount = "auth/select-account";
 String createAbhaNumber = "auth/create-abha";
 String verifyEmail = "auth/send-verification-link";
 String addMeTOCommunity = "community/add-me";
-String chatApi = "chat/answer";
+String chatApi = "chat/answerv2";
 String getAllMessagesApi({int page = 1, int limit = 10}) {
   return "chat/?page=$page&limit=$limit";
 }
@@ -37,3 +37,5 @@ String abhaAddressSuggestions(String sessionId) =>
 String updateFcmToken = "auth/update-fcm";
 String getFormSessions(String date, String status) =>
     "form/sessions?date=$date&status=$status";
+
+String getTranscription = "auth/audio-transcript";

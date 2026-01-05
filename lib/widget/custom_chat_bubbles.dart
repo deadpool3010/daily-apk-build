@@ -396,10 +396,33 @@ class _AudioChatBubbleState extends State<AudioChatBubble> {
   void initState() {
     super.initState();
     _playerController = PlayerController();
-    if (widget.audioUrl != null) {
+    if (widget.audioUrl != null && widget.audioUrl!.isNotEmpty) {
       _loadWaveform();
     } else {
       _isLoading = false;
+    }
+  }
+
+  @override
+  void didUpdateWidget(AudioChatBubble oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Only reload if audioUrl actually changed and we haven't loaded yet
+    if (widget.audioUrl != oldWidget.audioUrl) {
+      if (widget.audioUrl != null &&
+          widget.audioUrl!.isNotEmpty &&
+          !_hasWaveform) {
+        // Only reload if we haven't successfully loaded yet
+        _loadWaveform();
+      } else if (widget.audioUrl == null || widget.audioUrl!.isEmpty) {
+        // If URL was removed, reset state
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+            _hasWaveform = false;
+          });
+        }
+      }
+      // If URL is the same, don't reload - preserve current state
     }
   }
 
@@ -410,10 +433,48 @@ class _AudioChatBubbleState extends State<AudioChatBubble> {
   }
 
   Future<void> _loadWaveform() async {
-    if (widget.audioUrl == null) return;
+    if (widget.audioUrl == null || widget.audioUrl!.isEmpty) {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+      return;
+    }
+
+    // Skip invalid file paths like 'cc' that cause ExoPlayer errors
+    if (widget.audioUrl == 'cc' || widget.audioUrl!.length < 3) {
+      print('Invalid audio URL: ${widget.audioUrl}');
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+      return;
+    }
 
     try {
-      final localPath = await _downloadAudio(widget.audioUrl!);
+      // Check if it's a local file path or a URL
+      final String localPath;
+      if (widget.audioUrl!.startsWith('http://') ||
+          widget.audioUrl!.startsWith('https://')) {
+        // It's a URL, download it
+        localPath = await _downloadAudio(widget.audioUrl!);
+      } else {
+        // It's a local file path, verify it exists
+        final file = File(widget.audioUrl!);
+        if (await file.exists()) {
+          localPath = widget.audioUrl!;
+        } else {
+          print('Local audio file does not exist: ${widget.audioUrl}');
+          if (mounted) {
+            setState(() {
+              _isLoading = false;
+            });
+          }
+          return;
+        }
+      }
       _localAudioPath = localPath; // Store for later use
       await _playerController!.preparePlayer(
         path: localPath,
@@ -471,20 +532,38 @@ class _AudioChatBubbleState extends State<AudioChatBubble> {
   }
 
   Future<String> _downloadAudio(String url) async {
-    final dir = await getTemporaryDirectory();
-    final fileName = url.split('/').last;
-    final filePath = "${dir.path}/$fileName";
-    final response = await http.get(Uri.parse(url));
-    final file = File(filePath);
-    await file.writeAsBytes(response.bodyBytes);
-    return filePath;
+    try {
+      final dir = await getTemporaryDirectory();
+      // Extract filename from URL, use a safe default if extraction fails
+      String fileName = url.split('/').last;
+      if (fileName.isEmpty || !fileName.contains('.')) {
+        // Generate a unique filename if extraction fails
+        fileName = 'audio_${DateTime.now().millisecondsSinceEpoch}.wav';
+      }
+      final filePath = "${dir.path}/$fileName";
+
+      print('Downloading audio from: $url');
+      final response = await http.get(Uri.parse(url));
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to download audio: ${response.statusCode}');
+      }
+
+      final file = File(filePath);
+      await file.writeAsBytes(response.bodyBytes);
+      print('Audio downloaded to: $filePath');
+      return filePath;
+    } catch (e) {
+      print('Error downloading audio: $e');
+      rethrow;
+    }
   }
 
   void _togglePlayPause() async {
     if (_playerController == null || !_hasWaveform) return;
 
     try {
-      final currentState = await _playerController!.playerState;
+      final currentState = await _playerController!.playerState; //
       print('Current player state: $currentState, _isPlaying: $_isPlaying');
 
       if (currentState == PlayerState.playing) {
@@ -757,29 +836,33 @@ class _AudioChatBubbleState extends State<AudioChatBubble> {
             ],
           ),
           // Loading overlay with blur
-          if (widget.isLoading || (_isLoading && widget.audioUrl == null))
-            Positioned.fill(
-              child: ClipRRect(
-                borderRadius: const BorderRadius.only(
-                  bottomLeft: Radius.circular(20),
-                  bottomRight: Radius.circular(20),
-                  topLeft: Radius.circular(20),
-                  topRight: Radius.circular(0),
-                ),
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
-                  child: Container(
-                    color: Colors.white.withOpacity(0.3),
-                    child: const Center(
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
+          // Only show loading if we don't have a valid audioUrl yet
+          // If audioUrl is present, waveform loading happens in background without overlay
+          // if ((widget.isLoading &&
+          //         (widget.audioUrl == null || widget.audioUrl!.isEmpty)) ||
+          //     (_isLoading && widget.audioUrl == null))
+          //   Positioned.fill(
+          //     child: ClipRRect(
+          //       borderRadius: const BorderRadius.only(
+          //         bottomLeft: Radius.circular(20),
+          //         bottomRight: Radius.circular(20),
+          //         topLeft: Radius.circular(20),
+          //         topRight: Radius.circular(0),
+          //       ),
+          //       child: BackdropFilter(
+          //         filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
+          //         child: Container(
+          //           color: Colors.white.withOpacity(0.3),
+          //           child: const Center(
+          //             child: CircularProgressIndicator(
+          //               strokeWidth: 2,
+          //               color: Colors.white,
+          //             ),
+          //           ),
+          //         ),
+          //       ),
+          //     ),
+          //   ),
         ],
       ),
     );

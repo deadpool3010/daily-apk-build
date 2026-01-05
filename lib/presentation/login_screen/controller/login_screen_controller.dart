@@ -1,5 +1,5 @@
 import 'package:bandhucare_new/routes/app_routes.dart';
-import 'package:bandhucare_new/services/variables.dart';
+import 'package:bandhucare_new/core/constants/variables.dart';
 import 'package:bandhucare_new/core/network/api_services.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';

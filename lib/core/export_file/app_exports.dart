@@ -16,8 +16,8 @@ export 'package:pin_code_fields/pin_code_fields.dart';
 export 'package:mobile_scanner/mobile_scanner.dart';
 
 // ==================== Services ====================
-export 'package:bandhucare_new/services/shared_pref_localization.dart';
-export 'package:bandhucare_new/services/variables.dart';
+export 'package:bandhucare_new/core/services/shared_pref_localization.dart';
+export 'package:bandhucare_new/core/constants/variables.dart';
 
 // ==================== Localization ====================
 export 'package:bandhucare_new/localization/app_localization.dart';
