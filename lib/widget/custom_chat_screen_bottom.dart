@@ -510,6 +510,8 @@ class _ChatScreenBottomState extends State<ChatScreenBottom>
                             if (mounted) {
                               setState(() => _isRecording = true);
                               _pulseController.repeat(reverse: true);
+                              // Ensure focus is maintained after state change
+                              //  _textFieldFocusNode.requestFocus();
                             }
                             _audioWaveformKey.currentState?.startRecording();
                           });
@@ -560,8 +562,6 @@ class _ChatScreenBottomState extends State<ChatScreenBottom>
                                 );
                                 _removePdfFile();
                                 widget.messageController.clear();
-                                // Dismiss keyboard after sending
-                                FocusScope.of(context).unfocus();
                               }
                               // Send text only if there's text
                               else if (textToSend.isNotEmpty) {
@@ -571,8 +571,6 @@ class _ChatScreenBottomState extends State<ChatScreenBottom>
                                   fileType: null,
                                 );
                                 widget.messageController.clear();
-                                // Dismiss keyboard after sending
-                                FocusScope.of(context).unfocus();
                               }
                             },
 

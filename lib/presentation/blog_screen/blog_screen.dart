@@ -1,4 +1,4 @@
-import 'package:bandhucare_new/core/app_exports.dart';
+import 'package:bandhucare_new/core/export_file/app_exports.dart';
 import 'package:bandhucare_new/presentation/blog_screen/controller/blog_screen_controller.dart';
 
 class BlogScreen extends StatelessWidget {
@@ -59,11 +59,7 @@ class BlogScreen extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               // Tags (use tags from arguments if provided, otherwise use default)
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: _buildTags(article),
-              ),
+              Wrap(spacing: 8, runSpacing: 8, children: _buildTags(article)),
               const SizedBox(height: 24),
               // Hero Image (shown when navigating from story cards)
               if (article['heroTag'] != null && article['imageUrl'] != null)
@@ -122,7 +118,7 @@ class BlogScreen extends StatelessWidget {
   Widget _buildHeroImage(Map<String, dynamic> article) {
     final heroTag = article['heroTag'] as String;
     final imageUrl = article['imageUrl'] as String;
-    
+
     return Hero(
       tag: heroTag,
       child: Container(
@@ -370,7 +366,8 @@ class BlogScreen extends StatelessWidget {
 
   Widget _buildArticleText(Map<String, dynamic> article) {
     // Use description from arguments if provided, otherwise use default
-    final description = article['description'] ??
+    final description =
+        article['description'] ??
         'I woke up to the soft light filtering through my window, and for the first time in a while, I didn\'t rush to check my phone. Instead, I took a deep breath and stretched, feeling my body wake up slowly.';
 
     return Column(

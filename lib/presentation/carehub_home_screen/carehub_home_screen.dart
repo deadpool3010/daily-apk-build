@@ -1,4 +1,4 @@
-import 'package:bandhucare_new/core/app_exports.dart';
+import 'package:bandhucare_new/core/export_file/app_exports.dart';
 import 'package:bandhucare_new/presentation/carehub_home_screen/controller/carehub_home_screen_controller.dart';
 
 class CarehubHomeScreen extends StatelessWidget {
@@ -152,7 +152,10 @@ class CarehubHomeScreen extends StatelessWidget {
                               },
                             ];
                             final article = articles[index];
-                            return _buildArticleCard(article, 'carehub_popular_article_$index');
+                            return _buildArticleCard(
+                              article,
+                              'carehub_popular_article_$index',
+                            );
                           },
                         ),
                       );
@@ -347,11 +350,12 @@ class CarehubHomeScreen extends StatelessWidget {
         arguments['heroTag'] = heroTag;
         arguments['imageUrl'] = article['image'];
         // Add tags for article content type
-        arguments['tags'] = ['Patient Reference', 'Healthy Diet Articles', 'Self Help'];
-        Get.toNamed(
-          AppRoutes.blogScreen,
-          arguments: arguments,
-        );
+        arguments['tags'] = [
+          'Patient Reference',
+          'Healthy Diet Articles',
+          'Self Help',
+        ];
+        Get.toNamed(AppRoutes.blogScreen, arguments: arguments);
       },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -383,48 +387,52 @@ class CarehubHomeScreen extends StatelessWidget {
                       width: double.infinity,
                       height: 240,
                       color: Colors.grey[300],
-                      child: const Icon(Icons.image, size: 50, color: Colors.grey),
+                      child: const Icon(
+                        Icons.image,
+                        size: 50,
+                        color: Colors.grey,
+                      ),
                     );
                   },
                 ),
               ),
             ),
           ),
-        const SizedBox(height: 10),
-        // Article Content
-        Text(
-          article['title']!,
-          style: GoogleFonts.roboto(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-            color: AppColors.black,
-          ),
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
-        ),
-        const SizedBox(height: 4),
-        Row(
-          children: [
-            Text(
-              '- ${article['author']!}',
-              style: GoogleFonts.lato(
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-                color: Colors.grey[600],
-              ),
+          const SizedBox(height: 10),
+          // Article Content
+          Text(
+            article['title']!,
+            style: GoogleFonts.roboto(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: AppColors.black,
             ),
-          ],
-        ),
-        const SizedBox(height: 4),
-        Text(
-          article['date']!,
-          style: GoogleFonts.lato(
-            fontSize: 12,
-            fontWeight: FontWeight.w400,
-            color: AppColors.primaryColor,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
           ),
-        ),
-      ],
+          const SizedBox(height: 4),
+          Row(
+            children: [
+              Text(
+                '- ${article['author']!}',
+                style: GoogleFonts.lato(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.grey[600],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Text(
+            article['date']!,
+            style: GoogleFonts.lato(
+              fontSize: 12,
+              fontWeight: FontWeight.w400,
+              color: AppColors.primaryColor,
+            ),
+          ),
+        ],
       ),
     );
   }
