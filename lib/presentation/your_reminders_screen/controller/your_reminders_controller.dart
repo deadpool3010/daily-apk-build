@@ -1,4 +1,4 @@
-import 'package:bandhucare_new/core/network/api_services.dart';
+import 'package:bandhucare_new/core/api/api_services.dart';
 import 'package:bandhucare_new/presentation/chat_screen/controller/chat_screeen_controller.dart';
 import 'package:bandhucare_new/presentation/chat_screen/chat_bot_screen.dart';
 import 'package:get/get.dart';

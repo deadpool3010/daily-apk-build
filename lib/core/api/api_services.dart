@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:bandhucare_new/core/controller/session_controller.dart';
 import 'package:bandhucare_new/model/patientModel.dart';
 import 'package:bandhucare_new/core/constants/variables.dart';
-import 'package:bandhucare_new/core/network/api_constant.dart';
+import 'package:bandhucare_new/core/api/api_constant.dart';
 import 'package:bandhucare_new/core/services/shared_pref_localization.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';

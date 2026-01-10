@@ -29,7 +29,7 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
       surfaceTintColor: backgroundColor,
       elevation: 0,
       systemOverlayStyle: const SystemUiOverlayStyle(
-        statusBarColor: Colors.white,
+        statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.dark,
       ),
       leading: showBackButton

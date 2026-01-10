@@ -7,7 +7,7 @@ import 'package:bandhucare_new/widget/add_media_chat_screen_bottomsheet.dart';
 import 'package:bandhucare_new/widget/selected_pdf_in_chat_bottom.dart';
 import 'package:bandhucare_new/widget/selected_audio_in_chat_bottom.dart';
 import 'package:bandhucare_new/widget/audio_waveform_widget.dart';
-import 'package:bandhucare_new/core/network/api_services.dart';
+import 'package:bandhucare_new/core/api/api_services.dart';
 import 'package:bandhucare_new/core/services/audio_service.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:get/get.dart';

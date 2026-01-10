@@ -10,27 +10,42 @@ class HealthCalendar extends StatefulWidget {
 class _HealthCalendarState extends State<HealthCalendar> {
   int selectedIndex = 0;
   @override
+  void initState() {
+    super.initState();
+    // SystemChrome.setSystemUIOverlayStyle(
+    //   SystemUiOverlayStyle(
+    //     statusBarColor: Colors.redAccent,
+    //     systemNavigationBarColor: Colors.transparent,
+    //   ),
+    // );
+  }
+
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: CommonAppBar(title: 'Health Calendar'),
-      backgroundColor: Colors.white,
-      body: Center(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SmoothToggle(
-              onChanged: (index) {
-                setState(() {
-                  selectedIndex = index;
-                });
-              },
-            ),
-            Expanded(
-              child: selectedIndex == 0
-                  ? const MyAppointment()
-                  : const YourReminders(),
-            ),
-          ],
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle(
+        statusBarColor: Colors.red,
+        systemNavigationBarColor: Colors.transparent,
+      ),
+      child: Scaffold(
+        appBar: CommonAppBar(title: 'Health Calendar'),
+        body: Center(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              SmoothToggle(
+                onChanged: (index) {
+                  setState(() {
+                    selectedIndex = index;
+                  });
+                },
+              ),
+              Expanded(
+                child: selectedIndex == 1
+                    ? const MyAppointment()
+                    : const YourReminders(),
+              ),
+            ],
+          ),
         ),
       ),
     );

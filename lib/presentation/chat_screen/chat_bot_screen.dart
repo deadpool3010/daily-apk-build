@@ -569,15 +569,20 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
               children: [
                 if (message.formQuestionHeader != null &&
                     message.formQuestionHeader!.isNotEmpty) ...{
-                  Text(
-                    message.formQuestionHeader!,
-                    style: TextStyle(
-                      color: Color(0xFF979797),
-                      fontSize: 12,
-                      fontFamily: 'Roboto',
-                    ),
+                  Builder(
+                    builder: (context) {
+                      print("message.formQuestionHeader: ${message.text}");
+                      return Text(
+                        message.text!,
+                        style: TextStyle(
+                          color: Color(0xFF979797),
+                          fontSize: 12,
+                          fontFamily: 'Roboto',
+                        ),
+                      );
+                    },
                   ),
-                  SizedBox(height: 5),
+                  // SizedBox(height: 5),
                 } else ...{
                   SizedBox.shrink(),
                 },

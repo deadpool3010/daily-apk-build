@@ -22,6 +22,14 @@ class _ChatbotSplashLoadingScreenState extends State<ChatbotSplashLoadingScreen>
     super.initState();
     // Initialize controller first
 
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.light,
+        statusBarBrightness: Brightness.dark,
+      ),
+    );
+
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 800), // Faster transition
       vsync: this,
@@ -80,6 +88,7 @@ class _ChatbotSplashLoadingScreenState extends State<ChatbotSplashLoadingScreen>
 
   @override
   void dispose() {
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
     _animationController.dispose();
     super.dispose();
   }

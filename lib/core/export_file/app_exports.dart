@@ -23,7 +23,7 @@ export 'package:bandhucare_new/core/constants/variables.dart';
 export 'package:bandhucare_new/localization/app_localization.dart';
 
 // ==================== Core Network ====================
-export 'package:bandhucare_new/core/network/api_services.dart';
+export 'package:bandhucare_new/core/api/api_services.dart';
 
 // ==================== Common Dart Libraries ====================
 export 'dart:async';

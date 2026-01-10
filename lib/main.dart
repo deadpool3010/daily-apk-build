@@ -1,3 +1,5 @@
+import 'package:bandhucare_new/core/network/controller/network_controller.dart';
+import 'package:bandhucare_new/core/network/widget/network_ui.dart';
 import 'package:bandhucare_new/core/notifications/local_notification_service.dart';
 import 'package:bandhucare_new/core/notifications/notification_router.dart';
 import 'package:bandhucare_new/core/notifications/notification_service.dart';
@@ -74,6 +76,7 @@ void main() async {
   //   printNotificationPayload(initialMessage);
   // }
   Get.put(SessionController(), permanent: true);
+  Get.put(NetworkController(), permanent: true);
   runApp(
     ToastificationWrapper(
       child: MyApp(initialLocale: locale, initialMessage: initialMessage),
@@ -154,6 +157,19 @@ class _MyAppState extends State<MyApp> {
       fallbackLocale: const Locale('en', 'US'),
       initialRoute: AppRoutes.splashScreen,
       getPages: AppPages.pages,
+
+      builder: (context, child) {
+        return Stack(
+          children: [
+            child!, // 👈 Your real pages
+            Obx(() {
+              final hasInternet =
+                  Get.find<NetworkController>().hasInternet.value;
+              return hasInternet ? const SizedBox() : NoInternetScreen();
+            }),
+          ],
+        );
+      },
     );
   }
 }
