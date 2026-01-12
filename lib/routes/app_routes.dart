@@ -1,3 +1,5 @@
+import 'package:bandhucare_new/feature/hospital_information/binding/binding.dart';
+import 'package:bandhucare_new/feature/hospital_information/presentation/hospital_information.dart';
 import 'package:bandhucare_new/feature/personal_information/presentation/personal_information.dart';
 import 'package:bandhucare_new/feature/user_profile/presentation/user_profile_screen.dart';
 import 'package:bandhucare_new/presentation/chat_screen/binding/chat_screen_binding.dart';
@@ -100,6 +102,7 @@ class AppRoutes {
   static const affirmationsScreen = '/affirmations-screen';
   static const peoplesStoriesSplashScreen = '/peoples-stories-splash-screen';
   static const peoplesStoriesScreen = '/peoples-stories-screen';
+  static const hospitalInformationScreen = '/hospital-information';
 }
 
 class AppPages {
@@ -309,6 +312,13 @@ class AppPages {
       binding: PeoplesStoriesScreenBinding(),
       transition: Transition.rightToLeftWithFade,
       transitionDuration: const Duration(milliseconds: 300),
+    ),
+    GetPage(
+      name: AppRoutes.hospitalInformationScreen,
+      page: () => HospitalInformation(),
+      binding: HospitalInformationBinding(),
+      transition: Transition.rightToLeftWithFade,
+      transitionDuration: const Duration(milliseconds: 400),
     ),
   ];
 }

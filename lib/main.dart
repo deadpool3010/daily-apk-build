@@ -4,6 +4,7 @@ import 'package:bandhucare_new/core/notifications/local_notification_service.dar
 import 'package:bandhucare_new/core/notifications/notification_router.dart';
 import 'package:bandhucare_new/core/notifications/notification_service.dart';
 import 'package:bandhucare_new/core/constants/variables.dart';
+import 'package:bandhucare_new/presentation/networks/networkgate.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:bandhucare_new/localization/app_localization.dart';
@@ -79,7 +80,7 @@ void main() async {
   Get.put(NetworkController(), permanent: true);
   runApp(
     ToastificationWrapper(
-      child: MyApp(initialLocale: locale, initialMessage: initialMessage),
+      child: NetworkGate(initialLocale: locale, initialMessage: initialMessage),
     ),
   );
 }
@@ -157,19 +158,6 @@ class _MyAppState extends State<MyApp> {
       fallbackLocale: const Locale('en', 'US'),
       initialRoute: AppRoutes.splashScreen,
       getPages: AppPages.pages,
-
-      builder: (context, child) {
-        return Stack(
-          children: [
-            child!, // 👈 Your real pages
-            Obx(() {
-              final hasInternet =
-                  Get.find<NetworkController>().hasInternet.value;
-              return hasInternet ? const SizedBox() : NoInternetScreen();
-            }),
-          ],
-        );
-      },
     );
   }
 }

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
 class NetworkButton extends StatelessWidget {
-  String title;
-  NetworkButton({super.key, required this.title});
+  final String title;
+  final VoidCallback onPressed;
+  NetworkButton({super.key, required this.title, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -17,13 +18,16 @@ class NetworkButton extends StatelessWidget {
           colors: [Color(0xFF397BE9), Color(0xFF99CDFB)],
         ),
       ),
-      child: Center(
-        child: Text(
-          title,
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
+      child: GestureDetector(
+        onTap: onPressed,
+        child: Center(
+          child: Text(
+            title,
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ),
       ),

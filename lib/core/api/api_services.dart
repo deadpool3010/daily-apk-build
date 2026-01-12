@@ -1141,3 +1141,30 @@ Future<Map<String, dynamic>> getTranscriptionApi(
     throw Exception(e);
   }
 }
+
+Future<Map<String, dynamic>> getHospitalInformationApi(String language) async {
+  final url = baseUrl + getHospitalInformation(language);
+
+  try {
+    final response = await http.get(
+      Uri.parse(url),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $accessToken",
+      },
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      final result = jsonDecode(response.body);
+      print('Hospital Information Response: $result');
+      return result['data']['hospitalInfo'];
+    } else {
+      final result = jsonDecode(response.body);
+      print('Hospital Information Error: $result');
+      throw Exception(result['message'] ?? 'Unknown error');
+    }
+  } catch (e) {
+    print('Hospital Information Error: $e');
+    throw Exception(e);
+  }
+}

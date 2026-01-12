@@ -35,7 +35,12 @@ class NoInternetScreen extends StatelessWidget {
               Obx(() {
                 return controller.isChecking.value
                     ? const CircularProgressIndicator()
-                    : NetworkButton(title: "Retry");
+                    : NetworkButton(
+                        title: "Retry",
+                        onPressed: () {
+                          controller.retry();
+                        },
+                      );
               }),
             ],
           ),
