@@ -25,16 +25,16 @@ class HospitalModel {
 
   factory HospitalModel.fromJson(Map<String, dynamic> map) {
     return HospitalModel(
-      hospitalName: map['hospitalName'],
-      hospitalType: map['hospitalType'],
-      email: map['email'],
-      mainMobileNumber: map['mainPhoneNumber'],
-      operatingHours: map['operatingHours'],
-      state: map['state'],
-      city: map['city'],
-      street: map['street'],
-      emergencyContanct: map['emergencyContactNumber'],
-      department: map['department'] ?? '-',
+      hospitalName: map['hospitalName']?.toString(),
+      hospitalType: map['hospitalType']?.toString(),
+      email: map['email']?.toString(),
+      mainMobileNumber: map['mainPhoneNumber']?.toString(),
+      operatingHours: map['operatingHours']?.toString(),
+      state: map['state']?.toString(),
+      city: map['city']?.toString(),
+      street: map['street']?.toString(),
+      emergencyContanct: map['emergencyContactNumber']?.toString(),
+      department: map['department']?.toString() ?? '-',
     );
   }
 }

@@ -105,4 +105,5 @@ class ImageConstant {
 
   // Network Screen Images
   static const String no_internet_icon = '${basePath}no_internet.png';
+  static const String google_map_section_img = '${basePath}google_maps.png';
 }

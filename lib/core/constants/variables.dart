@@ -6,3 +6,5 @@ String userData = "";
 String appLanguage = "";
 String mitraLanguage = "";
 String? fcmToken;
+double? destLat;
+double? destLong;

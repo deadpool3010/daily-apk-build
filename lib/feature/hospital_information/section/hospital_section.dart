@@ -15,7 +15,7 @@ class HospitalInformationSection extends StatelessWidget {
       return Column(
         children: [
           InfoRow(label: "Hospital Name", value: hospital.hospitalName ?? '-'),
-          const SizedBox(height: 16),
+          const SizedBox(height: 10),
           InfoRow(label: "Hosptial Type", value: hospital.hospitalType ?? '-'),
           const SizedBox(height: 16),
           InfoRow(label: "Department", value: hospital.department ?? '-'),
@@ -37,15 +37,32 @@ class HospitalInformationSection extends StatelessWidget {
             value: hospital.operatingHours ?? '-',
           ),
           const SizedBox(height: 16),
-          Text(
-            "Address :",
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          Padding(
+            padding: const EdgeInsets.only(left: 16),
+            child: Align(
+              alignment: Alignment.topLeft,
+              child: Text(
+                "Address :",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+            ),
           ),
           InfoRow(label: "Stret/Area", value: hospital.street ?? '-'),
           const SizedBox(height: 16),
           InfoRow(label: "City", value: hospital.city ?? '-'),
           const SizedBox(height: 16),
           InfoRow(label: "State", value: hospital.state ?? '-'),
+          const SizedBox(height: 16),
+          Padding(
+            padding: const EdgeInsets.only(left: 16),
+            child: Align(
+              alignment: Alignment.topLeft,
+              child: Text(
+                "Map :",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ),
         ],
       );
     });
