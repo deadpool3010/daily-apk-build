@@ -1168,3 +1168,60 @@ Future<Map<String, dynamic>> getHospitalInformationApi(String language) async {
     throw Exception(e);
   }
 }
+
+Future<Map<String, dynamic>> likeMessageApi(String messageId) async {
+  final url = baseUrl + likeMessage;
+  try {
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $accessToken",
+      },
+      body: jsonEncode({"messageId": messageId}),
+    );
+    final result = jsonDecode(response.body);
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      print(result);
+
+      return result is Map<String, dynamic>
+          ? result
+          : {'success': true, 'message': result.toString()};
+    } else {
+      throw Exception(
+        result['message'] ?? result.toString() ?? 'Unknown error',
+      );
+    }
+  } catch (e) {
+    print('Error liking message: $e');
+    throw Exception(e);
+  }
+}
+
+Future<Map<String, dynamic>> disLikeMessageApi(String messageId) async {
+  final url = baseUrl + disLikeMessage;
+  try {
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $accessToken",
+      },
+      body: jsonEncode({"messageId": messageId}),
+    );
+    final result = jsonDecode(response.body);
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      print(result);
+      return result is Map<String, dynamic>
+          ? result
+          : {'success': true, 'message': result.toString()};
+    } else {
+      throw Exception(
+        result['message'] ?? result.toString() ?? 'Unknown error',
+      );
+    }
+  } catch (e) {
+    print('Error disliking message: $e');
+    throw Exception(e);
+  }
+}

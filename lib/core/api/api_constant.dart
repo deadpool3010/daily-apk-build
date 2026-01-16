@@ -41,3 +41,6 @@ String getFormSessions(String date, String status) =>
 String getTranscription = "auth/audio-transcript";
 String getHospitalInformation(String language) =>
     "auth/get-hospital-info?language=$language";
+
+String likeMessage = 'chat/like-message';
+String disLikeMessage = 'chat/dislike-message';

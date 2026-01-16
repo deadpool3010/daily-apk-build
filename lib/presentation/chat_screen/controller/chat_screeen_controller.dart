@@ -342,6 +342,7 @@ class ChatScreenController extends GetxController {
     final isUser = msg["senderType"] == "patient";
     final fileData = msg["file"] as Map<String, dynamic>?;
     final formQuestionHeader = msg['formTemplateName'] as String?;
+    print("id is" + "  " + msg['_id']);
 
     Map<String, dynamic>? fileInfo;
     if (fileData != null &&
@@ -372,6 +373,7 @@ class ChatScreenController extends GetxController {
     }
 
     return ChatMessage(
+      messageId: msg['_id'],
       formQuestionHeader: formQuestionHeader,
       text: messageText,
       isUser: isUser,
@@ -488,7 +490,10 @@ class ChatScreenController extends GetxController {
               botMessage["content"]?.toString() ??
               botMessage["text"]?.toString() ??
               "No response";
+          // print("idddddd" + botMessage["_id"]);
+          final id = botMessage["_id"];
           final botMsg = ChatMessage(
+            messageId: id,
             text: full,
             fullText: full,
             isUser: false,

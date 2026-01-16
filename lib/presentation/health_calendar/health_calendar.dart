@@ -40,7 +40,7 @@ class _HealthCalendarState extends State<HealthCalendar> {
                 },
               ),
               Expanded(
-                child: selectedIndex == 1
+                child: selectedIndex == 0
                     ? const MyAppointment()
                     : const YourReminders(),
               ),
