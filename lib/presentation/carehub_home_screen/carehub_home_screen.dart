@@ -1,5 +1,6 @@
 import 'package:bandhucare_new/core/app_exports.dart';
 import 'package:bandhucare_new/presentation/carehub_home_screen/controller/carehub_home_screen_controller.dart';
+import 'package:bandhucare_new/presentation/blog_screen/data/blog_screen_navigation_example.dart';
 
 class CarehubHomeScreen extends StatelessWidget {
   const CarehubHomeScreen({super.key});
@@ -100,6 +101,35 @@ class CarehubHomeScreen extends StatelessWidget {
                   ),
 
                   const SizedBox(height: 30),
+
+                  // Test TipTap Button (Remove after testing)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: ElevatedButton.icon(
+                      onPressed: BlogScreenNavigationExample.navigateWithTiptapContent,
+                      icon: const Icon(Icons.article, color: Colors.white),
+                      label: Text(
+                        'Test TipTap Blog',
+                        style: GoogleFonts.lato(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primaryColor,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 12,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 20),
 
                   // Popular Articles Section
                   FadeTransition(

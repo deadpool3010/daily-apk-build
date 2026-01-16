@@ -1,5 +1,6 @@
 import 'package:bandhucare_new/core/app_exports.dart';
 import 'package:bandhucare_new/presentation/blog_screen/controller/blog_screen_controller.dart';
+import 'package:bandhucare_new/presentation/blog_screen/widgets/tiptap/tiptap_renderer.dart';
 
 class BlogScreen extends StatelessWidget {
   const BlogScreen({super.key});
@@ -369,7 +370,15 @@ class BlogScreen extends StatelessWidget {
   }
 
   Widget _buildArticleText(Map<String, dynamic> article) {
-    // Use description from arguments if provided, otherwise use default
+    // Check if TipTap JSON content is provided
+    final tiptapContent = article['tiptapContent'] ?? article['content'];
+
+    if (tiptapContent != null && tiptapContent is Map<String, dynamic>) {
+      // Use TipTap renderer for rich content
+      return TiptapRenderer(document: tiptapContent);
+    }
+
+    // Fallback to static view for backward compatibility
     final description = article['description'] ??
         'I woke up to the soft light filtering through my window, and for the first time in a while, I didn\'t rush to check my phone. Instead, I took a deep breath and stretched, feeling my body wake up slowly.';
 

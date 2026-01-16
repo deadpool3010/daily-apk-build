@@ -73,8 +73,10 @@ class JoinGroupController extends GetxController {
         // Use post-frame callback to ensure proper widget disposal before navigation
         WidgetsBinding.instance.addPostFrameCallback((_) {
           Future.delayed(Duration(milliseconds: 300), () {
-            // Navigate to join community screen or home screen
-            Get.offNamed(AppRoutes.consentFormScreen);
+            // Get group data from arguments to pass to consent form
+            final groupData = Get.arguments as Map<String, dynamic>? ?? {};
+            // Navigate to consent form screen with group data
+            Get.offNamed(AppRoutes.consentFormScreen, arguments: groupData);
           });
         });
       } else {

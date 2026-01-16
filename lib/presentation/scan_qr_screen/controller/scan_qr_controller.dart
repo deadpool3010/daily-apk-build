@@ -133,18 +133,22 @@ class ScanQrController extends GetxController {
             // Get current language from SharedPreferences (saved in ChooseLanguageScreen)
             final prefs = SharedPrefLocalization();
             final savedLocale = await prefs
-                .getAppLocale(); // Returns format like "en_US", "gu_IN", etc.
-            // Convert to lowercase: "en_us", "gu_in", etc., with fallback to "en_us"
-            final languageCode =
-                (savedLocale.isNotEmpty ? savedLocale : 'en_US').toLowerCase();
+                .getAppLocale(); // Returns format like "en_US", "gu_IN", "hi_IN", etc.
+            
+            // Convert to lowercase format for API: "en_us", "gu_in", "hi_in", "ta_in", "te_in", "ml_in"
+            // Format: language_country (all lowercase with underscore)
+            final languageCode = savedLocale.isNotEmpty
+                ? savedLocale.toLowerCase().trim() // "hi_IN" -> "hi_in", "en_US" -> "en_us"
+                : 'en_us'; // Default fallback to English
+            
             print(
-              'Retrieved language from SharedPreferences: "$savedLocale" -> "$languageCode"',
+              'GetGroupInfo - Language from SharedPreferences: "$savedLocale" -> API format: "$languageCode"',
             );
 
             final groupInfoResult = await getGroupInfo(
               groupId: groupId,
               uniqueCode: uniqueCode,
-              language: languageCode,
+              language: languageCode, // Format: "hi_in", "en_us", etc.
             );
 
             // Close loading dialog
