@@ -1,4 +1,4 @@
-import 'package:bandhucare_new/core/app_exports.dart';
+import 'package:bandhucare_new/core/export_file/app_exports.dart';
 
 class PeoplesStoriesScreen extends StatelessWidget {
   const PeoplesStoriesScreen({super.key});
@@ -205,7 +205,11 @@ class PeoplesStoriesScreen extends StatelessWidget {
                   errorBuilder: (context, error, stackTrace) {
                     return Container(
                       color: Colors.grey[300],
-                      child: Icon(Icons.person, size: 60, color: Colors.grey[600]),
+                      child: Icon(
+                        Icons.person,
+                        size: 60,
+                        color: Colors.grey[600],
+                      ),
                     );
                   },
                 ),
@@ -252,7 +256,7 @@ class PeoplesStoriesScreen extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 4),
-                    
+
                     const SizedBox(height: 12),
                     // Read Story Button
                     GestureDetector(
@@ -338,9 +342,7 @@ class PeoplesStoriesScreen extends StatelessWidget {
         // Journey Cards with thread background
         Container(
           height: 355,
-          decoration: const BoxDecoration(
-            color: Color(0xFFF3F9FF),
-          ),
+          decoration: const BoxDecoration(color: Color(0xFFF3F9FF)),
           child: Stack(
             children: [
               // Background thread/string
@@ -447,22 +449,28 @@ class PeoplesStoriesScreen extends StatelessWidget {
             itemBuilder: (context, index) {
               final quotesData = [
                 {
-                  'quote': 'I learned that strength doesn\'t always look loud—it often looks like simply continuing.',
+                  'quote':
+                      'I learned that strength doesn\'t always look loud—it often looks like simply continuing.',
                   'name': 'Manish Reddy',
                   'affiliation': 'Student, Gitan College',
-                  'imageUrl': 'https://t4.ftcdn.net/jpg/06/33/37/89/360_F_633378965_iRc8bqmOoxkrAlYKvNcBqUhqGXNBmfTB.jpg',
+                  'imageUrl':
+                      'https://t4.ftcdn.net/jpg/06/33/37/89/360_F_633378965_iRc8bqmOoxkrAlYKvNcBqUhqGXNBmfTB.jpg',
                 },
                 {
-                  'quote': 'Every small step forward is a victory worth celebrating on this journey.',
+                  'quote':
+                      'Every small step forward is a victory worth celebrating on this journey.',
                   'name': 'Priya Sharma',
                   'affiliation': 'Teacher, Delhi School',
-                  'imageUrl': 'https://t4.ftcdn.net/jpg/06/33/37/89/360_F_633378965_iRc8bqmOoxkrAlYKvNcBqUhqGXNBmfTB.jpg',
+                  'imageUrl':
+                      'https://t4.ftcdn.net/jpg/06/33/37/89/360_F_633378965_iRc8bqmOoxkrAlYKvNcBqUhqGXNBmfTB.jpg',
                 },
                 {
-                  'quote': 'Hope is not the absence of struggle, but finding light within it.',
+                  'quote':
+                      'Hope is not the absence of struggle, but finding light within it.',
                   'name': 'Rajesh Kumar',
                   'affiliation': 'Engineer, Tech Corp',
-                  'imageUrl': 'https://t4.ftcdn.net/jpg/06/33/37/89/360_F_633378965_iRc8bqmOoxkrAlYKvNcBqUhqGXNBmfTB.jpg',
+                  'imageUrl':
+                      'https://t4.ftcdn.net/jpg/06/33/37/89/360_F_633378965_iRc8bqmOoxkrAlYKvNcBqUhqGXNBmfTB.jpg',
                 },
               ];
               final data = quotesData[index];
@@ -620,7 +628,8 @@ class ThreadPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = const Color(0xFFD0D0D0) // Light gray thread color
+      ..color =
+          const Color(0xFFD0D0D0) // Light gray thread color
       ..strokeWidth = 1.5
       ..style = PaintingStyle.stroke;
 

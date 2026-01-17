@@ -8,6 +8,7 @@ class DynamicButton extends StatelessWidget {
   final double fontSize;
   final Widget? leadingIcon;
   final Widget? trailingIcon;
+  final Color? color;
 
   const DynamicButton({
     Key? key,
@@ -18,7 +19,13 @@ class DynamicButton extends StatelessWidget {
     this.fontSize = 18,
     this.leadingIcon,
     this.trailingIcon,
+    this.color,
   }) : super(key: key);
+
+  // Auto scale based on height
+  double _scale(double size) {
+    return (height / 50) * size;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,55 +36,41 @@ class DynamicButton extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [Color(0xFF3865FF), Color(0xFF223D99)],
+          colors: color == null
+              ? const [Color(0xFF3865FF), Color(0xFF223D99)]
+              : [color!, color!],
         ),
-        borderRadius: BorderRadius.circular(25),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFF0988F3).withOpacity(0.4),
-            // blurRadius: 12,
-            // offset: const Offset(0, 4),
-          ),
-          // BoxShadow(
-          //   color: const Color(0xFF0340CC).withOpacity(0.3),
-          //   blurRadius: 20,
-          //   offset: const Offset(0, 8),
-          // ),
-        ],
+        borderRadius: BorderRadius.circular(height / 2),
       ),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
           onTap: onPressed,
-          borderRadius: BorderRadius.circular(25),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // Leading Icon (optional)
-              if (leadingIcon != null) ...[
-                leadingIcon!,
-                const SizedBox(width: 10),
-              ],
-
-              // Button Text
-              Flexible(
-                child: Text(
+          borderRadius: BorderRadius.circular(height / 2),
+          child: Center(
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (leadingIcon != null) ...[
+                  Transform.scale(scale: height / 50, child: leadingIcon),
+                  // SizedBox(width: _scale(10)),
+                ],
+                Text(
                   text,
-                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: fontSize,
+                    fontSize: _scale(fontSize).clamp(11, 22),
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-              ),
-
-              // Trailing Icon (optional)
-              if (trailingIcon != null) ...[
-                const SizedBox(width: 10),
-                trailingIcon!,
+                if (trailingIcon != null) ...[
+                  SizedBox(width: _scale(6)),
+                  Transform.scale(scale: height / 50, child: trailingIcon),
+                ],
               ],
-            ],
+            ),
           ),
         ),
       ),

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:bandhucare_new/core/network/api_services.dart';
+import 'package:bandhucare_new/core/api/api_services.dart';
 import 'package:bandhucare_new/routes/app_routes.dart';
-import 'package:bandhucare_new/services/variables.dart';
+import 'package:bandhucare_new/core/constants/variables.dart';
 
 class EmailPasswordLoginController extends GetxController {
   late TextEditingController emailController;
@@ -110,7 +110,9 @@ class EmailPasswordLoginController extends GetxController {
             print('FCM token updated successfully after email login');
           } catch (e) {
             // Log error but don't fail the signInWithCredentialsApi call
-            print('Error updating FCM token after signInWithCredentialsApi: $e');
+            print(
+              'Error updating FCM token after signInWithCredentialsApi: $e',
+            );
           }
         } else {
           print('FCM token is null or empty, skipping updateFcmTokenApi call');

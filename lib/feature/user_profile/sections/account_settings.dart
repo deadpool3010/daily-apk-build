@@ -27,6 +27,11 @@ class AccountSettingsSection extends StatelessWidget {
         onTap: () {},
       ),
       ProfileMenuModel(
+        icon: Icons.local_hospital,
+        label: 'Hospital Information',
+        onTap: () => Get.toNamed(AppRoutes.hospitalInformationScreen),
+      ),
+      ProfileMenuModel(
         icon: Icons.security,
         label: 'Privacy & Security',
         onTap: () {},

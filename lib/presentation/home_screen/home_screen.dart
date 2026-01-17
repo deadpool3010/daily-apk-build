@@ -1,4 +1,4 @@
-import 'package:bandhucare_new/core/app_exports.dart';
+import 'package:bandhucare_new/core/export_file/app_exports.dart';
 import 'package:bandhucare_new/core/controller/session_controller.dart';
 import 'package:bandhucare_new/core/utils/string_utils.dart';
 
@@ -79,7 +79,9 @@ class _HomepageScreenState extends State<HomepageScreen> {
           extendBodyBehindAppBar: true,
           body: AnnotatedRegion<SystemUiOverlayStyle>(
             value: SystemUiOverlayStyle(
+              statusBarColor: Colors.transparent,
               systemNavigationBarColor: Colors.transparent,
+              statusBarIconBrightness: Brightness.light,
             ),
             child: Stack(
               children: [
@@ -95,6 +97,11 @@ class _HomepageScreenState extends State<HomepageScreen> {
                       snap: false,
                       backgroundColor: Colors.transparent,
                       elevation: 0,
+                      systemOverlayStyle: SystemUiOverlayStyle(
+                        statusBarColor: Colors.transparent,
+                        systemNavigationBarColor: Colors.transparent,
+                        statusBarIconBrightness: Brightness.dark,
+                      ),
                       automaticallyImplyLeading: false,
                       flexibleSpace: FlexibleSpaceBar(
                         background: Stack(
@@ -153,8 +160,10 @@ class _HomepageScreenState extends State<HomepageScreen> {
                                   const SizedBox(height: 4),
                                   Text(
                                     () {
-                                      final userName = sessionController.user?.name;
-                                      return userName != null && userName.isNotEmpty
+                                      final userName =
+                                          sessionController.user?.name;
+                                      return userName != null &&
+                                              userName.isNotEmpty
                                           ? '${StringUtils.getFirstName(userName)}!'
                                           : 'Hello!';
                                     }(),

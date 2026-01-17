@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:bandhucare_new/core/app_exports.dart';
+import 'package:bandhucare_new/core/export_file/app_exports.dart';
 
 class InfoRow extends StatelessWidget {
   const InfoRow({super.key, required this.label, required this.value});

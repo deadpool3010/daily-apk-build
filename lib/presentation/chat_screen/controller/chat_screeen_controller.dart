@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:bandhucare_new/core/app_exports.dart';
+import 'package:bandhucare_new/core/export_file/app_exports.dart';
 import 'package:bandhucare_new/widget/audio_record_animation.dart';
 import 'package:get/get.dart';
 
@@ -21,6 +21,7 @@ class ChatScreenController extends GetxController {
   var conversationId = RxnString();
   var selectedLanguage = 'eng'.obs;
   var shouldAutoScroll = true.obs;
+  var formQuestionHeader = ''.obs;
 
   // Pagination variables
   int currentPage = 1;
@@ -47,6 +48,25 @@ class ChatScreenController extends GetxController {
     }
     scrollController.addListener(_onScroll);
   }
+
+  void startBotStreaming(ChatMessage msg) {
+    String current = '';
+    Timer.periodic(const Duration(milliseconds: 28), (timer) {
+      if (current.length == msg.fullText?.length) {
+        timer.cancel();
+        return;
+      }
+      current += msg.fullText![current.length];
+      msg.streamedText = current;
+      messages.refresh(); // GetX magic
+    });
+  }
+
+  // @override
+  // void onReady() {
+  //   final arg = Get.arguments ?? {};
+  //   formQuestionHeader = arg['textMessage'];
+  // }
 
   void _onScroll() {
     if (!scrollController.hasClients || _isLoadingInBackground) return;
@@ -321,6 +341,7 @@ class ChatScreenController extends GetxController {
   ChatMessage _processMessage(Map<String, dynamic> msg) {
     final isUser = msg["senderType"] == "patient";
     final fileData = msg["file"] as Map<String, dynamic>?;
+    final formQuestionHeader = msg['formTemplateName'] as String?;
 
     Map<String, dynamic>? fileInfo;
     if (fileData != null &&
@@ -351,6 +372,7 @@ class ChatScreenController extends GetxController {
     }
 
     return ChatMessage(
+      formQuestionHeader: formQuestionHeader,
       text: messageText,
       isUser: isUser,
       timestamp:
@@ -364,6 +386,8 @@ class ChatScreenController extends GetxController {
     String text, {
     File? file,
     String? fileType,
+    String? originalTranscript,
+    String? fileUrl,
   }) async {
     if (text.trim().isEmpty && file == null || isSending.value) return;
 
@@ -395,6 +419,8 @@ class ChatScreenController extends GetxController {
         targetLanguage: selectedLanguage.value,
         file: file,
         fileType: fileType,
+        fileUrl: fileUrl,
+        transcript: originalTranscript,
       );
 
       print("Send Message Response: $response");
@@ -458,23 +484,39 @@ class ChatScreenController extends GetxController {
               'audioTranscript': botMessageFile["audioTranscript"],
             };
           }
+          final full =
+              botMessage["content"]?.toString() ??
+              botMessage["text"]?.toString() ??
+              "No response";
+          final botMsg = ChatMessage(
+            text: full,
+            fullText: full,
+            isUser: false,
+            timestamp:
+                DateTime.tryParse(botMessage["createdAt"]?.toString() ?? "") ??
+                DateTime.now(),
+            file: botFile,
+          );
 
           messages.insert(
             0,
-            ChatMessage(
-              text:
-                  botMessage["content"]?.toString() ??
-                  botMessage["text"]?.toString() ??
-                  "No response",
-              isUser: false,
-              timestamp:
-                  DateTime.tryParse(
-                    botMessage["createdAt"]?.toString() ?? "",
-                  ) ??
-                  DateTime.now(),
-              file: botFile,
-            ),
+            botMsg,
+
+            // ChatMessage(
+            //   text:
+            //       botMessage["content"]?.toString() ??
+            //       botMessage["text"]?.toString() ??
+            //       "No response",
+            //   isUser: false,
+            //   timestamp:
+            //       DateTime.tryParse(
+            //         botMessage["createdAt"]?.toString() ?? "",
+            //       ) ??
+            //       DateTime.now(),
+            //   file: botFile,
+            // ),
           );
+          startBotStreaming(botMsg);
         }
 
         scrollToTopAfterBuild();
@@ -517,4 +559,13 @@ class ChatScreenController extends GetxController {
       onStopRecord();
     }
   }
+
+  // void handleBack() {
+  //   if (from == 'reminder') {
+
+  //   }
+  //   else if(from =='home'){
+
+  //   }
+  // }
 }

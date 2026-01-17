@@ -1,4 +1,4 @@
-import 'package:bandhucare_new/core/app_exports.dart';
+import 'package:bandhucare_new/core/export_file/app_exports.dart';
 import 'package:bandhucare_new/presentation/content_type_home_screen/controller/content_type_home_screen_controller.dart';
 
 class ContentTypeHomeScreen extends StatelessWidget {
@@ -12,8 +12,12 @@ class ContentTypeHomeScreen extends StatelessWidget {
       value: SystemUiOverlayStyle(
         systemNavigationBarColor: Colors.transparent,
         statusBarColor: Colors.transparent,
-        statusBarIconBrightness: controller.showHeaderImage ? Brightness.light : Brightness.dark,
-        statusBarBrightness: controller.showHeaderImage ? Brightness.light : Brightness.dark,
+        statusBarIconBrightness: controller.showHeaderImage
+            ? Brightness.light
+            : Brightness.dark,
+        statusBarBrightness: controller.showHeaderImage
+            ? Brightness.light
+            : Brightness.dark,
       ),
       child: Scaffold(
         backgroundColor: const Color(0xFFF3F9FF),
@@ -28,7 +32,9 @@ class ContentTypeHomeScreen extends StatelessWidget {
               child: Icon(
                 JamIcons.chevronLeft,
                 size: 26,
-                color: controller.showHeaderImage ? Colors.white : AppColors.black,
+                color: controller.showHeaderImage
+                    ? Colors.white
+                    : AppColors.black,
               ),
             ),
           ),
@@ -53,9 +59,7 @@ class ContentTypeHomeScreen extends StatelessWidget {
                           ImageConstant.content_type_img_1,
                           fit: BoxFit.cover,
                           errorBuilder: (context, error, stackTrace) {
-                            return Container(
-                              color: const Color(0xFFF3F9FF),
-                            );
+                            return Container(color: const Color(0xFFF3F9FF));
                           },
                         ),
                       ),
@@ -95,59 +99,66 @@ class ContentTypeHomeScreen extends StatelessWidget {
 
                     // Article Cards Section
                     // Popular Articles Section
-              _buildPopularArticlesHeader(),
-      
-              const SizedBox(height: 16),
-      
-              // Popular Articles Horizontal List
-              Builder(
-                builder: (context) {
-                  // Dynamic height calculation: image (240) + spacing (10) + title max 2 lines (~48) + spacing (8) + author (~18) + spacing (4) + date (~18) = ~346
-                  // Using screen height percentage for better responsiveness
-                  final screenHeight = MediaQuery.of(context).size.height;
-                  final dynamicHeight = (screenHeight * 0.4).clamp(310.0, 350.0);
-                  
-                  return SizedBox(
-                    height: dynamicHeight,
-                    child: ListView.separated(
-                      scrollDirection: Axis.horizontal,
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      itemCount: 4,
-                      separatorBuilder: (context, index) => const SizedBox(width: 26),
-                      itemBuilder: (context, index) {
-                        final articles = [
-                          {
-                            'image': ImageConstant.care_hub_img_2,
-                            'title': 'New Treatment goes viral !!!',
-                            'author': 'Dr. Mukesh Kumar',
-                            'date': 'Dec 18, 2025',
-                          },
-                          {
-                            'image': ImageConstant.care_hub_img_3,
-                            'title': 'New Diet for Cancer Patient',
-                            'author': 'Dr. Sohail Ali',
-                            'date': 'Nov 09, 2025',
-                          },
-                          {
-                            'image': ImageConstant.care_hub_img_2,
-                            'title': 'New Diet for Cancer Patient',
-                            'author': 'Dr. Sohail Ali',
-                            'date': 'Nov 09, 2025',
-                          },
-                          {
-                            'image': ImageConstant.care_hub_img_3,
-                            'title': 'New Diet for Cancer Patient',
-                            'author': 'Dr. Sohail Ali',
-                            'date': 'Nov 09, 2025',
-                          },
-                        ];
-                        final article = articles[index];
-                        return _buildArticleCard(article, 'popular_article_$index');
+                    _buildPopularArticlesHeader(),
+
+                    const SizedBox(height: 16),
+
+                    // Popular Articles Horizontal List
+                    Builder(
+                      builder: (context) {
+                        // Dynamic height calculation: image (240) + spacing (10) + title max 2 lines (~48) + spacing (8) + author (~18) + spacing (4) + date (~18) = ~346
+                        // Using screen height percentage for better responsiveness
+                        final screenHeight = MediaQuery.of(context).size.height;
+                        final dynamicHeight = (screenHeight * 0.4).clamp(
+                          310.0,
+                          350.0,
+                        );
+
+                        return SizedBox(
+                          height: dynamicHeight,
+                          child: ListView.separated(
+                            scrollDirection: Axis.horizontal,
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            itemCount: 4,
+                            separatorBuilder: (context, index) =>
+                                const SizedBox(width: 26),
+                            itemBuilder: (context, index) {
+                              final articles = [
+                                {
+                                  'image': ImageConstant.care_hub_img_2,
+                                  'title': 'New Treatment goes viral !!!',
+                                  'author': 'Dr. Mukesh Kumar',
+                                  'date': 'Dec 18, 2025',
+                                },
+                                {
+                                  'image': ImageConstant.care_hub_img_3,
+                                  'title': 'New Diet for Cancer Patient',
+                                  'author': 'Dr. Sohail Ali',
+                                  'date': 'Nov 09, 2025',
+                                },
+                                {
+                                  'image': ImageConstant.care_hub_img_2,
+                                  'title': 'New Diet for Cancer Patient',
+                                  'author': 'Dr. Sohail Ali',
+                                  'date': 'Nov 09, 2025',
+                                },
+                                {
+                                  'image': ImageConstant.care_hub_img_3,
+                                  'title': 'New Diet for Cancer Patient',
+                                  'author': 'Dr. Sohail Ali',
+                                  'date': 'Nov 09, 2025',
+                                },
+                              ];
+                              final article = articles[index];
+                              return _buildArticleCard(
+                                article,
+                                'popular_article_$index',
+                              );
+                            },
+                          ),
+                        );
                       },
                     ),
-                  );
-                },
-              ),
 
                     // Just for You Section
                     Padding(
@@ -279,7 +290,10 @@ class ContentTypeHomeScreen extends StatelessWidget {
           ),
           filled: true,
           fillColor: const Color(0xFFFFFFFF),
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 14,
+          ),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(50),
             borderSide: BorderSide(
@@ -316,7 +330,6 @@ class ContentTypeHomeScreen extends StatelessWidget {
     );
   }
 
-
   Widget _buildArticleCard(Map<String, String> article, String heroTag) {
     return GestureDetector(
       onTap: () {
@@ -324,11 +337,12 @@ class ContentTypeHomeScreen extends StatelessWidget {
         arguments['heroTag'] = heroTag;
         arguments['imageUrl'] = article['image'];
         // Add tags for article content type
-        arguments['tags'] = ['Patient Reference', 'Healthy Diet Articles', 'Self Help'];
-        Get.toNamed(
-          AppRoutes.blogScreen,
-          arguments: arguments,
-        );
+        arguments['tags'] = [
+          'Patient Reference',
+          'Healthy Diet Articles',
+          'Self Help',
+        ];
+        Get.toNamed(AppRoutes.blogScreen, arguments: arguments);
       },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -360,7 +374,11 @@ class ContentTypeHomeScreen extends StatelessWidget {
                       width: double.infinity,
                       height: 240,
                       color: Colors.grey[300],
-                      child: const Icon(Icons.image, size: 50, color: Colors.grey),
+                      child: const Icon(
+                        Icons.image,
+                        size: 50,
+                        color: Colors.grey,
+                      ),
                     );
                   },
                 ),
@@ -405,6 +423,7 @@ class ContentTypeHomeScreen extends StatelessWidget {
       ),
     );
   }
+
   Widget _buildJustForYouSection() {
     final images = [
       ImageConstant.care_hub_healthy_diet_img,
@@ -452,7 +471,11 @@ class ContentTypeHomeScreen extends StatelessWidget {
                         'author': 'CareHub Team',
                         'date': DateTime.now().toString().split(' ')[0],
                         'description': defaultDescription,
-                        'tags': ['Patient Reference', 'Healthy Diet Articles', 'Self Help'],
+                        'tags': [
+                          'Patient Reference',
+                          'Healthy Diet Articles',
+                          'Self Help',
+                        ],
                       },
                     );
                   },
@@ -466,7 +489,11 @@ class ContentTypeHomeScreen extends StatelessWidget {
                       errorBuilder: (context, error, stackTrace) {
                         return Container(
                           color: Colors.grey[300],
-                          child: const Icon(Icons.image, size: 30, color: Colors.grey),
+                          child: const Icon(
+                            Icons.image,
+                            size: 30,
+                            color: Colors.grey,
+                          ),
                         );
                       },
                     ),
@@ -527,7 +554,11 @@ class ContentTypeHomeScreen extends StatelessWidget {
                         'author': 'CareHub Team',
                         'date': DateTime.now().toString().split(' ')[0],
                         'description': defaultDescription,
-                        'tags': ['Patient Reference', 'Healthy Diet Articles', 'Self Help'],
+                        'tags': [
+                          'Patient Reference',
+                          'Healthy Diet Articles',
+                          'Self Help',
+                        ],
                       },
                     );
                   },
@@ -541,7 +572,11 @@ class ContentTypeHomeScreen extends StatelessWidget {
                       errorBuilder: (context, error, stackTrace) {
                         return Container(
                           color: Colors.grey[300],
-                          child: const Icon(Icons.image, size: 30, color: Colors.grey),
+                          child: const Icon(
+                            Icons.image,
+                            size: 30,
+                            color: Colors.grey,
+                          ),
                         );
                       },
                     ),
@@ -555,4 +590,3 @@ class ContentTypeHomeScreen extends StatelessWidget {
     );
   }
 }
-

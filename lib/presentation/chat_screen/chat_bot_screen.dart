@@ -1,5 +1,5 @@
 import 'dart:ui';
-import 'package:bandhucare_new/core/app_exports.dart';
+import 'package:bandhucare_new/core/export_file/app_exports.dart';
 import 'package:bandhucare_new/presentation/chat_screen/controller/chat_screeen_controller.dart';
 import 'package:bandhucare_new/widget/custom_chat_bubbles.dart';
 import 'package:bandhucare_new/widget/qustion_suggetion.dart';
@@ -9,13 +9,19 @@ class ChatMessage {
   final String text;
   final bool isUser; // true for user, false for bot
   final DateTime timestamp;
-  final Map<String, dynamic>? file; // file information from API
+  final Map<String, dynamic>? file;
+  final String? formQuestionHeader;
+  String streamedText;
+  String? fullText; // Text streamed from bot
 
   ChatMessage({
     required this.text,
     required this.isUser,
     DateTime? timestamp,
     this.file,
+    this.formQuestionHeader,
+    this.streamedText = '',
+    this.fullText = '',
   }) : timestamp = timestamp ?? DateTime.now();
 }
 
@@ -97,163 +103,154 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
         extendBodyBehindAppBar:
             true, // THIS IS CRITICAL - extends content behind AppBar for blur effect
         appBar: ChatScreenAppBar(),
-        body: Container(
-          width: double.infinity,
-          height: double.infinity,
-          clipBehavior: Clip.antiAlias,
-          decoration: ShapeDecoration(
-            image: DecorationImage(
-              image: AssetImage(ImageConstant.chat_screen_background),
-              fit: BoxFit.cover,
-            ),
-            color: const Color.fromARGB(255, 243, 249, 255),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-          ),
-          child: Stack(
-            clipBehavior: Clip.none,
-            children: [
-              // Chat messages area
-              Positioned.fill(
-                child: Obx(
-                  () => controller.isLoading.value
-                      ? Center(
-                          child: CircularProgressIndicator(
-                            color: const Color(0xFF3865FF),
-                          ),
-                        )
-                      : _buildChatView(keyboardHeight),
-                ),
+        body: GestureDetector(
+          onTap: () {
+            // Dismiss keyboard when tapping outside
+            FocusScope.of(context).unfocus();
+          },
+          behavior: HitTestBehavior.translucent,
+          child: Container(
+            width: double.infinity,
+            height: double.infinity,
+            clipBehavior: Clip.antiAlias,
+            decoration: ShapeDecoration(
+              image: DecorationImage(
+                image: AssetImage(ImageConstant.chat_screen_background),
+                fit: BoxFit.cover,
               ),
+              color: const Color.fromARGB(255, 243, 249, 255),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+            ),
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                // Chat messages area
+                Positioned.fill(
+                  child: Obx(
+                    () => controller.isLoading.value
+                        ? Center(
+                            child: CircularProgressIndicator(
+                              color: const Color(0xFF3865FF),
+                            ),
+                          )
+                        : _buildChatView(keyboardHeight),
+                  ),
+                ),
 
-              // Question suggestions (hide when keyboard is open)
-              Positioned(
-                left: 0,
-                right: 0,
-                bottom: 90,
-                child: AnimatedSize(
-                  duration: const Duration(milliseconds: 200),
-                  curve: Curves.easeInOut,
-                  child: SizedBox(
-                    height: isKeyboardVisible
-                        ? 0
-                        : 90, // Collapse to 0 when keyboard opens
-                    child: ClipRect(
-                      clipBehavior: Clip.hardEdge,
-                      child: AnimatedOpacity(
-                        duration: const Duration(milliseconds: 200),
-                        opacity: isKeyboardVisible ? 0 : 1,
-                        child: IgnorePointer(
-                          ignoring: isKeyboardVisible,
-                          child: Obx(() {
-                            final shouldShow =
-                                controller.messages.isNotEmpty &&
-                                controller.shouldAutoScroll.value;
-                            return shouldShow
-                                ? QuestionSuggestions(
-                                    onQuestionTap: (question) {
-                                      controller.sendChatMessage(question);
-                                    },
-                                  )
-                                : const SizedBox.shrink();
-                          }),
+                // Question suggestions (hide when keyboard is open)
+                Positioned(
+                  left: 0,
+                  right: 0,
+                  bottom: 90,
+                  child: AnimatedSize(
+                    duration: const Duration(milliseconds: 200),
+                    curve: Curves.easeInOut,
+                    child: SizedBox(
+                      height: isKeyboardVisible
+                          ? 0
+                          : 90, // Collapse to 0 when keyboard opens
+                      child: ClipRect(
+                        clipBehavior: Clip.hardEdge,
+                        child: AnimatedOpacity(
+                          duration: const Duration(milliseconds: 200),
+                          opacity: isKeyboardVisible ? 0 : 1,
+                          child: IgnorePointer(
+                            ignoring: isKeyboardVisible,
+                            child: Obx(() {
+                              final shouldShow =
+                                  controller.messages.isNotEmpty &&
+                                  controller.shouldAutoScroll.value;
+                              return shouldShow
+                                  ? QuestionSuggestions(
+                                      onQuestionTap: (question) {
+                                        FocusScope.of(context).unfocus();
+                                        controller.sendChatMessage(question);
+                                      },
+                                    )
+                                  : const SizedBox.shrink();
+                            }),
+                          ),
                         ),
                       ),
                     ),
                   ),
                 ),
-              ),
-              // Blur overlay for gap area below text field (messages visible through gap)
-              // Positioned(
-              //   left: 0,
-              //   right: 0,
-              //   bottom: 0,
-              //   height: 150,
-              //   child: IgnorePointer(
-              //     child: BackdropFilter(
-              //       filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
-              //       child: Container(
-              //         decoration: BoxDecoration(
-              //           gradient: LinearGradient(
-              //             colors: [
-              //               Colors.transparent,
-              //               Colors.white.withOpacity(0.5),
-              //               Colors.white.withOpacity(0.9),
-              //             ],
-              //             stops: [0.0, 0.6, 1.0],
-              //           ),
-              //         ),
-              //       ),
-              //     ),
-              //   ),
-              // ),
-              // Telegram/iOS style seamless blur shadow from bottom
-              Positioned(
-                left: 0,
-                right: 0,
-                bottom: 0,
-                height: 70, // Height of blur shadow area
-                child: Container(
-                  decoration: BoxDecoration(
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.white.withOpacity(1),
-                        spreadRadius: 5,
-                        blurRadius: 50,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
+
+                Positioned(
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  height: 70, // Height of blur shadow area
+                  child: Container(
+                    decoration: BoxDecoration(
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.white.withOpacity(1),
+                          spreadRadius: 5,
+                          blurRadius: 50,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              // Bottom input field
-              Positioned(
-                left: 0,
-                right: 0,
-                bottom: -10,
-                child: ChatScreenBottom(
-                  messageController: controller.messageController,
-                  onSend: (text, {file, fileType}) => controller
-                      .sendChatMessage(text, file: file, fileType: fileType),
+                // Bottom input field
+                Positioned(
+                  left: 0,
+                  right: 0,
+                  bottom: -10,
+                  child: ChatScreenBottom(
+                    messageController: controller.messageController,
+                    onSend:
+                        (text, {file, fileType, originalTranscript, fileUrl}) =>
+                            controller.sendChatMessage(
+                              text,
+                              file: file,
+                              fileType: fileType,
+                              originalTranscript: originalTranscript,
+                              fileUrl: fileUrl,
+                            ),
+                  ),
                 ),
-              ),
 
-              // Scroll to bottom button (appears when scrolled up)
-              Obx(
-                () => !controller.shouldAutoScroll.value
-                    ? Positioned(
-                        right: 16,
-                        bottom: 90, // Above the input field
-                        child: Material(
-                          color: Colors.transparent,
-                          child: InkWell(
-                            onTap: _scrollToBottom,
-                            borderRadius: BorderRadius.circular(25),
-                            child: Container(
-                              width: 35,
-                              height: 35,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                shape: BoxShape.circle,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.2),
-                                    blurRadius: 8,
-                                    offset: const Offset(0, 2),
-                                  ),
-                                ],
-                              ),
-                              child: const Icon(
-                                Icons.keyboard_arrow_down,
-                                color: Color(0xFF3865FF),
-                                size: 28,
+                // Scroll to bottom button (appears when scrolled up)
+                Obx(
+                  () => !controller.shouldAutoScroll.value
+                      ? Positioned(
+                          right: 16,
+                          bottom: 90, // Above the input field
+                          child: Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              onTap: _scrollToBottom,
+                              borderRadius: BorderRadius.circular(25),
+                              child: Container(
+                                width: 35,
+                                height: 35,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  shape: BoxShape.circle,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.2),
+                                      blurRadius: 8,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: const Icon(
+                                  Icons.keyboard_arrow_down,
+                                  color: Color(0xFF3865FF),
+                                  size: 28,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      )
-                    : const SizedBox.shrink(),
-              ),
-            ],
+                        )
+                      : const SizedBox.shrink(),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -268,6 +265,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
   ];
 
   void _handleSuggestionTap(String question) {
+    FocusScope.of(context).unfocus();
     controller.sendChatMessage(question);
   }
 
@@ -385,52 +383,78 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
   }
 
   Widget _buildUserMessage(ChatMessage message) {
-    return Align(
-      alignment: Alignment.centerRight,
-      child: message.file != null
-          ? message.file!['fileType'] == 'audio'
-                ? AudioChatBubble(
-                    audioUrl: message.file!['fileUrl']?.toString(),
-                    audioTranscript:
-                        message.file!['audioTranscript']?.toString() ??
-                        message.text,
-                    isLoading: message.file!['fileUrl'] == null,
-                  )
-                : ChatBubblePdf(
-                    fileName:
-                        message.file!['fileName']?.toString() ?? 'Document.pdf',
-                    fileUrl: message.file!['fileUrl']?.toString(),
-                    caption:
-                        message.file!['caption']?.toString() ?? message.text,
-                    fileSize: null, // Can be extracted from file if needed
-                    isLoading: message.file!['fileUrl'] == null,
-                  )
-          : Container(
-              constraints: BoxConstraints(maxWidth: 300),
-              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-              decoration: ShapeDecoration(
-                color: const Color(0xFF3865FF),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(12),
-                    topRight: Radius.circular(12),
-                    bottomLeft: Radius.circular(12),
-                  ),
-                ),
-              ),
-              child: Text(
-                message.text,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontFamily: 'Lato',
-                  fontWeight: FontWeight.w400,
-                  height: 1.44,
-                  decoration: TextDecoration.none,
-                ),
-              ),
+    final hasValidFile =
+        message.file != null &&
+        message.file!['fileType'] != null &&
+        message.file!['fileType'].toString().isNotEmpty;
+
+    // Debug prints
+    print('🔍 _buildUserMessage DEBUG:');
+    print('   message.text: ${message.text}');
+    print('   message.file: ${message.file}');
+    print('   message.file != null: ${message.file != null}');
+    if (message.file != null) {
+      print('   message.file![\'fileType\']: ${message.file!['fileType']}');
+      print(
+        '   message.file![\'fileType\'] != null: ${message.file!['fileType'] != null}',
+      );
+      print(
+        '   message.file![\'fileType\'].toString().isNotEmpty: ${message.file!['fileType']?.toString().isNotEmpty}',
+      );
+    }
+    print('   hasValidFile: $hasValidFile');
+
+    Widget messageWidget;
+
+    if (hasValidFile) {
+      if (message.file!['fileType'] == 'audio') {
+        print('✅ RENDERING: AudioChatBubble');
+        messageWidget = AudioChatBubble(
+          audioUrl: message.file!['fileUrl']?.toString(),
+          audioTranscript:
+              message.text, // Use text field content (may be edited)
+          isLoading: message.file!['fileUrl'] == null,
+        );
+      } else {
+        print('✅ RENDERING: ChatBubblePdf (PDF/Document)');
+        messageWidget = ChatBubblePdf(
+          fileName: message.file!['fileName']?.toString() ?? 'Document.pdf',
+          fileUrl: message.file!['fileUrl']?.toString(),
+          caption: message.file!['caption']?.toString() ?? message.text,
+          fileSize: null, // Can be extracted from file if needed
+          isLoading: message.file!['fileUrl'] == null,
+        );
+      }
+    } else {
+      print('✅ RENDERING: Normal Text Message');
+      messageWidget = Container(
+        constraints: BoxConstraints(maxWidth: 300),
+        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+        decoration: ShapeDecoration(
+          color: const Color(0xFF3865FF),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(12),
+              topRight: Radius.circular(12),
+              bottomLeft: Radius.circular(12),
             ),
-    );
+          ),
+        ),
+        child: Text(
+          message.text,
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 16,
+            fontFamily: 'Lato',
+            fontWeight: FontWeight.w400,
+            height: 1.44,
+            decoration: TextDecoration.none,
+          ),
+        ),
+      );
+    }
+
+    return Align(alignment: Alignment.centerRight, child: messageWidget);
   }
 
   Widget _buildBotMessage(ChatMessage message) {
@@ -444,15 +468,12 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
                     children: [
                       AudioChatBubble(
                         audioUrl: message.file!['fileUrl']?.toString(),
-                        audioTranscript:
-                            message.file!['audioTranscript']?.toString() ??
-                            message.text,
+                        audioTranscript: message
+                            .text, // Use message text (may be edited for user messages)
                         isLoading: message.file!['fileUrl'] == null,
                       ),
                       LikeDislikeTTS(
-                        messageText:
-                            message.file!['audioTranscript']?.toString() ??
-                            message.text,
+                        messageText: message.text,
                         onLikeChanged: (isLiked) {
                           print(
                             'Message feedback: ${isLiked ? "liked" : "disliked"}',
@@ -546,6 +567,25 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
+                if (message.formQuestionHeader != null &&
+                    message.formQuestionHeader!.isNotEmpty) ...{
+                  Builder(
+                    builder: (context) {
+                      print("message.formQuestionHeader: ${message.text}");
+                      return Text(
+                        message.text!,
+                        style: TextStyle(
+                          color: Color(0xFF979797),
+                          fontSize: 12,
+                          fontFamily: 'Roboto',
+                        ),
+                      );
+                    },
+                  ),
+                  // SizedBox(height: 5),
+                } else ...{
+                  SizedBox.shrink(),
+                },
                 Container(
                   constraints: BoxConstraints(maxWidth: 300),
                   padding: const EdgeInsets.symmetric(
@@ -563,7 +603,9 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
                     ),
                   ),
                   child: Text(
-                    message.text,
+                    message.streamedText.isNotEmpty
+                        ? message.streamedText
+                        : message.text,
                     style: const TextStyle(
                       color: Color(0xFF1D2873),
                       fontSize: 16,

@@ -1,6 +1,8 @@
 import 'dart:math' as math;
-import 'package:bandhucare_new/core/app_exports.dart';
+
+import 'package:bandhucare_new/core/export_file/app_exports.dart';
 import 'package:bandhucare_new/presentation/peoples_stories_splash_screen/controller/peoples_stories_splash_controller.dart';
+
 class PeoplesStoriesSplashScreen extends StatelessWidget {
   const PeoplesStoriesSplashScreen({super.key});
 

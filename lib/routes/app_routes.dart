@@ -1,5 +1,9 @@
+import 'package:bandhucare_new/feature/hospital_information/binding/binding.dart';
+import 'package:bandhucare_new/feature/hospital_information/presentation/hospital_information.dart';
 import 'package:bandhucare_new/feature/personal_information/presentation/personal_information.dart';
 import 'package:bandhucare_new/feature/user_profile/presentation/user_profile_screen.dart';
+import 'package:bandhucare_new/presentation/chat_screen/binding/chat_screen_binding.dart';
+import 'package:bandhucare_new/presentation/chat_screen/chat_bot_screen.dart';
 import 'package:bandhucare_new/presentation/concent_form_screen/binding/consent_form_binding.dart';
 import 'package:bandhucare_new/presentation/concent_form_screen/consent_form_screen.dart';
 import 'package:bandhucare_new/presentation/scan_qr_screen/binding/scan_qr_binding.dart';
@@ -90,6 +94,7 @@ class AppRoutes {
   static const abhaCreatedScreen = '/abha-created';
   static const selectAbhaAddressScreen = '/select-abha-address';
   static const personalInformationScreen = '/personal-information';
+  static const chatScreen = '/chat-screen';
   static const carehubHomeScreen = '/carehub-home';
   static const contentTypeHomeScreen = '/content-type-home';
   static const blogScreen = '/blog-screen';
@@ -97,6 +102,7 @@ class AppRoutes {
   static const affirmationsScreen = '/affirmations-screen';
   static const peoplesStoriesSplashScreen = '/peoples-stories-splash-screen';
   static const peoplesStoriesScreen = '/peoples-stories-screen';
+  static const hospitalInformationScreen = '/hospital-information';
 }
 
 class AppPages {
@@ -254,6 +260,11 @@ class AppPages {
       page: () => const PersonalInformation(),
     ),
     GetPage(
+      name: AppRoutes.chatScreen,
+      page: () => ChatBotScreen(),
+      binding: ChatScreenBinding(),
+    ),
+    GetPage(
       name: AppRoutes.carehubHomeScreen,
       page: () => const CarehubHomeScreen(),
       binding: CarehubHomeScreenBinding(),
@@ -301,6 +312,13 @@ class AppPages {
       binding: PeoplesStoriesScreenBinding(),
       transition: Transition.rightToLeftWithFade,
       transitionDuration: const Duration(milliseconds: 300),
+    ),
+    GetPage(
+      name: AppRoutes.hospitalInformationScreen,
+      page: () => HospitalInformation(),
+      binding: HospitalInformationBinding(),
+      transition: Transition.rightToLeftWithFade,
+      transitionDuration: const Duration(milliseconds: 400),
     ),
   ];
 }

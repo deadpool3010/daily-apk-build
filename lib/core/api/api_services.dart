@@ -1,8 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:bandhucare_new/services/variables.dart';
-import 'package:bandhucare_new/core/network/api_constant.dart';
-import 'package:bandhucare_new/services/shared_pref_localization.dart';
+import 'package:bandhucare_new/core/controller/session_controller.dart';
+import 'package:bandhucare_new/model/patientModel.dart';
+import 'package:bandhucare_new/core/constants/variables.dart';
+import 'package:bandhucare_new/core/api/api_constant.dart';
+import 'package:bandhucare_new/core/services/shared_pref_localization.dart';
+import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 
@@ -78,7 +81,14 @@ Future<Map<String, dynamic>> signUpApi({
 
         // Optionally persist user info if provided
         if (dataMap != null && dataMap.isNotEmpty) {
-          await SharedPrefLocalization().saveUserInfo(dataMap);
+          await SharedPrefLocalization().saveUserInfo(
+            result['data']['profileDetails'],
+          );
+          final userModel = PatientModel.fromJson(
+            result['data']['profileDetails'],
+          );
+          final session = Get.find<SessionController>();
+          session.setUser(userModel);
         }
       } catch (e) {
         print('SignUp token save warning: $e');
@@ -211,7 +221,14 @@ Future<Map<String, dynamic>> signInWithCredentialsApi({
 
         // Optionally persist user info if provided
         if (dataMap != null && dataMap.isNotEmpty) {
-          await SharedPrefLocalization().saveUserInfo(dataMap);
+          await SharedPrefLocalization().saveUserInfo(
+            result['data']['profileDetails'],
+          );
+          final userModel = PatientModel.fromJson(
+            result['data']['profileDetails'],
+          );
+          final session = Get.find<SessionController>();
+          session.setUser(userModel);
         }
       } catch (e) {
         print('SignIn token save warning: $e');
@@ -440,6 +457,9 @@ Future<Map<String, dynamic>> selectAccountApi(
       await SharedPrefLocalization().saveUserInfo(
         result['data']['profileDetails'],
       );
+      final userModel = PatientModel.fromJson(result['data']['profileDetails']);
+      final session = Get.find<SessionController>();
+      session.setUser(userModel);
 
       return result;
     } else {
@@ -523,6 +543,9 @@ Future<Map<String, dynamic>> createAbhaAddressApi(
     await SharedPrefLocalization().saveUserInfo(
       result['data']['profileDetails'],
     );
+    final userModel = PatientModel.fromJson(result['data']['profileDetails']);
+    final session = Get.find<SessionController>();
+    session.setUser(userModel);
 
     if (response.statusCode == 200 || response.statusCode == 201) {
       return result;
@@ -578,7 +601,7 @@ Future<Map<String, dynamic>> getChatHistory({
   int page = 1,
   int limit = 10,
 }) async {
-  final url = baseUrl + getMessagesApi(page: page, limit: limit);
+  final url = baseUrl + getAllMessagesApi(page: page, limit: limit);
   try {
     final response = await http.get(
       Uri.parse(url),
@@ -598,31 +621,45 @@ Future<Map<String, dynamic>> sendMessage({
   required String targetLanguage,
   File? file,
   String? fileType, // pass 'document' or 'audio'
+  String? transcript,
+  String? fileName,
+  String? fileUrl,
 }) async {
   try {
+    print("$chatApi if chatApi is called");
     final url = baseUrl + chatApi;
 
     // If file is provided, use multipart/form-data
     if (file != null && fileType != null) {
       if (fileType == 'audio') {
+        print("object");
         var request = http.MultipartRequest('POST', Uri.parse(url));
         request.headers['Authorization'] = 'Bearer $accessToken';
         request.fields['conversationId'] = conversationId;
+        request.fields['content'] = content; // Send text field content
         request.fields['targetLanguage'] = targetLanguage;
         request.fields['fileType'] = fileType;
+        request.fields['audioTranscript'] =
+            transcript ?? ''; // Send original transcript
         request.fields['senderType'] = 'patient';
+        // Use fileUrl from transcription response if available, otherwise use empty string
+        // Don't use 'cc' as it causes ExoPlayer errors
+        request.fields['fileUrl'] = fileUrl ?? '';
+        request.fields['fileName'] = fileName ?? file.path.split('/').last;
         // Send WAV file with correct content type
-        request.files.add(
-          await http.MultipartFile.fromPath(
-            'file',
-            file.path,
-            filename: file.path
-                .split('/')
-                .last, // Ensure .wav extension in filename
-          ),
-        );
+        // request.files.add(
+        //   await http.MultipartFile.fromPath(
+        //     'file',
+        //     file.path,
+        //     filename: file.path
+        //         .split('/')
+        //         .last, // Ensure .wav extension in filename
+        //   ),
+        // );
         final streamedResponse = await request.send();
         final response = await http.Response.fromStream(streamedResponse);
+        print('SendMessage Response Status: ${response.statusCode}');
+        print('SendMessage Response Body: ${response.body}');
         return jsonDecode(response.body);
       } else if (fileType == 'document') {
         var request = http.MultipartRequest('POST', Uri.parse(url));
@@ -668,7 +705,8 @@ Future<Map<String, dynamic>> sendMessage({
         },
         body: jsonEncode(body),
       );
-
+      print('SendMessage Response Status: ${response.statusCode}');
+      print('SendMessage Response Body: ${response.body}');
       return jsonDecode(response.body);
     }
   } catch (e) {
@@ -884,9 +922,12 @@ Future<Map<String, dynamic>> updateFcmTokenApi(String fcmToken) async {
   }
 }
 
-Future<Map<String, dynamic>> getFormSessionsApi() async {
+Future<Map<String, dynamic>> getFormSessionsApi(
+  String date,
+  String status,
+) async {
   try {
-    final url = baseUrl + getFormSessions;
+    final url = baseUrl + getFormSessions(date, status);
     print('GetFormSessions API URL: $url');
 
     final response = await http.get(
@@ -935,6 +976,7 @@ Future<Map<String, dynamic>> getFormQuestionApi(String sessionId) async {
     final result = jsonDecode(response.body);
 
     if (response.statusCode == 200 || response.statusCode == 201) {
+      // print('GetFormQuestion Result: ${result['data']['message']['content']}');
       return result;
     } else {
       throw Exception(
@@ -1044,6 +1086,12 @@ class GoogleAuthService {
         await SharedPrefLocalization().saveUserInfo(
           result['data']['profileDetails'],
         );
+        final userModel = PatientModel.fromJson(
+          result['data']['profileDetails'],
+        );
+        final session = Get.find<SessionController>();
+        session.setUser(userModel);
+
         print('✅ User info saved to local storage');
       }
 
@@ -1057,5 +1105,66 @@ class GoogleAuthService {
         'Backend login failed: ${response.statusCode} - $errorBody',
       );
     }
+  }
+}
+
+Future<Map<String, dynamic>> getTranscriptionApi(
+  String targetLanguage,
+  File file,
+) async {
+  final url = baseUrl + getTranscription;
+  try {
+    final request = http.MultipartRequest('POST', Uri.parse(url));
+    request.headers['Authorization'] = 'Bearer $accessToken';
+    request.fields['targetLanguage'] = targetLanguage;
+
+    request.files.add(
+      await http.MultipartFile.fromPath(
+        'file',
+        file.path,
+        filename: file.path.split('/').last,
+      ),
+    );
+    final streamedResponse = await request.send();
+    final response = await http.Response.fromStream(streamedResponse);
+    final result = jsonDecode(response.body);
+    print('Transcription Response Status: ${response.statusCode}');
+    print('Transcription Response Body: ${response.body}');
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      print('Transcription Response: $result');
+      return result;
+    } else {
+      throw Exception(result['message'] ?? 'Unknown error');
+    }
+  } catch (e) {
+    print('Error getting transcription: $e');
+    throw Exception(e);
+  }
+}
+
+Future<Map<String, dynamic>> getHospitalInformationApi(String language) async {
+  final url = baseUrl + getHospitalInformation(language);
+
+  try {
+    final response = await http.get(
+      Uri.parse(url),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $accessToken",
+      },
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      final result = jsonDecode(response.body);
+      print('Hospital Information Response: $result');
+      return result['data']['hospitalInfo'];
+    } else {
+      final result = jsonDecode(response.body);
+      print('Hospital Information Error: $result');
+      throw Exception(result['message'] ?? 'Unknown error');
+    }
+  } catch (e) {
+    print('Hospital Information Error: $e');
+    throw Exception(e);
   }
 }

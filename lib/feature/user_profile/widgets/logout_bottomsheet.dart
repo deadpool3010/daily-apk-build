@@ -1,3 +1,4 @@
+import 'package:bandhucare_new/core/controller/session_controller.dart';
 import 'package:bandhucare_new/routes/app_routes.dart';
 import 'package:bandhucare_new/presentation/user_profile_screen/bottomsheet.dart';
 import 'package:bandhucare_new/presentation/login_screen/controller/login_screen_controller.dart';
@@ -8,6 +9,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 Future<void> logoutFunction() async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   await prefs.clear();
+  final session = Get.find<SessionController>();
+  session.clearSession();
 
   // Explicitly delete LoginController to ensure fresh instance
   try {

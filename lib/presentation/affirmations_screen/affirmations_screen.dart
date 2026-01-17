@@ -1,4 +1,4 @@
-import 'package:bandhucare_new/core/app_exports.dart';
+import 'package:bandhucare_new/core/export_file/app_exports.dart';
 import 'package:bandhucare_new/presentation/affirmations_screen/controller/affirmations_screen_controller.dart';
 
 class AffirmationsScreen extends StatelessWidget {

@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:bandhucare_new/helperClasses/play_sound_helpler.dart';
+import 'package:bandhucare_new/helper_classes/play_sound_helpler.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:record/record.dart';
