@@ -366,7 +366,6 @@ class BlogScreen extends StatelessWidget {
   }
 
   Widget _buildArticleText(Map<String, dynamic> article) {
-<<<<<<< HEAD
     // Check if TipTap JSON content is provided
     final tiptapContent = article['tiptapContent'] ?? article['content'];
 
@@ -377,11 +376,6 @@ class BlogScreen extends StatelessWidget {
 
     // Fallback to static view for backward compatibility
     final description = article['description'] ??
-=======
-    // Use description from arguments if provided, otherwise use default
-    final description =
-        article['description'] ??
->>>>>>> 5c522d1b923e20aecc53b5aa920083c11a4d4ef8
         'I woke up to the soft light filtering through my window, and for the first time in a while, I didn\'t rush to check my phone. Instead, I took a deep breath and stretched, feeling my body wake up slowly.';
 
     return Column(
