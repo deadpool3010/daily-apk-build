@@ -6,11 +6,12 @@ class ProfileMenuItem extends StatelessWidget {
     required this.icon,
     required this.label,
     required this.onTap,
+    this.color,
   });
   final IconData icon;
   final String label;
   final VoidCallback onTap;
-
+  final Color? color;
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -20,7 +21,7 @@ class ProfileMenuItem extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 20.0),
         child: Row(
           children: [
-            Icon(icon, size: 24, color: Colors.black87),
+            Icon(icon, size: 24, color: color ?? Colors.black87),
             SizedBox(width: 16),
             Expanded(
               child: Text(
@@ -29,7 +30,7 @@ class ProfileMenuItem extends StatelessWidget {
                   fontFamily: GoogleFonts.roboto().fontFamily,
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
-                  color: Colors.black87,
+                  color: color ?? Colors.black87,
                 ),
               ),
             ),

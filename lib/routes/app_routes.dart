@@ -1,3 +1,5 @@
+import 'package:bandhucare_new/feature/group_details/binding/group_details_binding.dart';
+import 'package:bandhucare_new/feature/group_details/presentation/group_details_screen.dart';
 import 'package:bandhucare_new/feature/hospital_information/binding/binding.dart';
 import 'package:bandhucare_new/feature/hospital_information/presentation/hospital_information.dart';
 import 'package:bandhucare_new/feature/personal_information/presentation/personal_information.dart';
@@ -102,7 +104,8 @@ class AppRoutes {
   static const affirmationsScreen = '/affirmations-screen';
   static const peoplesStoriesSplashScreen = '/peoples-stories-splash-screen';
   static const peoplesStoriesScreen = '/peoples-stories-screen';
-  static const hospitalInformationScreen = '/hospital-information';
+    static const hospitalInformationScreen = '/hospital-information';
+    static const groupDetailsScreen = '/group-details';
 }
 
 class AppPages {
@@ -317,6 +320,13 @@ class AppPages {
       name: AppRoutes.hospitalInformationScreen,
       page: () => HospitalInformation(),
       binding: HospitalInformationBinding(),
+      transition: Transition.rightToLeftWithFade,
+      transitionDuration: const Duration(milliseconds: 400),
+    ),
+    GetPage(
+      name: AppRoutes.groupDetailsScreen,
+      page: () => const GroupDetailsScreen(),
+      binding: GroupDetailsBinding(),
       transition: Transition.rightToLeftWithFade,
       transitionDuration: const Duration(milliseconds: 400),
     ),

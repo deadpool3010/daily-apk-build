@@ -363,6 +363,7 @@ class BlogScreen extends StatelessWidget {
         ),
       );
     });
+    
   }
 
   Widget _buildArticleText(Map<String, dynamic> article) {
