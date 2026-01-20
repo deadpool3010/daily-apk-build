@@ -362,6 +362,7 @@ class _YourRemindersState extends State<YourReminders> {
                         // if (reminderId != null) {
                         //   controller.viewResponse(reminderId);
                         // }
+                        Get.toNamed(AppRoutes.weeklyQuestionnerScreen);
                       },
                       child: Row(
                         children: [

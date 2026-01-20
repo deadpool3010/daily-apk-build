@@ -50,7 +50,10 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
     if (Get.isRegistered<ChatLikeDislikeController>()) {
       likeDislikeController = Get.find<ChatLikeDislikeController>();
     } else {
-      likeDislikeController = Get.put(ChatLikeDislikeController(), permanent: false);
+      likeDislikeController = Get.put(
+        ChatLikeDislikeController(),
+        permanent: false,
+      );
     }
   }
 
@@ -615,10 +618,10 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
                   ),
                   child: Text(
                     // message.messageId ?? '',
-                    message.messageId ?? '',
-                    // message.streamedText.isNotEmpty
-                    //     ? message.streamedText
-                    //     : message.text,
+                    //  message.messageId ?? '',
+                    message.streamedText.isNotEmpty
+                        ? message.streamedText
+                        : message.text,
                     style: const TextStyle(
                       color: Color(0xFF1D2873),
                       fontSize: 16,
