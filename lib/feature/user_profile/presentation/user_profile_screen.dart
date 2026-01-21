@@ -9,33 +9,41 @@ class UserProfileScreen extends StatelessWidget {
   const UserProfileScreen({super.key});
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: UserProfileAppbar(),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            SizedBox(height: 20),
-            ProfileHeaderSection(),
-            SizedBox(height: 24),
-            SeperatorLine(),
-            SizedBox(height: 24),
-            AbhaSection(),
-            SizedBox(height: 24),
-            Container(
-              width: 360,
-              alignment: Alignment.centerLeft,
-              child: Text(
-                "Account Settings",
-                style: TextStyle(
-                  fontFamily: GoogleFonts.roboto().fontFamily,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 18,
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle(
+        statusBarColor: Colors.white,
+        statusBarIconBrightness: Brightness.dark,
+        statusBarBrightness: Brightness.light,
+        systemNavigationBarColor: Colors.transparent,
+      ),
+      child: Scaffold(
+        appBar: UserProfileAppbar(),
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              SizedBox(height: 20),
+              ProfileHeaderSection(),
+              SizedBox(height: 24),
+              SeperatorLine(),
+              SizedBox(height: 24),
+              AbhaSection(),
+              SizedBox(height: 24),
+              Container(
+                width: 360,
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  "Account Settings",
+                  style: TextStyle(
+                    fontFamily: GoogleFonts.roboto().fontFamily,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 18,
+                  ),
                 ),
               ),
-            ),
-            SizedBox(height: 24),
-            AccountSettingsSection(),
-          ],
+              SizedBox(height: 24),
+              AccountSettingsSection(),
+            ],
+          ),
         ),
       ),
     );

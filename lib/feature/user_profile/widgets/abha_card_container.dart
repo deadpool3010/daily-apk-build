@@ -64,8 +64,8 @@ class AbhaCardContainer extends StatelessWidget {
         ),
         const SizedBox(height: 10),
         DynamicButton(
-          text: "Create Another",
-          width: 129,
+          text: "Create Another Address",
+          width: 132,
           height: 35,
           onPressed: () {
             // TODO: Navigate to create ABHA screen

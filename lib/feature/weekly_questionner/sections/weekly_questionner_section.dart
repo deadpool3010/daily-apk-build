@@ -24,8 +24,18 @@ class _QuestionAnswerTileState extends State<QuestionAnswerTile> {
 
   @override
   Widget build(BuildContext context) {
-    return Obx(
-      () => Center(
+    return Obx(() {
+      // Show empty state if no questions available
+      if (controller.filteredQuestionner.isEmpty) {
+        return Center(
+          child: Text(
+            'No questions available',
+            style: TextStyle(fontSize: 16, color: Colors.grey),
+          ),
+        );
+      }
+
+      return Center(
         child: SizedBox(
           height: 500,
           width: 380, // Match search bar width
@@ -122,7 +132,7 @@ class _QuestionAnswerTileState extends State<QuestionAnswerTile> {
             },
           ),
         ),
-      ),
-    );
+      );
+    });
   }
 }

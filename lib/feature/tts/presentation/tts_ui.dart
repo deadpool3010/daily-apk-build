@@ -111,10 +111,7 @@ class _TtsContainerState extends State<TtsContainer> {
                   ),
                 ),
                 SizedBox(width: 10),
-                Text(
-                  "Loading...",
-                  style: TextStyle(color: Colors.white),
-                ),
+                Text("Loading...", style: TextStyle(color: Colors.white)),
               ],
             );
           }
@@ -126,9 +123,7 @@ class _TtsContainerState extends State<TtsContainer> {
               InkWell(
                 onTap: _controller.togglePlayPause,
                 child: Icon(
-                  _controller.isPlaying.value
-                      ? Icons.pause
-                      : Icons.play_arrow,
+                  _controller.isPlaying.value ? Icons.pause : Icons.play_arrow,
                   color: Colors.white,
                 ),
               ),

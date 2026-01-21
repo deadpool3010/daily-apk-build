@@ -1,3 +1,5 @@
+import 'package:bandhucare_new/feature/group_details/binding/group_details_binding.dart';
+import 'package:bandhucare_new/feature/group_details/presentation/group_details_screen.dart';
 import 'package:bandhucare_new/feature/hospital_information/binding/binding.dart';
 import 'package:bandhucare_new/feature/hospital_information/presentation/hospital_information.dart';
 import 'package:bandhucare_new/feature/personal_information/presentation/personal_information.dart';
@@ -104,8 +106,13 @@ class AppRoutes {
   static const affirmationsScreen = '/affirmations-screen';
   static const peoplesStoriesSplashScreen = '/peoples-stories-splash-screen';
   static const peoplesStoriesScreen = '/peoples-stories-screen';
+<<<<<<< HEAD
   static const hospitalInformationScreen = '/hospital-information';
   static const weeklyQuestionnerScreen = '/weekly-questionner';
+=======
+    static const hospitalInformationScreen = '/hospital-information';
+    static const groupDetailsScreen = '/group-details';
+>>>>>>> b351f00cd8ab94cd443401e25a4123fd26090a64
 }
 
 class AppPages {
@@ -324,9 +331,15 @@ class AppPages {
       transitionDuration: const Duration(milliseconds: 400),
     ),
     GetPage(
+<<<<<<< HEAD
       name: AppRoutes.weeklyQuestionnerScreen,
       page: () => WeeklyQuestionnerUi(),
       binding: WeeklyQuestionnerBinding(),
+=======
+      name: AppRoutes.groupDetailsScreen,
+      page: () => const GroupDetailsScreen(),
+      binding: GroupDetailsBinding(),
+>>>>>>> b351f00cd8ab94cd443401e25a4123fd26090a64
       transition: Transition.rightToLeftWithFade,
       transitionDuration: const Duration(milliseconds: 400),
     ),

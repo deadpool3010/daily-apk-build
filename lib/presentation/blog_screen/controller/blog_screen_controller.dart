@@ -1,4 +1,5 @@
 import 'package:bandhucare_new/core/utils/image_constant.dart';
+import 'package:bandhucare_new/presentation/blog_screen/widgets/tiptap/tiptap_renderer_registration.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'dart:async';
@@ -46,6 +47,8 @@ class BlogScreenController extends GetxController with GetTickerProviderStateMix
   @override
   void onInit() {
     super.onInit();
+    // Register TipTap renderers
+    registerTiptapRenderers();
     // Initialize waveform with default heights
     waveformHeights.value = List.generate(waveformBarCount, (index) => 10.0);
     // Initialize animation controller

@@ -1,25 +1,25 @@
+import 'package:bandhucare_new/core/api/api_services.dart';
 import 'package:get/get.dart';
-
-final List<Map<String, String>> weeklyQuestionner = [
-  {
-    'i sip liqueds to help swellow food':
-        'Yes from my past few days liquid is must',
-  },
-  {'my house feels dry when eating a meal': 'Yes i have dry mouth'},
-  {'my throat is sore': 'Yes i have sore throat'},
-  {'i have a cough': 'Yes i have cough'},
-  {'i have a cold': 'Yes i have cold'},
-  {'i have a flu': 'Yes i have flu'},
-  {'i have a headache': 'Yes i have headache'},
-];
 
 class WeeklyQuestionnerController extends GetxController {
   var filteredQuestionner = <Map<String, String>>[].obs;
   var filteredIndices = <int>[].obs;
 
+  final String? sessionId = Get.arguments?['sessionId'] as String?;
+  final isLoading = false.obs;
+  var weeklyQuestionner = <Map<String, String>>[].obs;
+
   @override
   void onInit() {
     super.onInit();
+
+    final sessionIdValue = Get.arguments?['sessionId'] as String?;
+    if (sessionIdValue != null && sessionIdValue.isNotEmpty) {
+      weeklyQuestionnaire(sessionIdValue);
+    }
+  }
+
+  void _updateFilteredLists() {
     filteredQuestionner.value = List.from(weeklyQuestionner);
     filteredIndices.value = List.generate(
       weeklyQuestionner.length,
@@ -29,11 +29,7 @@ class WeeklyQuestionnerController extends GetxController {
 
   void searchQuestionner(String query) {
     if (query.isEmpty) {
-      filteredQuestionner.value = List.from(weeklyQuestionner);
-      filteredIndices.value = List.generate(
-        weeklyQuestionner.length,
-        (index) => index,
-      );
+      _updateFilteredLists();
     } else {
       filteredQuestionner.value = [];
       filteredIndices.value = [];
@@ -44,6 +40,35 @@ class WeeklyQuestionnerController extends GetxController {
           filteredIndices.add(i);
         }
       }
+    }
+  }
+
+  Future<void> weeklyQuestionnaire(String sessionId) async {
+    try {
+      isLoading.value = true;
+      // Get API response as List<Map<String, dynamic>>
+      final List<Map<String, dynamic>> result = await getFormQuestionAnsApi(
+        sessionId,
+      );
+
+      // Transform API response from {questionId, question, response}
+      // to {question: response} format
+      final transformedList = result.map((item) {
+        final question = item['question']?.toString() ?? '';
+        final response = item['response']?.toString() ?? '';
+        return <String, String>{question: response};
+      }).toList();
+
+      // Update the observable list
+      weeklyQuestionner.assignAll(transformedList);
+
+      // Update filtered lists after data is loaded
+      _updateFilteredLists();
+    } catch (e) {
+      print('Error loading weekly questionnaire: $e');
+      // Optionally show error to user
+    } finally {
+      isLoading.value = false;
     }
   }
 }

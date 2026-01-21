@@ -11,6 +11,7 @@ class AppColors {
   static const Color textGray = Color(0xFF64748B);
   static const Color primaryColor = Color(0xFF3864FD);
   static const Color secondaryColor = Color(0xFF223D99);
+  static const Color errorColor = Color(0xFFFF2020);
   // Background Colors
   static const Color backgroundColor = Colors.white;
   static const Color cardBackground = Color(0xFFF1F5F9);

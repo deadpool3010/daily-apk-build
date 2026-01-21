@@ -19,20 +19,26 @@ class WeeklyQuestionnerUi extends StatelessWidget {
     return Scaffold(
       appBar: CommonAppBar(title: 'Weekly Questionner'),
       backgroundColor: Colors.white,
-      body: Column(
-        children: [
-          AssesmentTitle(),
-          SizedBox(height: 20),
-          CustomSearchBar(onSearchChanged: controller.searchQuestionner),
+      body: Obx(
+        () => Column(
+          children: [
+            AssesmentTitle(),
+            SizedBox(height: 20),
+            CustomSearchBar(onSearchChanged: controller.searchQuestionner),
 
-          SizedBox(height: 30),
+            SizedBox(height: 30),
 
-          QuestionText(),
-          const SizedBox(height: 10),
-          Expanded(child: QuestionAnswerTile()),
-          SizedBox(height: 20),
-          FurtherAssistance(),
-        ],
+            QuestionText(),
+            const SizedBox(height: 10),
+            Expanded(
+              child: controller.isLoading.value
+                  ? Center(child: CircularProgressIndicator())
+                  : QuestionAnswerTile(),
+            ),
+            SizedBox(height: 20),
+            FurtherAssistance(),
+          ],
+        ),
       ),
     );
   }

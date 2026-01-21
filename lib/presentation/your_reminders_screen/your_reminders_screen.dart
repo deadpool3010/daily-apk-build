@@ -362,7 +362,18 @@ class _YourRemindersState extends State<YourReminders> {
                         // if (reminderId != null) {
                         //   controller.viewResponse(reminderId);
                         // }
-                        Get.toNamed(AppRoutes.weeklyQuestionnerScreen);
+                        // Get.toNamed(AppRoutes.weeklyQuestionnerScreen);
+                        if (sessionId != null || sessionId!.isNotEmpty) {
+                          // controller.weeklyQuestionnaire(sessionId);
+                          Get.toNamed(
+                            AppRoutes.weeklyQuestionnerScreen,
+                            arguments: {'sessionId': sessionId},
+                          );
+                        } else {
+                          Fluttertoast.showToast(
+                            msg: ' Session ID is Not Found',
+                          );
+                        }
                       },
                       child: Row(
                         children: [

@@ -1225,3 +1225,31 @@ Future<Map<String, dynamic>> disLikeMessageApi(String messageId) async {
     throw Exception(e);
   }
 }
+
+Future<List<Map<String, dynamic>>> getFormQuestionAnsApi(
+  String sessionId,
+) async {
+  final url = baseUrl + getFormQuestionAns(sessionId);
+
+  try {
+    final response = await http.get(
+      Uri.parse(url),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $accessToken",
+      },
+    );
+
+    final result = jsonDecode(response.body);
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return List<Map<String, dynamic>>.from(
+        result['data']['formSession']['questionScores'],
+      );
+    } else {
+      throw Exception('Failed to get form question answers');
+    }
+  } catch (e) {
+    throw Exception(e);
+  }
+}

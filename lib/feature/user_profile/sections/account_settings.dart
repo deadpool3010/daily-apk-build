@@ -1,3 +1,4 @@
+import 'package:bandhucare_new/core/export_file/app_exports.dart';
 import 'package:bandhucare_new/feature/user_profile/presentation/models/profile_menu_model.dart';
 import 'package:bandhucare_new/feature/user_profile/widgets/logout_bottomsheet.dart';
 import 'package:bandhucare_new/feature/user_profile/widgets/profile_menu_item.dart';
@@ -12,27 +13,32 @@ class AccountSettingsSection extends StatelessWidget {
   Widget build(BuildContext context) {
     List<ProfileMenuModel> menuItems = [
       ProfileMenuModel(
-        icon: Icons.person_outline,
+        icon: JamIcons.userCircle,
         label: 'Personal Information',
         onTap: () => {Get.toNamed(AppRoutes.personalInformationScreen)},
       ),
       ProfileMenuModel(
-        icon: Icons.language,
+        icon: TablerIcons.language,
         label: 'Language Settings',
         onTap: () => Get.toNamed(AppRoutes.simpleLanguageScreen),
       ),
       ProfileMenuModel(
-        icon: Icons.notifications_outlined,
+        icon: TablerIcons.bell,
         label: 'Notification',
         onTap: () {},
       ),
       ProfileMenuModel(
-        icon: Icons.local_hospital,
-        label: 'Hospital Information',
+        icon: TablerIcons.building_hospital,
+        label: 'Hospital details',
         onTap: () => Get.toNamed(AppRoutes.hospitalInformationScreen),
       ),
       ProfileMenuModel(
-        icon: Icons.security,
+        icon: TablerIcons.building_hospital,
+        label: 'Group details',
+        onTap: () => Get.toNamed(AppRoutes.groupDetailsScreen),
+      ),
+      ProfileMenuModel(
+        icon: TablerIcons.shield_check,
         label: 'Privacy & Security',
         onTap: () {},
       ),
@@ -42,9 +48,10 @@ class AccountSettingsSection extends StatelessWidget {
         onTap: () {},
       ),
       ProfileMenuModel(
-        icon: Icons.logout,
+        icon: TablerIcons.arrow_bar_right,
         label: 'Logout',
         onTap: () => logoutBottomSheet(context),
+        color: AppColors.errorColor,
       ),
     ];
     return Column(
@@ -56,11 +63,15 @@ class AccountSettingsSection extends StatelessWidget {
               icon: menuItems[i].icon,
               label: menuItems[i].label,
               onTap: menuItems[i].onTap,
+              color: menuItems[i].color,
             ),
             if (i != menuItems.length - 1) ...[
               const SizedBox(height: 20),
               const SeperatorLine(height: 3, horizontalPadding: 20),
               const SizedBox(height: 20),
+            ],
+            if (i == menuItems.length - 1) ...[
+              const SizedBox(height: 60),
             ],
           ],
         ),

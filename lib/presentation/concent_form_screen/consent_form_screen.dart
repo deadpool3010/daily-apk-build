@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'package:bandhucare_new/core/utils/image_constant.dart';
+import 'package:bandhucare_new/presentation/blog_screen/widgets/tiptap/tiptap_renderer.dart';
 import 'package:bandhucare_new/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -11,6 +13,44 @@ class ConsentFormScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<ConsentFormController>();
+    final groupData = Get.arguments as Map<String, dynamic>? ?? {};
+    
+    // Extract consentForm from group data
+    Map<String, dynamic>? consentFormData;
+    
+    // Debug: Print received data structure
+    print('Consent Form Screen - Received groupData keys: ${groupData.keys.toList()}');
+    
+    // Try to get consentForm from nested group structure
+    String? consentFormString;
+    
+    if (groupData['group'] != null && groupData['group'] is Map<String, dynamic>) {
+      final group = groupData['group'] as Map<String, dynamic>;
+      print('Consent Form Screen - Group keys: ${group.keys.toList()}');
+      consentFormString = group['consentForm'] as String?;
+    } else if (groupData['consentForm'] != null) {
+      // Fallback: check if consentForm is directly in groupData
+      consentFormString = groupData['consentForm'] as String?;
+      print('Consent Form Screen - Found consentForm directly in groupData');
+    }
+    
+    // Parse the JSON string if found
+    if (consentFormString != null && consentFormString.isNotEmpty) {
+      print('Consent Form Screen - consentFormString length: ${consentFormString.length}');
+      print('Consent Form Screen - consentFormString preview: ${consentFormString.substring(0, consentFormString.length > 150 ? 150 : consentFormString.length)}...');
+      
+      try {
+        consentFormData = jsonDecode(consentFormString) as Map<String, dynamic>;
+        print('Consent Form Screen - ✅ Successfully parsed TipTap JSON');
+        print('Consent Form Screen - TipTap content type: ${consentFormData['type']}');
+        print('Consent Form Screen - TipTap content nodes count: ${(consentFormData['content'] as List?)?.length ?? 0}');
+      } catch (e) {
+        print('Consent Form Screen - ❌ Error parsing consentForm JSON: $e');
+        print('Consent Form Screen - Full JSON string: $consentFormString');
+      }
+    } else {
+      print('Consent Form Screen - ⚠️ consentFormString is null or empty');
+    }
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
@@ -93,23 +133,11 @@ class ConsentFormScreen extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                       ),
                       const SizedBox(height: 16),
-                      Text(
-                        'msg_by_proceeding_you_confirm'.tr,
-                        style: TextStyle(
-                          fontFamily: 'Lato',
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                          color: Color(0xFF334155),
-                        ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      const SizedBox(height: 20),
-                      _buildBulletPoint('msg_authorize_hospital_to_share'.tr),
-                      const SizedBox(height: 12),
-                      _buildBulletPoint('msg_understand_group_may_include'.tr),
-                      const SizedBox(height: 12),
-                      _buildBulletPoint('msg_agree_to_hospital_privacy'.tr),
+                      // Render TipTap content from API response
+                      if (consentFormData != null)
+                        _buildTiptapContent(consentFormData)
+                      else
+                        _buildLoadingOrError(),
                       const SizedBox(height: 24),
                       Container(
                         width: double.infinity,
@@ -273,37 +301,6 @@ class ConsentFormScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildBulletPoint(String text) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          margin: const EdgeInsets.only(top: 6, right: 12),
-          width: 6,
-          height: 6,
-          decoration: const BoxDecoration(
-            shape: BoxShape.circle,
-            color: Color(0xFF6B7280),
-          ),
-        ),
-        Expanded(
-          child: Text(
-            text,
-            style: const TextStyle(
-              fontFamily: 'Lato',
-              fontSize: 13,
-              color: Color(0xFF6B7280),
-              height: 1.4,
-              fontWeight: FontWeight.w400,
-            ),
-            maxLines: 3,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ),
-      ],
-    );
-  }
-
   Widget _buildInfoItem(String text) {
     return Row(
       children: [
@@ -329,6 +326,33 @@ class ConsentFormScreen extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+
+  /// Build TipTap content from API response
+  Widget _buildTiptapContent(Map<String, dynamic> consentFormData) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.only(bottom: 8),
+      child: TiptapRenderer(document: consentFormData),
+    );
+  }
+
+  /// Build loading or error state
+  Widget _buildLoadingOrError() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(vertical: 20),
+      child: Center(
+        child: Text(
+          'Loading consent form...',
+          style: TextStyle(
+            fontFamily: 'Lato',
+            fontSize: 14,
+            color: Color(0xFF6B7280),
+          ),
+        ),
+      ),
     );
   }
 }
