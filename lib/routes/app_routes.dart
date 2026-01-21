@@ -106,13 +106,11 @@ class AppRoutes {
   static const affirmationsScreen = '/affirmations-screen';
   static const peoplesStoriesSplashScreen = '/peoples-stories-splash-screen';
   static const peoplesStoriesScreen = '/peoples-stories-screen';
-<<<<<<< HEAD
+
   static const hospitalInformationScreen = '/hospital-information';
   static const weeklyQuestionnerScreen = '/weekly-questionner';
-=======
-    static const hospitalInformationScreen = '/hospital-information';
-    static const groupDetailsScreen = '/group-details';
->>>>>>> b351f00cd8ab94cd443401e25a4123fd26090a64
+
+  static const groupDetailsScreen = '/group-details';
 }
 
 class AppPages {
@@ -331,15 +329,14 @@ class AppPages {
       transitionDuration: const Duration(milliseconds: 400),
     ),
     GetPage(
-<<<<<<< HEAD
       name: AppRoutes.weeklyQuestionnerScreen,
       page: () => WeeklyQuestionnerUi(),
       binding: WeeklyQuestionnerBinding(),
-=======
+    ),
+    GetPage(
       name: AppRoutes.groupDetailsScreen,
       page: () => const GroupDetailsScreen(),
       binding: GroupDetailsBinding(),
->>>>>>> b351f00cd8ab94cd443401e25a4123fd26090a64
       transition: Transition.rightToLeftWithFade,
       transitionDuration: const Duration(milliseconds: 400),
     ),
