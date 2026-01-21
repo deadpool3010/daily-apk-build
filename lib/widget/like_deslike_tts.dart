@@ -28,13 +28,26 @@ class _LikeDislikeTTSState extends State<LikeDislikeTTS> {
   void _handleLike() async {
     // Store previous state
     final previousLiked = _isLiked;
+    final previousDisliked = _isDisliked;
 
-    // Optimistic update: immediately show like (only if not already liked)
-    if (_isLiked != true) {
-      setState(() {
+    // Check if we're toggling off before setState
+    final bool isTogglingOff = _isLiked == true;
+
+    // Optimistic update: toggle like on/off
+    setState(() {
+      if (_isLiked == true) {
+        // If already liked, toggle it off
+        _isLiked = null;
+        _isDisliked = null;
+      } else {
+        // Like the message and clear dislike
         _isLiked = true;
-        _isDisliked = null; // Clear dislike if present
-      });
+        _isDisliked = null;
+      }
+    });
+
+    // Notify callback only if not toggling off (going to neutral state)
+    if (!isTogglingOff) {
       widget.onLikeChanged?.call(true);
     }
 
@@ -48,23 +61,31 @@ class _LikeDislikeTTSState extends State<LikeDislikeTTS> {
       if (result == null) {
         // API succeeded - keep the optimistic update
         setState(() {
-          _isLiked = true;
+          if (!isTogglingOff) {
+            _isLiked = true;
+          }
         });
       } else if (result == false) {
         // API failed - revert to previous state
         setState(() {
           _isLiked = previousLiked;
-          _isDisliked = previousLiked == false ? true : null;
+          _isDisliked = previousDisliked;
         });
-        widget.onLikeChanged?.call(previousLiked == true);
+        // Only notify if we were actually liking (not toggling off)
+        if (!isTogglingOff) {
+          widget.onLikeChanged?.call(previousLiked == true);
+        }
       }
     } catch (e) {
       // On exception, revert to previous state
       setState(() {
         _isLiked = previousLiked;
-        _isDisliked = previousLiked == false ? true : null;
+        _isDisliked = previousDisliked;
       });
-      widget.onLikeChanged?.call(previousLiked == true);
+      // Only notify if we were actually liking (not toggling off)
+      if (!isTogglingOff) {
+        widget.onLikeChanged?.call(previousLiked == true);
+      }
     }
 
     // // Store previous state for potential rollback
@@ -119,6 +140,9 @@ class _LikeDislikeTTSState extends State<LikeDislikeTTS> {
     final previousLiked = _isLiked;
     final previousDisliked = _isDisliked;
 
+    // Check if we're toggling off before setState
+    final bool isTogglingOff = _isDisliked == true || _isLiked == false;
+
     // Optimistic update: immediately update UI
     setState(() {
       if (_isDisliked == true || _isLiked == false) {
@@ -132,8 +156,11 @@ class _LikeDislikeTTSState extends State<LikeDislikeTTS> {
       }
     });
 
-    // Notify callback
-    widget.onLikeChanged?.call(_isLiked == false);
+    // Notify callback only if not toggling off (going to neutral state)
+    // false means disliked, true means liked
+    if (!isTogglingOff) {
+      widget.onLikeChanged?.call(false);
+    }
 
     // Call API in parallel
     try {
@@ -148,7 +175,10 @@ class _LikeDislikeTTSState extends State<LikeDislikeTTS> {
           _isDisliked = previousDisliked;
         });
         // Notify callback of reversion - restore previous state
-        widget.onLikeChanged?.call(previousLiked == true);
+        // Only notify if we were actually disliking (not toggling off)
+        if (!isTogglingOff) {
+          widget.onLikeChanged?.call(previousDisliked == true ? false : true);
+        }
       }
       // If result is null, API call succeeded, so we keep the optimistic update
     } catch (e) {
@@ -158,12 +188,11 @@ class _LikeDislikeTTSState extends State<LikeDislikeTTS> {
         _isDisliked = previousDisliked;
       });
       // Notify callback of reversion - restore previous state
-      widget.onLikeChanged?.call(previousLiked == true);
+      // Only notify if we were actually disliking (not toggling off)
+      if (!isTogglingOff) {
+        widget.onLikeChanged?.call(previousDisliked == true ? false : true);
+      }
     }
-  }
-
-  void _handleTTS() {
-    widget.onTTS?.call();
   }
 
   @override
@@ -211,7 +240,9 @@ class _LikeDislikeTTSState extends State<LikeDislikeTTS> {
 
           // Speaker/TTS Button
           InkWell(
-            onTap: _handleTTS,
+            onTap: () {
+              widget.onTTS?.call();
+            },
             borderRadius: BorderRadius.circular(20),
             child: Padding(
               padding: const EdgeInsets.all(4.0),
