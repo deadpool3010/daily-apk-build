@@ -1168,3 +1168,47 @@ Future<Map<String, dynamic>> getHospitalInformationApi(String language) async {
     throw Exception(e);
   }
 }
+
+Future<Map<String, dynamic>> getUserGroupsApi() async {
+  try {
+    // Get language from SharedPreferences
+    final prefs = SharedPrefLocalization();
+    final savedLocale = await prefs.getAppLocale();
+    final languageCode = savedLocale.isNotEmpty
+        ? savedLocale.toLowerCase().trim() // "hi_IN" -> "hi_in", "en_US" -> "en_us"
+        : 'en_us'; // Default fallback to English
+
+    print('═══════════════════════════════════════════════════════════');
+    print('GetUserGroups - SharedPreferences Language:');
+    print('  Original Locale: "$savedLocale"');
+    print('  API Format: "$languageCode"');
+    print('═══════════════════════════════════════════════════════════');
+
+    final url = baseUrl + getUserGroups(languageCode);
+
+    print('GetUserGroups API URL: $url');
+    print('Language: $languageCode');
+
+    final response = await http.get(
+      Uri.parse(url),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $accessToken",
+      },
+    );
+
+    print('GetUserGroups Response Status: ${response.statusCode}');
+    print('GetUserGroups Response Body: ${response.body}');
+
+    final result = jsonDecode(response.body);
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return result;
+    } else {
+      throw Exception(result['message'] ?? 'Unknown error');
+    }
+  } catch (e) {
+    print('GetUserGroups Error: $e');
+    throw Exception(e);
+  }
+}

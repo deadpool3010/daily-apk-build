@@ -1,3 +1,4 @@
+import 'package:bandhucare_new/core/api/api_services.dart';
 import 'package:bandhucare_new/feature/group_details/model/group_model.dart';
 import 'package:get/get.dart';
 
@@ -6,6 +7,7 @@ class GroupDetailsController extends GetxController {
   final RxList<GroupModel> pastGroups = <GroupModel>[].obs;
   final RxString searchQuery = ''.obs;
   final RxBool isLoading = false.obs;
+  final RxString errorMessage = ''.obs;
 
   @override
   void onInit() {
@@ -13,44 +15,44 @@ class GroupDetailsController extends GetxController {
     loadGroups();
   }
 
-  void loadGroups() {
-    isLoading.value = true;
-    // TODO: Replace with actual API call
-    // For now, using mock data
-    _loadMockData();
-    isLoading.value = false;
-  }
+  Future<void> loadGroups() async {
+    try {
+      isLoading.value = true;
+      errorMessage.value = '';
 
-  void _loadMockData() {
-    currentGroups.value = [
-      GroupModel(
-        id: '1',
-        name: 'Head and Neck Survivorship',
-        createdDate: 'Jun 1st, 2025',
-        hospitalName: 'ABC Hospital',
-        ward: 'Paediatric Ward',
-        isActive: true,
-      ),
-    ];
+      // Call API (language is automatically retrieved from SharedPreferences in the API function)
+      final response = await getUserGroupsApi();
 
-    pastGroups.value = [
-      GroupModel(
-        id: '2',
-        name: 'Paediatric Care Team - May',
-        createdDate: 'Jun 1st, 2025',
-        hospitalName: 'ABC Hospital',
-        ward: 'Paediatric Ward',
-        isActive: false,
-      ),
-      GroupModel(
-        id: '3',
-        name: 'ABC Group 11098',
-        createdDate: 'Jun 1st, 2025',
-        hospitalName: 'ABC Hospital',
-        ward: 'Paediatric Ward',
-        isActive: false,
-      ),
-    ];
+      if (response['success'] == true && response['data'] != null) {
+        final groupsData = response['data']['groups'] as List<dynamic>?;
+
+        if (groupsData != null) {
+          final allGroups = groupsData
+              .map((group) => GroupModel.fromJson(group as Map<String, dynamic>))
+              .toList();
+
+          // Separate active and inactive groups
+          currentGroups.value =
+              allGroups.where((group) => group.isActive).toList();
+          pastGroups.value =
+              allGroups.where((group) => !group.isActive).toList();
+
+          print('Loaded ${currentGroups.length} current groups and ${pastGroups.length} past groups');
+        } else {
+          currentGroups.value = [];
+          pastGroups.value = [];
+        }
+      } else {
+        throw Exception(response['message'] ?? 'Failed to load groups');
+      }
+    } catch (e) {
+      print('Error loading groups: $e');
+      errorMessage.value = e.toString().replaceAll('Exception: ', '');
+      currentGroups.value = [];
+      pastGroups.value = [];
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   List<GroupModel> get filteredCurrentGroups {

@@ -1,9 +1,12 @@
 import 'package:get/get.dart';
+import '../controller/group_details_controller.dart';
 
 class GroupDetailsBinding extends Bindings {
   @override
   void dependencies() {
-    // Add any controllers here if needed in the future
+    Get.lazyPut<GroupDetailsController>(
+      () => GroupDetailsController(),
+    );
   }
 }
 

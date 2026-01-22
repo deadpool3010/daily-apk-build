@@ -41,3 +41,7 @@ String getFormSessions(String date, String status) =>
 String getTranscription = "auth/audio-transcript";
 String getHospitalInformation(String language) =>
     "auth/get-hospital-info?language=$language";
+
+String getUserGroups(String language) {
+  return "groups/get-user-groups?language=$language";
+}

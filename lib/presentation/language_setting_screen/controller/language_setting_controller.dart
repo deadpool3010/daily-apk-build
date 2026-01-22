@@ -25,6 +25,28 @@ class LanguageSettingController extends GetxController {
   ];
   final _prefs = SharedPrefLocalization();
 
+  // Mapping language display names to locale codes
+  final Map<String, String> _languageToLocaleCode = {
+    'English': 'en_US',
+    'Hindi': 'hi_IN',
+    'Tamil': 'ta_IN',
+    'Telugu': 'te_IN',
+    'Gujarati': 'gu_IN',
+    'Malayalam': 'ml_IN',
+    'Kannada': 'en_US', // Fallback to English if Kannada locale not available
+  };
+
+  // Mapping language display names to Locale objects
+  final Map<String, Locale> _languageToLocale = {
+    'English': const Locale('en', 'US'),
+    'Hindi': const Locale('hi', 'IN'),
+    'Tamil': const Locale('ta', 'IN'),
+    'Telugu': const Locale('te', 'IN'),
+    'Gujarati': const Locale('gu', 'IN'),
+    'Malayalam': const Locale('ml', 'IN'),
+    'Kannada': const Locale('en', 'US'), // Fallback to English if Kannada locale not available
+  };
+
   @override
   void onInit() {
     super.onInit();
@@ -133,8 +155,27 @@ class LanguageSettingController extends GetxController {
   }
 
   Future<void> saveLanguages() async {
+    // Save language display names
     await _prefs.appLanguage(selectedAppLanguage.value);
     await _prefs.mitraLanguage(selectedMitraLanguage.value);
+
+    // Save locale code for app language (used by APIs)
+    final localeCode = _languageToLocaleCode[selectedAppLanguage.value] ?? 'en_US';
+    await _prefs.saveAppLocale(localeCode);
+
+    print('═══════════════════════════════════════════════════════════');
+    print('Language Settings - Saved:');
+    print('  App Language: ${selectedAppLanguage.value}');
+    print('  App Locale Code: $localeCode');
+    print('  Mitra Language: ${selectedMitraLanguage.value}');
+    print('═══════════════════════════════════════════════════════════');
+
+    // Update GetX locale to reflect changes immediately in the app
+    final locale = _languageToLocale[selectedAppLanguage.value] ?? const Locale('en', 'US');
+    Future.microtask(() {
+      Get.updateLocale(locale);
+      print('GetX Locale updated to: ${locale.languageCode}_${locale.countryCode}');
+    });
   }
 
   Future<void> _loadPersistedLanguages() async {

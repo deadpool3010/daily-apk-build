@@ -1,4 +1,6 @@
 import 'package:bandhucare_new/core/export_file/app_exports.dart';
+import 'package:bandhucare_new/feature/group_details/controller/group_details_controller.dart';
+import 'package:bandhucare_new/feature/group_details/model/group_model.dart';
 import 'package:bandhucare_new/feature/group_details/widgets/expandable_group_card.dart';
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
@@ -8,26 +10,65 @@ class GroupDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final controller = Get.find<GroupDetailsController>();
+    
     return Scaffold(
       backgroundColor: Color(0xFFF3F9FF),
       appBar: _buildAppBar(context),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 20),
-              _buildSearchSection(),
-              const SizedBox(height: 24),
-              _buildCurrentGroupSection(),
-              const SizedBox(height: 24),
-              _buildPastGroupsSection(),
-              const SizedBox(height: 20),
-            ],
+      body: Obx(() {
+        if (controller.isLoading.value) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+
+        if (controller.errorMessage.value.isNotEmpty) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.error_outline,
+                  size: 64,
+                  color: Colors.red[300],
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  controller.errorMessage.value,
+                  style: GoogleFonts.roboto(
+                    fontSize: 16,
+                    color: Colors.red[700],
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 24),
+                ElevatedButton(
+                  onPressed: () => controller.loadGroups(),
+                  child: const Text('Retry'),
+                ),
+              ],
+            ),
+          );
+        }
+
+        return SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 20),
+                _buildSearchSection(controller),
+                const SizedBox(height: 24),
+                _buildCurrentGroupSection(controller),
+                const SizedBox(height: 24),
+                _buildPastGroupsSection(controller),
+                const SizedBox(height: 20),
+              ],
+            ),
           ),
-        ),
-      ),
+        );
+      }),
     );
   }
 
@@ -87,54 +128,56 @@ class GroupDetailsScreen extends StatelessWidget {
       ],
     );
   }
-  Widget _buildSearchSection() {
+  Widget _buildSearchSection(GroupDetailsController controller) {
     return Row(
       children: [
-        Expanded(child: TextField(
-          decoration: InputDecoration(
-            hintText: 'Search Groups',
-            hintStyle: GoogleFonts.lato(
+        Expanded(
+          child: TextField(
+            onChanged: (value) => controller.onSearchChanged(value),
+            decoration: InputDecoration(
+              hintText: 'Search Groups',
+              hintStyle: GoogleFonts.lato(
+                fontSize: 14,
+                color: const Color(0xFFB8B8B8),
+                fontWeight: FontWeight.w400,
+              ),
+              filled: true,
+              fillColor: const Color(0xFFFFFFFF),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 14,
+              ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(50),
+                borderSide: BorderSide(
+                  color: Colors.black.withOpacity(0.1),
+                  width: 1,
+                ),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(50),
+                borderSide: BorderSide(
+                  color: Colors.black.withOpacity(0.1),
+                  width: 1,
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(50),
+                borderSide: BorderSide(
+                  color: Colors.black.withOpacity(0.1),
+                  width: 1,
+                ),
+              ),
+              prefixIcon: const Icon(
+                TablerIcons.search,
+                size: 24,
+                color: Color(0xFFB8B8B8),
+              ),
+            ),
+            style: GoogleFonts.lato(
               fontSize: 14,
-              color: const Color(0xFFB8B8B8),
+              color: AppColors.black,
               fontWeight: FontWeight.w400,
-            ),
-            filled: true,
-            fillColor: const Color(0xFFFFFFFF),
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 14,
-            ),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(50),
-              borderSide: BorderSide(
-                color: Colors.black.withOpacity(0.1),
-                width: 1,
-              ),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(50),
-              borderSide: BorderSide(
-                color: Colors.black.withOpacity(0.1),
-                width: 1,
-              ),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(50),
-              borderSide: BorderSide(
-                color: Colors.black.withOpacity(0.1),
-                width: 1,
-              ),
-            ),
-            prefixIcon: const Icon(
-              TablerIcons.search,
-              size: 24,
-              color: Color(0xFFB8B8B8),
-            ),
-          ),
-          style: GoogleFonts.lato(
-            fontSize: 14,
-            color: AppColors.black,
-            fontWeight: FontWeight.w400,
             ),
           ),
         ),
@@ -147,17 +190,60 @@ class GroupDetailsScreen extends StatelessWidget {
             shape: BoxShape.circle,
             border: Border.all(color: AppColors.borderColor, width: 1),
           ),
-          child: IconButton(onPressed: () {}, icon: const Icon(Ionicons.filter_outline, size: 20, color: AppColors.black,),)),
+          child: IconButton(
+            onPressed: () {},
+            icon: const Icon(
+              Ionicons.filter_outline,
+              size: 20,
+              color: AppColors.black,
+            ),
+          ),
+        ),
       ],
     );
   }
 
 
-  Widget _buildCurrentGroupSection() {
+  Widget _buildCurrentGroupSection(GroupDetailsController controller) {
+    final filteredGroups = controller.filteredCurrentGroups;
+
+    if (filteredGroups.isEmpty) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Current Groups',
+            style: GoogleFonts.roboto(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: Colors.black,
+            ),
+          ),
+          const SizedBox(height: 16),
+          Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: const Color(0xFFE7EEF4),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Center(
+              child: Text(
+                'No active groups found',
+                style: GoogleFonts.roboto(
+                  fontSize: 14,
+                  color: Colors.grey[600],
+                ),
+              ),
+            ),
+          ),
+        ],
+      );
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-          Text(
+        Text(
           'Current Groups',
           style: GoogleFonts.roboto(
             fontSize: 18,
@@ -166,33 +252,50 @@ class GroupDetailsScreen extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 16),
-        ExpandableGroupCard(
-          groupName: 'Head and Neck Survivorship',
-          createdDate: 'Created on Jun 1st, 2025',
-          location: 'ABC Hospital - Paediatric Ward',
-          isActive: true,
-          linkedNode: 'Head and Neck Cancer',
-          nodeType: 'Section',
-          totalUsers: '09',
-          contactNo: '1234567890',
-          contactName: 'Rajashekar',
-          emailAddress: 'madhurisharma@gmail.com',
-          hospitalAddress: '1/16/76 ABC Hospital, Vellore, Chennai, B-Block',
-          doctorsAndHealthWorkers: [
-            {'name': 'Mike Mazowski', 'role': 'Doctor', 'avatar': ''},
-            {'name': 'Marvin Robertson', 'role': 'Doctor', 'avatar': ''},
-            {'name': 'Bambang Wijayanto', 'role': 'Doctor', 'avatar': ''},
-            {'name': 'Gregory Robertson', 'role': 'Health Worker', 'avatar': ''},
-            {'name': 'Samuel Witnessa', 'role': 'Health Worker', 'avatar': ''},
-            {'name': 'Sururi Mandatson', 'role': 'Health Worker', 'avatar': ''},
-            {'name': 'Michael Robbin', 'role': 'Health Worker', 'avatar': ''},
-          ],
-        ),
+        ...filteredGroups.map((group) => Padding(
+              padding: const EdgeInsets.only(bottom: 16),
+              child: _buildGroupCard(group),
+            )),
       ],
     );
   }
 
-  Widget _buildPastGroupsSection() {
+  Widget _buildPastGroupsSection(GroupDetailsController controller) {
+    final filteredGroups = controller.filteredPastGroups;
+
+    if (filteredGroups.isEmpty) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Past Groups',
+            style: GoogleFonts.roboto(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: Colors.black,
+            ),
+          ),
+          const SizedBox(height: 16),
+          Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: const Color(0xFFE7EEF4),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Center(
+              child: Text(
+                'No past groups found',
+                style: GoogleFonts.roboto(
+                  fontSize: 14,
+                  color: Colors.grey[600],
+                ),
+              ),
+            ),
+          ),
+        ],
+      );
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -205,49 +308,37 @@ class GroupDetailsScreen extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 16),
-        ExpandableGroupCard(
-          groupName: 'Paediatric Care Team - May',
-          createdDate: 'Created on Jun 1st, 2025',
-          location: 'ABC Hospital - Paediatric Ward',
-          isActive: false,
-          linkedNode: 'Head and Neck Cancer',
-          nodeType: 'Section',
-          totalUsers: '09',
-          contactNo: '1234567890',
-          contactName: 'Rajashekar',
-          emailAddress: 'madhurisharma@gmail.com',
-          hospitalAddress: '1/16/76 ABC Hospital, Vellore, Chennai, B-Block',
-          doctorsAndHealthWorkers: [
-            {'name': 'Dr. Sarah Johnson', 'role': 'Doctor', 'avatar': ''},
-            {'name': 'John Smith', 'role': 'Health Worker', 'avatar': ''},
-            {'name': 'Dr. Emily Brown', 'role': 'Doctor', 'avatar': ''},
-            {'name': 'Michael Davis', 'role': 'Health Worker', 'avatar': ''},
-            {'name': 'Dr. Robert Wilson', 'role': 'Doctor', 'avatar': ''},
-            {'name': 'Lisa Anderson', 'role': 'Health Worker', 'avatar': ''},
-          ],
-        ),
-        const SizedBox(height: 16),
-        ExpandableGroupCard(
-          groupName: 'ABC Group 11098',
-          createdDate: 'Created on Jun 1st, 2025',
-          location: 'ABC Hospital - Paediatric Ward',
-          isActive: false,
-          linkedNode: 'Head and Neck Cancer',
-          nodeType: 'Section',
-          totalUsers: '09',
-          contactNo: '1234567890',
-          contactName: 'Rajashekar',
-          emailAddress: 'madhurisharma@gmail.com',
-          hospitalAddress: '1/16/76 ABC Hospital, Vellore, Chennai, B-Block',
-          doctorsAndHealthWorkers: [
-            {'name': 'Dr. David Lee', 'role': 'Doctor', 'avatar': ''},
-            {'name': 'Jennifer Taylor', 'role': 'Health Worker', 'avatar': ''},
-            {'name': 'Dr. James White', 'role': 'Doctor', 'avatar': ''},
-            {'name': 'Patricia Harris', 'role': 'Health Worker', 'avatar': ''},
-            {'name': 'Dr. Christopher Martin', 'role': 'Doctor', 'avatar': ''},
-          ],
-        ),
+        ...filteredGroups.map((group) => Padding(
+              padding: const EdgeInsets.only(bottom: 16),
+              child: _buildGroupCard(group),
+            )),
       ],
+    );
+  }
+
+  Widget _buildGroupCard(GroupModel group) {
+    // Map members to doctors and health workers format
+    List<Map<String, String>> doctorsAndHealthWorkers = group.members
+        .map((member) => {
+              'name': member.name,
+              'role': member.userType == 'doctor' ? 'Doctor' : 'Health Worker',
+              'avatar': member.profilePhoto ?? '',
+            })
+        .toList();
+
+    return ExpandableGroupCard(
+      groupName: group.name,
+      createdDate: group.createdDate,
+      location: group.location,
+      isActive: group.isActive,
+      linkedNode: group.associatedNodeName ?? 'N/A',
+      nodeType: group.associatedNodeType ?? 'N/A',
+      totalUsers: group.members.length.toString().padLeft(2, '0'),
+      contactNo: group.contactNumber ?? 'N/A',
+      contactName: group.contactPersonName ?? 'N/A',
+      emailAddress: group.contactEmail ?? 'N/A',
+      hospitalAddress: group.address ?? 'N/A',
+      doctorsAndHealthWorkers: doctorsAndHealthWorkers,
     );
   }
 }
