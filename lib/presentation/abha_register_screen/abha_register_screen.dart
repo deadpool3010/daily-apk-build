@@ -1,5 +1,4 @@
 import 'package:bandhucare_new/core/export_file/app_exports.dart';
-import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'controller/abha_register_controller.dart';
 

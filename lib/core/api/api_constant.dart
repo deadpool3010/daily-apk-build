@@ -42,13 +42,10 @@ String getTranscription = "auth/audio-transcript";
 String getHospitalInformation(String language) =>
     "auth/get-hospital-info?language=$language";
 
-<<<<<<< HEAD
 String getUserGroups(String language) {
   return "groups/get-user-groups?language=$language";
 }
-=======
+
 String likeMessage = 'chat/like-message';
 String disLikeMessage = 'chat/dislike-message';
-String getFormQuestionAns(String sessionId)=>"form/report/$sessionId";
-
->>>>>>> b22f7b5234ddb48b0cc4c5d0e1baf4bb6a41b7cc
+String getFormQuestionAns(String sessionId) => "form/report/$sessionId";

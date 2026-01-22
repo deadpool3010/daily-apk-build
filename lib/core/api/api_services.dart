@@ -1169,7 +1169,6 @@ Future<Map<String, dynamic>> getHospitalInformationApi(String language) async {
   }
 }
 
-<<<<<<< HEAD
 Future<Map<String, dynamic>> getUserGroupsApi() async {
   try {
     // Get language from SharedPreferences
@@ -1190,7 +1189,30 @@ Future<Map<String, dynamic>> getUserGroupsApi() async {
     print('GetUserGroups API URL: $url');
     print('Language: $languageCode');
 
-=======
+    final response = await http.get(
+      Uri.parse(url),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $accessToken",
+      },
+    );
+
+    print('GetUserGroups Response Status: ${response.statusCode}');
+    print('GetUserGroups Response Body: ${response.body}');
+
+    final result = jsonDecode(response.body);
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return result;
+    } else {
+      throw Exception(result['message'] ?? 'Unknown error');
+    }
+  } catch (e) {
+    print('GetUserGroups Error: $e');
+    throw Exception(e);
+  }
+}
+
 Future<Map<String, dynamic>> likeMessageApi(String messageId) async {
   final url = baseUrl + likeMessage;
   try {
@@ -1254,7 +1276,6 @@ Future<List<Map<String, dynamic>>> getFormQuestionAnsApi(
   final url = baseUrl + getFormQuestionAns(sessionId);
 
   try {
->>>>>>> b22f7b5234ddb48b0cc4c5d0e1baf4bb6a41b7cc
     final response = await http.get(
       Uri.parse(url),
       headers: {
@@ -1263,23 +1284,6 @@ Future<List<Map<String, dynamic>>> getFormQuestionAnsApi(
       },
     );
 
-<<<<<<< HEAD
-    print('GetUserGroups Response Status: ${response.statusCode}');
-    print('GetUserGroups Response Body: ${response.body}');
-
-    final result = jsonDecode(response.body);
-
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      return result;
-    } else {
-      throw Exception(result['message'] ?? 'Unknown error');
-    }
-  } catch (e) {
-    print('GetUserGroups Error: $e');
-    throw Exception(e);
-  }
-}
-=======
     final result = jsonDecode(response.body);
 
     if (response.statusCode == 200 || response.statusCode == 201) {
@@ -1293,4 +1297,3 @@ Future<List<Map<String, dynamic>>> getFormQuestionAnsApi(
     throw Exception(e);
   }
 }
->>>>>>> b22f7b5234ddb48b0cc4c5d0e1baf4bb6a41b7cc
