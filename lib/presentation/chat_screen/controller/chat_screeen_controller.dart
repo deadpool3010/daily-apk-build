@@ -273,10 +273,9 @@ class ChatScreenController extends GetxController {
       if (response["success"] == true && response["data"] != null) {
         final data = response["data"];
         final messagesList = data["messages"] as List?;
-
+        print(response['data']);
         if (messagesList != null && messagesList.isNotEmpty) {
           final List<Map<String, dynamic>> flattened = [];
-
           for (var dateGroup in messagesList) {
             final list = dateGroup["messages"] as List? ?? [];
             flattened.addAll(list.cast<Map<String, dynamic>>());
@@ -342,6 +341,9 @@ class ChatScreenController extends GetxController {
     final isUser = msg["senderType"] == "patient";
     final fileData = msg["file"] as Map<String, dynamic>?;
     final formQuestionHeader = msg['formTemplateName'] as String?;
+    print("id is" + "  " + (msg['_id']?.toString() ?? "null"));
+    print("base64 is" + "  " + (msg['base64Audio']?.toString() ?? "null"));
+    print("msg is" + "  " + msg.toString());
 
     Map<String, dynamic>? fileInfo;
     if (fileData != null &&
@@ -372,6 +374,8 @@ class ChatScreenController extends GetxController {
     }
 
     return ChatMessage(
+      messageId: msg['_id']?.toString(),
+      base64: msg['base64Audio']?.toString() ?? "",
       formQuestionHeader: formQuestionHeader,
       text: messageText,
       isUser: isUser,
@@ -488,7 +492,14 @@ class ChatScreenController extends GetxController {
               botMessage["content"]?.toString() ??
               botMessage["text"]?.toString() ??
               "No response";
+          // print("idddddd" + botMessage["_id"]);
+
+          final id = botMessage["_id"]?.toString();
+          final base64 = botMessage["base64"]?.toString() ?? "";
+          print("base64 is" + "  " + base64);
           final botMsg = ChatMessage(
+            messageId: id,
+
             text: full,
             fullText: full,
             isUser: false,

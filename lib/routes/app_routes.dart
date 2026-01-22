@@ -4,6 +4,8 @@ import 'package:bandhucare_new/feature/hospital_information/binding/binding.dart
 import 'package:bandhucare_new/feature/hospital_information/presentation/hospital_information.dart';
 import 'package:bandhucare_new/feature/personal_information/presentation/personal_information.dart';
 import 'package:bandhucare_new/feature/user_profile/presentation/user_profile_screen.dart';
+import 'package:bandhucare_new/feature/weekly_questionner/binding/binding.dart';
+import 'package:bandhucare_new/feature/weekly_questionner/presentation/weekly_questionner_ui.dart';
 import 'package:bandhucare_new/presentation/chat_screen/binding/chat_screen_binding.dart';
 import 'package:bandhucare_new/presentation/chat_screen/chat_bot_screen.dart';
 import 'package:bandhucare_new/presentation/concent_form_screen/binding/consent_form_binding.dart';
@@ -104,8 +106,11 @@ class AppRoutes {
   static const affirmationsScreen = '/affirmations-screen';
   static const peoplesStoriesSplashScreen = '/peoples-stories-splash-screen';
   static const peoplesStoriesScreen = '/peoples-stories-screen';
-    static const hospitalInformationScreen = '/hospital-information';
-    static const groupDetailsScreen = '/group-details';
+
+  static const hospitalInformationScreen = '/hospital-information';
+  static const weeklyQuestionnerScreen = '/weekly-questionner';
+
+  static const groupDetailsScreen = '/group-details';
 }
 
 class AppPages {
@@ -322,6 +327,11 @@ class AppPages {
       binding: HospitalInformationBinding(),
       transition: Transition.rightToLeftWithFade,
       transitionDuration: const Duration(milliseconds: 400),
+    ),
+    GetPage(
+      name: AppRoutes.weeklyQuestionnerScreen,
+      page: () => WeeklyQuestionnerUi(),
+      binding: WeeklyQuestionnerBinding(),
     ),
     GetPage(
       name: AppRoutes.groupDetailsScreen,

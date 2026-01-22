@@ -1,15 +1,20 @@
+import 'package:bandhucare_new/presentation/chat_screen/controller/chat_like_dislike.dart';
 import 'package:flutter/material.dart';
 
 class LikeDislikeTTS extends StatefulWidget {
   final String? messageText; // Optional text for TTS
   final Function(bool)? onLikeChanged; // Callback when like/dislike changes
   final Function()? onTTS; // Callback when TTS is triggered
+  final String messageId;
+  final ChatLikeDislikeController? controller;
 
   const LikeDislikeTTS({
     super.key,
     this.messageText,
     this.onLikeChanged,
     this.onTTS,
+    required this.messageId,
+    this.controller,
   });
 
   @override
@@ -17,36 +22,177 @@ class LikeDislikeTTS extends StatefulWidget {
 }
 
 class _LikeDislikeTTSState extends State<LikeDislikeTTS> {
-  bool? _isLiked; // null = no selection, true = liked, false = disliked
+  bool? _isLiked;
+  bool? _isDisliked;
 
-  void _handleLike() {
+  void _handleLike() async {
+    // Store previous state
+    final previousLiked = _isLiked;
+    final previousDisliked = _isDisliked;
+
+    // Check if we're toggling off before setState
+    final bool isTogglingOff = _isLiked == true;
+
+    // Optimistic update: toggle like on/off
     setState(() {
       if (_isLiked == true) {
-        // If already liked, deselect
+        // If already liked, toggle it off
         _isLiked = null;
+        _isDisliked = null;
       } else {
-        // Set to liked
+        // Like the message and clear dislike
         _isLiked = true;
+        _isDisliked = null;
       }
-      widget.onLikeChanged?.call(_isLiked == true);
     });
+
+    // Notify callback only if not toggling off (going to neutral state)
+    if (!isTogglingOff) {
+      widget.onLikeChanged?.call(true);
+    }
+
+    // Call API
+    try {
+      final result = await widget.controller?.likeMessageReversal(
+        widget.messageId,
+      );
+
+      // Update based on API response
+      if (result == null) {
+        // API succeeded - keep the optimistic update
+        setState(() {
+          if (!isTogglingOff) {
+            _isLiked = true;
+          }
+        });
+      } else if (result == false) {
+        // API failed - revert to previous state
+        setState(() {
+          _isLiked = previousLiked;
+          _isDisliked = previousDisliked;
+        });
+        // Only notify if we were actually liking (not toggling off)
+        if (!isTogglingOff) {
+          widget.onLikeChanged?.call(previousLiked == true);
+        }
+      }
+    } catch (e) {
+      // On exception, revert to previous state
+      setState(() {
+        _isLiked = previousLiked;
+        _isDisliked = previousDisliked;
+      });
+      // Only notify if we were actually liking (not toggling off)
+      if (!isTogglingOff) {
+        widget.onLikeChanged?.call(previousLiked == true);
+      }
+    }
+
+    // // Store previous state for potential rollback
+    // final previousLiked = _isLiked;
+    // final previousDisliked = _isDisliked;
+
+    // // Optimistic update: immediately update UI
+    // setState(() {
+    //   if (_isLiked == true) {
+    //     // If already liked, toggle it off
+    //     _isLiked = null;
+    //     _isDisliked = null;
+    //   } else {
+    //     // Like the message and clear dislike
+    //     _isLiked = true;
+    //     _isDisliked = null;
+    //   }
+    // });
+
+    // // Notify callback
+    // widget.onLikeChanged?.call(_isLiked == true);
+
+    // // Call API in parallel
+    // try {
+    //   bool? result = await widget.controller?.likeMessageReversal(
+    //     widget.messageId,
+    //   );
+
+    //   // If API call failed (result is not null), revert the optimistic update
+    //   if (result != null) {
+    //     setState(() {
+    //       _isLiked = previousLiked;
+    //       _isDisliked = previousDisliked;
+    //     });
+    //     // Notify callback of reversion - restore previous state
+    //     widget.onLikeChanged?.call(previousLiked == true);
+    //   }
+    //   // If result is null, API call succeeded, so we keep the optimistic update
+    // } catch (e) {
+    //   // On exception, revert the optimistic update
+    //   setState(() {
+    //     _isLiked = previousLiked;
+    //     _isDisliked = previousDisliked;
+    //   });
+    //   // Notify callback of reversion - restore previous state
+    //   widget.onLikeChanged?.call(previousLiked == true);
+    // }
   }
 
-  void _handleDislike() {
+  void _handleDislike() async {
+    // Store previous state for potential rollback
+    final previousLiked = _isLiked;
+    final previousDisliked = _isDisliked;
+
+    // Check if we're toggling off before setState
+    final bool isTogglingOff = _isDisliked == true || _isLiked == false;
+
+    // Optimistic update: immediately update UI
     setState(() {
-      if (_isLiked == false) {
-        // If already disliked, deselect
+      if (_isDisliked == true || _isLiked == false) {
+        // If already disliked, toggle it off
         _isLiked = null;
+        _isDisliked = null;
       } else {
-        // Set to disliked
+        // Dislike the message and clear like
         _isLiked = false;
+        _isDisliked = true;
       }
-      widget.onLikeChanged?.call(_isLiked == true);
     });
-  }
 
-  void _handleTTS() {
-    widget.onTTS?.call();
+    // Notify callback only if not toggling off (going to neutral state)
+    // false means disliked, true means liked
+    if (!isTogglingOff) {
+      widget.onLikeChanged?.call(false);
+    }
+
+    // Call API in parallel
+    try {
+      bool? result = await widget.controller?.disLikeMessageReversal(
+        widget.messageId,
+      );
+
+      // If API call failed (result is not null), revert the optimistic update
+      if (result != null) {
+        setState(() {
+          _isLiked = previousLiked;
+          _isDisliked = previousDisliked;
+        });
+        // Notify callback of reversion - restore previous state
+        // Only notify if we were actually disliking (not toggling off)
+        if (!isTogglingOff) {
+          widget.onLikeChanged?.call(previousDisliked == true ? false : true);
+        }
+      }
+      // If result is null, API call succeeded, so we keep the optimistic update
+    } catch (e) {
+      // On exception, revert the optimistic update
+      setState(() {
+        _isLiked = previousLiked;
+        _isDisliked = previousDisliked;
+      });
+      // Notify callback of reversion - restore previous state
+      // Only notify if we were actually disliking (not toggling off)
+      if (!isTogglingOff) {
+        widget.onLikeChanged?.call(previousDisliked == true ? false : true);
+      }
+    }
   }
 
   @override
@@ -83,7 +229,7 @@ class _LikeDislikeTTSState extends State<LikeDislikeTTS> {
               child: Icon(
                 Icons.thumb_down_outlined,
                 size: 18,
-                color: _isLiked == false
+                color: (_isDisliked == true || _isLiked == false)
                     ? const Color(0xFF3865FF) // Blue when selected
                     : const Color(0xFF9CA3AF), // Grey when not selected
               ),
@@ -94,7 +240,9 @@ class _LikeDislikeTTSState extends State<LikeDislikeTTS> {
 
           // Speaker/TTS Button
           InkWell(
-            onTap: _handleTTS,
+            onTap: () {
+              widget.onTTS?.call();
+            },
             borderRadius: BorderRadius.circular(20),
             child: Padding(
               padding: const EdgeInsets.all(4.0),

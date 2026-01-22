@@ -12,6 +12,7 @@ class ChatBubblePdf extends StatefulWidget {
   final String? caption;
   final String? fileSize;
   final bool isLoading; // Show loading state until response received
+  // final String messageId;
 
   const ChatBubblePdf({
     super.key,
@@ -20,6 +21,7 @@ class ChatBubblePdf extends StatefulWidget {
     this.caption,
     this.fileSize,
     this.isLoading = false,
+    // required this.messageId,
   });
 
   @override

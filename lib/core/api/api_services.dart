@@ -1169,6 +1169,7 @@ Future<Map<String, dynamic>> getHospitalInformationApi(String language) async {
   }
 }
 
+<<<<<<< HEAD
 Future<Map<String, dynamic>> getUserGroupsApi() async {
   try {
     // Get language from SharedPreferences
@@ -1189,6 +1190,71 @@ Future<Map<String, dynamic>> getUserGroupsApi() async {
     print('GetUserGroups API URL: $url');
     print('Language: $languageCode');
 
+=======
+Future<Map<String, dynamic>> likeMessageApi(String messageId) async {
+  final url = baseUrl + likeMessage;
+  try {
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $accessToken",
+      },
+      body: jsonEncode({"messageId": messageId}),
+    );
+    final result = jsonDecode(response.body);
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      print(result);
+
+      return result is Map<String, dynamic>
+          ? result
+          : {'success': true, 'message': result.toString()};
+    } else {
+      throw Exception(
+        result['message'] ?? result.toString() ?? 'Unknown error',
+      );
+    }
+  } catch (e) {
+    print('Error liking message: $e');
+    throw Exception(e);
+  }
+}
+
+Future<Map<String, dynamic>> disLikeMessageApi(String messageId) async {
+  final url = baseUrl + disLikeMessage;
+  try {
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $accessToken",
+      },
+      body: jsonEncode({"messageId": messageId}),
+    );
+    final result = jsonDecode(response.body);
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      print(result);
+      return result is Map<String, dynamic>
+          ? result
+          : {'success': true, 'message': result.toString()};
+    } else {
+      throw Exception(
+        result['message'] ?? result.toString() ?? 'Unknown error',
+      );
+    }
+  } catch (e) {
+    print('Error disliking message: $e');
+    throw Exception(e);
+  }
+}
+
+Future<List<Map<String, dynamic>>> getFormQuestionAnsApi(
+  String sessionId,
+) async {
+  final url = baseUrl + getFormQuestionAns(sessionId);
+
+  try {
+>>>>>>> b22f7b5234ddb48b0cc4c5d0e1baf4bb6a41b7cc
     final response = await http.get(
       Uri.parse(url),
       headers: {
@@ -1197,6 +1263,7 @@ Future<Map<String, dynamic>> getUserGroupsApi() async {
       },
     );
 
+<<<<<<< HEAD
     print('GetUserGroups Response Status: ${response.statusCode}');
     print('GetUserGroups Response Body: ${response.body}');
 
@@ -1212,3 +1279,18 @@ Future<Map<String, dynamic>> getUserGroupsApi() async {
     throw Exception(e);
   }
 }
+=======
+    final result = jsonDecode(response.body);
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return List<Map<String, dynamic>>.from(
+        result['data']['formSession']['questionScores'],
+      );
+    } else {
+      throw Exception('Failed to get form question answers');
+    }
+  } catch (e) {
+    throw Exception(e);
+  }
+}
+>>>>>>> b22f7b5234ddb48b0cc4c5d0e1baf4bb6a41b7cc

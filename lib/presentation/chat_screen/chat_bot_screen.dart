@@ -1,11 +1,14 @@
 import 'dart:ui';
 import 'package:bandhucare_new/core/export_file/app_exports.dart';
+import 'package:bandhucare_new/feature/tts/presentation/tts_ui.dart';
 import 'package:bandhucare_new/presentation/chat_screen/controller/chat_screeen_controller.dart';
+import 'package:bandhucare_new/presentation/chat_screen/controller/chat_like_dislike.dart';
 import 'package:bandhucare_new/widget/custom_chat_bubbles.dart';
 import 'package:bandhucare_new/widget/qustion_suggetion.dart';
 import 'package:bandhucare_new/widget/like_deslike_tts.dart';
 
 class ChatMessage {
+  final String? messageId;
   final String text;
   final bool isUser; // true for user, false for bot
   final DateTime timestamp;
@@ -13,8 +16,10 @@ class ChatMessage {
   final String? formQuestionHeader;
   String streamedText;
   String? fullText; // Text streamed from bot
+  String? base64;
 
   ChatMessage({
+    this.messageId,
     required this.text,
     required this.isUser,
     DateTime? timestamp,
@@ -22,6 +27,7 @@ class ChatMessage {
     this.formQuestionHeader,
     this.streamedText = '',
     this.fullText = '',
+    this.base64,
   }) : timestamp = timestamp ?? DateTime.now();
 }
 
@@ -32,6 +38,11 @@ class ChatBotScreen extends StatefulWidget {
 
 class _ChatBotScreenState extends State<ChatBotScreen> {
   late final ChatScreenController controller;
+  late final ChatLikeDislikeController likeDislikeController;
+
+  // TTS overlay state
+  bool _showTtsContainer = false;
+  String? _ttsBase64;
 
   @override
   void initState() {
@@ -41,6 +52,15 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
       controller = Get.find<ChatScreenController>();
     } else {
       controller = Get.put(ChatScreenController(), permanent: false);
+    }
+    // Initialize like/dislike controller
+    if (Get.isRegistered<ChatLikeDislikeController>()) {
+      likeDislikeController = Get.find<ChatLikeDislikeController>();
+    } else {
+      likeDislikeController = Get.put(
+        ChatLikeDislikeController(),
+        permanent: false,
+      );
     }
   }
 
@@ -194,6 +214,45 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
                     ),
                   ),
                 ),
+                // TTS Container overlay (animated from top, below header)
+                AnimatedPositioned(
+                  duration: const Duration(
+                    milliseconds: 500,
+                  ), // Slower animation
+                  curve: Curves.easeInOut,
+                  top: _showTtsContainer
+                      ? MediaQuery.of(context).padding.top +
+                            80 +
+                            10 // Status bar + header height + padding
+                      : -100,
+                  left: 0,
+                  right: 0,
+                  child: _ttsBase64 != null
+                      ? Center(
+                          child: TtsContainer(
+                            base64: _ttsBase64!,
+                            onClose: () {
+                              // Start closing animation
+                              setState(() {
+                                _showTtsContainer = false;
+                              });
+                              // Clear base64 after animation completes (500ms)
+                              Future.delayed(
+                                const Duration(milliseconds: 500),
+                                () {
+                                  if (mounted) {
+                                    setState(() {
+                                      _ttsBase64 = null;
+                                    });
+                                  }
+                                },
+                              );
+                            },
+                          ),
+                        )
+                      : const SizedBox.shrink(),
+                ),
+
                 // Bottom input field
                 Positioned(
                   left: 0,
@@ -389,26 +448,26 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
         message.file!['fileType'].toString().isNotEmpty;
 
     // Debug prints
-    print('🔍 _buildUserMessage DEBUG:');
-    print('   message.text: ${message.text}');
-    print('   message.file: ${message.file}');
-    print('   message.file != null: ${message.file != null}');
-    if (message.file != null) {
-      print('   message.file![\'fileType\']: ${message.file!['fileType']}');
-      print(
-        '   message.file![\'fileType\'] != null: ${message.file!['fileType'] != null}',
-      );
-      print(
-        '   message.file![\'fileType\'].toString().isNotEmpty: ${message.file!['fileType']?.toString().isNotEmpty}',
-      );
-    }
-    print('   hasValidFile: $hasValidFile');
+    // print('🔍 _buildUserMessage DEBUG:');
+    // print('   message.text: ${message.text}');
+    // print('   message.file: ${message.file}');
+    // print('   message.file != null: ${message.file != null}');
+    // if (message.file != null) {
+    //   print('   message.file![\'fileType\']: ${message.file!['fileType']}');
+    //   print(
+    //     '   message.file![\'fileType\'] != null: ${message.file!['fileType'] != null}',
+    //   );
+    //   print(
+    //     '   message.file![\'fileType\'].toString().isNotEmpty: ${message.file!['fileType']?.toString().isNotEmpty}',
+    //   );
+    // }
+    // print('   hasValidFile: $hasValidFile');
 
     Widget messageWidget;
 
     if (hasValidFile) {
       if (message.file!['fileType'] == 'audio') {
-        print('✅ RENDERING: AudioChatBubble');
+        //  print('✅ RENDERING: AudioChatBubble');
         messageWidget = AudioChatBubble(
           audioUrl: message.file!['fileUrl']?.toString(),
           audioTranscript:
@@ -416,7 +475,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
           isLoading: message.file!['fileUrl'] == null,
         );
       } else {
-        print('✅ RENDERING: ChatBubblePdf (PDF/Document)');
+        //  print('✅ RENDERING: ChatBubblePdf (PDF/Document)');
         messageWidget = ChatBubblePdf(
           fileName: message.file!['fileName']?.toString() ?? 'Document.pdf',
           fileUrl: message.file!['fileUrl']?.toString(),
@@ -426,7 +485,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
         );
       }
     } else {
-      print('✅ RENDERING: Normal Text Message');
+      //  print('✅ RENDERING: Normal Text Message');
       messageWidget = Container(
         constraints: BoxConstraints(maxWidth: 300),
         padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
@@ -473,14 +532,30 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
                         isLoading: message.file!['fileUrl'] == null,
                       ),
                       LikeDislikeTTS(
+                        messageId: message.messageId ?? '',
                         messageText: message.text,
+                        controller: likeDislikeController,
                         onLikeChanged: (isLiked) {
-                          print(
-                            'Message feedback: ${isLiked ? "liked" : "disliked"}',
-                          );
+                          // print(
+                          //   'Message feedback: ${isLiked ? "liked" : "disliked"}',
+                          // );
                         },
                         onTTS: () {
-                          print('TTS triggered for audio message');
+                          // Show TTS container inline
+                          if (message.base64 != null &&
+                              message.base64!.isNotEmpty) {
+                            setState(() {
+                              _showTtsContainer = true;
+                              _ttsBase64 = message.base64;
+                            });
+                          } else {
+                            Fluttertoast.showToast(
+                              msg: "No TTS available",
+                              backgroundColor: Colors.grey[800],
+                              textColor: Colors.white,
+                              toastLength: Toast.LENGTH_SHORT,
+                            );
+                          }
                         },
                       ),
                     ],
@@ -502,16 +577,28 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
                         isLoading: message.file!['fileUrl'] == null,
                       ),
                       LikeDislikeTTS(
+                        messageId: message.messageId ?? '',
                         messageText:
                             message.file!['caption']?.toString() ??
                             message.text,
-                        onLikeChanged: (isLiked) {
-                          print(
-                            'Message feedback: ${isLiked ? "liked" : "disliked"}',
-                          );
-                        },
+                        controller: likeDislikeController,
+
                         onTTS: () {
-                          print('TTS triggered for document message');
+                          // Show TTS container inline
+                          if (message.base64 != null &&
+                              message.base64!.isNotEmpty) {
+                            setState(() {
+                              _showTtsContainer = true;
+                              _ttsBase64 = message.base64;
+                            });
+                          } else {
+                            Fluttertoast.showToast(
+                              msg: "No TTS available",
+                              backgroundColor: Colors.grey[800],
+                              textColor: Colors.white,
+                              toastLength: Toast.LENGTH_SHORT,
+                            );
+                          }
                         },
                       ),
                     ],
@@ -549,16 +636,31 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
                         ),
                       ),
                       LikeDislikeTTS(
+                        messageId: message.messageId ?? '',
                         messageText: message.text,
-                        onLikeChanged: (isLiked) {
-                          // Handle like/dislike feedback
-                          print(
-                            'Message feedback: ${isLiked ? "liked" : "disliked"}',
-                          );
-                        },
+                        controller: likeDislikeController,
+                        // onLikeChanged: (isLiked) {
+                        //   // Handle like/dislike feedback
+                        //   print(
+                        //     'Message feedback: ${isLiked ? "liked" : "disliked"}',
+                        //   );
+                        // },
                         onTTS: () {
-                          // Handle text-to-speech
-                          print('TTS triggered for: ${message.text}');
+                          // Show TTS container inline
+                          if (message.base64 != null &&
+                              message.base64!.isNotEmpty) {
+                            setState(() {
+                              _showTtsContainer = true;
+                              _ttsBase64 = message.base64;
+                            });
+                          } else {
+                            Fluttertoast.showToast(
+                              msg: "No TTS available",
+                              backgroundColor: Colors.grey[800],
+                              textColor: Colors.white,
+                              toastLength: Toast.LENGTH_SHORT,
+                            );
+                          }
                         },
                       ),
                     ],
@@ -573,7 +675,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
                     builder: (context) {
                       print("message.formQuestionHeader: ${message.text}");
                       return Text(
-                        message.text!,
+                        message.text,
                         style: TextStyle(
                           color: Color(0xFF979797),
                           fontSize: 12,
@@ -603,6 +705,9 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
                     ),
                   ),
                   child: Text(
+                    // message.messageId ?? '',
+                    //  message.messageId ?? '',
+                    //  message.base64 ?? '',
                     message.streamedText.isNotEmpty
                         ? message.streamedText
                         : message.text,
@@ -617,16 +722,34 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
                   ),
                 ),
                 LikeDislikeTTS(
+                  messageId: message.messageId ?? '',
                   messageText: message.text,
+                  controller: likeDislikeController,
                   onLikeChanged: (isLiked) {
-                    // Handle like/dislike feedback
-                    print(
-                      'Message feedback: ${isLiked ? "liked" : "disliked"}',
+                    // Show feedback to user
+                    Fluttertoast.showToast(
+                      msg: isLiked ? "Message liked" : "Message disliked",
+                      backgroundColor: Colors.grey[800],
+                      textColor: Colors.white,
+                      toastLength: Toast.LENGTH_SHORT,
                     );
                   },
                   onTTS: () {
-                    // Handle text-to-speech
+                    // Handle text-to-speech - show inline container
                     print('TTS triggered for: ${message.text}');
+                    if (message.base64 != null && message.base64!.isNotEmpty) {
+                      setState(() {
+                        _showTtsContainer = true;
+                        _ttsBase64 = message.base64;
+                      });
+                    } else {
+                      Fluttertoast.showToast(
+                        msg: "No TTS available",
+                        backgroundColor: Colors.grey[800],
+                        textColor: Colors.white,
+                        toastLength: Toast.LENGTH_SHORT,
+                      );
+                    }
                   },
                 ),
               ],
