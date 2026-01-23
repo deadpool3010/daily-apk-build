@@ -64,7 +64,7 @@ class AbhaCardContainer extends StatelessWidget {
         ),
         const SizedBox(height: 10),
         DynamicButton(
-          text: "Create Another Address",
+          text: "Create Another",
           width: 132,
           height: 35,
           onPressed: () {

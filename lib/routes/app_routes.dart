@@ -1,3 +1,4 @@
+import 'package:bandhucare_new/feature/edit_profile/presentation/edit_profile_ui.dart';
 import 'package:bandhucare_new/feature/group_details/binding/group_details_binding.dart';
 import 'package:bandhucare_new/feature/group_details/presentation/group_details_screen.dart';
 import 'package:bandhucare_new/feature/hospital_information/binding/binding.dart';
@@ -111,6 +112,7 @@ class AppRoutes {
   static const weeklyQuestionnerScreen = '/weekly-questionner';
 
   static const groupDetailsScreen = '/group-details';
+  static const editProfileScreen = '/edit-profile';
 }
 
 class AppPages {
@@ -337,6 +339,12 @@ class AppPages {
       name: AppRoutes.groupDetailsScreen,
       page: () => const GroupDetailsScreen(),
       binding: GroupDetailsBinding(),
+      transition: Transition.rightToLeftWithFade,
+      transitionDuration: const Duration(milliseconds: 400),
+    ),
+    GetPage(
+      name: AppRoutes.editProfileScreen,
+      page: () => EditProfileUi(),
       transition: Transition.rightToLeftWithFade,
       transitionDuration: const Duration(milliseconds: 400),
     ),

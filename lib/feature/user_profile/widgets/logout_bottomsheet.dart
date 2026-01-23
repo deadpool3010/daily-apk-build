@@ -34,9 +34,9 @@ Future<void> logoutBottomSheet(BuildContext context) async {
     child: Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const Text(
+          Text(
             'Logout',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
           ),
@@ -48,30 +48,43 @@ Future<void> logoutBottomSheet(BuildContext context) async {
           const Spacer(),
           Row(
             children: [
-              Expanded(
+              Container(
+                width: 175,
+                height: 50,
                 child: OutlinedButton(
+                  style: OutlinedButton.styleFrom(
+                    side: BorderSide(color: Colors.grey),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
                   onPressed: () {
                     Navigator.of(context).pop(); // close bottom sheet
                   },
                   child: const Text(
                     'Cancel',
-                    style: TextStyle(color: Colors.black),
+                    style: TextStyle(color: Colors.grey),
                   ),
                 ),
               ),
               const SizedBox(width: 12),
-              Expanded(
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black,
+              Container(
+                width: 175,
+                height: 50,
+                child: OutlinedButton(
+                  style: OutlinedButton.styleFrom(
+                    side: BorderSide(color: Colors.red),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
                   onPressed: () async {
                     Navigator.of(context).pop(); // close sheet first
                     await logoutFunction();
                   },
                   child: const Text(
-                    'Logout',
-                    style: TextStyle(color: Colors.white),
+                    'Confirm',
+                    style: TextStyle(color: Colors.red),
                   ),
                 ),
               ),

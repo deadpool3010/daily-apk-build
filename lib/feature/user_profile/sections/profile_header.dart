@@ -38,7 +38,12 @@ class ProfileHeaderSection extends StatelessWidget {
               ],
             ),
             Spacer(), // Pushes edit icon to the end
-            Icon(Icons.edit, size: 20, color: Colors.black),
+            InkWell(
+              onTap: () {
+                Get.toNamed(AppRoutes.editProfileScreen);
+              },
+              child: Icon(Icons.edit, size: 20, color: Colors.black),
+            ),
           ],
         ),
       ),

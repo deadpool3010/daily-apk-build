@@ -11,13 +11,18 @@ class UserProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
-        statusBarColor: Colors.white,
+        statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.dark,
         statusBarBrightness: Brightness.light,
         systemNavigationBarColor: Colors.transparent,
       ),
       child: Scaffold(
-        appBar: UserProfileAppbar(),
+        backgroundColor: Colors.white,
+        appBar: CommonAppBar(
+          title: 'My Profile',
+          toolbarHeight: 75,
+          titleSpacing: 140,
+        ),
         body: SingleChildScrollView(
           child: Column(
             children: [
