@@ -1,6 +1,7 @@
 // lib/feature/profile/presentation/sections/widgets/abha_card_container.dart
 import 'package:bandhucare_new/feature/user_profile/widgets/abha_card_front.dart';
 import 'package:bandhucare_new/model/patientModel.dart';
+import 'package:bandhucare_new/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:bandhucare_new/widget/custom_button.dart';
@@ -16,7 +17,7 @@ class AbhaCardContainer extends StatelessWidget {
       width: 360,
       height: 125,
       decoration: BoxDecoration(
-        color: const Color.fromRGBO(237, 242, 247, 1.0),
+        color: Color(0xFFE0E7EE).withOpacity(0.5),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Padding(

@@ -1,7 +1,9 @@
 import 'dart:ui';
 import 'package:bandhucare_new/core/export_file/app_exports.dart';
 import 'package:bandhucare_new/core/utils/image_constant.dart';
-import 'package:bandhucare_new/routes/app_routes.dart';
+import 'package:bandhucare_new/presentation/home_screen/controller/home_screen_controller.dart';
+import 'package:bandhucare_new/model/homepage_model.dart';
+import 'package:bandhucare_new/core/ui/shimmer/shimmer.dart';
 import 'package:flutter/material.dart';
 
 class SearchGroupsCard extends StatefulWidget {
@@ -23,13 +25,15 @@ class _SearchGroupsCardState extends State<SearchGroupsCard>
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
   late Animation<double> _opacityAnimation;
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
 
-  // Sample groups data
-  final List<Map<String, String>> _groups = [
-    {'name': 'CMC Main Group - June', 'id': '1'},
-    {'name': 'Paediatric Care Team Group', 'id': '2'},
-    {'name': 'Paediatric Post Care Team Group', 'id': '3'},
-  ];
+  @override
+  void dispose() {
+    _controller.dispose();
+    _searchController.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -58,11 +62,6 @@ class _SearchGroupsCardState extends State<SearchGroupsCard>
     _controller.forward();
   }
 
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
 
   void _closeCard() {
     _controller.reverse().then((_) {
@@ -144,6 +143,12 @@ class _SearchGroupsCardState extends State<SearchGroupsCard>
                   borderRadius: BorderRadius.circular(50),
                 ),
                 child: TextField(
+                  controller: _searchController,
+                  onChanged: (value) {
+                    setState(() {
+                      _searchQuery = value.toLowerCase();
+                    });
+                  },
                   decoration: InputDecoration(
                     hintText: 'Search Groups',
                     hintStyle: GoogleFonts.lato(
@@ -185,14 +190,63 @@ class _SearchGroupsCardState extends State<SearchGroupsCard>
             ),
             // Groups list
             Flexible(
-              child: ListView.builder(
-                shrinkWrap: true,
-                padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-                itemCount: _groups.length,
-                itemBuilder: (context, index) {
-                  return _buildGroupItem(_groups[index]);
-                },
-              ),
+              child: Obx(() {
+                final controller = Get.find<HomepageController>();
+                final isLoading = controller.isLoading.value;
+                final allGroups = controller.groups;
+                
+                // Show shimmer loading effect
+                if (isLoading) {
+                  return ListView.builder(
+                    shrinkWrap: true,
+                    padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+                    itemCount: 3, // Show 3 shimmer items
+                    itemBuilder: (context, index) {
+                      return _buildGroupItemShimmer();
+                    },
+                  );
+                }
+                
+                // Filter groups based on search query
+                var filteredGroups = _searchQuery.isEmpty
+                    ? allGroups.toList()
+                    : allGroups.where((group) {
+                        return group.name.toLowerCase().contains(_searchQuery);
+                      }).toList();
+                
+                // Sort groups: active groups first, then inactive
+                filteredGroups.sort((a, b) {
+                  if (a.isActive && !b.isActive) return -1;
+                  if (!a.isActive && b.isActive) return 1;
+                  return 0;
+                });
+                
+                if (filteredGroups.isEmpty) {
+                  return Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
+                    child: Center(
+                      child: Text(
+                        _searchQuery.isEmpty
+                            ? 'No groups available'
+                            : 'No groups found',
+                        style: GoogleFonts.roboto(
+                          fontSize: 14,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                    ),
+                  );
+                }
+                
+                return ListView.builder(
+                  shrinkWrap: true,
+                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+                  itemCount: filteredGroups.length,
+                  itemBuilder: (context, index) {
+                    return _buildGroupItem(filteredGroups[index]);
+                  },
+                );
+              }),
             ),
           ],
         ),
@@ -200,15 +254,21 @@ class _SearchGroupsCardState extends State<SearchGroupsCard>
     );
   }
 
-  Widget _buildGroupItem(Map<String, String> group) {
+  Widget _buildGroupItem(HomepageGroup group) {
+    final isActive = group.isActive;
+    
     return InkWell(
       onTap: () {
+        // Set bottom navigation index to 0 (home) when closing
+        final controller = Get.find<HomepageController>();
+        controller.changeBottomNavIndex(0);
         _closeCard();
-        Get.toNamed(AppRoutes.groupDetailsScreen);
+        // Get.toNamed(AppRoutes.groupDetailsScreen);
       },
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 16),
         decoration: BoxDecoration(
+          color:Colors.transparent,
           border: Border(
             bottom: BorderSide(
               color: Colors.grey[200]!,
@@ -218,48 +278,150 @@ class _SearchGroupsCardState extends State<SearchGroupsCard>
         ),
         child: Row(
           children: [
-            // Medical icon
+            // Group image or icon
             Container(
               width: 48,
               height: 48,
               decoration: BoxDecoration(
-                color: AppColors.secondaryColor,
+                color: isActive ? AppColors.primaryColor : AppColors.secondaryColor,
                 shape: BoxShape.circle,
               ),
-              child: Image.asset(
-                ImageConstant.hospitalLogo,
-                width: 24,
-                height: 24,
-                fit: BoxFit.contain,
-                errorBuilder: (context, error, stackTrace) {
-                  return const Icon(
-                    Icons.medical_services,
-                    color: Colors.white,
-                    size: 24,
-                  );
-                },
+              child: ClipOval(
+                child: group.image != null && group.image!.isNotEmpty
+                    ? Image.network(
+                        group.image!,
+                        width: 48,
+                        height: 48,
+                        fit: BoxFit.cover,
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) {
+                            return child;
+                          }
+                          return Shimmer(
+                            child: Container(
+                              width: 48,
+                              height: 48,
+                              color: Colors.white,
+                            ),
+                          );
+                        },
+                        errorBuilder: (context, error, stackTrace) {
+                          return Image.asset(
+                            ImageConstant.hospitalLogo,
+                            width: 24,
+                            height: 24,
+                            fit: BoxFit.contain,
+                          );
+                        },
+                      )
+                    : Image.asset(
+                        ImageConstant.hospitalLogo,
+                        width: 24,
+                        height: 24,
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) {
+                          return const Icon(
+                            Icons.medical_services,
+                            color: Colors.white,
+                            size: 24,
+                          );
+                        },
+                      ),
               ),
             ),
             const SizedBox(width: 16),
             // Group name
             Expanded(
               child: Text(
-                group['name'] ?? '',
+                group.name,
                 style: GoogleFonts.roboto(
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
-                  color: Colors.black,
+                  color: isActive ? AppColors.primaryColor : Colors.black,
                 ),
               ),
             ),
-            // Chevron icon
-            Icon(
-              Icons.chevron_right,
-              color: Colors.grey[400],
-              size: 24,
-            ),
+            // Active indicator or Chevron icon
+           
+          
+              Icon(
+                Icons.chevron_right,
+                color: Colors.grey[400],
+                size: 24,
+              ),
+            if (isActive) const SizedBox(width: 8),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildGroupItemShimmer() {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 16),
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: BorderSide(
+            color: Colors.grey[200]!,
+            width: 1,
+          ),
+        ),
+      ),
+      child: Row(
+        children: [
+          // Group image shimmer
+          Shimmer(
+            child: Container(
+              width: 48,
+              height: 48,
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+              ),
+            ),
+          ),
+          const SizedBox(width: 16),
+          // Group name shimmer
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Shimmer(
+                  child: Container(
+                    width: double.infinity,
+                    height: 16,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Shimmer(
+                  child: Container(
+                    width: 120,
+                    height: 12,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // Chevron icon shimmer
+          Shimmer(
+            child: Container(
+              width: 24,
+              height: 24,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(4),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -328,4 +490,5 @@ class SpeechBubblePainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
+
 

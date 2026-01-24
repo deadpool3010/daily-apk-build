@@ -67,7 +67,7 @@ class AccountSettingsSection extends StatelessWidget {
             ),
             if (i != menuItems.length - 1) ...[
               const SizedBox(height: 20),
-              const SeperatorLine(height: 3, horizontalPadding: 20),
+              const SeperatorLine(height: 1.5, horizontalPadding: 20, color: Color(0xFFDADADA)),
               const SizedBox(height: 20),
             ],
             if (i == menuItems.length - 1) ...[
