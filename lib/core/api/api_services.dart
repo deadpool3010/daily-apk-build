@@ -1297,3 +1297,33 @@ Future<List<Map<String, dynamic>>> getFormQuestionAnsApi(
     throw Exception(e);
   }
 }
+
+Future<Map<String, dynamic>> getHomepageApi() async {
+  try {
+    final url = baseUrl + getHomepage;
+
+    print('GetHomepage API URL: $url');
+
+    final response = await http.get(
+      Uri.parse(url),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $accessToken",
+      },
+    );
+
+    print('GetHomepage Response Status: ${response.statusCode}');
+    print('GetHomepage Response Body: ${response.body}');
+
+    final result = jsonDecode(response.body);
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return result;
+    } else {
+      throw Exception(result['message'] ?? 'Unknown error');
+    }
+  } catch (e) {
+    print('GetHomepage Error: $e');
+    throw Exception(e);
+  }
+}

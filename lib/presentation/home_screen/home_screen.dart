@@ -1,6 +1,7 @@
 import 'package:bandhucare_new/core/export_file/app_exports.dart';
 import 'package:bandhucare_new/core/controller/session_controller.dart';
 import 'package:bandhucare_new/core/utils/string_utils.dart';
+import 'package:bandhucare_new/presentation/home_screen/home_screen_helper.dart';
 
 bool isBottomNavVisible = true;
 
@@ -127,14 +128,31 @@ class _HomepageScreenState extends State<HomepageScreen> {
                                       children: [
                                         Icon(TablerIcons.bell, size: 26),
                                         const SizedBox(width: 10),
-                                        SizedBox(
-                                          width: 38,
-                                          height: 38,
-                                          child: Image.asset(
-                                            ImageConstant.hospitalLogo,
-                                            fit: BoxFit.contain,
-                                          ),
-                                        ),
+                                        Obx(() {
+                                          final activeGroup = controller.activeGroup;
+                                          final activeGroupImage = activeGroup?.image;
+                                          return SizedBox(
+                                            width: 40,
+                                            height: 40,
+                                            child: activeGroupImage != null && activeGroupImage.isNotEmpty
+                                                ? ClipOval(
+                                                  child: DelayedImageWithShimmer(
+                                                      imageUrl: activeGroupImage,
+                                                      width: 40,
+                                                      height: 40,
+                                                      fit: BoxFit.contain,
+                                                      fallbackWidget: Image.asset(
+                                                        ImageConstant.hospitalLogo,
+                                                        fit: BoxFit.contain,
+                                                      ),
+                                                    ),
+                                                )
+                                                : Image.asset(
+                                                    ImageConstant.hospitalLogo,
+                                                    fit: BoxFit.contain,
+                                                  ),
+                                          );
+                                        }),
                                       ],
                                     ),
                                   ),

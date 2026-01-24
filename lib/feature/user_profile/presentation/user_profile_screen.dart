@@ -17,6 +17,7 @@ class UserProfileScreen extends StatelessWidget {
         systemNavigationBarColor: Colors.transparent,
       ),
       child: Scaffold(
+        backgroundColor: Colors.white,
         appBar: UserProfileAppbar(),
         body: SingleChildScrollView(
           child: Column(
