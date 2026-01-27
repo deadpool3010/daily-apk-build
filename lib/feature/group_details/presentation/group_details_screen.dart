@@ -94,7 +94,7 @@ class GroupDetailsScreen extends StatelessWidget {
             children: [
               ElevatedButton.icon(
                 onPressed: () {
-                  Get.toNamed(AppRoutes.joinGroupScreen);
+                  Get.toNamed(AppRoutes.scanQrScreen);
                 },
                 icon: const Icon(
                   TablerIcons.qrcode,
