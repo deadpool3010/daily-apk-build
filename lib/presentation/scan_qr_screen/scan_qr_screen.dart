@@ -20,11 +20,11 @@ class ScanQrScreen extends StatelessWidget {
             // Camera Preview Area
             Positioned.fill(child: _buildCameraPreview(controller)),
 
-            // Top Header
-            Positioned(top: 26, left: 0, right: 0, child: _buildHeader()),
-
             // Scanning Frame Overlay
             Positioned.fill(child: _buildScanningOverlay(controller)),
+
+            // Top Header
+            Positioned(top: 26, left: 0, right: 0, child: _buildHeader()),
 
             // Gallery Button at bottom
             Positioned(
@@ -124,9 +124,11 @@ class ScanQrScreen extends StatelessWidget {
         children: [
           GestureDetector(
             onTap: () => Get.back(),
+            behavior: HitTestBehavior.translucent,
             child: Container(
               padding: EdgeInsets.all(5),
               decoration: BoxDecoration(
+                color: Colors.transparent,
                 shape: BoxShape.circle,
                 border: Border.all(color: Colors.white, width: 2),
               ),
