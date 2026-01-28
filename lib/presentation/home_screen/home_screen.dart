@@ -129,24 +129,31 @@ class _HomepageScreenState extends State<HomepageScreen> {
                                         Icon(TablerIcons.bell, size: 26),
                                         const SizedBox(width: 10),
                                         Obx(() {
-                                          final activeGroup = controller.activeGroup;
-                                          final activeGroupImage = activeGroup?.image;
+                                          final hospitalImage =
+                                              controller.hospitalImageUrl.value;
                                           return SizedBox(
                                             width: 40,
                                             height: 40,
-                                            child: activeGroupImage != null && activeGroupImage.isNotEmpty
+                                            child:
+                                                hospitalImage != null &&
+                                                    hospitalImage.isNotEmpty
                                                 ? ClipOval(
-                                                  child: DelayedImageWithShimmer(
-                                                      imageUrl: activeGroupImage,
-                                                      width: 40,
-                                                      height: 40,
-                                                      fit: BoxFit.contain,
-                                                      fallbackWidget: Image.asset(
-                                                        ImageConstant.hospitalLogo,
-                                                        fit: BoxFit.contain,
-                                                      ),
-                                                    ),
-                                                )
+                                                    child:
+                                                        DelayedImageWithShimmer(
+                                                          imageUrl:
+                                                              hospitalImage,
+                                                          width: 40,
+                                                          height: 40,
+                                                          fit: BoxFit.contain,
+                                                          fallbackWidget:
+                                                              Image.asset(
+                                                                ImageConstant
+                                                                    .hospitalLogo,
+                                                                fit: BoxFit
+                                                                    .contain,
+                                                              ),
+                                                        ),
+                                                  )
                                                 : Image.asset(
                                                     ImageConstant.hospitalLogo,
                                                     fit: BoxFit.contain,

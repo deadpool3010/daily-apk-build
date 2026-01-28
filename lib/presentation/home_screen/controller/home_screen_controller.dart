@@ -11,6 +11,7 @@ class HomepageController extends GetxController {
   final Rx<ProfileInfo?> profileInfo = Rx<ProfileInfo?>(null);
   final Rx<HospitalInfo?> hospitalInfo = Rx<HospitalInfo?>(null);
   final RxList<HomepageGroup> groups = <HomepageGroup>[].obs;
+  final RxString hospitalImageUrl = ''.obs;
   final RxBool isLoading = false.obs;
   final RxString errorMessage = ''.obs;
 
@@ -61,6 +62,8 @@ class HomepageController extends GetxController {
         profileInfo.value = homepageResponse.data.profileInfo;
         hospitalInfo.value = homepageResponse.data.hospitalInfo;
         groups.value = homepageResponse.data.groups;
+        hospitalImageUrl.value =
+            response['data']['hospitalInfo']['image'] ?? '';
 
         print('Homepage data loaded successfully');
         print('Profile: ${profileInfo.value?.name}');
