@@ -14,17 +14,20 @@ class ConsentFormScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Get.find<ConsentFormController>();
     final groupData = Get.arguments as Map<String, dynamic>? ?? {};
-    
+
     // Extract consentForm from group data
     Map<String, dynamic>? consentFormData;
-    
+
     // Debug: Print received data structure
-    print('Consent Form Screen - Received groupData keys: ${groupData.keys.toList()}');
-    
+    print(
+      'Consent Form Screen - Received groupData keys: ${groupData.keys.toList()}',
+    );
+
     // Try to get consentForm from nested group structure
     String? consentFormString;
-    
-    if (groupData['group'] != null && groupData['group'] is Map<String, dynamic>) {
+
+    if (groupData['group'] != null &&
+        groupData['group'] is Map<String, dynamic>) {
       final group = groupData['group'] as Map<String, dynamic>;
       print('Consent Form Screen - Group keys: ${group.keys.toList()}');
       consentFormString = group['consentForm'] as String?;
@@ -33,17 +36,25 @@ class ConsentFormScreen extends StatelessWidget {
       consentFormString = groupData['consentForm'] as String?;
       print('Consent Form Screen - Found consentForm directly in groupData');
     }
-    
+
     // Parse the JSON string if found
     if (consentFormString != null && consentFormString.isNotEmpty) {
-      print('Consent Form Screen - consentFormString length: ${consentFormString.length}');
-      print('Consent Form Screen - consentFormString preview: ${consentFormString.substring(0, consentFormString.length > 150 ? 150 : consentFormString.length)}...');
-      
+      print(
+        'Consent Form Screen - consentFormString length: ${consentFormString.length}',
+      );
+      print(
+        'Consent Form Screen - consentFormString preview: ${consentFormString.substring(0, consentFormString.length > 150 ? 150 : consentFormString.length)}...',
+      );
+
       try {
         consentFormData = jsonDecode(consentFormString) as Map<String, dynamic>;
         print('Consent Form Screen - ✅ Successfully parsed TipTap JSON');
-        print('Consent Form Screen - TipTap content type: ${consentFormData['type']}');
-        print('Consent Form Screen - TipTap content nodes count: ${(consentFormData['content'] as List?)?.length ?? 0}');
+        print(
+          'Consent Form Screen - TipTap content type: ${consentFormData['type']}',
+        );
+        print(
+          'Consent Form Screen - TipTap content nodes count: ${(consentFormData['content'] as List?)?.length ?? 0}',
+        );
       } catch (e) {
         print('Consent Form Screen - ❌ Error parsing consentForm JSON: $e');
         print('Consent Form Screen - Full JSON string: $consentFormString');
@@ -72,9 +83,11 @@ class ConsentFormScreen extends StatelessWidget {
                   children: [
                     GestureDetector(
                       onTap: () => Get.back(),
+                      behavior: HitTestBehavior.translucent,
                       child: Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
+                          color: Colors.transparent,
                           shape: BoxShape.circle,
                           border: Border.all(
                             color: Color(0xFF2563EB),
@@ -139,40 +152,40 @@ class ConsentFormScreen extends StatelessWidget {
                       else
                         _buildLoadingOrError(),
                       const SizedBox(height: 24),
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFF9FBFF),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: const Color(0xFF5281E6),
-                            width: 1,
-                          ),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'msg_you_will_be_added_to'.tr,
-                              style: TextStyle(
-                                fontFamily: 'Lato',
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                                color: Color(0xFF111827),
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            const SizedBox(height: 12),
-                            _buildInfoItem('lbl_department'.tr),
-                            const SizedBox(height: 8),
-                            _buildInfoItem('lbl_section'.tr),
-                            const SizedBox(height: 8),
-                            _buildInfoItem('lbl_unit'.tr),
-                          ],
-                        ),
-                      ),
+                      // Container(
+                      //   width: double.infinity,
+                      //   padding: const EdgeInsets.all(16),
+                      //   decoration: BoxDecoration(
+                      //     color: const Color(0xFFF9FBFF),
+                      //     borderRadius: BorderRadius.circular(12),
+                      //     border: Border.all(
+                      //       color: const Color(0xFF5281E6),
+                      //       width: 1,
+                      //     ),
+                      //   ),
+                      //   child: Column(
+                      //     crossAxisAlignment: CrossAxisAlignment.start,
+                      //     children: [
+                      //       Text(
+                      //         'msg_you_will_be_added_to'.tr,
+                      //         style: TextStyle(
+                      //           fontFamily: 'Lato',
+                      //           fontSize: 14,
+                      //           fontWeight: FontWeight.w500,
+                      //           color: Color(0xFF111827),
+                      //         ),
+                      //         maxLines: 1,
+                      //         overflow: TextOverflow.ellipsis,
+                      //       ),
+                      //       const SizedBox(height: 12),
+                      //       _buildInfoItem('lbl_department'.tr),
+                      //       const SizedBox(height: 8),
+                      //       _buildInfoItem('lbl_section'.tr),
+                      //       const SizedBox(height: 8),
+                      //       _buildInfoItem('lbl_unit'.tr),
+                      //     ],
+                      //   ),
+                      // ),
                       const SizedBox(height: 32),
 
                       const SizedBox(height: 40),

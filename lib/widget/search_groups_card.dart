@@ -1,10 +1,7 @@
 import 'dart:ui';
 import 'package:bandhucare_new/core/export_file/app_exports.dart';
-import 'package:bandhucare_new/core/utils/image_constant.dart';
-import 'package:bandhucare_new/presentation/home_screen/controller/home_screen_controller.dart';
 import 'package:bandhucare_new/model/homepage_model.dart';
 import 'package:bandhucare_new/core/ui/shimmer/shimmer.dart';
-import 'package:flutter/material.dart';
 
 class SearchGroupsCard extends StatefulWidget {
   final VoidCallback onClose;
@@ -282,8 +279,9 @@ class _SearchGroupsCardState extends State<SearchGroupsCard>
             Container(
               width: 48,
               height: 48,
-              decoration: BoxDecoration(
-                color: isActive ? AppColors.primaryColor : AppColors.secondaryColor,
+              decoration: const BoxDecoration(
+                // Remove colored background; keep circular shape only
+                color: Colors.transparent,
                 shape: BoxShape.circle,
               ),
               child: ClipOval(
@@ -294,16 +292,18 @@ class _SearchGroupsCardState extends State<SearchGroupsCard>
                         height: 48,
                         fit: BoxFit.cover,
                         loadingBuilder: (context, child, loadingProgress) {
-                          if (loadingProgress == null) {
-                            return child;
+                          // While loading, show shimmer placeholder
+                          if (loadingProgress != null) {
+                            return Shimmer(
+                              child: Container(
+                                width: 48,
+                                height: 48,
+                                color: Colors.white,
+                              ),
+                            );
                           }
-                          return Shimmer(
-                            child: Container(
-                              width: 48,
-                              height: 48,
-                              color: Colors.white,
-                            ),
-                          );
+                          // When fully loaded, show the actual image without shimmer
+                          return child;
                         },
                         errorBuilder: (context, error, stackTrace) {
                           return Image.asset(

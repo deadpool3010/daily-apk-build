@@ -63,6 +63,13 @@ class TextSpanRenderer {
 
             style = style.copyWith(backgroundColor: highlightColor);
             break;
+          case 'textStyle':
+            final colorValue = attrs['color'] as String? ?? '';
+            final parsedColor = _colorFromHex(colorValue);
+            if (parsedColor != null) {
+              style = style.copyWith(color: parsedColor);
+            }
+            break;
           case 'link':
             final href = attrs['href'] as String? ?? '';
             style = style.copyWith(
@@ -137,3 +144,20 @@ class TextSpanRenderer {
   }
 }
 
+Color? _colorFromHex(String hexColor) {
+  if (hexColor.isEmpty) return null;
+
+  var cleaned = hexColor.trim();
+  if (cleaned.startsWith('#')) {
+    cleaned = cleaned.substring(1);
+  }
+
+  if (cleaned.length == 6) {
+    cleaned = 'FF$cleaned';
+  }
+
+  final colorInt = int.tryParse(cleaned, radix: 16);
+  if (colorInt == null) return null;
+
+  return Color(colorInt);
+}
