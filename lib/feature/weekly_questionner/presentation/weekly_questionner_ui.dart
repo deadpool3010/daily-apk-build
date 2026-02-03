@@ -11,6 +11,8 @@ class WeeklyQuestionnerUi extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Initialize controller if not already registered
+    final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
+    final bool isKeyboardOpen = keyboardHeight > 0;
     if (!Get.isRegistered<WeeklyQuestionnerController>()) {
       Get.put(WeeklyQuestionnerController());
     }
@@ -36,7 +38,7 @@ class WeeklyQuestionnerUi extends StatelessWidget {
                   : QuestionAnswerTile(),
             ),
             SizedBox(height: 20),
-            FurtherAssistance(),
+            if (isKeyboardOpen == false) ...{FurtherAssistance()},
           ],
         ),
       ),

@@ -8,7 +8,7 @@ class SessionController extends GetxController {
   void loadFromCache(Map<String, dynamic> cachedUser) {
     // Extract profileDetails if it exists, otherwise use the cachedUser directly
     Map<String, dynamic> userData = cachedUser;
-    if (cachedUser.containsKey('profileDetails') && 
+    if (cachedUser.containsKey('profileDetails') &&
         cachedUser['profileDetails'] is Map<String, dynamic>) {
       userData = cachedUser['profileDetails'] as Map<String, dynamic>;
     }

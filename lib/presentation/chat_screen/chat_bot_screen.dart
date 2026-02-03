@@ -222,7 +222,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
                   curve: Curves.easeInOut,
                   top: _showTtsContainer
                       ? MediaQuery.of(context).padding.top +
-                            80 +
+                            90 +
                             10 // Status bar + header height + padding
                       : -100,
                   left: 0,
@@ -673,9 +673,11 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
                     message.formQuestionHeader!.isNotEmpty) ...{
                   Builder(
                     builder: (context) {
-                      print("message.formQuestionHeader: ${message.text}");
+                      // print(
+                      //   "message.formQuestionHeader: ${message.formQuestionHeader}",  // chnages by manav for header display
+                      // );
                       return Text(
-                        message.text,
+                        message.formQuestionHeader ?? '',
                         style: TextStyle(
                           color: Color(0xFF979797),
                           fontSize: 12,

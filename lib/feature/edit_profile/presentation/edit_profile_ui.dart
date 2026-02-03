@@ -1,5 +1,7 @@
+import 'package:bandhucare_new/core/export_file/app_exports.dart';
 import 'package:bandhucare_new/feature/edit_profile/section/edit_field_section.dart';
 import 'package:bandhucare_new/feature/edit_profile/section/profile_image.dart';
+import 'package:bandhucare_new/feature/edit_profile/section/save_changes.dart';
 import 'package:bandhucare_new/widget/custom_app_bar.dart';
 import 'package:bandhucare_new/widget/custom_button.dart';
 import 'package:flutter/material.dart';
@@ -17,13 +19,7 @@ class EditProfileUi extends StatelessWidget {
         children: [
           EditProfileImage(),
           Expanded(child: EditFieldSection()),
-          DynamicButton(
-            text: "Save Changes",
-            onPressed: () {},
-            fontSize: 15,
-            height: 50,
-            width: 160,
-          ),
+          SaveChanges(),
           SizedBox(height: 20),
         ],
       ),

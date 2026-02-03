@@ -496,10 +496,11 @@ class ChatScreenController extends GetxController {
 
           final id = botMessage["_id"]?.toString();
           final base64 = botMessage["base64"]?.toString() ?? "";
-          print("base64 is" + "  " + base64);
+
+          print("base64 is" + "  " + botMessage['formTemplateName']);
+          
           final botMsg = ChatMessage(
             messageId: id,
-
             text: full,
             fullText: full,
             isUser: false,
@@ -507,6 +508,7 @@ class ChatScreenController extends GetxController {
                 DateTime.tryParse(botMessage["createdAt"]?.toString() ?? "") ??
                 DateTime.now(),
             file: botFile,
+            formQuestionHeader: botMessage['formTemplateName'],
           );
 
           messages.insert(

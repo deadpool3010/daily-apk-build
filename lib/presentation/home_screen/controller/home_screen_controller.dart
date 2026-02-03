@@ -82,6 +82,26 @@ class HomepageController extends GetxController {
     }
   }
 
+  /// Silent refresh (no loading state). Use after switch-group to get updated isActive.
+  Future<bool> refreshHomepageDataSilent() async {
+    try {
+      final response = await getHomepageApi();
+      if (response['success'] == true && response['data'] != null) {
+        final homepageResponse = HomepageResponse.fromJson(response);
+        profileInfo.value = homepageResponse.data.profileInfo;
+        hospitalInfo.value = homepageResponse.data.hospitalInfo;
+        groups.value = homepageResponse.data.groups;
+        hospitalImageUrl.value =
+            response['data']['hospitalInfo']['image'] ?? '';
+        return true;
+      }
+      return false;
+    } catch (e) {
+      print('Error refreshing homepage data silently: $e');
+      return false;
+    }
+  }
+
   @override
   void onClose() {
     super.onClose();

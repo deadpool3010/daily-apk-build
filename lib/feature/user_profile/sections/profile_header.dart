@@ -4,7 +4,7 @@ import 'package:bandhucare_new/feature/user_profile/widgets/avatar.dart';
 import 'package:flutter/material.dart';
 
 class ProfileHeaderSection extends StatelessWidget {
-  const ProfileHeaderSection({super.key});
+const ProfileHeaderSection({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -38,12 +38,20 @@ class ProfileHeaderSection extends StatelessWidget {
               ],
             ),
             Spacer(), // Pushes edit icon to the end
-            Icon(Icons.edit, size: 20, color: Colors.black),
+            //Icon(Icons.edit, size: 20, color: Colors.black),
             InkWell(
               onTap: () {
                 Get.toNamed(AppRoutes.editProfileScreen);
               },
-              child: Icon(Icons.edit, size: 20, color: Colors.black),
+              child: Container(
+                height: 30,
+                width: 30,
+                decoration: BoxDecoration(
+                  color: Color.fromARGB(109, 57, 122, 233),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(Icons.edit_outlined, size: 20, color: Colors.black),
+              ),
             ),
           ],
         ),

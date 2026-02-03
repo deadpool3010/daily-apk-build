@@ -331,6 +331,7 @@ class GroupDetailsScreen extends StatelessWidget {
       createdDate: group.createdDate,
       location: group.location,
       isActive: group.isActive,
+      image: group.image,
       linkedNode: group.associatedNodeName ?? 'N/A',
       nodeType: group.associatedNodeType ?? 'N/A',
       totalUsers: group.members.length.toString().padLeft(2, '0'),

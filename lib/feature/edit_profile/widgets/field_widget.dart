@@ -30,6 +30,7 @@ class FieldWidget extends StatelessWidget {
           ),
           SizedBox(height: 5),
           TextFormField(
+            controller: controller,
             onTap: onTap,
             onTapOutside: (event) {
               FocusScope.of(context).unfocus();

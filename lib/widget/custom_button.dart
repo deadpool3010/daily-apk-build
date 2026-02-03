@@ -9,6 +9,7 @@ class DynamicButton extends StatelessWidget {
   final Widget? leadingIcon;
   final Widget? trailingIcon;
   final Color? color;
+  final bool isDisable;
 
   const DynamicButton({
     Key? key,
@@ -20,6 +21,7 @@ class DynamicButton extends StatelessWidget {
     this.leadingIcon,
     this.trailingIcon,
     this.color,
+    this.isDisable = false,
   }) : super(key: key);
 
   // Auto scale based on height
@@ -36,7 +38,9 @@ class DynamicButton extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: color == null
+          colors: isDisable == true
+              ? const [Colors.grey, Colors.grey]
+              : color == null
               ? const [Color(0xFF3865FF), Color(0xFF223D99)]
               : [color!, color!],
         ),

@@ -169,17 +169,17 @@ class _YourRemindersState extends State<YourReminders> {
             child: PopupMenuButton<String>(
               onSelected: controller.updateFilter,
               itemBuilder: (context) => [
-                const PopupMenuItem(value: 'active', child: Text('active')),
+                const PopupMenuItem(value: 'active', child: Text('Active')),
                 const PopupMenuItem(
                   value: 'in-progress',
-                  child: Text('in-progress'),
+                  child: Text('In Progress'),
                 ),
                 const PopupMenuItem(
                   value: 'completed',
-                  child: Text('completed'),
+                  child: Text('Completed'),
                 ),
-                const PopupMenuItem(value: 'missed', child: Text('missed')),
-                const PopupMenuItem(value: 'all', child: Text('all')),
+                const PopupMenuItem(value: 'missed', child: Text('Missed')),
+                const PopupMenuItem(value: 'all', child: Text('All')),
               ],
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(14),
