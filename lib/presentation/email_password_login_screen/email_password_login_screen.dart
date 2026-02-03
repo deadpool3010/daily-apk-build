@@ -2,7 +2,6 @@ import 'package:bandhucare_new/core/export_file/app_exports.dart';
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'controller/email_password_login_controller.dart';
-import 'package:bandhucare_new/widget/alternative_login_buttons.dart';
 
 class EmailPasswordLoginScreen extends StatelessWidget {
   const EmailPasswordLoginScreen({super.key});
@@ -212,6 +211,11 @@ class EmailPasswordLoginScreen extends StatelessWidget {
       controller: controller.emailController,
       hintText: 'lbl_email_id'.tr,
       icon: BootstrapIcons.envelope,
+      hintStyle: GoogleFonts.lato(
+        fontWeight: FontWeight.w500,
+        color: Color(0xFF94A3B8),
+        fontSize: 14,
+      ),
       keyboardType: TextInputType.emailAddress,
     );
   }
@@ -226,6 +230,11 @@ class EmailPasswordLoginScreen extends StatelessWidget {
         keyboardType: TextInputType.visiblePassword,
         obscureText: !controller.isPasswordVisible.value,
         showPasswordToggle: true,
+        hintStyle: GoogleFonts.lato(
+        fontWeight: FontWeight.w500,
+        color: Color(0xFF94A3B8),
+        fontSize: 14,
+      ),
         onTogglePassword: () {
           controller.togglePasswordVisibility();
         },
@@ -324,7 +333,14 @@ class EmailPasswordLoginScreen extends StatelessWidget {
         onPressed: isLoading
             ? null
             : () {
-                controller.handleLogin();
+                final email = controller.emailController.text.trim();
+                final password = controller.passwordController.text.trim();
+                
+                // Validate before calling handleLogin
+                if (controller.validateEmail(email) &&
+                    controller.validatePassword(password)) {
+                  controller.handleLogin();
+                }
               },
         leadingIcon: isLoading
             ? LoadingAnimationWidget.horizontalRotatingDots(

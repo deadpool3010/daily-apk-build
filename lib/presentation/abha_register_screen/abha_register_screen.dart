@@ -530,7 +530,14 @@ class AbhaRegisterScreen extends StatelessWidget {
               onPressed: isLoading
                   ? null
                   : () {
-                      controller.handleGetAadhaarOTP();
+                      final aadhaarNumber = controller.aadhaarControllers[0].text +
+                          controller.aadhaarControllers[1].text +
+                          controller.aadhaarControllers[2].text;
+                      
+                      // Validate before calling handleGetAadhaarOTP
+                      if (controller.validateAadhaarNumber(aadhaarNumber)) {
+                        controller.handleGetAadhaarOTP();
+                      }
                     },
               leadingIcon: isLoading
                   ? LoadingAnimationWidget.horizontalRotatingDots(
@@ -651,6 +658,17 @@ class AbhaRegisterScreen extends StatelessWidget {
               TextSelection.collapsed(offset: text.length);
         },
         onChanged: (value) {
+          // Only allow numeric input
+          if (value.isNotEmpty && !RegExp(r'^[0-9]+$').hasMatch(value)) {
+            // Remove non-numeric characters
+            final numericValue = value.replaceAll(RegExp(r'[^0-9]'), '');
+            controller.aadhaarControllers[index].value = TextEditingValue(
+              text: numericValue,
+              selection: TextSelection.collapsed(offset: numericValue.length),
+            );
+            return;
+          }
+          
           // Auto-advance to next field when 4 digits are entered
           if (value.length == 4 && index < 2) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -721,6 +739,16 @@ class AbhaRegisterScreen extends StatelessWidget {
             keyboardType: TextInputType.phone,
             maxLength: 10,
             onChanged: (value) {
+              // Only allow numeric input
+              if (value.isNotEmpty && !RegExp(r'^[0-9]+$').hasMatch(value)) {
+                // Remove non-numeric characters
+                final numericValue = value.replaceAll(RegExp(r'[^0-9]'), '');
+                controller.mobileController.value = TextEditingValue(
+                  text: numericValue,
+                  selection: TextSelection.collapsed(offset: numericValue.length),
+                );
+                return;
+              }
               if (value.length == 10) {
                 FocusScope.of(context).unfocus();
               }
@@ -739,7 +767,14 @@ class AbhaRegisterScreen extends StatelessWidget {
             onPressed: isLoading
                 ? null
                 : () {
-                    controller.handleVerifyOtp();
+                    final otp = controller.enteredAadhaarOtp.value;
+                    final mobile = controller.mobileController.text.trim();
+                    
+                    // Validate before calling handleVerifyOtp
+                    if (controller.validateOTP(otp) &&
+                        controller.validateMobileNumber(mobile)) {
+                      controller.handleVerifyOtp();
+                    }
                   },
             leadingIcon: isLoading
                 ? LoadingAnimationWidget.horizontalRotatingDots(

@@ -50,6 +50,7 @@ export 'package:bandhucare_new/widget/custom_text_field.dart';
 export 'package:bandhucare_new/widget/alternative_login_buttons.dart';
 // ==================== Utils ====================
 export 'package:bandhucare_new/core/utils/image_constant.dart';
+export 'package:bandhucare_new/core/utils/validator.dart';
 export 'package:bandhucare_new/theme/app_theme.dart';
 
 // ==================== Routes ====================

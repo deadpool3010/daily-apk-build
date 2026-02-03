@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:bandhucare_new/core/api/api_services.dart';
 import 'package:bandhucare_new/routes/app_routes.dart';
 import 'package:bandhucare_new/core/constants/variables.dart';
+import 'package:bandhucare_new/core/utils/validator.dart';
 
 class MobilePasswordLoginController extends GetxController {
   late TextEditingController mobileController;
@@ -35,47 +35,37 @@ class MobilePasswordLoginController extends GetxController {
     rememberMe.value = !rememberMe.value;
   }
 
+  // Validate mobile number using Validator utility
+  bool validateMobileNumber(String mobile) {
+    return Validator.validatePhoneNumber(mobile);
+  }
+
+  // Validate password using Validator utility
+  bool validatePassword(String password) {
+    return Validator.validatePassword(password);
+  }
+
   Future<void> handleLogin() async {
     final mobile = mobileController.text.trim();
     final password = passwordController.text.trim();
 
+    // Validate mobile number - this will show snackbar if invalid
     if (mobile.isEmpty) {
-      Fluttertoast.showToast(
-        msg: "Please enter your mobile number",
-        toastLength: Toast.LENGTH_SHORT,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-      );
+      Validator.showErrorSnackbar('Please enter your mobile number');
       return;
     }
 
-    if (mobile.length != 10) {
-      Fluttertoast.showToast(
-        msg: "Please enter a valid 10-digit mobile number",
-        toastLength: Toast.LENGTH_SHORT,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-      );
+    if (!validateMobileNumber(mobile)) {
       return;
     }
 
+    // Validate password - this will show snackbar if invalid
     if (password.isEmpty) {
-      Fluttertoast.showToast(
-        msg: "Please enter your password",
-        toastLength: Toast.LENGTH_SHORT,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-      );
+      Validator.showErrorSnackbar('Please enter your password');
       return;
     }
 
-    if (password.length < 6) {
-      Fluttertoast.showToast(
-        msg: "Password must be at least 6 characters",
-        toastLength: Toast.LENGTH_SHORT,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-      );
+    if (!validatePassword(password)) {
       return;
     }
 
@@ -88,12 +78,11 @@ class MobilePasswordLoginController extends GetxController {
         password: password,
       );
 
-      if (result['success'] == true || result['message'] != null) {
-        Fluttertoast.showToast(
-          msg: result['message'] ?? "Login successful!",
-          toastLength: Toast.LENGTH_SHORT,
-          backgroundColor: Colors.green,
-          textColor: Colors.white,
+      // Check if login was successful
+      // Backend may return success: false even with 200 status code
+      if (result['success'] == true) {
+        Validator.showSuccessSnackbar(
+          result['message'] ?? "Login successful!",
         );
 
         // After successful signInWithCredentialsApi, call updateFcmTokenApi
@@ -136,24 +125,53 @@ class MobilePasswordLoginController extends GetxController {
           });
         });
       } else {
-        throw Exception(result['message'] ?? 'Login failed');
+        // Backend returned an error - show the backend error message directly
+        final backendMessage = result['message'] ?? 
+                               result['error'] ?? 
+                               result['errorMessage'] ??
+                               result['status'] ??
+                               'Login failed. Please try again.';
+        // Show backend error message directly without modification
+        Validator.showErrorSnackbar(backendMessage);
       }
     } catch (e) {
-      String errorMessage = e.toString();
-      if (errorMessage.startsWith('Exception: Exception: ')) {
-        errorMessage = errorMessage.replaceFirst('Exception: Exception: ', '');
-      } else if (errorMessage.startsWith('Exception: ')) {
-        errorMessage = errorMessage.replaceFirst('Exception: ', '');
+      // Extract backend error message from exception
+      String errorMessage = '';
+      String exceptionString = e.toString();
+      
+      // The API service wraps backend errors as "Failed to sign in: {backend_message}"
+      // Extract the actual backend message
+      if (exceptionString.contains('Failed to sign in: ')) {
+        errorMessage = exceptionString.split('Failed to sign in: ').last.trim();
+      } else if (exceptionString.contains('Exception: ')) {
+        // Try to extract message after "Exception: "
+        final parts = exceptionString.split('Exception: ');
+        if (parts.length > 1) {
+          errorMessage = parts.last.trim();
+          // Remove nested "Exception: " if present
+          while (errorMessage.startsWith('Exception: ')) {
+            errorMessage = errorMessage.replaceFirst('Exception: ', '').trim();
+          }
+        }
       }
-
-      Fluttertoast.showToast(
-        msg: errorMessage.isNotEmpty
-            ? errorMessage
-            : "Login failed. Please try again.",
-        toastLength: Toast.LENGTH_LONG,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-      );
+      
+      // If extracted message looks like a backend error (not technical), use it directly
+      // Otherwise, use Validator utility to clean it up
+      if (errorMessage.isNotEmpty && 
+          !errorMessage.contains('at ') && 
+          !errorMessage.contains('package:') &&
+          !errorMessage.contains('dart:') &&
+          errorMessage.length <= 200) {
+        // This looks like a backend error message, use it directly
+        Validator.showErrorSnackbar(errorMessage);
+      } else {
+        // Use Validator utility to extract and clean the message
+        errorMessage = Validator.extractErrorMessage(e);
+        if (errorMessage.isEmpty) {
+          errorMessage = "Login failed. Please try again.";
+        }
+        Validator.showErrorSnackbar(errorMessage);
+      }
     } finally {
       isLoading.value = false;
     }

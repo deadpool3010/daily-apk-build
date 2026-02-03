@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:bandhucare_new/core/api/api_services.dart';
 import 'package:bandhucare_new/routes/app_routes.dart';
 import 'package:bandhucare_new/core/constants/variables.dart';
+import 'package:bandhucare_new/core/utils/validator.dart';
 
 class EmailRegisterController extends GetxController {
   late TextEditingController fullNameController;
@@ -41,79 +41,75 @@ class EmailRegisterController extends GetxController {
     isConfirmPasswordVisible.value = !isConfirmPasswordVisible.value;
   }
 
+  // Validate full name
+  bool validateFullName(String fullName) {
+    if (fullName.isEmpty) {
+      Validator.showErrorSnackbar('Please enter your full name');
+      return false;
+    }
+    if (fullName.length < 2) {
+      Validator.showErrorSnackbar('Full name must be at least 2 characters');
+      return false;
+    }
+    return true;
+  }
+
+  // Validate email using Validator utility
+  bool validateEmail(String email) {
+    return Validator.validateEmail(email);
+  }
+
+  // Validate password using Validator utility
+  bool validatePassword(String password) {
+    return Validator.validatePassword(password);
+  }
+
+  // Validate confirm password
+  bool validateConfirmPassword(String password, String confirmPassword) {
+    if (confirmPassword.isEmpty) {
+      Validator.showErrorSnackbar('Please confirm your password');
+      return false;
+    }
+    if (password != confirmPassword) {
+      Validator.showErrorSnackbar('Passwords do not match');
+      return false;
+    }
+    return true;
+  }
+
   Future<void> handleRegister() async {
     final fullName = fullNameController.text.trim();
     final email = emailController.text.trim();
     final createPassword = createPasswordController.text.trim();
     final confirmPassword = confirmPasswordController.text.trim();
 
-    if (fullName.isEmpty) {
-      Fluttertoast.showToast(
-        msg: "Please enter your full name",
-        toastLength: Toast.LENGTH_SHORT,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-      );
+    // Validate full name
+    if (!validateFullName(fullName)) {
       return;
     }
 
+    // Validate email - this will show snackbar if invalid
     if (email.isEmpty) {
-      Fluttertoast.showToast(
-        msg: "Please enter your email address",
-        toastLength: Toast.LENGTH_SHORT,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-      );
+      Validator.showErrorSnackbar('Please enter your email address');
       return;
     }
 
-    if (!GetUtils.isEmail(email)) {
-      Fluttertoast.showToast(
-        msg: "Please enter a valid email address",
-        toastLength: Toast.LENGTH_SHORT,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-      );
+    if (!validateEmail(email)) {
       return;
     }
 
+    // Validate password - this will show snackbar if invalid
     if (createPassword.isEmpty) {
-      Fluttertoast.showToast(
-        msg: "Please enter a password",
-        toastLength: Toast.LENGTH_SHORT,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-      );
+      Validator.showErrorSnackbar('Please enter a password');
       return;
     }
 
-    if (createPassword.length < 6) {
-      Fluttertoast.showToast(
-        msg: "Password must be at least 6 characters",
-        toastLength: Toast.LENGTH_SHORT,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-      );
+    if (!validatePassword(createPassword)) {
       return;
     }
 
-    if (confirmPassword.isEmpty) {
-      Fluttertoast.showToast(
-        msg: "Please confirm your password",
-        toastLength: Toast.LENGTH_SHORT,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-      );
-      return;
-    }
-
-    if (createPassword != confirmPassword) {
-      Fluttertoast.showToast(
-        msg: "Passwords do not match",
-        toastLength: Toast.LENGTH_SHORT,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-      );
+    // Validate confirm password
+    if (!validateConfirmPassword(createPassword, confirmPassword)) {
       return;
     }
 
@@ -128,12 +124,11 @@ class EmailRegisterController extends GetxController {
         userType: "patient",
       );
 
-      if (result['success'] == true || result['message'] != null) {
-        Fluttertoast.showToast(
-          msg: result['message'] ?? "Registration successful!",
-          toastLength: Toast.LENGTH_SHORT,
-          backgroundColor: Colors.green,
-          textColor: Colors.white,
+      // Check if registration was successful
+      // Backend may return success: false even with 200 status code
+      if (result['success'] == true) {
+        Validator.showSuccessSnackbar(
+          result['message'] ?? "Registration successful!",
         );
 
         // After successful signUpApi, call updateFcmTokenApi
@@ -164,24 +159,53 @@ class EmailRegisterController extends GetxController {
           });
         });
       } else {
-        throw Exception(result['message'] ?? 'Registration failed');
+        // Backend returned an error - show the backend error message directly
+        final backendMessage = result['message'] ?? 
+                               result['error'] ?? 
+                               result['errorMessage'] ??
+                               result['status'] ??
+                               'Registration failed. Please try again.';
+        // Show backend error message directly without modification
+        Validator.showErrorSnackbar(backendMessage);
       }
     } catch (e) {
-      String errorMessage = e.toString();
-      if (errorMessage.startsWith('Exception: Exception: ')) {
-        errorMessage = errorMessage.replaceFirst('Exception: Exception: ', '');
-      } else if (errorMessage.startsWith('Exception: ')) {
-        errorMessage = errorMessage.replaceFirst('Exception: ', '');
+      // Extract backend error message from exception
+      String errorMessage = '';
+      String exceptionString = e.toString();
+      
+      // The API service wraps backend errors as "Failed to sign up: {backend_message}"
+      // Extract the actual backend message
+      if (exceptionString.contains('Failed to sign up: ')) {
+        errorMessage = exceptionString.split('Failed to sign up: ').last.trim();
+      } else if (exceptionString.contains('Exception: ')) {
+        // Try to extract message after "Exception: "
+        final parts = exceptionString.split('Exception: ');
+        if (parts.length > 1) {
+          errorMessage = parts.last.trim();
+          // Remove nested "Exception: " if present
+          while (errorMessage.startsWith('Exception: ')) {
+            errorMessage = errorMessage.replaceFirst('Exception: ', '').trim();
+          }
+        }
       }
-
-      Fluttertoast.showToast(
-        msg: errorMessage.isNotEmpty
-            ? errorMessage
-            : "Registration failed. Please try again.",
-        toastLength: Toast.LENGTH_LONG,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-      );
+      
+      // If extracted message looks like a backend error (not technical), use it directly
+      // Otherwise, use Validator utility to clean it up
+      if (errorMessage.isNotEmpty && 
+          !errorMessage.contains('at ') && 
+          !errorMessage.contains('package:') &&
+          !errorMessage.contains('dart:') &&
+          errorMessage.length <= 200) {
+        // This looks like a backend error message, use it directly
+        Validator.showErrorSnackbar(errorMessage);
+      } else {
+        // Use Validator utility to extract and clean the message
+        errorMessage = Validator.extractErrorMessage(e);
+        if (errorMessage.isEmpty) {
+          errorMessage = "Registration failed. Please try again.";
+        }
+        Validator.showErrorSnackbar(errorMessage);
+      }
     } finally {
       isLoading.value = false;
     }

@@ -1,8 +1,8 @@
 import 'package:bandhucare_new/routes/app_routes.dart';
 import 'package:bandhucare_new/core/constants/variables.dart';
 import 'package:bandhucare_new/core/api/api_services.dart';
+import 'package:bandhucare_new/core/utils/validator.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 
 class LoginController extends GetxController with GetTickerProviderStateMixin {
@@ -306,6 +306,16 @@ class LoginController extends GetxController with GetTickerProviderStateMixin {
   //   return true;
   // }
 
+  // Validate phone number using Validator utility
+  bool validatePhoneNumber(String phone) {
+    return Validator.validatePhoneNumber(phone);
+  }
+
+  // Validate OTP using Validator utility
+  bool validateOTP(String otp) {
+    return Validator.validateOTP(otp);
+  }
+
   // Call SignIn API
   Future<void> handleGetOTP() async {
     // Hide hint when button is clicked
@@ -313,13 +323,13 @@ class LoginController extends GetxController with GetTickerProviderStateMixin {
 
     String phone = phoneController.text.trim();
 
-    if (phone.isEmpty || phone.length != 10) {
-      Fluttertoast.showToast(
-        msg: "Please enter a valid 10-digit phone number",
-        toastLength: Toast.LENGTH_SHORT,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-      );
+    // Validate phone number - this will show snackbar if invalid
+    if (phone.isEmpty) {
+      Validator.showErrorSnackbar('Please enter your mobile number');
+      return;
+    }
+
+    if (!validatePhoneNumber(phone)) {
       return;
     }
 
@@ -339,12 +349,7 @@ class LoginController extends GetxController with GetTickerProviderStateMixin {
       print('========================================');
       print('');
 
-      Fluttertoast.showToast(
-        msg: "OTP sent successfully!",
-        toastLength: Toast.LENGTH_SHORT,
-        backgroundColor: Colors.green,
-        textColor: Colors.white,
-      );
+      Validator.showSuccessSnackbar('OTP sent successfully!');
     } catch (e) {
       print('');
       print('========================================');
@@ -354,20 +359,9 @@ class LoginController extends GetxController with GetTickerProviderStateMixin {
       print('========================================');
       print('');
 
-      // Extract the actual error message
-      String errorMessage = e.toString();
-      if (errorMessage.startsWith('Exception: Exception: ')) {
-        errorMessage = errorMessage.replaceFirst('Exception: Exception: ', '');
-      } else if (errorMessage.startsWith('Exception: ')) {
-        errorMessage = errorMessage.replaceFirst('Exception: ', '');
-      }
-
-      Fluttertoast.showToast(
-        msg: errorMessage,
-        toastLength: Toast.LENGTH_LONG,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-      );
+      // Extract user-friendly error message using Validator utility
+      String errorMessage = Validator.extractErrorMessage(e);
+      Validator.showErrorSnackbar(errorMessage);
     } finally {
       isLoadingSignIn.value = false;
     }
@@ -1024,15 +1018,16 @@ class LoginController extends GetxController with GetTickerProviderStateMixin {
 
   // Call VerifyOTP API
   Future<void> verifyOTPforMobileNumber(String otp) async {
+    // Validate OTP before proceeding
+    if (!validateOTP(otp)) {
+      isLoadingVerifyOtp.value = false;
+      return;
+    }
+
     if (sessionId.isEmpty) {
       print('❌ SessionId is empty!');
       isLoadingVerifyOtp.value = false;
-      Fluttertoast.showToast(
-        msg: "Session expired. Please request OTP again.",
-        toastLength: Toast.LENGTH_SHORT,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-      );
+      Validator.showErrorSnackbar('Session expired. Please request OTP again.');
       return;
     }
 
@@ -1055,12 +1050,7 @@ class LoginController extends GetxController with GetTickerProviderStateMixin {
       print('========================================');
       print('');
 
-      Fluttertoast.showToast(
-        msg: "OTP verified successfully!",
-        toastLength: Toast.LENGTH_SHORT,
-        backgroundColor: Colors.green,
-        textColor: Colors.white,
-      );
+      Validator.showSuccessSnackbar('OTP verified successfully!');
 
       // Store accounts data and new sessionId if available
       if (result['data'] != null) {
@@ -1104,20 +1094,9 @@ class LoginController extends GetxController with GetTickerProviderStateMixin {
       print('========================================');
       print('');
 
-      // Extract the actual error message
-      String errorMessage = e.toString();
-      if (errorMessage.startsWith('Exception: Exception: ')) {
-        errorMessage = errorMessage.replaceFirst('Exception: Exception: ', '');
-      } else if (errorMessage.startsWith('Exception: ')) {
-        errorMessage = errorMessage.replaceFirst('Exception: ', '');
-      }
-
-      Fluttertoast.showToast(
-        msg: errorMessage,
-        toastLength: Toast.LENGTH_LONG,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-      );
+      // Extract user-friendly error message using Validator utility
+      String errorMessage = Validator.extractErrorMessage(e);
+      Validator.showErrorSnackbar(errorMessage);
     } finally {
       isLoadingVerifyOtp.value = false;
     }
@@ -1144,12 +1123,7 @@ class LoginController extends GetxController with GetTickerProviderStateMixin {
       if (result == null) {
         // User cancelled login
         print('⚠️ User cancelled Google login');
-        Fluttertoast.showToast(
-          msg: "Google login cancelled",
-          toastLength: Toast.LENGTH_SHORT,
-          backgroundColor: Colors.orange,
-          textColor: Colors.white,
-        );
+        Validator.showWarningSnackbar('Google login was cancelled');
         return;
       }
 
@@ -1166,11 +1140,8 @@ class LoginController extends GetxController with GetTickerProviderStateMixin {
 
       // Check if login was successful
       if (result['success'] == true) {
-        Fluttertoast.showToast(
-          msg: result['message'] ?? "Google login successful!",
-          toastLength: Toast.LENGTH_SHORT,
-          backgroundColor: Colors.green,
-          textColor: Colors.white,
+        Validator.showSuccessSnackbar(
+          result['message'] ?? "Google login successful!",
         );
 
         accessToken = result['data']['accessToken'] as String;
@@ -1198,20 +1169,9 @@ class LoginController extends GetxController with GetTickerProviderStateMixin {
       print('========================================');
       print('');
 
-      // Extract the actual error message
-      String errorMessage = e.toString();
-      if (errorMessage.startsWith('Exception: Exception: ')) {
-        errorMessage = errorMessage.replaceFirst('Exception: Exception: ', '');
-      } else if (errorMessage.startsWith('Exception: ')) {
-        errorMessage = errorMessage.replaceFirst('Exception: ', '');
-      }
-
-      Fluttertoast.showToast(
-        msg: errorMessage,
-        toastLength: Toast.LENGTH_LONG,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-      );
+      // Extract user-friendly error message using Validator utility
+      String errorMessage = Validator.extractErrorMessage(e);
+      Validator.showErrorSnackbar(errorMessage);
     }
   }
 }

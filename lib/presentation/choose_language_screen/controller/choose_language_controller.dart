@@ -1,6 +1,7 @@
 import 'package:bandhucare_new/core/export_file/app_exports.dart';
 import 'package:flutter/material.dart';
 import 'package:bandhucare_new/core/services/shared_pref_localization.dart';
+import 'package:bandhucare_new/core/utils/validator.dart';
 
 class ChooseLanguageController extends GetxController
     with GetSingleTickerProviderStateMixin {
@@ -89,6 +90,9 @@ class ChooseLanguageController extends GetxController
 
   // Select a language
   Future<void> selectLanguage(String languageKey) async {
+    // Get the translated language name for snackbar
+    final languageName = languageKey.tr;
+    
     selectedLanguageKey.value = languageKey;
     isDropdownExpanded.value = false;
     dropdownAnimationController.reverse();
@@ -101,12 +105,20 @@ class ChooseLanguageController extends GetxController
     final locale = _languageKeyToLocale[languageKey] ?? Locale('en', 'US');
     Future.microtask(() {
       Get.updateLocale(locale);
+      // Show snackbar after locale is updated to display in selected language
+      Validator.showSuccessSnackbar(
+        'Language changed to $languageName',
+        duration: Duration(seconds: 2),
+      );
     });
   }
 
   // Navigate to login screen
   // In ChooseLanguageController
   Future<void> proceedToLogin() async {
+    // Get the selected language name for snackbar
+    final languageName = selectedLanguageKey.value.tr;
+    
     // Save locale
     final localeString =
         _languageKeyToLocaleString[selectedLanguageKey.value] ?? 'en_US';
@@ -117,7 +129,15 @@ class ChooseLanguageController extends GetxController
         const Locale('en', 'US');
     Get.updateLocale(locale);
 
-    // Navigate with custom transition
-    Get.toNamed(AppRoutes.loginScreen);
+    // Show snackbar with selected language
+    Validator.showSuccessSnackbar(
+      'Proceeding with $languageName',
+      duration: Duration(seconds: 2),
+    );
+
+    // Navigate with custom transition after a short delay to show snackbar
+    Future.delayed(Duration(milliseconds: 500), () {
+      Get.toNamed(AppRoutes.loginScreen);
+    });
   }
 }

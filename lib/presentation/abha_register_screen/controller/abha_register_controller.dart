@@ -1,9 +1,9 @@
 import 'package:bandhucare_new/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:bandhucare_new/core/api/api_services.dart';
 import 'package:bandhucare_new/core/constants/variables.dart' as vars;
+import 'package:bandhucare_new/core/utils/validator.dart';
 
 class AbhaRegisterController extends GetxController
     with GetTickerProviderStateMixin {
@@ -167,19 +167,34 @@ class AbhaRegisterController extends GetxController
     isCardFlipped.value = !isCardFlipped.value;
   }
 
+  // Validate Aadhaar number using Validator utility
+  bool validateAadhaarNumber(String aadhaar) {
+    return Validator.validateAadhaarNumber(aadhaar);
+  }
+
+  // Validate OTP using Validator utility
+  bool validateOTP(String otp) {
+    return Validator.validateOTP(otp);
+  }
+
+  // Validate mobile number using Validator utility
+  bool validateMobileNumber(String mobile) {
+    return Validator.validatePhoneNumber(mobile);
+  }
+
   Future<void> handleGetAadhaarOTP() async {
     String aadhaarNumber =
         aadhaarControllers[0].text +
         aadhaarControllers[1].text +
         aadhaarControllers[2].text;
 
-    if (aadhaarNumber.isEmpty || aadhaarNumber.length != 12) {
-      Fluttertoast.showToast(
-        msg: "Please enter a valid 12-digit Aadhaar number",
-        toastLength: Toast.LENGTH_SHORT,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-      );
+    // Validate Aadhaar number - this will show snackbar if invalid
+    if (aadhaarNumber.isEmpty) {
+      Validator.showErrorSnackbar('Please enter your Aadhaar number');
+      return;
+    }
+
+    if (!validateAadhaarNumber(aadhaarNumber)) {
       return;
     }
 
@@ -188,6 +203,18 @@ class AbhaRegisterController extends GetxController
     try {
       // Call create ABHA API with Aadhaar number
       final result = await createAbhaNumberApi(aadhaarNumber);
+
+      // Check if API returned an error
+      if (result['success'] == false) {
+        // Show backend error message directly
+        String errorMessage = result['message'] ?? 
+            result['error'] ?? 
+            result['errorMessage'] ?? 
+            result['status'] ?? 
+            'Something went wrong. Please try again.';
+        Validator.showErrorSnackbar(errorMessage);
+        return;
+      }
 
       // Extract sessionId from response
       if (result['data'] != null && result['data'] is Map) {
@@ -201,29 +228,16 @@ class AbhaRegisterController extends GetxController
         }
       }
 
-      Fluttertoast.showToast(
-        msg: result['message'] ?? "OTP sent successfully!",
-        toastLength: Toast.LENGTH_SHORT,
-        backgroundColor: Colors.green,
-        textColor: Colors.white,
+      Validator.showSuccessSnackbar(
+        result['message'] ?? "OTP sent successfully!",
       );
 
       // Move to next step (card will auto-flip via ever listener)
       currentStep.value = 1;
     } catch (e) {
-      String errorMessage = e.toString();
-      if (errorMessage.startsWith('Exception: Exception: ')) {
-        errorMessage = errorMessage.replaceFirst('Exception: Exception: ', '');
-      } else if (errorMessage.startsWith('Exception: ')) {
-        errorMessage = errorMessage.replaceFirst('Exception: ', '');
-      }
-
-      Fluttertoast.showToast(
-        msg: errorMessage,
-        toastLength: Toast.LENGTH_LONG,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-      );
+      // Extract user-friendly error message using Validator utility
+      String errorMessage = Validator.extractErrorMessage(e);
+      Validator.showErrorSnackbar(errorMessage);
     } finally {
       isLoadingGetOtp.value = false;
     }
@@ -283,35 +297,31 @@ class AbhaRegisterController extends GetxController
   }
 
   Future<void> handleVerifyOtp() async {
-    if (enteredAadhaarOtp.value.isEmpty ||
-        enteredAadhaarOtp.value.length != 6) {
-      Fluttertoast.showToast(
-        msg: "Please enter complete 6-digit OTP",
-        toastLength: Toast.LENGTH_SHORT,
-        backgroundColor: Colors.orange,
-        textColor: Colors.white,
-      );
+    final otp = enteredAadhaarOtp.value;
+    final mobile = mobileController.text.trim();
+
+    // Validate OTP - this will show snackbar if invalid
+    if (otp.isEmpty) {
+      Validator.showErrorSnackbar('Please enter the OTP');
       return;
     }
 
-    if (mobileController.text.trim().isEmpty ||
-        mobileController.text.trim().length != 10) {
-      Fluttertoast.showToast(
-        msg: "Please enter a valid 10-digit mobile number",
-        toastLength: Toast.LENGTH_SHORT,
-        backgroundColor: Colors.orange,
-        textColor: Colors.white,
-      );
+    if (!validateOTP(otp)) {
+      return;
+    }
+
+    // Validate mobile number - this will show snackbar if invalid
+    if (mobile.isEmpty) {
+      Validator.showErrorSnackbar('Please enter your mobile number');
+      return;
+    }
+
+    if (!validateMobileNumber(mobile)) {
       return;
     }
 
     if (sessionId.isEmpty) {
-      Fluttertoast.showToast(
-        msg: "Session ID is missing. Please try again.",
-        toastLength: Toast.LENGTH_SHORT,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-      );
+      Validator.showErrorSnackbar('Session expired. Please request OTP again.');
       return;
     }
 
@@ -324,6 +334,18 @@ class AbhaRegisterController extends GetxController
         sessionId,
         mobileController.text.trim(),
       );
+
+      // Check if API returned an error
+      if (result['success'] == false) {
+        // Show backend error message directly
+        String errorMessage = result['message'] ?? 
+            result['error'] ?? 
+            result['errorMessage'] ?? 
+            result['status'] ?? 
+            'Something went wrong. Please try again.';
+        Validator.showErrorSnackbar(errorMessage);
+        return;
+      }
 
       // Extract and update sessionId from response if available
       if (result['data'] != null && result['data'] is Map) {
@@ -346,11 +368,8 @@ class AbhaRegisterController extends GetxController
         }
       }
 
-      Fluttertoast.showToast(
-        msg: result['message'] ?? "OTP verified successfully!",
-        toastLength: Toast.LENGTH_SHORT,
-        backgroundColor: Colors.green,
-        textColor: Colors.white,
+      Validator.showSuccessSnackbar(
+        result['message'] ?? "OTP verified successfully!",
       );
 
       // Check updateMobile in response to determine navigation
@@ -366,19 +385,9 @@ class AbhaRegisterController extends GetxController
         Get.toNamed(AppRoutes.emailVerificationAbhaScreen);
       }
     } catch (e) {
-      String errorMessage = e.toString();
-      if (errorMessage.startsWith('Exception: Exception: ')) {
-        errorMessage = errorMessage.replaceFirst('Exception: Exception: ', '');
-      } else if (errorMessage.startsWith('Exception: ')) {
-        errorMessage = errorMessage.replaceFirst('Exception: ', '');
-      }
-
-      Fluttertoast.showToast(
-        msg: errorMessage,
-        toastLength: Toast.LENGTH_LONG,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-      );
+      // Extract user-friendly error message using Validator utility
+      String errorMessage = Validator.extractErrorMessage(e);
+      Validator.showErrorSnackbar(errorMessage);
     } finally {
       isLoadingVerifyOtp.value = false;
     }

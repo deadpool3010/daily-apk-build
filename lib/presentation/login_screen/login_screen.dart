@@ -207,6 +207,16 @@ class LoginScreen extends StatelessWidget {
         color: Color(0xFF94A3B8),
       ),
       onChanged: (value) {
+        // Only allow numeric input
+        if (value.isNotEmpty && !RegExp(r'^[0-9]+$').hasMatch(value)) {
+          // Remove non-numeric characters
+          final numericValue = value.replaceAll(RegExp(r'[^0-9]'), '');
+          controller.phoneController.value = TextEditingValue(
+            text: numericValue,
+            selection: TextSelection.collapsed(offset: numericValue.length),
+          );
+          return;
+        }
         if (value.length == 10) {
           FocusScope.of(Get.context!).unfocus();
         }
@@ -241,7 +251,12 @@ class LoginScreen extends StatelessWidget {
                       child: ElevatedButton(
                         onPressed: controller.isLoadingSignIn.value
                             ? null
-                            : () => controller.handleGetOTP(),
+                            : () {
+                                final phone = controller.phoneController.text.trim();
+                                if (controller.validatePhoneNumber(phone)) {
+                                  controller.handleGetOTP();
+                                }
+                              },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Color(0xFF3864FD),
                           foregroundColor: Colors.white,
@@ -342,9 +357,10 @@ class LoginScreen extends StatelessWidget {
             ? null
             : () {
                 // Verify OTP when button is clicked
-                controller.verifyOTPforMobileNumber(
-                  controller.enteredOtp.value,
-                );
+                final otp = controller.enteredOtp.value;
+                if (controller.validateOTP(otp)) {
+                  controller.verifyOTPforMobileNumber(otp);
+                }
               },
         leadingIcon: isLoading
             ? LoadingAnimationWidget.horizontalRotatingDots(
