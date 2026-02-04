@@ -140,13 +140,21 @@ class EditFieldSection extends StatelessWidget {
                       CupertinoButton(
                         padding: EdgeInsets.zero,
                         minSize: 0,
-                        onPressed: () {
-                          int? index = controller.selectedStateIndex.value;
-                          print("the id is ${controller.states[index].name} ");
-                          print("the id is ${controller.states[index].code} ");
-
-                          final stateCode = controller.states[index].code;
-                          controller.loadCity(stateCode!);
+                        onPressed: () async {
+                          final index = controller.selectedStateIndex.value >= 0
+                              ? controller.selectedStateIndex.value
+                              : 0;
+                          if (index < controller.states.length) {
+                            controller.stateController.text =
+                                controller.states[index].name ?? '';
+                            controller.cityController.text = 'NA';
+                            controller.selectedCityIndex.value = -1;
+                            final stateCode = controller.states[index].code;
+                            if (stateCode != null) {
+                              await controller.loadCity(stateCode);
+                            }
+                          }
+                          Navigator.of(context).pop();
                         },
                         child: const Text(
                           'Done',
@@ -173,7 +181,9 @@ class EditFieldSection extends StatelessWidget {
                     child: CupertinoPicker(
                       itemExtent: 51.0,
                       scrollController: FixedExtentScrollController(
-                        initialItem: controller.selectedStateIndex.value,
+                        initialItem: controller.selectedStateIndex.value >= 0
+                            ? controller.selectedStateIndex.value
+                            : 0,
                       ),
                       onSelectedItemChanged: (value) {
                         HapticFeedback.selectionClick();
@@ -239,12 +249,14 @@ class EditFieldSection extends StatelessWidget {
                         padding: EdgeInsets.zero,
                         minSize: 0,
                         onPressed: () {
-                          // print(
-                          //   'the code is ${controller.selectedStateIndex.value}',
-                          // );
-                          // // print("the id is ${controller.states[0].id} ");
-                          int index = controller.selectedStateIndex.value;
-                          print("the id is ${controller.states[index].name} ");
+                          final index = controller.selectedCityIndex.value >= 0
+                              ? controller.selectedCityIndex.value
+                              : 0;
+                          if (index < controller.cities.length) {
+                            controller.cityController.text =
+                                controller.cities[index].name ?? '';
+                          }
+                          Navigator.of(context).pop();
                         },
                         child: const Text(
                           'Done',
@@ -271,12 +283,14 @@ class EditFieldSection extends StatelessWidget {
                     child: CupertinoPicker(
                       itemExtent: 51.0,
                       scrollController: FixedExtentScrollController(
-                        initialItem: controller.selectedStateIndex.value,
+                        initialItem: controller.selectedCityIndex.value >= 0
+                            ? controller.selectedCityIndex.value
+                            : 0,
                       ),
                       onSelectedItemChanged: (value) {
                         HapticFeedback.selectionClick();
                         SystemSound.play(SystemSoundType.click);
-                        controller.selectedStateIndex.value = value;
+                        controller.selectedCityIndex.value = value;
                       },
                       children: controller.cities
                           .map((city) => Center(child: Text(city.name ?? '')))

@@ -1410,7 +1410,7 @@ Future<Map<String, dynamic>> updateProfileApi({
     final url = baseUrl + updateProfile;
 
     var request = http.MultipartRequest('POST', Uri.parse(url));
-
+    print('Update Profile Request :$request');
     if (name != null) {
       request.fields['name'] = name;
     }
@@ -1426,12 +1426,15 @@ Future<Map<String, dynamic>> updateProfileApi({
     if (city != null) {
       request.fields['city'] = city;
     }
-    if (image != null || image!.path.isNotEmpty) {
+    if (image != null && image.path.isNotEmpty) {
+      print('object');
+      final fileName = image.path.split('/').last;
+      print('Update Profile - Adding image: $fileName');
       request.files.add(
         await http.MultipartFile.fromPath(
           'file',
-          image!.path,
-          filename: image.path.split('/').last,
+          image.path,
+          filename: fileName,
         ),
       );
     }
@@ -1441,6 +1444,8 @@ Future<Map<String, dynamic>> updateProfileApi({
     final response = await http.Response.fromStream(responseBody);
 
     final result = jsonDecode(response.body);
+
+    print('Update Profile Response :$result');
 
     if (response.statusCode == 200 || response.statusCode == 201) {
       print('Update Profile Response :$result');

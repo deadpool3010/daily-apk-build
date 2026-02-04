@@ -13,8 +13,7 @@ class SaveChanges extends StatelessWidget {
       return DynamicButton(
         text: "Save Changes",
         onPressed: () {
-          print("object");
-          controller.updateChanges;
+          controller.updateChanges();
         },
         isDisable: controller.isChanged.value,
       );
