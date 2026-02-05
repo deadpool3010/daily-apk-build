@@ -139,6 +139,11 @@ class _YourRemindersState extends State<YourReminders> {
     );
   }
 
+  String _capitalizeFirst(String text) {
+    if (text.isEmpty) return text;
+    return text[0].toUpperCase() + text.substring(1);
+  }
+
   Widget _buildDailyRemindersHeader() {
     return Obx(
       () => Row(
@@ -188,7 +193,7 @@ class _YourRemindersState extends State<YourReminders> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    controller.selectedFilter.value,
+                    _capitalizeFirst(controller.selectedFilter.value),
                     style: const TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w500,

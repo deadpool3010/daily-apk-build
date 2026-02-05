@@ -13,6 +13,10 @@ class SaveChanges extends StatelessWidget {
       return DynamicButton(
         text: "Save Changes",
         onPressed: () {
+          if (!controller.formKey.currentState!.validate()) {
+            Fluttertoast.showToast(msg: "Name cannot be empty");
+            return;
+          }
           controller.updateChanges();
         },
         isDisable: controller.isChanged.value,

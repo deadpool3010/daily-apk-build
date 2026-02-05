@@ -4,7 +4,7 @@ import 'package:bandhucare_new/feature/user_profile/widgets/avatar.dart';
 import 'package:flutter/material.dart';
 
 class ProfileHeaderSection extends StatelessWidget {
-const ProfileHeaderSection({super.key});
+  const ProfileHeaderSection({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +27,13 @@ const ProfileHeaderSection({super.key});
                   ),
                 ),
                 Text(
-                  "${sessionController.user?.email ?? sessionController.user?.abhaAddress}",
+                  (sessionController.user?.abhaAddress?.isNotEmpty == true)
+                      ? sessionController.user!.abhaAddress!
+                      : (sessionController.user?.email?.isNotEmpty == true)
+                      ? sessionController.user!.email!
+                      : (sessionController.user?.mobile?.isNotEmpty == true)
+                      ? sessionController.user!.mobile!
+                      : '',
                   style: TextStyle(
                     fontFamily: GoogleFonts.roboto().fontFamily,
                     fontWeight: FontWeight.w600,

@@ -8,11 +8,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> logoutFunction() async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
+  await Future.delayed(Duration(milliseconds: 100));
+  Get.offAllNamed(AppRoutes.loginScreen);
   await prefs.clear();
   final session = Get.find<SessionController>();
   session.clearSession();
 
-  // Explicitly delete LoginController to ensure fresh instance
   try {
     if (Get.isRegistered<LoginController>()) {
       Get.delete<LoginController>();
@@ -20,11 +21,6 @@ Future<void> logoutFunction() async {
   } catch (e) {
     print('Error deleting LoginController: $e');
   }
-
-  // Use a small delay to ensure cleanup completes before navigation
-  await Future.delayed(Duration(milliseconds: 100));
-
-  Get.offAllNamed(AppRoutes.loginScreen);
 }
 
 Future<void> logoutBottomSheet(BuildContext context) async {

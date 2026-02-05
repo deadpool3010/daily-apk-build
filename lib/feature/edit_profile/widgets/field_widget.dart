@@ -8,12 +8,14 @@ class FieldWidget extends StatelessWidget {
     this.readOnly = false,
     this.controller,
     this.onTap,
+    this.mandatory = false,
   });
   final IconData? icon;
   final String label;
   final bool readOnly;
-  void Function()? onTap;
+  final VoidCallback? onTap;
   final TextEditingController? controller;
+  final bool mandatory;
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +30,7 @@ class FieldWidget extends StatelessWidget {
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
           ),
+
           SizedBox(height: 5),
           TextFormField(
             controller: controller,
@@ -48,11 +51,29 @@ class FieldWidget extends StatelessWidget {
                 borderRadius: BorderRadius.circular(15),
                 borderSide: const BorderSide(color: Colors.grey),
               ),
+              errorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(15),
+                borderSide: const BorderSide(color: Colors.red),
+              ),
+
+              /// 🔴 Focused + error border
+              focusedErrorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(15),
+                borderSide: const BorderSide(color: Colors.red, width: 1.5),
+              ),
+              errorStyle: const TextStyle(color: Colors.red, fontSize: 12),
             ),
+            validator: mandatory
+                ? (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return '*This field can’t be empty';
+                    }
+                    return null;
+                  }
+                : null,
           ),
         ],
       ),
     );
-    ;
   }
 }

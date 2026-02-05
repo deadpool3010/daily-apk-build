@@ -27,9 +27,12 @@ class EditProfileController extends GetxController {
   late TextEditingController addressController;
   late TextEditingController genderController;
   final Map<String, String> changes = {};
+  final formKey = GlobalKey<FormState>();
   RxBool isChanged = false.obs;
   final ImagePicker _imagePicker = ImagePicker();
   final Rx<File?> selectedImage = Rx<File?>(null);
+  final List<String> genderList = ['Male', 'Female', 'Other'];
+  RxInt selectedGenderIndex = (-1).obs;
 
   // List<Map<String,String>>StateCodeMapping=[{
   //  'Gujarat':''
@@ -52,6 +55,9 @@ class EditProfileController extends GetxController {
     );
     genderController = TextEditingController(
       text: sessionController.user?.gender ?? 'NA',
+    );
+    selectedGenderIndex.value = genderList.indexOf(
+      sessionController.user?.gender ?? 'NA',
     );
     check();
     loadAllState().then((_) {
@@ -181,6 +187,7 @@ class EditProfileController extends GetxController {
             merged['subdistrictName'] = changes['city'];
           await sessionController.updateUserFromProfile(merged);
           if (hasImageChange) selectedImage.value = null;
+          Fluttertoast.showToast(msg: "Profile updated successfully");
         }
       } catch (_) {
         // Toast/error already shown by updateProfileApi
