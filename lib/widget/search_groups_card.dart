@@ -1,10 +1,7 @@
 import 'dart:ui';
 import 'package:bandhucare_new/core/export_file/app_exports.dart';
-import 'package:bandhucare_new/core/utils/image_constant.dart';
-import 'package:bandhucare_new/presentation/home_screen/controller/home_screen_controller.dart';
 import 'package:bandhucare_new/model/homepage_model.dart';
 import 'package:bandhucare_new/core/ui/shimmer/shimmer.dart';
-import 'package:flutter/material.dart';
 
 class SearchGroupsCard extends StatefulWidget {
   final VoidCallback onClose;

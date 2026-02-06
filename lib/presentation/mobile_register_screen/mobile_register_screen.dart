@@ -242,6 +242,16 @@ class MobileRegisterScreen extends StatelessWidget {
       keyboardType: TextInputType.phone,
       maxLength: 10,
       onChanged: (value) {
+        // Only allow numeric input
+        if (value.isNotEmpty && !RegExp(r'^[0-9]+$').hasMatch(value)) {
+          // Remove non-numeric characters
+          final numericValue = value.replaceAll(RegExp(r'[^0-9]'), '');
+          controller.mobileController.value = TextEditingValue(
+            text: numericValue,
+            selection: TextSelection.collapsed(offset: numericValue.length),
+          );
+          return;
+        }
         if (value.length == 10) {
           FocusScope.of(Get.context!).unfocus();
         }
@@ -308,7 +318,18 @@ class MobileRegisterScreen extends StatelessWidget {
         onPressed: isLoading
             ? null
             : () {
-                controller.handleRegister();
+                final fullName = controller.fullNameController.text.trim();
+                final mobile = controller.mobileController.text.trim();
+                final createPassword = controller.createPasswordController.text.trim();
+                final confirmPassword = controller.confirmPasswordController.text.trim();
+                
+                // Validate before calling handleRegister
+                if (controller.validateFullName(fullName) &&
+                    controller.validateMobileNumber(mobile) &&
+                    controller.validatePassword(createPassword) &&
+                    controller.validateConfirmPassword(createPassword, confirmPassword)) {
+                  controller.handleRegister();
+                }
               },
         leadingIcon: isLoading
             ? LoadingAnimationWidget.horizontalRotatingDots(

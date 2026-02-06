@@ -215,9 +215,24 @@ class MobilePasswordLoginScreen extends StatelessWidget {
       controller: controller.mobileController,
       hintText: '1234567890',
       countryCode: '+91',
+      hintStyle: GoogleFonts.lato(
+        fontWeight: FontWeight.w500,
+        color: Color(0xFF94A3B8),
+        fontSize: 14,
+      ),
       keyboardType: TextInputType.phone,
       maxLength: 10,
       onChanged: (value) {
+        // Only allow numeric input
+        if (value.isNotEmpty && !RegExp(r'^[0-9]+$').hasMatch(value)) {
+          // Remove non-numeric characters
+          final numericValue = value.replaceAll(RegExp(r'[^0-9]'), '');
+          controller.mobileController.value = TextEditingValue(
+            text: numericValue,
+            selection: TextSelection.collapsed(offset: numericValue.length),
+          );
+          return;
+        }
         if (value.length == 10) {
           FocusScope.of(Get.context!).unfocus();
         }
@@ -235,6 +250,11 @@ class MobilePasswordLoginScreen extends StatelessWidget {
         keyboardType: TextInputType.visiblePassword,
         obscureText: !controller.isPasswordVisible.value,
         showPasswordToggle: true,
+        hintStyle: GoogleFonts.lato(
+        fontWeight: FontWeight.w500,
+        color: Color(0xFF94A3B8),
+        fontSize: 14,
+      ),
         onTogglePassword: () {
           controller.togglePasswordVisibility();
         },
@@ -332,7 +352,14 @@ class MobilePasswordLoginScreen extends StatelessWidget {
         onPressed: isLoading
             ? null
             : () {
-                controller.handleLogin();
+                final mobile = controller.mobileController.text.trim();
+                final password = controller.passwordController.text.trim();
+                
+                // Validate before calling handleLogin
+                if (controller.validateMobileNumber(mobile) &&
+                    controller.validatePassword(password)) {
+                  controller.handleLogin();
+                }
               },
         leadingIcon: isLoading
             ? LoadingAnimationWidget.horizontalRotatingDots(

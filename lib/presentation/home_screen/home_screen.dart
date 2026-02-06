@@ -3,6 +3,7 @@ import 'package:bandhucare_new/core/controller/session_controller.dart';
 import 'package:bandhucare_new/core/utils/string_utils.dart';
 import 'package:bandhucare_new/presentation/home_screen/home_screen_helper.dart';
 import 'package:bandhucare_new/widget/appointment_card.dart';
+import 'package:bandhucare_new/model/homepage_model.dart';
 
 bool isBottomNavVisible = true;
 
@@ -245,37 +246,134 @@ class _HomepageScreenState extends State<HomepageScreen> {
                             child: _buildQuickActions(),
                           ),
                           const SizedBox(height: 30),
+
+                          // Articles Curated just for you Section
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 20),
-                            child: Text(
-                              'Daily Affirmations / Reminders',
-                              style: GoogleFonts.roboto(
-                                textStyle: TextStyle(
-                                  color: AppColors.black,
-                                  fontSize: 18.0,
-                                  fontWeight: FontWeight.w500,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Articles Curated just for you',
+                                  style: GoogleFonts.roboto(
+                                    textStyle: TextStyle(
+                                      color: AppColors.black,
+                                      fontSize: 18.0,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
                                 ),
-                              ),
+                                GestureDetector(
+                                  onTap: () {},
+                                  child: Text(
+                                    'See All',
+                                    style: GoogleFonts.lato(
+                                      textStyle: TextStyle(
+                                        color: AppColors.black,
+                                        fontSize: 14.0,
+                                        fontWeight: FontWeight.w500,
+                                        decoration: TextDecoration.underline,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                          const SizedBox(height: 14),
-                          // Horizontal scrollable affirmation cards
-                          SizedBox(
-                            height: 250,
-                            child: ListView.separated(
-                              scrollDirection: Axis.horizontal,
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 20,
-                              ),
-                              itemCount: 3,
-                              separatorBuilder: (context, index) =>
-                                  const SizedBox(width: 16),
-                              itemBuilder: (context, index) {
-                                return DailyAffirmation();
+                          const SizedBox(height: 16),
+                          // Articles Horizontal List
+                          Obx(() {
+                            final articles = controller.articles;
+                            if (articles.isEmpty) {
+                              return const SizedBox.shrink();
+                            }
+                            return Builder(
+                              builder: (context) {
+                                final screenHeight = MediaQuery.of(
+                                  context,
+                                ).size.height;
+                                final dynamicHeight = (screenHeight * 0.4)
+                                    .clamp(310.0, 350.0);
+                                return SizedBox(
+                                  height: dynamicHeight,
+                                  child: ListView.separated(
+                                    scrollDirection: Axis.horizontal,
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 20,
+                                    ),
+                                    itemCount: articles.length,
+                                    separatorBuilder: (context, index) =>
+                                        const SizedBox(width: 16),
+                                    itemBuilder: (context, index) {
+                                      final article = articles[index];
+                                      // Format date
+                                      String formattedDate = '';
+                                      try {
+                                        final dateTime = DateTime.parse(
+                                          article.createdAt,
+                                        );
+                                        final months = [
+                                          'Jan',
+                                          'Feb',
+                                          'Mar',
+                                          'Apr',
+                                          'May',
+                                          'Jun',
+                                          'Jul',
+                                          'Aug',
+                                          'Sep',
+                                          'Oct',
+                                          'Nov',
+                                          'Dec',
+                                        ];
+                                        formattedDate =
+                                            '${months[dateTime.month - 1]} ${dateTime.day.toString().padLeft(2, '0')}, ${dateTime.year}';
+                                      } catch (e) {
+                                        formattedDate = article.createdAt;
+                                      }
+                                      return _buildArticleCardFromModel(
+                                        article,
+                                        formattedDate,
+                                        'home_article_$index',
+                                      );
+                                    },
+                                  ),
+                                );
                               },
-                            ),
-                          ),
-                          const SizedBox(height: 40),
+                            );
+                          }),
+                          // const SizedBox(height: 30),
+                          // Padding(
+                          //   padding: const EdgeInsets.symmetric(horizontal: 20),
+                          //   child: Text(
+                          //     'Daily Affirmations / Reminders',
+                          //     style: GoogleFonts.roboto(
+                          //       textStyle: TextStyle(
+                          //         color: AppColors.black,
+                          //         fontSize: 18.0,
+                          //         fontWeight: FontWeight.w500,
+                          //       ),
+                          //     ),
+                          //   ),
+                          // ),
+                          // const SizedBox(height: 14),
+                          // Horizontal scrollable affirmation cards
+                          // SizedBox(
+                          //   height: 250,
+                          //   child: ListView.separated(
+                          //     scrollDirection: Axis.horizontal,
+                          //     padding: const EdgeInsets.symmetric(
+                          //       horizontal: 20,
+                          //     ),
+                          //     itemCount: 3,
+                          //     separatorBuilder: (context, index) =>
+                          //         const SizedBox(width: 16),
+                          //     itemBuilder: (context, index) {
+                          //       return DailyAffirmation();
+                          //     },
+                          //   ),
+                          // ),
+                          const SizedBox(height: 14),
 
                           // Meet Our Strong Warriors Section
                           Padding(
@@ -519,6 +617,346 @@ class _HomepageScreenState extends State<HomepageScreen> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildUpcomingAppointmentCard() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 17, vertical: 12),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            const Color(0xFF3865FF), // Stop 1: 0% - #3865FF
+            const Color(0xFF223D99), // Stop 2: 100% - #223D99
+          ],
+        ),
+        borderRadius: BorderRadius.circular(27),
+      ),
+      child: Row(
+        children: [
+          // Left side - Day and Date
+          Container(
+            padding: const EdgeInsets.only(
+              left: 13,
+              right: 13,
+              top: 11,
+              bottom: 11,
+            ),
+            decoration: BoxDecoration(
+              color: const Color(0xFFE5EFFE), // Stop 1: 0% - #3865FF
+              borderRadius: BorderRadius.circular(18),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  'Thu',
+                  style: GoogleFonts.lato(
+                    textStyle: TextStyle(
+                      color: Color(0xFF21231E), // Lighter blue
+                      fontSize: 14.0,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  '23',
+                  style: GoogleFonts.lato(
+                    textStyle: TextStyle(
+                      color: Color(0xFF3865FF),
+                      fontSize: 32.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 14),
+          // Right side - Appointment details
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Appointment with Dr. Vishnu',
+                  style: GoogleFonts.lato(
+                    textStyle: TextStyle(
+                      color: AppColors.white,
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Therapy Session',
+                  style: GoogleFonts.lato(
+                    textStyle: TextStyle(
+                      color: AppColors.white,
+                      fontSize: 14.0,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Upcoming',
+                      style: GoogleFonts.lato(
+                        textStyle: TextStyle(
+                          color: Color(0xFFDEFF4A),
+                          fontSize: 14.0,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                    Text(
+                      '11 Am - 01 Pm',
+                      style: GoogleFonts.lato(
+                        textStyle: TextStyle(
+                          color: AppColors.white,
+                          fontSize: 14.0,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildArticleCard(Map<String, String> article, String heroTag) {
+    return GestureDetector(
+      onTap: () {
+        final arguments = Map<String, dynamic>.from(article);
+        arguments['heroTag'] = heroTag;
+        arguments['imageUrl'] = article['image'];
+        // Add tags for article content type
+        arguments['tags'] = [
+          'Patient Reference',
+          'Healthy Diet Articles',
+          'Self Help',
+        ];
+        Get.toNamed(AppRoutes.blogScreen, arguments: arguments);
+      },
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 200,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.08),
+                  blurRadius: 15,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: ClipRRect(
+              borderRadius: const BorderRadius.all(Radius.circular(20)),
+              child: Hero(
+                tag: heroTag,
+                child: Image.asset(
+                  article['image']!,
+                  width: double.infinity,
+                  height: 240,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      width: double.infinity,
+                      height: 240,
+                      color: Colors.grey[300],
+                      child: const Icon(
+                        Icons.image,
+                        size: 50,
+                        color: Colors.grey,
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 10),
+          // Article Content
+          Text(
+            article['title']!,
+            style: GoogleFonts.roboto(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: AppColors.black,
+            ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+          const SizedBox(height: 4),
+          Row(
+            children: [
+              Text(
+                '- ${article['author']!}',
+                style: GoogleFonts.lato(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.grey[600],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Text(
+            article['date']!,
+            style: GoogleFonts.lato(
+              fontSize: 12,
+              fontWeight: FontWeight.w400,
+              color: AppColors.primaryColor,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildArticleCardFromModel(
+    HomepageArticle article,
+    String formattedDate,
+    String heroTag,
+  ) {
+    return GestureDetector(
+      onTap: () {
+        final arguments = {
+          'contentId': article.id,
+          'heroTag': heroTag,
+          'imageUrl': article.coverImage?.fileUrl ?? '',
+          'title': article.title,
+          'author': article.author.name,
+          'date': formattedDate,
+          'tags': ['Patient Reference', 'Healthy Diet Articles', 'Self Help'],
+        };
+        Get.toNamed(AppRoutes.blogScreen, arguments: arguments);
+      },
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 200,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.08),
+                  blurRadius: 15,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: ClipRRect(
+              borderRadius: const BorderRadius.all(Radius.circular(20)),
+              child: Hero(
+                tag: heroTag,
+                child:
+                    article.coverImage != null &&
+                        article.coverImage!.fileUrl.isNotEmpty
+                    ? DelayedImageWithShimmer(
+                        imageUrl: article.coverImage!.fileUrl,
+                        width: double.infinity,
+                        height: 240,
+                        fit: BoxFit.cover,
+                        fallbackWidget: Container(
+                          width: double.infinity,
+                          height: 240,
+                          color: Colors.grey[300],
+                          child: const Icon(
+                            Icons.image,
+                            size: 50,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      )
+                    : Container(
+                        width: double.infinity,
+                        height: 240,
+                        color: Colors.grey[300],
+                        child: const Icon(
+                          Icons.image,
+                          size: 50,
+                          color: Colors.grey,
+                        ),
+                      ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 10),
+          // Article Content
+          SizedBox(
+            width: 200,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: Text(
+                article.title,
+                style: GoogleFonts.roboto(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.black,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ),
+          const SizedBox(height: 4),
+          SizedBox(
+            width: 200,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: Row(
+                children: [
+                  Flexible(
+                    child: Text(
+                      '- ${article.author.name}',
+                      style: GoogleFonts.lato(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.black,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 4),
+          SizedBox(
+            width: 200,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: Text(
+                formattedDate,
+                style: GoogleFonts.lato(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w400,
+                  color: AppColors.primaryColor,
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

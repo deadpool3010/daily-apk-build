@@ -281,7 +281,18 @@ class EmailRegisterScreen extends StatelessWidget {
         onPressed: isLoading
             ? null
             : () {
-                controller.handleRegister();
+                final fullName = controller.fullNameController.text.trim();
+                final email = controller.emailController.text.trim();
+                final createPassword = controller.createPasswordController.text.trim();
+                final confirmPassword = controller.confirmPasswordController.text.trim();
+                
+                // Validate before calling handleRegister
+                if (controller.validateFullName(fullName) &&
+                    controller.validateEmail(email) &&
+                    controller.validatePassword(createPassword) &&
+                    controller.validateConfirmPassword(createPassword, confirmPassword)) {
+                  controller.handleRegister();
+                }
               },
         leadingIcon: isLoading
             ? LoadingAnimationWidget.horizontalRotatingDots(

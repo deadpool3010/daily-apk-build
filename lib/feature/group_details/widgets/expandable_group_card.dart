@@ -1,4 +1,5 @@
 import 'package:bandhucare_new/core/export_file/app_exports.dart';
+import 'package:bandhucare_new/presentation/home_screen/home_screen_helper.dart';
 
 class ExpandableGroupCard extends StatefulWidget {
   final String groupName;
@@ -399,12 +400,27 @@ class _ExpandableGroupCardState extends State<ExpandableGroupCard>
                                 radius: 14,
                                 backgroundColor: Colors.white,
                                 child: ClipOval(
-                                  child: Image.asset(
-                                    ImageConstant.peoples_stories_img_1,
-                                    width: 40,
-                                    height: 40,
-                                    fit: BoxFit.cover,
-                                  ),
+                                  child:
+                                      members[index]['avatar'] != null &&
+                                          members[index]['avatar']!.isNotEmpty
+                                      ? DelayedImageWithShimmer(
+                                          imageUrl: members[index]['avatar']!,
+                                          width: 28,
+                                          height: 28,
+                                          fit: BoxFit.cover,
+                                          fallbackWidget: Image.asset(
+                                            ImageConstant.appLogo,
+                                            width: 28,
+                                            height: 28,
+                                            fit: BoxFit.cover,
+                                          ),
+                                        )
+                                      : Image.asset(
+                                          ImageConstant.appLogo,
+                                          width: 28,
+                                          height: 28,
+                                          fit: BoxFit.cover,
+                                        ),
                                 ),
                               ),
                             ),
@@ -481,15 +497,29 @@ class _ExpandableGroupCardState extends State<ExpandableGroupCard>
 
   Widget _buildMemberRow(Map<String, String> member) {
     final isDoctor = member['role'] == 'Doctor';
+    final avatarUrl = member['avatar'] ?? '';
     return Row(
       children: [
         ClipOval(
-          child: Image.asset(
-            ImageConstant.peoples_stories_img_1,
-            width: 40,
-            height: 40,
-            fit: BoxFit.cover,
-          ),
+          child: avatarUrl.isNotEmpty
+              ? DelayedImageWithShimmer(
+                  imageUrl: avatarUrl,
+                  width: 40,
+                  height: 40,
+                  fit: BoxFit.cover,
+                  fallbackWidget: Image.asset(
+                    ImageConstant.appLogo,
+                    width: 40,
+                    height: 40,
+                    fit: BoxFit.cover,
+                  ),
+                )
+              : Image.asset(
+                  ImageConstant.appLogo,
+                  width: 40,
+                  height: 40,
+                  fit: BoxFit.cover,
+                ),
         ),
         const SizedBox(width: 12),
         Expanded(

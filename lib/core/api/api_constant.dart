@@ -55,3 +55,4 @@ String switchGroup(String groupId) => "groups/switch-group/$groupId";
 String updateProfile = "auth/profile";
 String getAllStates = "auth/get-all-states";
 String getAllCities(String stateId) => "auth/get-cities-by-state/$stateId";
+String getContentById(String contentId) => "content/$contentId";

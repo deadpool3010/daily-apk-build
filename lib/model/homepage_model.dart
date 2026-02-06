@@ -73,15 +73,87 @@ class HomepageGroup {
   }
 }
 
+class ArticleAuthor {
+  final String id;
+  final String name;
+
+  ArticleAuthor({
+    required this.id,
+    required this.name,
+  });
+
+  factory ArticleAuthor.fromJson(Map<String, dynamic> json) {
+    return ArticleAuthor(
+      id: json['_id'] ?? '',
+      name: json['name'] ?? '',
+    );
+  }
+}
+
+class CoverImage {
+  final String fileUrl;
+  final String? fileAltText;
+  final String? fileTitle;
+
+  CoverImage({
+    required this.fileUrl,
+    this.fileAltText,
+    this.fileTitle,
+  });
+
+  factory CoverImage.fromJson(Map<String, dynamic> json) {
+    return CoverImage(
+      fileUrl: json['fileUrl'] ?? '',
+      fileAltText: json['fileAltText'],
+      fileTitle: json['fileTitle'],
+    );
+  }
+}
+
+class HomepageArticle {
+  final String id;
+  final String title;
+  final CoverImage? coverImage;
+  final String createdBy;
+  final String createdAt;
+  final ArticleAuthor author;
+
+  HomepageArticle({
+    required this.id,
+    required this.title,
+    this.coverImage,
+    required this.createdBy,
+    required this.createdAt,
+    required this.author,
+  });
+
+  factory HomepageArticle.fromJson(Map<String, dynamic> json) {
+    return HomepageArticle(
+      id: json['_id'] ?? '',
+      title: json['title'] ?? '',
+      coverImage: json['coverImage'] != null
+          ? CoverImage.fromJson(json['coverImage'] as Map<String, dynamic>)
+          : null,
+      createdBy: json['createdBy'] ?? '',
+      createdAt: json['createdAt'] ?? '',
+      author: ArticleAuthor.fromJson(
+        json['author'] as Map<String, dynamic>,
+      ),
+    );
+  }
+}
+
 class HomepageData {
   final ProfileInfo profileInfo;
   final HospitalInfo hospitalInfo;
   final List<HomepageGroup> groups;
+  final List<HomepageArticle> articles;
 
   HomepageData({
     required this.profileInfo,
     required this.hospitalInfo,
     required this.groups,
+    required this.articles,
   });
 
   factory HomepageData.fromJson(Map<String, dynamic> json) {
@@ -89,6 +161,14 @@ class HomepageData {
     if (json['groups'] != null && json['groups'] is List) {
       groupsList = (json['groups'] as List)
           .map((group) => HomepageGroup.fromJson(group as Map<String, dynamic>))
+          .toList();
+    }
+
+    List<HomepageArticle> articlesList = [];
+    if (json['articles'] != null && json['articles'] is List) {
+      articlesList = (json['articles'] as List)
+          .map((article) =>
+              HomepageArticle.fromJson(article as Map<String, dynamic>))
           .toList();
     }
 
@@ -100,6 +180,7 @@ class HomepageData {
         json['hospitalInfo'] as Map<String, dynamic>,
       ),
       groups: groupsList,
+      articles: articlesList,
     );
   }
 }
@@ -129,5 +210,6 @@ class HomepageResponse {
     );
   }
 }
+
 
 

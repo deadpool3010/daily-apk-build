@@ -1,8 +1,10 @@
 import 'package:bandhucare_new/core/utils/image_constant.dart';
 import 'package:bandhucare_new/presentation/blog_screen/widgets/tiptap/tiptap_renderer_registration.dart';
+import 'package:bandhucare_new/core/api/api_services.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'dart:async';
+import 'dart:convert';
 import 'dart:math';
 
 class BlogScreenController extends GetxController with GetTickerProviderStateMixin {
@@ -10,6 +12,9 @@ class BlogScreenController extends GetxController with GetTickerProviderStateMix
   final RxBool isPlaying = false.obs;
   final RxString currentTime = '00:32'.obs;
   final RxList<double> waveformHeights = <double>[].obs;
+  final RxBool isLoading = false.obs;
+  final RxString errorMessage = ''.obs;
+  final Rx<Map<String, dynamic>?> contentData = Rx<Map<String, dynamic>?>(null);
   
   Timer? _audioTimer;
   Timer? _carouselTimer;
@@ -138,6 +143,37 @@ class BlogScreenController extends GetxController with GetTickerProviderStateMix
     _waveformAnimationController.stop();
     // Reset to default heights
     waveformHeights.value = List.generate(waveformBarCount, (index) => 8.0);
+  }
+
+  Future<void> loadContentById(String contentId) async {
+    try {
+      isLoading.value = true;
+      errorMessage.value = '';
+      
+      final response = await getContentByIdApi(contentId);
+      
+      if (response['success'] == true && response['data'] != null) {
+        final content = response['data']['content'] as Map<String, dynamic>;
+        
+        // Parse TipTap content if it's a string
+        if (content['content'] != null && content['content'] is String) {
+          try {
+            content['tiptapContent'] = jsonDecode(content['content'] as String);
+          } catch (e) {
+            print('Error parsing TipTap content: $e');
+          }
+        }
+        
+        contentData.value = content;
+      } else {
+        throw Exception(response['message'] ?? 'Failed to load content');
+      }
+    } catch (e) {
+      print('Error loading content: $e');
+      errorMessage.value = e.toString().replaceAll('Exception: ', '');
+    } finally {
+      isLoading.value = false;
+    }
   }
 }
 

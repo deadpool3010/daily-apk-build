@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:bandhucare_new/core/controller/session_controller.dart';
-import 'package:bandhucare_new/core/export_file/app_exports.dart';
 import 'package:bandhucare_new/model/city_model.dart';
 import 'package:bandhucare_new/model/patientModel.dart';
 import 'package:bandhucare_new/core/constants/variables.dart';
@@ -9,6 +9,8 @@ import 'package:bandhucare_new/core/api/api_constant.dart';
 import 'package:bandhucare_new/core/services/shared_pref_localization.dart';
 import 'package:bandhucare_new/model/state_model.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
@@ -1516,6 +1518,36 @@ Future<List<CityModel>> getAllCitiesApi(String stateId) async {
       throw Exception('Failed to load states');
     }
   } catch (e) {
+    throw Exception(e);
+  }
+}
+
+Future<Map<String, dynamic>> getContentByIdApi(String contentId) async {
+  try {
+    final url = baseUrl + getContentById(contentId);
+
+    print('GetContentById API URL: $url');
+
+    final response = await http.get(
+      Uri.parse(url),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $accessToken",
+      },
+    );
+
+    print('GetContentById Response Status: ${response.statusCode}');
+    print('GetContentById Response Body: ${response.body}');
+
+    final result = jsonDecode(response.body);
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return result;
+    } else {
+      throw Exception(result['message'] ?? 'Unknown error');
+    }
+  } catch (e) {
+    print('GetContentById Error: $e');
     throw Exception(e);
   }
 }

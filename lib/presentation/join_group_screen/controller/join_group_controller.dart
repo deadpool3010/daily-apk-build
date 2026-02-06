@@ -70,6 +70,17 @@ class JoinGroupController extends GetxController {
           }
         }
 
+        // Refresh homepage data so that new group appears immediately
+        if (Get.isRegistered<HomepageController>()) {
+          try {
+            final homepageController = Get.find<HomepageController>();
+            // Fire and forget; controller handles its own loading state
+            homepageController.loadHomepageData();
+          } catch (e) {
+            print('Failed to refresh homepage after group join: $e');
+          }
+        }
+
         // Use post-frame callback to ensure proper widget disposal before navigation
         WidgetsBinding.instance.addPostFrameCallback((_) {
           Future.delayed(Duration(milliseconds: 300), () {

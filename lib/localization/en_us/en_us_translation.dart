@@ -20,7 +20,7 @@ final Map<String, String> enUs = {
   'lbl_or_login_with': 'Or login with',
   'lbl_google': 'Google',
   'lbl_mobile': 'Mobile',
-  'lbl_email_id': 'E-Mail ID',
+  'lbl_email_id': 'E-mail ID',
   'lbl_your_trusted_partner_in_wellness': 'Your trusted partner in wellness.',
   'msg_please_select_your_preferred_way_to_register':
       'Please Select your preferred way to register',
