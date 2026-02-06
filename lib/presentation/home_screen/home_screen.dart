@@ -2,6 +2,7 @@ import 'package:bandhucare_new/core/export_file/app_exports.dart';
 import 'package:bandhucare_new/core/controller/session_controller.dart';
 import 'package:bandhucare_new/core/utils/string_utils.dart';
 import 'package:bandhucare_new/presentation/home_screen/home_screen_helper.dart';
+import 'package:bandhucare_new/widget/appointment_card.dart';
 
 bool isBottomNavVisible = true;
 
@@ -215,34 +216,11 @@ class _HomepageScreenState extends State<HomepageScreen> {
                         children: [
                           // Horizontal scrollable feelings cards
                           SizedBox(
-                            height: 310,
-                            child: ListView(
-                              scrollDirection: Axis.horizontal,
+                            child: Padding(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 20,
                               ),
-                              children: [
-                                DailyCheckInCard(
-                                  cardType: CheckInCardType.feeling,
-                                  progress: '1/5',
-                                  backgroundImage:
-                                      ImageConstant.home_screen_img_1,
-                                  label: 'Daily Check-in with Mitra',
-                                  question: 'How are you feeling today?',
-                                  index: 0,
-                                ),
-                                const SizedBox(width: 16),
-                                DailyCheckInCard(
-                                  cardType: CheckInCardType.symptoms,
-                                  progress: '2/5',
-                                  backgroundImage:
-                                      ImageConstant.home_screen_img_2,
-                                  label: 'Daily Check-in',
-                                  question:
-                                      'Do you have any following Symptoms ?',
-                                  index: 1,
-                                ),
-                              ],
+                              child: AppointmentCard(),
                             ),
                           ),
                           const SizedBox(height: 30),
