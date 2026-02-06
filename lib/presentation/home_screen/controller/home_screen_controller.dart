@@ -11,6 +11,7 @@ class HomepageController extends GetxController {
   final Rx<ProfileInfo?> profileInfo = Rx<ProfileInfo?>(null);
   final Rx<HospitalInfo?> hospitalInfo = Rx<HospitalInfo?>(null);
   final RxList<HomepageGroup> groups = <HomepageGroup>[].obs;
+  final RxList<HomepageArticle> articles = <HomepageArticle>[].obs;
   final RxBool isLoading = false.obs;
   final RxString errorMessage = ''.obs;
 
@@ -61,11 +62,13 @@ class HomepageController extends GetxController {
         profileInfo.value = homepageResponse.data.profileInfo;
         hospitalInfo.value = homepageResponse.data.hospitalInfo;
         groups.value = homepageResponse.data.groups;
+        articles.value = homepageResponse.data.articles;
 
         print('Homepage data loaded successfully');
         print('Profile: ${profileInfo.value?.name}');
         print('Hospital: ${hospitalInfo.value?.hospitalName}');
         print('Groups: ${groups.length}');
+        print('Articles: ${articles.length}');
       } else {
         throw Exception(response['message'] ?? 'Failed to load homepage data');
       }

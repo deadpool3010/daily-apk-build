@@ -1327,3 +1327,33 @@ Future<Map<String, dynamic>> getHomepageApi() async {
     throw Exception(e);
   }
 }
+
+Future<Map<String, dynamic>> getContentByIdApi(String contentId) async {
+  try {
+    final url = baseUrl + getContentById(contentId);
+
+    print('GetContentById API URL: $url');
+
+    final response = await http.get(
+      Uri.parse(url),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $accessToken",
+      },
+    );
+
+    print('GetContentById Response Status: ${response.statusCode}');
+    print('GetContentById Response Body: ${response.body}');
+
+    final result = jsonDecode(response.body);
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return result;
+    } else {
+      throw Exception(result['message'] ?? 'Unknown error');
+    }
+  } catch (e) {
+    print('GetContentById Error: $e');
+    throw Exception(e);
+  }
+}

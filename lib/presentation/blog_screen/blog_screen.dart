@@ -1,6 +1,7 @@
 import 'package:bandhucare_new/core/export_file/app_exports.dart';
 import 'package:bandhucare_new/presentation/blog_screen/controller/blog_screen_controller.dart';
 import 'package:bandhucare_new/presentation/blog_screen/widgets/tiptap/tiptap_renderer.dart';
+import 'package:bandhucare_new/presentation/home_screen/home_screen_helper.dart';
 
 class BlogScreen extends StatelessWidget {
   const BlogScreen({super.key});
@@ -9,6 +10,17 @@ class BlogScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Get.find<BlogScreenController>();
     final article = Get.arguments as Map<String, dynamic>? ?? {};
+    
+    // Fetch content by ID if contentId is provided
+    final contentId = article['contentId'] as String?;
+    if (contentId != null && contentId.isNotEmpty) {
+      // Load content only once when screen is built
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (controller.contentData.value == null && !controller.isLoading.value) {
+          controller.loadContentById(contentId);
+        }
+      });
+    }
 
     return Scaffold(
       backgroundColor: const Color(0xFFF3F9FF),
@@ -31,71 +43,185 @@ class BlogScreen extends StatelessWidget {
         ),
         leadingWidth: 50,
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 10),
-              // Date
-              Text(
-                article['date'] ?? 'Nov 09, 2025',
-                style: GoogleFonts.lato(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.primaryColor,
-                ),
+      body: Obx(() {
+        // Use fetched content if available, otherwise use arguments
+        final displayData = controller.contentData.value ?? article;
+        final isLoading = controller.isLoading.value;
+        final errorMessage = controller.errorMessage.value;
+        final hasContentId = contentId != null && contentId.isNotEmpty;
+        
+        if (isLoading && hasContentId) {
+          return Center(
+            child: CircularProgressIndicator(
+              color: AppColors.primaryColor,
+            ),
+          );
+        }
+        
+        if (errorMessage.isNotEmpty && hasContentId) {
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.error_outline, size: 48, color: Colors.red),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Error loading content',
+                    style: GoogleFonts.roboto(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.black,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    errorMessage,
+                    style: GoogleFonts.lato(
+                      fontSize: 14,
+                      color: Colors.grey[600],
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
               ),
-              const SizedBox(height: 8),
-              // Title
-              Text(
-                article['title'] ?? 'New Diet for Cancer Patients',
-                style: GoogleFonts.roboto(
-                  fontSize: 24,
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.black,
-                  height: 1.3,
-                ),
-              ),
-              const SizedBox(height: 16),
-              // Tags (use tags from arguments if provided, otherwise use default)
-              Wrap(spacing: 8, runSpacing: 8, children: _buildTags(article)),
-              const SizedBox(height: 24),
-              // Hero Image (shown when navigating from story cards)
-              if (article['heroTag'] != null && article['imageUrl'] != null)
-                _buildHeroImage(article),
-              // Image Carousel (shown when hero image is not present)
-              if (article['heroTag'] == null || article['imageUrl'] == null)
-                _buildImageCarousel(controller),
-              const SizedBox(height: 16),
-              // Pagination Dots (only shown with carousel)
-              if (article['heroTag'] == null || article['imageUrl'] == null)
-                _buildPaginationDots(controller),
-              const SizedBox(height: 24),
-              // Audio Player
-              _buildAudioPlayer(controller),
-              const SizedBox(height: 24),
-              // Article Text
-              _buildArticleText(article),
-              const SizedBox(height: 24),
-              // Author
-              Padding(
-                padding: const EdgeInsets.only(left: 8, right: 6),
-                child: Text(
-                  '- ${article['author'] ?? 'Dr. Sohail Ali'}',
+            ),
+          );
+        }
+        
+        // Format date from API response if available
+        String formattedDate = displayData['date'] ?? '';
+        if (formattedDate.isEmpty && displayData['createdAt'] != null) {
+          try {
+            final dateTime = DateTime.parse(displayData['createdAt']);
+            final months = [
+              'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+              'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+            ];
+            formattedDate = '${months[dateTime.month - 1]} ${dateTime.day.toString().padLeft(2, '0')}, ${dateTime.year}';
+          } catch (e) {
+            formattedDate = displayData['createdAt'] ?? 'Nov 09, 2025';
+          }
+        }
+        if (formattedDate.isEmpty) {
+          formattedDate = 'Nov 09, 2025';
+        }
+        
+        // Get tags from API response
+        List<String> tags = [];
+        if (displayData['tags'] != null && displayData['tags'] is List) {
+          tags = (displayData['tags'] as List)
+              .map((tag) => tag is Map ? (tag['name'] ?? tag.toString()) : tag.toString())
+              .cast<String>()
+              .toList();
+        } else if (displayData['tags'] != null && displayData['tags'] is List<String>) {
+          tags = List<String>.from(displayData['tags']);
+        } else if (article['tags'] != null && article['tags'] is List) {
+          tags = (article['tags'] as List).map((tag) => tag.toString()).toList();
+        }
+        
+        // Get author name - handle both Map and String types
+        String authorName = 'Dr. Sohail Ali';
+        if (displayData['author'] != null) {
+          if (displayData['author'] is Map) {
+            authorName = (displayData['author'] as Map)['name']?.toString() ?? 
+                        displayData['author'].toString();
+          } else {
+            authorName = displayData['author'].toString();
+          }
+        } else if (article['author'] != null) {
+          if (article['author'] is Map) {
+            authorName = (article['author'] as Map)['name']?.toString() ?? 
+                        article['author'].toString();
+          } else {
+            authorName = article['author'].toString();
+          }
+        }
+        
+        // Get cover image URL
+        String? coverImageUrl = displayData['coverImage']?['fileUrl'] ?? 
+                               displayData['imageUrl'] ?? 
+                               article['imageUrl'];
+        
+        // Check if audio field exists in API response (only when content is loaded from API)
+        // Audio should only show if:
+        // 1. Content is loaded from API (hasContentId is true)
+        // 2. Audio field exists in the API response and is not null/empty
+        final hasAudio = hasContentId && 
+                        controller.contentData.value != null &&
+                        controller.contentData.value!['audio'] != null &&
+                        controller.contentData.value!['audio'].toString().isNotEmpty;
+        
+        return SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 10),
+                // Date
+                Text(
+                  formattedDate,
                   style: GoogleFonts.lato(
-                    fontSize: 16,
+                    fontSize: 14,
                     fontWeight: FontWeight.w600,
                     color: AppColors.primaryColor,
                   ),
                 ),
-              ),
-              const SizedBox(height: 40),
-            ],
+                const SizedBox(height: 8),
+                // Title
+                Text(
+                  displayData['title'] ?? article['title'] ?? 'New Diet for Cancer Patients',
+                  style: GoogleFonts.roboto(
+                    fontSize: 24,
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.black,
+                    height: 1.3,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                // Tags
+                if (tags.isNotEmpty)
+                  Wrap(spacing: 8, runSpacing: 8, children: tags.map((tag) => _buildTag(tag)).toList())
+                else
+                  Wrap(spacing: 8, runSpacing: 8, children: _buildTags(article)),
+                const SizedBox(height: 24),
+                // Hero Image (shown when cover image is available)
+                if (coverImageUrl != null && coverImageUrl.isNotEmpty)
+                  _buildHeroImageFromUrl(coverImageUrl, article['heroTag'] as String?),
+                // Image Carousel (shown when hero image is not present)
+                if (coverImageUrl == null || coverImageUrl.isEmpty)
+                  _buildImageCarousel(controller),
+                const SizedBox(height: 16),
+                // Pagination Dots (only shown with carousel)
+                if (coverImageUrl == null || coverImageUrl.isEmpty)
+                  _buildPaginationDots(controller),
+                if (hasAudio) SizedBox(height: 24),
+                // Audio Player (only show if audio field exists in API response)
+                if (hasAudio) _buildAudioPlayer(controller),
+                if (hasAudio) const SizedBox(height: 24),
+                // Article Text
+                _buildArticleText(displayData),
+                const SizedBox(height: 24),
+                // Author
+                Padding(
+                  padding: const EdgeInsets.only(left: 8, right: 6),
+                  child: Text(
+                    '- $authorName',
+                    style: GoogleFonts.lato(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.primaryColor,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 40),
+              ],
+            ),
           ),
-        ),
-      ),
+        );
+      }),
     );
   }
 
@@ -149,6 +275,43 @@ class BlogScreen extends StatelessWidget {
             },
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildHeroImageFromUrl(String imageUrl, String? heroTag) {
+    Widget imageWidget = DelayedImageWithShimmer(
+      imageUrl: imageUrl,
+      width: double.infinity,
+      height: 200,
+      fit: BoxFit.cover,
+      fallbackWidget: Container(
+        color: Colors.grey[300],
+        child: const Icon(Icons.image, size: 40, color: Colors.grey),
+      ),
+    );
+
+    if (heroTag != null && heroTag.isNotEmpty) {
+      imageWidget = Hero(tag: heroTag, child: imageWidget);
+    }
+
+    return Container(
+      width: double.infinity,
+      height: 200,
+      margin: const EdgeInsets.only(bottom: 24),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: imageWidget,
       ),
     );
   }

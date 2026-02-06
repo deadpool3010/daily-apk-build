@@ -50,3 +50,4 @@ String likeMessage = 'chat/like-message';
 String disLikeMessage = 'chat/dislike-message';
 String getFormQuestionAns(String sessionId) => "form/report/$sessionId";
 String getHomepage = "auth/homepage";
+String getContentById(String contentId) => "content/$contentId";
