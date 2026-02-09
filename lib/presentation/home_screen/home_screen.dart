@@ -1,5 +1,6 @@
 import 'package:bandhucare_new/core/export_file/app_exports.dart';
 import 'package:bandhucare_new/core/controller/session_controller.dart';
+import 'package:bandhucare_new/core/utils/context_extensions.dart';
 import 'package:bandhucare_new/core/utils/string_utils.dart';
 import 'package:bandhucare_new/presentation/home_screen/home_screen_helper.dart';
 import 'package:bandhucare_new/widget/appointment_card.dart';
@@ -67,7 +68,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final statusBarHeight = MediaQuery.of(context).padding.top;
+    final hasNavButtons = context.hasThreeButtonNavigation;
 
     return PopScope(
       canPop: false,
@@ -77,184 +78,195 @@ class _HomepageScreenState extends State<HomepageScreen> {
         SystemNavigator.pop();
       },
       child: GetBuilder<SessionController>(
-        builder: (sessionController) => Scaffold(
-          backgroundColor: const Color(0xFFF3F9FF),
-          extendBodyBehindAppBar: true,
-          body: AnnotatedRegion<SystemUiOverlayStyle>(
-            value: SystemUiOverlayStyle(
-              statusBarColor: Colors.transparent,
-              systemNavigationBarColor: Colors.transparent,
-              statusBarIconBrightness: Brightness.light,
+        builder: (sessionController) => SafeArea(
+          top: false,
+          bottom: hasNavButtons,
+          child: Scaffold(
+            bottomNavigationBar: AnimatedSlide(
+              duration: const Duration(milliseconds: 280),
+              curve: Curves.easeInOut,
+              offset: isBottomNavVisible ? Offset.zero : const Offset(0, 1),
+              child: AnimatedOpacity(
+                duration: const Duration(milliseconds: 200),
+                opacity: isBottomNavVisible ? 1 : 0,
+                child: CustomBottomBar(controller: controller),
+              ),
             ),
-            child: Stack(
-              children: [
-                // CustomScrollView with SliverAppBar
-                CustomScrollView(
-                  controller: scrollController,
-                  slivers: [
-                    // SliverAppBar with flexible space for header image
-                    SliverAppBar(
-                      expandedHeight: size.height * 0.13,
-                      floating: false,
-                      pinned: false,
-                      snap: false,
-                      backgroundColor: Colors.transparent,
-                      elevation: 0,
-                      systemOverlayStyle: SystemUiOverlayStyle(
-                        statusBarColor: Colors.transparent,
-                        systemNavigationBarColor: Colors.transparent,
-                        statusBarIconBrightness: Brightness.dark,
-                      ),
-                      automaticallyImplyLeading: false,
-                      flexibleSpace: FlexibleSpaceBar(
-                        background: Stack(
-                          fit: StackFit.expand,
-                          children: [
-                            // Header background image
-                            Positioned(
-                              top: statusBarHeight + 20,
-                              right: 20,
-                              child: Row(
+
+            extendBody: true,
+            backgroundColor: const Color(0xFFF3F9FF),
+
+            // extendBodyBehindAppBar: true,
+            body: AnnotatedRegion<SystemUiOverlayStyle>(
+              value: const SystemUiOverlayStyle(
+                statusBarColor: Colors.transparent,
+                //  systemNavigationBarColor: Colors.red,
+                //  systemNavigationBarContrastEnforced: true,
+                statusBarIconBrightness: Brightness.light,
+                systemNavigationBarIconBrightness: Brightness.dark,
+              ),
+              child: Container(
+                //    bottom: true,
+                // bottom: hasNavButtons,
+                child: Stack(
+                  children: [
+                    // CustomScrollView with SliverAppBar
+                    CustomScrollView(
+                      controller: scrollController,
+                      slivers: [
+                        // SizedBox(height: 5),
+                        // SliverAppBar with flexible space for header image
+                        SliverPadding(
+                          padding: EdgeInsets.only(
+                            top: MediaQuery.of(context).padding.top,
+                          ),
+                          sliver: SliverAppBar(
+                            primary: false,
+                            expandedHeight: size.height * 0.13,
+                            floating: false,
+                            pinned: false,
+                            snap: false,
+                            backgroundColor: Colors.transparent,
+                            elevation: 0,
+                            // systemOverlayStyle: SystemUiOverlayStyle(
+                            //   statusBarColor: Colors.transparent,
+                            //   systemNavigationBarColor: Colors.transparent,
+                            //   statusBarIconBrightness: Brightness.dark,
+                            // ),
+                            automaticallyImplyLeading: false,
+                            flexibleSpace: FlexibleSpaceBar(
+                              background: Stack(
+                                fit: StackFit.expand,
                                 children: [
-                                  // Bell Icon with light blue background
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 20,
-                                      vertical: 10,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: const Color(0xFFE3F2FD),
-                                      borderRadius: BorderRadius.circular(50),
-                                    ),
+                                  // Header background image
+                                  Positioned(
+                                    top: 20,
+                                    right: 20,
                                     child: Row(
                                       children: [
-                                        Icon(TablerIcons.bell, size: 26),
-                                        const SizedBox(width: 10),
-                                        Obx(() {
-                                          final hospitalImage =
-                                              controller.hospitalImageUrl.value;
-                                          return SizedBox(
-                                            width: 40,
-                                            height: 40,
-                                            child:
-                                                hospitalImage != null &&
-                                                    hospitalImage.isNotEmpty
-                                                ? ClipOval(
-                                                    child:
-                                                        DelayedImageWithShimmer(
-                                                          imageUrl:
-                                                              hospitalImage,
-                                                          width: 40,
-                                                          height: 40,
+                                        // Bell Icon with light blue background
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 20,
+                                            vertical: 10,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: const Color(0xFFE3F2FD),
+                                            borderRadius: BorderRadius.circular(
+                                              50,
+                                            ),
+                                          ),
+                                          child: Row(
+                                            children: [
+                                              Icon(TablerIcons.bell, size: 26),
+                                              const SizedBox(width: 10),
+                                              Obx(() {
+                                                final hospitalImage = controller
+                                                    .hospitalImageUrl
+                                                    .value;
+                                                return SizedBox(
+                                                  width: 40,
+                                                  height: 40,
+                                                  child:
+                                                      hospitalImage != null &&
+                                                          hospitalImage
+                                                              .isNotEmpty
+                                                      ? ClipOval(
+                                                          child: DelayedImageWithShimmer(
+                                                            imageUrl:
+                                                                hospitalImage,
+                                                            width: 40,
+                                                            height: 40,
+                                                            fit: BoxFit.contain,
+                                                            fallbackWidget:
+                                                                Image.asset(
+                                                                  ImageConstant
+                                                                      .hospitalLogo,
+                                                                  fit: BoxFit
+                                                                      .contain,
+                                                                ),
+                                                          ),
+                                                        )
+                                                      : Image.asset(
+                                                          ImageConstant
+                                                              .hospitalLogo,
                                                           fit: BoxFit.contain,
-                                                          fallbackWidget:
-                                                              Image.asset(
-                                                                ImageConstant
-                                                                    .hospitalLogo,
-                                                                fit: BoxFit
-                                                                    .contain,
-                                                              ),
                                                         ),
-                                                  )
-                                                : Image.asset(
-                                                    ImageConstant.hospitalLogo,
-                                                    fit: BoxFit.contain,
-                                                  ),
-                                          );
-                                        }),
+                                                );
+                                              }),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Positioned(
+                                    top: 20,
+                                    left: 20,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Hello',
+                                          style: GoogleFonts.lato(
+                                            textStyle: TextStyle(
+                                              color: Color(0xFF898A8D),
+                                              fontSize: 16.0,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          () {
+                                            final userName =
+                                                sessionController.user?.name;
+                                            return userName != null &&
+                                                    userName.isNotEmpty
+                                                ? '${StringUtils.getFirstName(userName)}!'
+                                                : 'Hello!';
+                                          }(),
+                                          style: GoogleFonts.lato(
+                                            textStyle: TextStyle(
+                                              color: AppColors.black,
+                                              fontSize: 20.0,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        ),
                                       ],
                                     ),
                                   ),
                                 ],
                               ),
                             ),
-                            Positioned(
-                              top: statusBarHeight + 20,
-                              left: 20,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Hello',
-                                    style: GoogleFonts.lato(
-                                      textStyle: TextStyle(
-                                        color: Color(0xFF898A8D),
-                                        fontSize: 16.0,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    () {
-                                      final userName =
-                                          sessionController.user?.name;
-                                      return userName != null &&
-                                              userName.isNotEmpty
-                                          ? '${StringUtils.getFirstName(userName)}!'
-                                          : 'Hello!';
-                                    }(),
-                                    style: GoogleFonts.lato(
-                                      textStyle: TextStyle(
-                                        color: AppColors.black,
-                                        fontSize: 20.0,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-
-                    // Scrollable content
-                    SliverToBoxAdapter(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Horizontal scrollable feelings cards
-                          SizedBox(
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 20,
-                              ),
-                              child: AppointmentCard(),
-                            ),
                           ),
-                          const SizedBox(height: 30),
+                        ),
 
-                          // Quick Actions Section
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            child: Text(
-                              'Quick Actions',
-                              style: GoogleFonts.roboto(
-                                textStyle: TextStyle(
-                                  color: AppColors.black,
-                                  fontSize: 18.0,
-                                  fontWeight: FontWeight.w500,
+                        // Scrollable content
+                        SliverToBoxAdapter(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Horizontal scrollable feelings cards
+                              SizedBox(
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 20,
+                                  ),
+                                  child: AppointmentCard(),
                                 ),
                               ),
-                            ),
-                          ),
-                          const SizedBox(height: 16),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            child: _buildQuickActions(),
-                          ),
-                          const SizedBox(height: 30),
+                              const SizedBox(height: 30),
 
-                          // Articles Curated just for you Section
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  'Articles Curated just for you',
+                              // Quick Actions Section
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 20,
+                                ),
+                                child: Text(
+                                  'Quick Actions',
                                   style: GoogleFonts.roboto(
                                     textStyle: TextStyle(
                                       color: AppColors.black,
@@ -263,278 +275,322 @@ class _HomepageScreenState extends State<HomepageScreen> {
                                     ),
                                   ),
                                 ),
-                                GestureDetector(
-                                  onTap: () {},
-                                  child: Text(
-                                    'See All',
-                                    style: GoogleFonts.lato(
-                                      textStyle: TextStyle(
-                                        color: AppColors.black,
-                                        fontSize: 14.0,
-                                        fontWeight: FontWeight.w500,
-                                        decoration: TextDecoration.underline,
+                              ),
+                              const SizedBox(height: 16),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 20,
+                                ),
+                                child: _buildQuickActions(),
+                              ),
+                              const SizedBox(height: 30),
+
+                              // Articles Curated just for you Section
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 20,
+                                ),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      'Articles Curated just for you',
+                                      style: GoogleFonts.roboto(
+                                        textStyle: TextStyle(
+                                          color: AppColors.black,
+                                          fontSize: 18.0,
+                                          fontWeight: FontWeight.w500,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(height: 16),
-                          // Articles Horizontal List
-                          Obx(() {
-                            final articles = controller.articles;
-                            if (articles.isEmpty) {
-                              return const SizedBox.shrink();
-                            }
-                            return Builder(
-                              builder: (context) {
-                                final screenHeight = MediaQuery.of(
-                                  context,
-                                ).size.height;
-                                final dynamicHeight = (screenHeight * 0.4)
-                                    .clamp(310.0, 350.0);
-                                return SizedBox(
-                                  height: dynamicHeight,
-                                  child: ListView.separated(
-                                    scrollDirection: Axis.horizontal,
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 20,
+                                    GestureDetector(
+                                      onTap: () {},
+                                      child: Text(
+                                        'See All',
+                                        style: GoogleFonts.lato(
+                                          textStyle: TextStyle(
+                                            color: AppColors.black,
+                                            fontSize: 14.0,
+                                            fontWeight: FontWeight.w500,
+                                            decoration:
+                                                TextDecoration.underline,
+                                          ),
+                                        ),
+                                      ),
                                     ),
-                                    itemCount: articles.length,
-                                    separatorBuilder: (context, index) =>
-                                        const SizedBox(width: 16),
-                                    itemBuilder: (context, index) {
-                                      final article = articles[index];
-                                      // Format date
-                                      String formattedDate = '';
-                                      try {
-                                        final dateTime = DateTime.parse(
-                                          article.createdAt,
-                                        );
-                                        final months = [
-                                          'Jan',
-                                          'Feb',
-                                          'Mar',
-                                          'Apr',
-                                          'May',
-                                          'Jun',
-                                          'Jul',
-                                          'Aug',
-                                          'Sep',
-                                          'Oct',
-                                          'Nov',
-                                          'Dec',
-                                        ];
-                                        formattedDate =
-                                            '${months[dateTime.month - 1]} ${dateTime.day.toString().padLeft(2, '0')}, ${dateTime.year}';
-                                      } catch (e) {
-                                        formattedDate = article.createdAt;
-                                      }
-                                      return _buildArticleCardFromModel(
-                                        article,
-                                        formattedDate,
-                                        'home_article_$index',
-                                      );
-                                    },
-                                  ),
-                                );
-                              },
-                            );
-                          }),
-                          // const SizedBox(height: 30),
-                          // Padding(
-                          //   padding: const EdgeInsets.symmetric(horizontal: 20),
-                          //   child: Text(
-                          //     'Daily Affirmations / Reminders',
-                          //     style: GoogleFonts.roboto(
-                          //       textStyle: TextStyle(
-                          //         color: AppColors.black,
-                          //         fontSize: 18.0,
-                          //         fontWeight: FontWeight.w500,
-                          //       ),
-                          //     ),
-                          //   ),
-                          // ),
-                          // const SizedBox(height: 14),
-                          // Horizontal scrollable affirmation cards
-                          // SizedBox(
-                          //   height: 250,
-                          //   child: ListView.separated(
-                          //     scrollDirection: Axis.horizontal,
-                          //     padding: const EdgeInsets.symmetric(
-                          //       horizontal: 20,
-                          //     ),
-                          //     itemCount: 3,
-                          //     separatorBuilder: (context, index) =>
-                          //         const SizedBox(width: 16),
-                          //     itemBuilder: (context, index) {
-                          //       return DailyAffirmation();
-                          //     },
-                          //   ),
-                          // ),
-                          const SizedBox(height: 14),
-
-                          // Meet Our Strong Warriors Section
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            child: Text(
-                              'Meet Our Strong Warriors',
-                              style: GoogleFonts.roboto(
-                                textStyle: TextStyle(
-                                  color: AppColors.black,
-                                  fontSize: 18.0,
-                                  fontWeight: FontWeight.w500,
+                                  ],
                                 ),
                               ),
-                            ),
-                          ),
-                          const SizedBox(height: 14),
-                          // Horizontal scrollable journey cards with thread background
-                          Container(
-                            height: 355,
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFF3F9FF),
-                            ),
-                            child: Stack(
-                              children: [
-                                // Background thread/string
-                                Positioned(
-                                  top: 25,
-                                  left: 0,
-                                  right: 0,
-                                  child: CustomPaint(painter: ThreadPainter()),
-                                ),
-                                // Journey cards
-                                ListView.separated(
-                                  scrollDirection: Axis.horizontal,
-                                  padding: const EdgeInsets.only(
-                                    left: 20,
-                                    right: 20,
-                                    top: 15,
-                                    bottom: 15,
-                                  ),
-                                  itemCount: 3,
-                                  separatorBuilder: (context, index) =>
-                                      const SizedBox(width: 50),
-                                  itemBuilder: (context, index) {
-                                    final journeyData = [
-                                      {
-                                        'imageUrl':
-                                            'https://t4.ftcdn.net/jpg/06/33/37/89/360_F_633378965_iRc8bqmOoxkrAlYKvNcBqUhqGXNBmfTB.jpg',
-                                        'title': 'Sita Amma\'s Journey',
-                                        'description':
-                                            'After her 6-month treatment, Sita Amma began walking every morning again. She says, "I found my strength in small steps and big smiles."',
-                                        'buttonText': 'Read her Story',
-                                        'rotation': 0.02,
-                                      },
-                                      {
-                                        'imageUrl':
-                                            'https://t4.ftcdn.net/jpg/06/33/37/89/360_F_633378965_iRc8bqmOoxkrAlYKvNcBqUhqGXNBmfTB.jpg',
-                                        'title': 'Natasha\'s Journey',
-                                        'description':
-                                            'After her 6-month treatment, Natasha began walking every morning again. She says, "I found my strength in small steps and big smiles."',
-                                        'buttonText': 'Read her Story',
-                                        'rotation': -0.02,
-                                      },
-                                      {
-                                        'imageUrl':
-                                            'https://t4.ftcdn.net/jpg/06/33/37/89/360_F_633378965_iRc8bqmOoxkrAlYKvNcBqUhqGXNBmfTB.jpg',
-                                        'title': 'Prashanth\'s Story',
-                                        'description':
-                                            'After his 6-month treatment, Prashanth began walking every morning again. He says, "I found my strength in small steps and big smiles."',
-                                        'buttonText': 'Read his Story',
-                                        'rotation': 0.03,
-                                      },
-                                    ];
-                                    final data = journeyData[index];
-                                    return JourneyCard(
-                                      imageUrl: data['imageUrl'] as String,
-                                      title: data['title'] as String,
-                                      description:
-                                          data['description'] as String,
-                                      buttonText: data['buttonText'] as String,
-                                      rotation: data['rotation'] as double,
-                                      index: index,
+                              const SizedBox(height: 16),
+                              // Articles Horizontal List
+                              Obx(() {
+                                final articles = controller.articles;
+                                if (articles.isEmpty) {
+                                  return const SizedBox.shrink();
+                                }
+                                return Builder(
+                                  builder: (context) {
+                                    final screenHeight = MediaQuery.of(
+                                      context,
+                                    ).size.height;
+                                    final dynamicHeight = (screenHeight * 0.4)
+                                        .clamp(310.0, 350.0);
+                                    return SizedBox(
+                                      height: dynamicHeight,
+                                      child: ListView.separated(
+                                        scrollDirection: Axis.horizontal,
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 20,
+                                        ),
+                                        itemCount: articles.length,
+                                        separatorBuilder: (context, index) =>
+                                            const SizedBox(width: 16),
+                                        itemBuilder: (context, index) {
+                                          final article = articles[index];
+                                          // Format date
+                                          String formattedDate = '';
+                                          try {
+                                            final dateTime = DateTime.parse(
+                                              article.createdAt,
+                                            );
+                                            final months = [
+                                              'Jan',
+                                              'Feb',
+                                              'Mar',
+                                              'Apr',
+                                              'May',
+                                              'Jun',
+                                              'Jul',
+                                              'Aug',
+                                              'Sep',
+                                              'Oct',
+                                              'Nov',
+                                              'Dec',
+                                            ];
+                                            formattedDate =
+                                                '${months[dateTime.month - 1]} ${dateTime.day.toString().padLeft(2, '0')}, ${dateTime.year}';
+                                          } catch (e) {
+                                            formattedDate = article.createdAt;
+                                          }
+                                          return _buildArticleCardFromModel(
+                                            article,
+                                            formattedDate,
+                                            'home_article_$index',
+                                          );
+                                        },
+                                      ),
                                     );
                                   },
+                                );
+                              }),
+                              // const SizedBox(height: 30),
+                              // Padding(
+                              //   padding: const EdgeInsets.symmetric(horizontal: 20),
+                              //   child: Text(
+                              //     'Daily Affirmations / Reminders',
+                              //     style: GoogleFonts.roboto(
+                              //       textStyle: TextStyle(
+                              //         color: AppColors.black,
+                              //         fontSize: 18.0,
+                              //         fontWeight: FontWeight.w500,
+                              //       ),
+                              //     ),
+                              //   ),
+                              // ),
+                              // const SizedBox(height: 14),
+                              // Horizontal scrollable affirmation cards
+                              // SizedBox(
+                              //   height: 250,
+                              //   child: ListView.separated(
+                              //     scrollDirection: Axis.horizontal,
+                              //     padding: const EdgeInsets.symmetric(
+                              //       horizontal: 20,
+                              //     ),
+                              //     itemCount: 3,
+                              //     separatorBuilder: (context, index) =>
+                              //         const SizedBox(width: 16),
+                              //     itemBuilder: (context, index) {
+                              //       return DailyAffirmation();
+                              //     },
+                              //   ),
+                              // ),
+                              const SizedBox(height: 14),
+
+                              // Meet Our Strong Warriors Section
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 20,
                                 ),
-                              ],
-                            ),
-                          ),
-                          // Shared with heart section
-                          Padding(
-                            padding: const EdgeInsets.only(
-                              left: 24,
-                              right: 20,
-                              top: 30,
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                // Main text "Shared with heart." with gradient
-                                ShaderMask(
-                                  shaderCallback: (bounds) => LinearGradient(
-                                    colors: [
-                                      Color(0xFF397BE9).withOpacity(0.4),
-                                      Color(0xFF0040FF).withOpacity(0.6),
-                                    ],
-                                    begin: Alignment.topCenter,
-                                    end: Alignment.bottomCenter,
-                                  ).createShader(bounds),
-                                  child: Text(
-                                    'Shared\nwith heart.',
-                                    style: GoogleFonts.alumniSans(
-                                      textStyle: TextStyle(
-                                        fontSize: 85.0,
-                                        fontWeight: FontWeight.w700,
-                                        height:
-                                            62.84 /
-                                            80.0, // Line height: 62.84px
-                                        letterSpacing: 1.6, // 2% of 80px
-                                        color: Colors
-                                            .white, // Will be masked by gradient
+                                child: Text(
+                                  'Meet Our Strong Warriors',
+                                  style: GoogleFonts.roboto(
+                                    textStyle: TextStyle(
+                                      color: AppColors.black,
+                                      fontSize: 18.0,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 14),
+                              // Horizontal scrollable journey cards with thread background
+                              Container(
+                                height: 355,
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFF3F9FF),
+                                ),
+                                child: Stack(
+                                  children: [
+                                    // Background thread/string
+                                    Positioned(
+                                      top: 25,
+                                      left: 0,
+                                      right: 0,
+                                      child: CustomPaint(
+                                        painter: ThreadPainter(),
                                       ),
                                     ),
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-                                // Subtitle "-Built for BandhuCare"
-                                Text(
-                                  '-Built for BandhuCare',
-                                  style: GoogleFonts.lato(
-                                    textStyle: TextStyle(
-                                      color: Color(0xFF4D7EE7),
-                                      fontSize: 16.0,
-                                      fontWeight: FontWeight.w700,
+                                    // Journey cards
+                                    ListView.separated(
+                                      scrollDirection: Axis.horizontal,
+                                      padding: const EdgeInsets.only(
+                                        left: 20,
+                                        right: 20,
+                                        top: 15,
+                                        bottom: 15,
+                                      ),
+                                      itemCount: 3,
+                                      separatorBuilder: (context, index) =>
+                                          const SizedBox(width: 50),
+                                      itemBuilder: (context, index) {
+                                        final journeyData = [
+                                          {
+                                            'imageUrl':
+                                                'https://t4.ftcdn.net/jpg/06/33/37/89/360_F_633378965_iRc8bqmOoxkrAlYKvNcBqUhqGXNBmfTB.jpg',
+                                            'title': 'Sita Amma\'s Journey',
+                                            'description':
+                                                'After her 6-month treatment, Sita Amma began walking every morning again. She says, "I found my strength in small steps and big smiles."',
+                                            'buttonText': 'Read her Story',
+                                            'rotation': 0.02,
+                                          },
+                                          {
+                                            'imageUrl':
+                                                'https://t4.ftcdn.net/jpg/06/33/37/89/360_F_633378965_iRc8bqmOoxkrAlYKvNcBqUhqGXNBmfTB.jpg',
+                                            'title': 'Natasha\'s Journey',
+                                            'description':
+                                                'After her 6-month treatment, Natasha began walking every morning again. She says, "I found my strength in small steps and big smiles."',
+                                            'buttonText': 'Read her Story',
+                                            'rotation': -0.02,
+                                          },
+                                          {
+                                            'imageUrl':
+                                                'https://t4.ftcdn.net/jpg/06/33/37/89/360_F_633378965_iRc8bqmOoxkrAlYKvNcBqUhqGXNBmfTB.jpg',
+                                            'title': 'Prashanth\'s Story',
+                                            'description':
+                                                'After his 6-month treatment, Prashanth began walking every morning again. He says, "I found my strength in small steps and big smiles."',
+                                            'buttonText': 'Read his Story',
+                                            'rotation': 0.03,
+                                          },
+                                        ];
+                                        final data = journeyData[index];
+                                        return JourneyCard(
+                                          imageUrl: data['imageUrl'] as String,
+                                          title: data['title'] as String,
+                                          description:
+                                              data['description'] as String,
+                                          buttonText:
+                                              data['buttonText'] as String,
+                                          rotation: data['rotation'] as double,
+                                          index: index,
+                                        );
+                                      },
                                     ),
-                                  ),
+                                  ],
                                 ),
-                              ],
-                            ),
+                              ),
+                              // Shared with heart section
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 24,
+                                  right: 20,
+                                  top: 30,
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    // Main text "Shared with heart." with gradient
+                                    ShaderMask(
+                                      shaderCallback: (bounds) =>
+                                          LinearGradient(
+                                            colors: [
+                                              Color(
+                                                0xFF397BE9,
+                                              ).withOpacity(0.4),
+                                              Color(
+                                                0xFF0040FF,
+                                              ).withOpacity(0.6),
+                                            ],
+                                            begin: Alignment.topCenter,
+                                            end: Alignment.bottomCenter,
+                                          ).createShader(bounds),
+                                      child: Text(
+                                        'Shared\nwith heart.',
+                                        style: GoogleFonts.alumniSans(
+                                          textStyle: TextStyle(
+                                            fontSize: 85.0,
+                                            fontWeight: FontWeight.w700,
+                                            height:
+                                                62.84 /
+                                                80.0, // Line height: 62.84px
+                                            letterSpacing: 1.6, // 2% of 80px
+                                            color: Colors
+                                                .white, // Will be masked by gradient
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    // Subtitle "-Built for BandhuCare"
+                                    Text(
+                                      '-Built for BandhuCare',
+                                      style: GoogleFonts.lato(
+                                        textStyle: TextStyle(
+                                          color: Color(0xFF4D7EE7),
+                                          fontSize: 16.0,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(height: 30),
+                            ],
                           ),
-                          const SizedBox(height: 30),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
+
+                    // Custom bottom navigation bar overlaid on top
+                    // Positioned(
+                    //   left: 0,
+                    //   right: 0,
+                    //   bottom: 0,
+                    //   child: AnimatedSlide(
+                    //     duration: Duration(milliseconds: 280),
+                    //     curve: Curves.easeInOut,
+                    //     // 👇 Slide down (hide) & slide up (show)
+                    //     offset: isBottomNavVisible
+                    //         ? Offset(0, 0)
+                    //         : Offset(0, 1),
+
+                    //     child: CustomBottomBar(controller: controller),
+                    //   ),
+                    // ),
                   ],
                 ),
-
-                // Custom bottom navigation bar overlaid on top
-                Positioned(
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  child: AnimatedSlide(
-                    duration: Duration(milliseconds: 280),
-                    curve: Curves.easeInOut,
-                    // 👇 Slide down (hide) & slide up (show)
-                    offset: isBottomNavVisible ? Offset(0, 0) : Offset(0, 1),
-
-                    child: CustomBottomBar(controller: controller),
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
         ),
@@ -621,215 +677,215 @@ class _HomepageScreenState extends State<HomepageScreen> {
     );
   }
 
-  Widget _buildUpcomingAppointmentCard() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 17, vertical: 12),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            const Color(0xFF3865FF), // Stop 1: 0% - #3865FF
-            const Color(0xFF223D99), // Stop 2: 100% - #223D99
-          ],
-        ),
-        borderRadius: BorderRadius.circular(27),
-      ),
-      child: Row(
-        children: [
-          // Left side - Day and Date
-          Container(
-            padding: const EdgeInsets.only(
-              left: 13,
-              right: 13,
-              top: 11,
-              bottom: 11,
-            ),
-            decoration: BoxDecoration(
-              color: const Color(0xFFE5EFFE), // Stop 1: 0% - #3865FF
-              borderRadius: BorderRadius.circular(18),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  'Thu',
-                  style: GoogleFonts.lato(
-                    textStyle: TextStyle(
-                      color: Color(0xFF21231E), // Lighter blue
-                      fontSize: 14.0,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  '23',
-                  style: GoogleFonts.lato(
-                    textStyle: TextStyle(
-                      color: Color(0xFF3865FF),
-                      fontSize: 32.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(width: 14),
-          // Right side - Appointment details
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Appointment with Dr. Vishnu',
-                  style: GoogleFonts.lato(
-                    textStyle: TextStyle(
-                      color: AppColors.white,
-                      fontSize: 16.0,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  'Therapy Session',
-                  style: GoogleFonts.lato(
-                    textStyle: TextStyle(
-                      color: AppColors.white,
-                      fontSize: 14.0,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Upcoming',
-                      style: GoogleFonts.lato(
-                        textStyle: TextStyle(
-                          color: Color(0xFFDEFF4A),
-                          fontSize: 14.0,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                    Text(
-                      '11 Am - 01 Pm',
-                      style: GoogleFonts.lato(
-                        textStyle: TextStyle(
-                          color: AppColors.white,
-                          fontSize: 14.0,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  // Widget _buildUpcomingAppointmentCard() {
+  //   return Container(
+  //     padding: const EdgeInsets.symmetric(horizontal: 17, vertical: 12),
+  //     decoration: BoxDecoration(
+  //       gradient: LinearGradient(
+  //         begin: Alignment.topCenter,
+  //         end: Alignment.bottomCenter,
+  //         colors: [
+  //           const Color(0xFF3865FF), // Stop 1: 0% - #3865FF
+  //           const Color(0xFF223D99), // Stop 2: 100% - #223D99
+  //         ],
+  //       ),
+  //       borderRadius: BorderRadius.circular(27),
+  //     ),
+  //     child: Row(
+  //       children: [
+  //         // Left side - Day and Date
+  //         Container(
+  //           padding: const EdgeInsets.only(
+  //             left: 13,
+  //             right: 13,
+  //             top: 11,
+  //             bottom: 11,
+  //           ),
+  //           decoration: BoxDecoration(
+  //             color: const Color(0xFFE5EFFE), // Stop 1: 0% - #3865FF
+  //             borderRadius: BorderRadius.circular(18),
+  //           ),
+  //           child: Column(
+  //             crossAxisAlignment: CrossAxisAlignment.center,
+  //             children: [
+  //               Text(
+  //                 'Thu',
+  //                 style: GoogleFonts.lato(
+  //                   textStyle: TextStyle(
+  //                     color: Color(0xFF21231E), // Lighter blue
+  //                     fontSize: 14.0,
+  //                     fontWeight: FontWeight.w500,
+  //                   ),
+  //                 ),
+  //               ),
+  //               const SizedBox(height: 4),
+  //               Text(
+  //                 '23',
+  //                 style: GoogleFonts.lato(
+  //                   textStyle: TextStyle(
+  //                     color: Color(0xFF3865FF),
+  //                     fontSize: 32.0,
+  //                     fontWeight: FontWeight.bold,
+  //                   ),
+  //                 ),
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //         const SizedBox(width: 14),
+  //         // Right side - Appointment details
+  //         Expanded(
+  //           child: Column(
+  //             crossAxisAlignment: CrossAxisAlignment.start,
+  //             children: [
+  //               Text(
+  //                 'Appointment with Dr. Vishnu',
+  //                 style: GoogleFonts.lato(
+  //                   textStyle: TextStyle(
+  //                     color: AppColors.white,
+  //                     fontSize: 16.0,
+  //                     fontWeight: FontWeight.w600,
+  //                   ),
+  //                 ),
+  //               ),
+  //               const SizedBox(height: 4),
+  //               Text(
+  //                 'Therapy Session',
+  //                 style: GoogleFonts.lato(
+  //                   textStyle: TextStyle(
+  //                     color: AppColors.white,
+  //                     fontSize: 14.0,
+  //                     fontWeight: FontWeight.w400,
+  //                   ),
+  //                 ),
+  //               ),
+  //               const SizedBox(height: 8),
+  //               Row(
+  //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //                 children: [
+  //                   Text(
+  //                     'Upcoming',
+  //                     style: GoogleFonts.lato(
+  //                       textStyle: TextStyle(
+  //                         color: Color(0xFFDEFF4A),
+  //                         fontSize: 14.0,
+  //                         fontWeight: FontWeight.w500,
+  //                       ),
+  //                     ),
+  //                   ),
+  //                   Text(
+  //                     '11 Am - 01 Pm',
+  //                     style: GoogleFonts.lato(
+  //                       textStyle: TextStyle(
+  //                         color: AppColors.white,
+  //                         fontSize: 14.0,
+  //                         fontWeight: FontWeight.w500,
+  //                       ),
+  //                     ),
+  //                   ),
+  //                 ],
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
-  Widget _buildArticleCard(Map<String, String> article, String heroTag) {
-    return GestureDetector(
-      onTap: () {
-        final arguments = Map<String, dynamic>.from(article);
-        arguments['heroTag'] = heroTag;
-        arguments['imageUrl'] = article['image'];
-        // Add tags for article content type
-        arguments['tags'] = [
-          'Patient Reference',
-          'Healthy Diet Articles',
-          'Self Help',
-        ];
-        Get.toNamed(AppRoutes.blogScreen, arguments: arguments);
-      },
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: 200,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.08),
-                  blurRadius: 15,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: ClipRRect(
-              borderRadius: const BorderRadius.all(Radius.circular(20)),
-              child: Hero(
-                tag: heroTag,
-                child: Image.asset(
-                  article['image']!,
-                  width: double.infinity,
-                  height: 240,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      width: double.infinity,
-                      height: 240,
-                      color: Colors.grey[300],
-                      child: const Icon(
-                        Icons.image,
-                        size: 50,
-                        color: Colors.grey,
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 10),
-          // Article Content
-          Text(
-            article['title']!,
-            style: GoogleFonts.roboto(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              color: AppColors.black,
-            ),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-          ),
-          const SizedBox(height: 4),
-          Row(
-            children: [
-              Text(
-                '- ${article['author']!}',
-                style: GoogleFonts.lato(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.grey[600],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 4),
-          Text(
-            article['date']!,
-            style: GoogleFonts.lato(
-              fontSize: 12,
-              fontWeight: FontWeight.w400,
-              color: AppColors.primaryColor,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  // Widget _buildArticleCard(Map<String, String> article, String heroTag) {
+  //   return GestureDetector(
+  //     onTap: () {
+  //       final arguments = Map<String, dynamic>.from(article);
+  //       arguments['heroTag'] = heroTag;
+  //       arguments['imageUrl'] = article['image'];
+  //       // Add tags for article content type
+  //       arguments['tags'] = [
+  //         'Patient Reference',
+  //         'Healthy Diet Articles',
+  //         'Self Help',
+  //       ];
+  //       Get.toNamed(AppRoutes.blogScreen, arguments: arguments);
+  //     },
+  //     child: Column(
+  //       crossAxisAlignment: CrossAxisAlignment.start,
+  //       children: [
+  //         Container(
+  //           width: 200,
+  //           decoration: BoxDecoration(
+  //             color: Colors.white,
+  //             borderRadius: BorderRadius.circular(20),
+  //             boxShadow: [
+  //               BoxShadow(
+  //                 color: Colors.black.withOpacity(0.08),
+  //                 blurRadius: 15,
+  //                 offset: const Offset(0, 4),
+  //               ),
+  //             ],
+  //           ),
+  //           child: ClipRRect(
+  //             borderRadius: const BorderRadius.all(Radius.circular(20)),
+  //             child: Hero(
+  //               tag: heroTag,
+  //               child: Image.asset(
+  //                 article['image']!,
+  //                 width: double.infinity,
+  //                 height: 240,
+  //                 fit: BoxFit.cover,
+  //                 errorBuilder: (context, error, stackTrace) {
+  //                   return Container(
+  //                     width: double.infinity,
+  //                     height: 240,
+  //                     color: Colors.grey[300],
+  //                     child: const Icon(
+  //                       Icons.image,
+  //                       size: 50,
+  //                       color: Colors.grey,
+  //                     ),
+  //                   );
+  //                 },
+  //               ),
+  //             ),
+  //           ),
+  //         ),
+  //         const SizedBox(height: 10),
+  //         // Article Content
+  //         Text(
+  //           article['title']!,
+  //           style: GoogleFonts.roboto(
+  //             fontSize: 14,
+  //             fontWeight: FontWeight.w500,
+  //             color: AppColors.black,
+  //           ),
+  //           maxLines: 2,
+  //           overflow: TextOverflow.ellipsis,
+  //         ),
+  //         const SizedBox(height: 4),
+  //         Row(
+  //           children: [
+  //             Text(
+  //               '- ${article['author']!}',
+  //               style: GoogleFonts.lato(
+  //                 fontSize: 12,
+  //                 fontWeight: FontWeight.w500,
+  //                 color: Colors.grey[600],
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //         const SizedBox(height: 4),
+  //         Text(
+  //           article['date']!,
+  //           style: GoogleFonts.lato(
+  //             fontSize: 12,
+  //             fontWeight: FontWeight.w400,
+  //             color: AppColors.primaryColor,
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   Widget _buildArticleCardFromModel(
     HomepageArticle article,
@@ -1073,4 +1129,100 @@ Widget DailyAffirmation() {
       ),
     ],
   );
+}
+
+class HomeHeaderContent extends StatelessWidget {
+  final SessionController sessionController;
+  final HomepageController controller;
+
+  const HomeHeaderContent({
+    super.key,
+    required this.sessionController,
+    required this.controller,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        // Right side (bell + logo)
+        Positioned(
+          top: context.topSafeArea + 8, // 🔥 safe for Scaffold too
+          right: 20,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            decoration: BoxDecoration(
+              color: const Color(0xFFE3F2FD),
+              borderRadius: BorderRadius.circular(50),
+            ),
+            child: Row(
+              children: [
+                const Icon(TablerIcons.bell, size: 26),
+                const SizedBox(width: 10),
+                Obx(() {
+                  final hospitalImage = controller.hospitalImageUrl.value;
+
+                  return SizedBox(
+                    width: 40,
+                    height: 40,
+                    child: hospitalImage != null && hospitalImage.isNotEmpty
+                        ? ClipOval(
+                            child: DelayedImageWithShimmer(
+                              imageUrl: hospitalImage,
+                              width: 40,
+                              height: 40,
+                              fit: BoxFit.contain,
+                              fallbackWidget: Image.asset(
+                                ImageConstant.hospitalLogo,
+                                fit: BoxFit.contain,
+                              ),
+                            ),
+                          )
+                        : Image.asset(
+                            ImageConstant.hospitalLogo,
+                            fit: BoxFit.contain,
+                          ),
+                  );
+                }),
+              ],
+            ),
+          ),
+        ),
+
+        // Left side (Hello text)
+        Positioned(
+          top: context.topSafeArea + 8,
+          left: 20,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Hello',
+                style: GoogleFonts.lato(
+                  color: const Color(0xFF898A8D),
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                () {
+                  final name = sessionController.user?.name;
+                  return name != null && name.isNotEmpty
+                      ? '${StringUtils.getFirstName(name)}!'
+                      : 'Hello!';
+                }(),
+                style: GoogleFonts.lato(
+                  color: AppColors.black,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
 }
