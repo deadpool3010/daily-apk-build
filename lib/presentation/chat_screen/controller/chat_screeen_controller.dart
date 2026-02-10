@@ -495,10 +495,10 @@ class ChatScreenController extends GetxController {
           // print("idddddd" + botMessage["_id"]);
 
           final id = botMessage["_id"]?.toString();
-          final base64 = botMessage["base64"]?.toString() ?? "";
+          //final base64 = botMessage["base64"]?.toString() ?? "";
 
-          print("base64 is" + "  " + botMessage['formTemplateName']);
-          
+          // print("base64 is" + "  " + botMessage['formTemplateName']);
+
           final botMsg = ChatMessage(
             messageId: id,
             text: full,

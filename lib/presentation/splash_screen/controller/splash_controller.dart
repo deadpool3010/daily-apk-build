@@ -53,6 +53,7 @@ class SplashController extends GetxController with GetTickerProviderStateMixin {
   Future<void> _checkUserPersistence() async {
     final sharedPrefs = SharedPrefLocalization();
     final hasUser = await sharedPrefs.hasPersistedUser();
+    print("Google sign in ${hasUser}");
 
     if (hasUser) {
       final sessionController = Get.find<SessionController>();

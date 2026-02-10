@@ -1088,6 +1088,8 @@ class GoogleAuthService {
       final result = jsonDecode(response.body);
       print('✅ Backend login success');
 
+      print("Google Sign in $result");
+
       // Save user info to shared preferences
       if (result['data'] != null && result['data']['profileDetails'] != null) {
         await SharedPrefLocalization().saveUserInfo(
@@ -1096,10 +1098,20 @@ class GoogleAuthService {
         final userModel = PatientModel.fromJson(
           result['data']['profileDetails'],
         );
+        //  print("Google Sign in data is  ${result['data']['profileDetails']}");
         final session = Get.find<SessionController>();
         session.setUser(userModel);
+        // print('✅ User info saved to local storage');
+        final userinfo = await SharedPrefLocalization().getUserInfo();
+        // print("Google Sign in $userinfo");
+        final token = await SharedPrefLocalization().getTokens();
+        // print("Google Sign in Tokens ");
+        final accessToken = result['data']['accessToken'];
+        final refreshToken = result['data']['refreshToken'];
 
-        print('✅ User info saved to local storage');
+        await SharedPrefLocalization().saveTokens(accessToken, refreshToken);
+
+        // print("Success Fully saved ${accessToken} and ${refreshToken}");
       }
 
       print('📦 Response data: $result');
@@ -1453,6 +1465,7 @@ Future<Map<String, dynamic>> updateProfileApi({
       print('Update Profile Response :$result');
       Toastification().show(
         type: ToastificationType.success,
+        animationDuration: Duration(seconds: 2),
         title: Text("Profile Update Successfully"),
       );
 
