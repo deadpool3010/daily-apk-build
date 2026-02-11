@@ -1,4 +1,5 @@
 import 'package:bandhucare_new/core/export_file/app_exports.dart';
+import 'package:bandhucare_new/core/utils/context_extensions.dart';
 import 'package:bandhucare_new/feature/group_details/controller/group_details_controller.dart';
 import 'package:bandhucare_new/feature/group_details/model/group_model.dart';
 import 'package:bandhucare_new/feature/group_details/widgets/expandable_group_card.dart';
@@ -11,64 +12,61 @@ class GroupDetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<GroupDetailsController>();
-    
+
     return Scaffold(
       backgroundColor: Color(0xFFF3F9FF),
       appBar: _buildAppBar(context),
-      body: Obx(() {
-        if (controller.isLoading.value) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        }
+      body: SafeArea(
+        bottom: context.hasThreeButtonNavigation,
+        child: Obx(() {
+          if (controller.isLoading.value) {
+            return const Center(child: CircularProgressIndicator());
+          }
 
-        if (controller.errorMessage.value.isNotEmpty) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.error_outline,
-                  size: 64,
-                  color: Colors.red[300],
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  controller.errorMessage.value,
-                  style: GoogleFonts.roboto(
-                    fontSize: 16,
-                    color: Colors.red[700],
+          if (controller.errorMessage.value.isNotEmpty) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.error_outline, size: 64, color: Colors.red[300]),
+                  const SizedBox(height: 16),
+                  Text(
+                    controller.errorMessage.value,
+                    style: GoogleFonts.roboto(
+                      fontSize: 16,
+                      color: Colors.red[700],
+                    ),
+                    textAlign: TextAlign.center,
                   ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 24),
-                ElevatedButton(
-                  onPressed: () => controller.loadGroups(),
-                  child: const Text('Retry'),
-                ),
-              ],
+                  const SizedBox(height: 24),
+                  ElevatedButton(
+                    onPressed: () => controller.loadGroups(),
+                    child: const Text('Retry'),
+                  ),
+                ],
+              ),
+            );
+          }
+
+          return SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 20),
+                  _buildSearchSection(controller),
+                  const SizedBox(height: 24),
+                  _buildCurrentGroupSection(controller),
+                  const SizedBox(height: 24),
+                  _buildPastGroupsSection(controller),
+                  const SizedBox(height: 20),
+                ],
+              ),
             ),
           );
-        }
-
-        return SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 20),
-                _buildSearchSection(controller),
-                const SizedBox(height: 24),
-                _buildCurrentGroupSection(controller),
-                const SizedBox(height: 24),
-                _buildPastGroupsSection(controller),
-                const SizedBox(height: 20),
-              ],
-            ),
-          ),
-        );
-      }),
+        }),
+      ),
     );
   }
 
@@ -85,7 +83,14 @@ class GroupDetailsScreen extends StatelessWidget {
         ),
         onPressed: () => Get.back(),
       ),
-      title: Text("Group Details", style: GoogleFonts.roboto(fontSize: 20, fontWeight: FontWeight.w600, color: Colors.black),),
+      title: Text(
+        "Group Details",
+        style: GoogleFonts.roboto(
+          fontSize: 20,
+          fontWeight: FontWeight.w600,
+          color: Colors.black,
+        ),
+      ),
       actions: [
         Padding(
           padding: const EdgeInsets.only(right: 24),
@@ -128,6 +133,7 @@ class GroupDetailsScreen extends StatelessWidget {
       ],
     );
   }
+
   Widget _buildSearchSection(GroupDetailsController controller) {
     return Row(
       children: [
@@ -203,7 +209,6 @@ class GroupDetailsScreen extends StatelessWidget {
     );
   }
 
-
   Widget _buildCurrentGroupSection(GroupDetailsController controller) {
     final filteredGroups = controller.filteredCurrentGroups;
 
@@ -252,10 +257,12 @@ class GroupDetailsScreen extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 16),
-        ...filteredGroups.map((group) => Padding(
-              padding: const EdgeInsets.only(bottom: 16),
-              child: _buildGroupCard(group),
-            )),
+        ...filteredGroups.map(
+          (group) => Padding(
+            padding: const EdgeInsets.only(bottom: 16),
+            child: _buildGroupCard(group),
+          ),
+        ),
       ],
     );
   }
@@ -308,10 +315,12 @@ class GroupDetailsScreen extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 16),
-        ...filteredGroups.map((group) => Padding(
-              padding: const EdgeInsets.only(bottom: 16),
-              child: _buildGroupCard(group),
-            )),
+        ...filteredGroups.map(
+          (group) => Padding(
+            padding: const EdgeInsets.only(bottom: 16),
+            child: _buildGroupCard(group),
+          ),
+        ),
       ],
     );
   }
@@ -319,11 +328,13 @@ class GroupDetailsScreen extends StatelessWidget {
   Widget _buildGroupCard(GroupModel group) {
     // Map members to doctors and health workers format
     List<Map<String, String>> doctorsAndHealthWorkers = group.members
-        .map((member) => {
-              'name': member.name,
-              'role': member.userType == 'doctor' ? 'Doctor' : 'Health Worker',
-              'avatar': member.profilePhoto ?? '',
-            })
+        .map(
+          (member) => {
+            'name': member.name,
+            'role': member.userType == 'doctor' ? 'Doctor' : 'Health Worker',
+            'avatar': member.profilePhoto ?? '',
+          },
+        )
         .toList();
 
     return ExpandableGroupCard(
@@ -343,4 +354,3 @@ class GroupDetailsScreen extends StatelessWidget {
     );
   }
 }
-

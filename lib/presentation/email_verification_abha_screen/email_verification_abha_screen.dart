@@ -1,4 +1,5 @@
 import 'package:bandhucare_new/core/export_file/app_exports.dart';
+import 'package:bandhucare_new/core/utils/context_extensions.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'controller/email_verification_abha_controller.dart';
 
@@ -20,6 +21,8 @@ class EmailVerificationAbhaScreen extends StatelessWidget {
         resizeToAvoidBottomInset: false,
         backgroundColor: Colors.white,
         body: SafeArea(
+          top: false,
+          bottom: context.hasThreeButtonNavigation,
           child: Column(
             children: [
               Expanded(

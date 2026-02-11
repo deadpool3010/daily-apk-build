@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:bandhucare_new/core/utils/context_extensions.dart';
 import 'package:bandhucare_new/core/utils/image_constant.dart';
 import 'package:bandhucare_new/presentation/blog_screen/widgets/tiptap/tiptap_renderer.dart';
 import 'package:bandhucare_new/routes/app_routes.dart';
@@ -19,9 +20,9 @@ class ConsentFormScreen extends StatelessWidget {
     Map<String, dynamic>? consentFormData;
 
     // Debug: Print received data structure
-    print(
-      'Consent Form Screen - Received groupData keys: ${groupData.keys.toList()}',
-    );
+    // print(
+    //   'Consent Form Screen - Received groupData keys: ${groupData.keys.toList()}',
+    // );
 
     // Try to get consentForm from nested group structure
     String? consentFormString;
@@ -29,38 +30,38 @@ class ConsentFormScreen extends StatelessWidget {
     if (groupData['group'] != null &&
         groupData['group'] is Map<String, dynamic>) {
       final group = groupData['group'] as Map<String, dynamic>;
-      print('Consent Form Screen - Group keys: ${group.keys.toList()}');
+      //   print('Consent Form Screen - Group keys: ${group.keys.toList()}');
       consentFormString = group['consentForm'] as String?;
     } else if (groupData['consentForm'] != null) {
       // Fallback: check if consentForm is directly in groupData
       consentFormString = groupData['consentForm'] as String?;
-      print('Consent Form Screen - Found consentForm directly in groupData');
+      //  print('Consent Form Screen - Found consentForm directly in groupData');
     }
 
     // Parse the JSON string if found
     if (consentFormString != null && consentFormString.isNotEmpty) {
-      print(
-        'Consent Form Screen - consentFormString length: ${consentFormString.length}',
-      );
-      print(
-        'Consent Form Screen - consentFormString preview: ${consentFormString.substring(0, consentFormString.length > 150 ? 150 : consentFormString.length)}...',
-      );
+      // print(
+      //   'Consent Form Screen - consentFormString length: ${consentFormString.length}',
+      // );
+      // print(
+      //   'Consent Form Screen - consentFormString preview: ${consentFormString.substring(0, consentFormString.length > 150 ? 150 : consentFormString.length)}...',
+      // );
 
       try {
         consentFormData = jsonDecode(consentFormString) as Map<String, dynamic>;
-        print('Consent Form Screen - ✅ Successfully parsed TipTap JSON');
-        print(
-          'Consent Form Screen - TipTap content type: ${consentFormData['type']}',
-        );
-        print(
-          'Consent Form Screen - TipTap content nodes count: ${(consentFormData['content'] as List?)?.length ?? 0}',
-        );
+        //    print('Consent Form Screen - ✅ Successfully parsed TipTap JSON');
+        // print(
+        //   'Consent Form Screen - TipTap content type: ${consentFormData['type']}',
+        // );
+        // print(
+        //   'Consent Form Screen - TipTap content nodes count: ${(consentFormData['content'] as List?)?.length ?? 0}',
+        // );
       } catch (e) {
-        print('Consent Form Screen - ❌ Error parsing consentForm JSON: $e');
-        print('Consent Form Screen - Full JSON string: $consentFormString');
+        // print('Consent Form Screen - ❌ Error parsing consentForm JSON: $e');
+        // print('Consent Form Screen - Full JSON string: $consentFormString');
       }
     } else {
-      print('Consent Form Screen - ⚠️ consentFormString is null or empty');
+      // print('Consent Form Screen - ⚠️ consentFormString is null or empty');
     }
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
@@ -72,6 +73,7 @@ class ConsentFormScreen extends StatelessWidget {
       child: Scaffold(
         backgroundColor: Colors.white,
         body: SafeArea(
+          bottom: context.hasThreeButtonNavigation,
           child: Column(
             children: [
               Padding(

@@ -1,4 +1,5 @@
 import 'package:bandhucare_new/core/export_file/app_exports.dart';
+import 'package:bandhucare_new/core/utils/context_extensions.dart';
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'controller/email_password_login_controller.dart';
@@ -25,43 +26,49 @@ class EmailPasswordLoginScreen extends StatelessWidget {
             FocusScope.of(context).unfocus();
           },
           behavior: HitTestBehavior.translucent,
-          child: Builder(
-            builder: (context) {
-              final keyboardVisible =
-                  MediaQuery.of(context).viewInsets.bottom > 0;
+          child: SafeArea(
+            top: false,
+            bottom: context.hasThreeButtonNavigation,
+            child: Builder(
+              builder: (context) {
+                final keyboardVisible =
+                    MediaQuery.of(context).viewInsets.bottom > 0;
 
-              if (keyboardVisible) {
-                return Stack(
-                  children: [
-                    Column(children: [_buildLoginHeader(controller), Spacer()]),
-                    Positioned(
-                      left: 0,
-                      right: 0,
-                      bottom: 0,
-                      child: _buildLoginContentCard(
+                if (keyboardVisible) {
+                  return Stack(
+                    children: [
+                      Column(
+                        children: [_buildLoginHeader(controller), Spacer()],
+                      ),
+                      Positioned(
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        child: _buildLoginContentCard(
+                          context,
+                          controller,
+                          keyboardVisible,
+                        ),
+                      ),
+                    ],
+                  );
+                } else {
+                  return Stack(
+                    children: [
+                      // Header Section with Dark Blue Background
+                      _buildLoginHeader(controller),
+
+                      // Content Card Section
+                      _buildLoginContentCard(
                         context,
                         controller,
                         keyboardVisible,
                       ),
-                    ),
-                  ],
-                );
-              } else {
-                return Stack(
-                  children: [
-                    // Header Section with Dark Blue Background
-                    _buildLoginHeader(controller),
-
-                    // Content Card Section
-                    _buildLoginContentCard(
-                      context,
-                      controller,
-                      keyboardVisible,
-                    ),
-                  ],
-                );
-              }
-            },
+                    ],
+                  );
+                }
+              },
+            ),
           ),
         ),
       ),
@@ -231,10 +238,10 @@ class EmailPasswordLoginScreen extends StatelessWidget {
         obscureText: !controller.isPasswordVisible.value,
         showPasswordToggle: true,
         hintStyle: GoogleFonts.lato(
-        fontWeight: FontWeight.w500,
-        color: Color(0xFF94A3B8),
-        fontSize: 14,
-      ),
+          fontWeight: FontWeight.w500,
+          color: Color(0xFF94A3B8),
+          fontSize: 14,
+        ),
         onTogglePassword: () {
           controller.togglePasswordVisibility();
         },
@@ -335,7 +342,7 @@ class EmailPasswordLoginScreen extends StatelessWidget {
             : () {
                 final email = controller.emailController.text.trim();
                 final password = controller.passwordController.text.trim();
-                
+
                 // Validate before calling handleLogin
                 if (controller.validateEmail(email) &&
                     controller.validatePassword(password)) {

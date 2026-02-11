@@ -1,4 +1,5 @@
 import 'package:bandhucare_new/core/export_file/app_exports.dart';
+import 'package:bandhucare_new/core/utils/context_extensions.dart';
 import 'package:bandhucare_new/presentation/carehub_home_screen/controller/carehub_home_screen_controller.dart';
 import 'package:bandhucare_new/presentation/blog_screen/data/blog_screen_navigation_example.dart';
 
@@ -17,357 +18,361 @@ class CarehubHomeScreen extends StatelessWidget {
       ),
       child: Scaffold(
         backgroundColor: const Color(0xFFF3F9FF),
-        body: CustomScrollView(
-          controller: controller.scrollController,
-          slivers: [
-            SliverAppBar(
-              backgroundColor: const Color(0xFFF3F9FF),
-              elevation: 0,
-              surfaceTintColor: Colors.transparent,
-              shadowColor: Colors.transparent,
-              pinned: true,
-              expandedHeight: 220,
-              floating: false,
-              snap: false,
-              systemOverlayStyle: SystemUiOverlayStyle(
-                statusBarColor: Colors.transparent,
-                statusBarIconBrightness: Brightness.dark,
-                statusBarBrightness: Brightness.dark,
-              ),
-              leading: Padding(
-                padding: const EdgeInsets.only(left: 20, top: 16),
-                child: GestureDetector(
-                  onTap: () => Get.back(),
-                  child: Icon(
-                    JamIcons.chevronLeft,
-                    size: 26,
-                    color: AppColors.black,
+        body: SafeArea(
+          bottom: context.hasThreeButtonNavigation,
+          child: CustomScrollView(
+            controller: controller.scrollController,
+            slivers: [
+              SliverAppBar(
+                backgroundColor: const Color(0xFFF3F9FF),
+                elevation: 0,
+                surfaceTintColor: Colors.transparent,
+                shadowColor: Colors.transparent,
+                pinned: true,
+                expandedHeight: 220,
+                floating: false,
+                snap: false,
+                systemOverlayStyle: SystemUiOverlayStyle(
+                  statusBarColor: Colors.transparent,
+                  statusBarIconBrightness: Brightness.dark,
+                  statusBarBrightness: Brightness.dark,
+                ),
+                leading: Padding(
+                  padding: const EdgeInsets.only(left: 20, top: 16),
+                  child: GestureDetector(
+                    onTap: () => Get.back(),
+                    child: Icon(
+                      JamIcons.chevronLeft,
+                      size: 26,
+                      color: AppColors.black,
+                    ),
                   ),
                 ),
-              ),
-              leadingWidth: 50,
-              title: FadeTransition(
-                opacity: controller.titleFadeAnimation,
-                child: Text(
-                  'Care Hub',
-                  style: GoogleFonts.roboto(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.black,
+                leadingWidth: 50,
+                title: FadeTransition(
+                  opacity: controller.titleFadeAnimation,
+                  child: Text(
+                    'Care Hub',
+                    style: GoogleFonts.roboto(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.black,
+                    ),
                   ),
                 ),
-              ),
-              centerTitle: true,
-              bottom: _buildAppBarBottom(controller),
-              flexibleSpace: FlexibleSpaceBar(
                 centerTitle: true,
-                background: AnimatedBuilder(
-                  animation: controller.titleAnimationController,
-                  builder: (context, child) {
-                    return Opacity(
-                      opacity: 1 - controller.titleFadeAnimation.value,
-                      child: Container(
-                        color: const Color(0xFFF3F9FF),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const SizedBox(height: 50),
-                            // CareHub Logo
-                            Image.asset(
-                              ImageConstant.care_hub,
-                              width: 140,
-                              height: 140,
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ),
-            SliverToBoxAdapter(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 20),
-
-                  // Search Bar
-                  FadeTransition(
-                    opacity: ReverseAnimation(
-                      controller.searchBarFadeAnimation,
-                    ),
-                    child: _buildSearchBar(),
-                  ),
-
-                  const SizedBox(height: 30),
-
-                  // Test TipTap Button (Remove after testing)
-                  // Padding(
-                  //   padding: const EdgeInsets.symmetric(horizontal: 20),
-                  //   child: ElevatedButton.icon(
-                  //     onPressed: BlogScreenNavigationExample.navigateWithTiptapContent,
-                  //     icon: const Icon(Icons.article, color: Colors.white),
-                  //     label: Text(
-                  //       'Test TipTap Blog',
-                  //       style: GoogleFonts.lato(
-                  //         fontSize: 14,
-                  //         fontWeight: FontWeight.w600,
-                  //         color: Colors.white,
-                  //       ),
-                  //     ),
-                  //     style: ElevatedButton.styleFrom(
-                  //       backgroundColor: AppColors.primaryColor,
-                  //       padding: const EdgeInsets.symmetric(
-                  //         horizontal: 20,
-                  //         vertical: 12,
-                  //       ),
-                  //       shape: RoundedRectangleBorder(
-                  //         borderRadius: BorderRadius.circular(12),
-                  //       ),
-                  //     ),
-                  //   ),
-                  // ),
-
-                  const SizedBox(height: 20),
-
-                  // Popular Articles Section
-                  FadeTransition(
-                    opacity: ReverseAnimation(
-                      controller.searchBarFadeAnimation,
-                    ),
-                    child: _buildPopularArticlesHeader(),
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  // Popular Articles Horizontal List
-                  Builder(
-                    builder: (context) {
-                      // Dynamic height calculation: image (240) + spacing (10) + title max 2 lines (~48) + spacing (8) + author (~18) + spacing (4) + date (~18) = ~346
-                      // Using screen height percentage for better responsiveness
-                      final screenHeight = MediaQuery.of(context).size.height;
-                      final dynamicHeight = (screenHeight * 0.4).clamp(
-                        310.0,
-                        350.0,
-                      );
-
-                      return SizedBox(
-                        height: dynamicHeight,
-                        child: ListView.separated(
-                          scrollDirection: Axis.horizontal,
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          itemCount: 3,
-                          separatorBuilder: (context, index) =>
-                              const SizedBox(width: 26),
-                          itemBuilder: (context, index) {
-                            final articles = [
-                              {
-                                'image': ImageConstant.care_hub_img_1,
-                                'title': 'New Treatment goes viral !!!',
-                                'author': 'Dr. Mukesh Kumar',
-                                'date': 'Dec 18, 2025',
-                              },
-                              {
-                                'image': ImageConstant.care_hub_img_2,
-                                'title': 'New Diet for Cancer Patient',
-                                'author': 'Dr. Sohail Ali',
-                                'date': 'Nov 09, 2025',
-                              },
-                              {
-                                'image': ImageConstant.care_hub_img_1,
-                                'title': 'New Diet for Cancer Patient',
-                                'author': 'Dr. Sohail Ali',
-                                'date': 'Nov 09, 2025',
-                              },
-                            ];
-                            final article = articles[index];
-                            return _buildArticleCard(
-                              article,
-                              'carehub_popular_article_$index',
-                            );
-                          },
+                bottom: _buildAppBarBottom(controller),
+                flexibleSpace: FlexibleSpaceBar(
+                  centerTitle: true,
+                  background: AnimatedBuilder(
+                    animation: controller.titleAnimationController,
+                    builder: (context, child) {
+                      return Opacity(
+                        opacity: 1 - controller.titleFadeAnimation.value,
+                        child: Container(
+                          color: const Color(0xFFF3F9FF),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const SizedBox(height: 50),
+                              // CareHub Logo
+                              Image.asset(
+                                ImageConstant.care_hub,
+                                width: 140,
+                                height: 140,
+                              ),
+                            ],
+                          ),
                         ),
                       );
                     },
                   ),
+                ),
+              ),
+              SliverToBoxAdapter(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 20),
 
-                  // const SizedBox(height: 0),
-
-                  // Categories Section
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Categories',
-                          style: GoogleFonts.roboto(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w500,
-                            color: AppColors.black,
-                          ),
-                        ),
-                        GestureDetector(
-                          onTap: () {},
-                          child: Text(
-                            'See All',
-                            style: GoogleFonts.lato(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              // color: AppColors.primaryColor,
-                              decoration: TextDecoration.underline,
-                            ),
-                          ),
-                        ),
-                      ],
+                    // Search Bar
+                    FadeTransition(
+                      opacity: ReverseAnimation(
+                        controller.searchBarFadeAnimation,
+                      ),
+                      child: _buildSearchBar(),
                     ),
-                  ),
 
-                  const SizedBox(height: 16),
+                    const SizedBox(height: 30),
 
-                  // Categories Horizontal List
-                  SizedBox(
-                    height: 122,
-                    child: ListView.separated(
-                      scrollDirection: Axis.horizontal,
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      itemCount: 4,
-                      separatorBuilder: (context, index) =>
-                          const SizedBox(width: 12),
-                      itemBuilder: (context, index) {
-                        final categories = [
-                          {
-                            'image': ImageConstant.care_hub_article_img,
-                            'title': 'Articles',
-                            'count': '20+',
-                            'onTap': () {
-                              Get.toNamed(
-                                AppRoutes.contentTypeHomeScreen,
-                                arguments: {'showHeaderImage': false},
+                    // Test TipTap Button (Remove after testing)
+                    // Padding(
+                    //   padding: const EdgeInsets.symmetric(horizontal: 20),
+                    //   child: ElevatedButton.icon(
+                    //     onPressed: BlogScreenNavigationExample.navigateWithTiptapContent,
+                    //     icon: const Icon(Icons.article, color: Colors.white),
+                    //     label: Text(
+                    //       'Test TipTap Blog',
+                    //       style: GoogleFonts.lato(
+                    //         fontSize: 14,
+                    //         fontWeight: FontWeight.w600,
+                    //         color: Colors.white,
+                    //       ),
+                    //     ),
+                    //     style: ElevatedButton.styleFrom(
+                    //       backgroundColor: AppColors.primaryColor,
+                    //       padding: const EdgeInsets.symmetric(
+                    //         horizontal: 20,
+                    //         vertical: 12,
+                    //       ),
+                    //       shape: RoundedRectangleBorder(
+                    //         borderRadius: BorderRadius.circular(12),
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
+                    const SizedBox(height: 20),
+
+                    // Popular Articles Section
+                    FadeTransition(
+                      opacity: ReverseAnimation(
+                        controller.searchBarFadeAnimation,
+                      ),
+                      child: _buildPopularArticlesHeader(),
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    // Popular Articles Horizontal List
+                    Builder(
+                      builder: (context) {
+                        // Dynamic height calculation: image (240) + spacing (10) + title max 2 lines (~48) + spacing (8) + author (~18) + spacing (4) + date (~18) = ~346
+                        // Using screen height percentage for better responsiveness
+                        final screenHeight = MediaQuery.of(context).size.height;
+                        final dynamicHeight = (screenHeight * 0.4).clamp(
+                          310.0,
+                          350.0,
+                        );
+
+                        return SizedBox(
+                          height: dynamicHeight,
+                          child: ListView.separated(
+                            scrollDirection: Axis.horizontal,
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            itemCount: 3,
+                            separatorBuilder: (context, index) =>
+                                const SizedBox(width: 26),
+                            itemBuilder: (context, index) {
+                              final articles = [
+                                {
+                                  'image': ImageConstant.care_hub_img_1,
+                                  'title': 'New Treatment goes viral !!!',
+                                  'author': 'Dr. Mukesh Kumar',
+                                  'date': 'Dec 18, 2025',
+                                },
+                                {
+                                  'image': ImageConstant.care_hub_img_2,
+                                  'title': 'New Diet for Cancer Patient',
+                                  'author': 'Dr. Sohail Ali',
+                                  'date': 'Nov 09, 2025',
+                                },
+                                {
+                                  'image': ImageConstant.care_hub_img_1,
+                                  'title': 'New Diet for Cancer Patient',
+                                  'author': 'Dr. Sohail Ali',
+                                  'date': 'Nov 09, 2025',
+                                },
+                              ];
+                              final article = articles[index];
+                              return _buildArticleCard(
+                                article,
+                                'carehub_popular_article_$index',
                               );
                             },
-                          },
-                          {
-                            'image': ImageConstant.care_hub_documents_img,
-                            'title': 'Documents',
-                            'count': '40+',
-                            'onTap': () {
-                              Get.toNamed(AppRoutes.documentsScreen);
-                            },
-                          },
-                          {
-                            'image': ImageConstant.care_hub_affirmation_img,
-                            'title': 'Affirmation',
-                            'count': '100+',
-                            'onTap': () {
-                              Get.toNamed(AppRoutes.affirmationsScreen);
-                            },
-                          },
-                          {
-                            'image': ImageConstant.care_hub_people_img,
-                            'title': 'People\'s Stories',
-                            'count': '40+',
-                            'onTap': () {
-                              // Always show splash screen when navigating from home
-                              Get.toNamed(AppRoutes.peoplesStoriesSplashScreen);
-                            },
-                          },
-                        ];
-                        final category = categories[index];
-                        return _buildCategoryCard(
-                          image: category['image'] as String,
-                          title: category['title'] as String,
-                          count: category['count'] as String,
-                          onTap: category['onTap'] as VoidCallback,
+                          ),
                         );
                       },
                     ),
-                  ),
 
-                  const SizedBox(height: 30),
+                    // const SizedBox(height: 0),
 
-                  // Content Types Section
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Content Types',
-                          style: GoogleFonts.roboto(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w500,
-                            color: AppColors.black,
-                          ),
-                        ),
-                        GestureDetector(
-                          onTap: () {},
-                          child: Text(
-                            'See All',
-                            style: GoogleFonts.lato(
-                              fontSize: 14,
+                    // Categories Section
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Categories',
+                            style: GoogleFonts.roboto(
+                              fontSize: 18,
                               fontWeight: FontWeight.w500,
-                              decoration: TextDecoration.underline,
+                              color: AppColors.black,
                             ),
                           ),
-                        ),
-                      ],
+                          GestureDetector(
+                            onTap: () {},
+                            child: Text(
+                              'See All',
+                              style: GoogleFonts.lato(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                // color: AppColors.primaryColor,
+                                decoration: TextDecoration.underline,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
 
-                  const SizedBox(height: 16),
+                    const SizedBox(height: 16),
 
-                  // Content Types Grid
-                  Builder(
-                    builder: (context) {
-                      final screenWidth = MediaQuery.of(context).size.width;
-                      final padding = 20.0;
-                      final gap = 10.0;
-                      final availableWidth = screenWidth - (padding * 2);
-                      final cardWidth = (availableWidth - gap) / 2;
-
-                      final contentTypes = [
-                        {
-                          'image': ImageConstant.care_hub_healthy_diet_img,
-                          'title': 'Healthy Diet',
-                        },
-                        {
-                          'image': ImageConstant.care_hub_new_treatments_img,
-                          'title': 'New Treatments',
-                        },
-                        {
-                          'image': ImageConstant.care_hub_self_care_img,
-                          'title': 'Self Care',
-                        },
-                        {
-                          'image': ImageConstant.care_hub_basic_exercises_img,
-                          'title': 'Basic Exercises',
-                        },
-                      ];
-
-                      return Padding(
+                    // Categories Horizontal List
+                    SizedBox(
+                      height: 122,
+                      child: ListView.separated(
+                        scrollDirection: Axis.horizontal,
                         padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: Wrap(
-                          spacing: gap,
-                          runSpacing: gap,
-                          children: contentTypes.map((contentType) {
-                            return _buildContentTypeCard(
-                              width: cardWidth,
-                              image: contentType['image']!,
-                              title: contentType['title']!,
-                            );
-                          }).toList(),
-                        ),
-                      );
-                    },
-                  ),
+                        itemCount: 4,
+                        separatorBuilder: (context, index) =>
+                            const SizedBox(width: 12),
+                        itemBuilder: (context, index) {
+                          final categories = [
+                            {
+                              'image': ImageConstant.care_hub_article_img,
+                              'title': 'Articles',
+                              'count': '20+',
+                              'onTap': () {
+                                Get.toNamed(
+                                  AppRoutes.contentTypeHomeScreen,
+                                  arguments: {'showHeaderImage': false},
+                                );
+                              },
+                            },
+                            {
+                              'image': ImageConstant.care_hub_documents_img,
+                              'title': 'Documents',
+                              'count': '40+',
+                              'onTap': () {
+                                Get.toNamed(AppRoutes.documentsScreen);
+                              },
+                            },
+                            {
+                              'image': ImageConstant.care_hub_affirmation_img,
+                              'title': 'Affirmation',
+                              'count': '100+',
+                              'onTap': () {
+                                Get.toNamed(AppRoutes.affirmationsScreen);
+                              },
+                            },
+                            {
+                              'image': ImageConstant.care_hub_people_img,
+                              'title': 'People\'s Stories',
+                              'count': '40+',
+                              'onTap': () {
+                                // Always show splash screen when navigating from home
+                                Get.toNamed(
+                                  AppRoutes.peoplesStoriesSplashScreen,
+                                );
+                              },
+                            },
+                          ];
+                          final category = categories[index];
+                          return _buildCategoryCard(
+                            image: category['image'] as String,
+                            title: category['title'] as String,
+                            count: category['count'] as String,
+                            onTap: category['onTap'] as VoidCallback,
+                          );
+                        },
+                      ),
+                    ),
 
-                  const SizedBox(height: 30),
-                ],
+                    const SizedBox(height: 30),
+
+                    // Content Types Section
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Content Types',
+                            style: GoogleFonts.roboto(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w500,
+                              color: AppColors.black,
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () {},
+                            child: Text(
+                              'See All',
+                              style: GoogleFonts.lato(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                decoration: TextDecoration.underline,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    // Content Types Grid
+                    Builder(
+                      builder: (context) {
+                        final screenWidth = MediaQuery.of(context).size.width;
+                        final padding = 20.0;
+                        final gap = 10.0;
+                        final availableWidth = screenWidth - (padding * 2);
+                        final cardWidth = (availableWidth - gap) / 2;
+
+                        final contentTypes = [
+                          {
+                            'image': ImageConstant.care_hub_healthy_diet_img,
+                            'title': 'Healthy Diet',
+                          },
+                          {
+                            'image': ImageConstant.care_hub_new_treatments_img,
+                            'title': 'New Treatments',
+                          },
+                          {
+                            'image': ImageConstant.care_hub_self_care_img,
+                            'title': 'Self Care',
+                          },
+                          {
+                            'image': ImageConstant.care_hub_basic_exercises_img,
+                            'title': 'Basic Exercises',
+                          },
+                        ];
+
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: Wrap(
+                            spacing: gap,
+                            runSpacing: gap,
+                            children: contentTypes.map((contentType) {
+                              return _buildContentTypeCard(
+                                width: cardWidth,
+                                image: contentType['image']!,
+                                title: contentType['title']!,
+                              );
+                            }).toList(),
+                          ),
+                        );
+                      },
+                    ),
+
+                    const SizedBox(height: 30),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

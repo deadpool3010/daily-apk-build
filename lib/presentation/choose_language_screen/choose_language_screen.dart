@@ -1,4 +1,5 @@
 import 'package:bandhucare_new/core/export_file/app_exports.dart';
+import 'package:bandhucare_new/core/utils/context_extensions.dart';
 import 'package:bandhucare_new/presentation/choose_language_screen/controller/choose_language_controller.dart';
 import 'package:heroicons/heroicons.dart';
 
@@ -19,6 +20,7 @@ class ChooseLanguageScreen extends StatelessWidget {
       child: Scaffold(
         backgroundColor: Colors.white,
         body: SafeArea(
+          bottom: context.hasThreeButtonNavigation,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [

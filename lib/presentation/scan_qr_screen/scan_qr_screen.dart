@@ -1,4 +1,5 @@
 import 'package:bandhucare_new/core/export_file/app_exports.dart';
+import 'package:bandhucare_new/core/utils/context_extensions.dart';
 
 class ScanQrScreen extends StatelessWidget {
   const ScanQrScreen({super.key});
@@ -15,25 +16,29 @@ class ScanQrScreen extends StatelessWidget {
       ),
       child: Scaffold(
         backgroundColor: Colors.black,
-        body: Stack(
-          children: [
-            // Camera Preview Area
-            Positioned.fill(child: _buildCameraPreview(controller)),
+        body: SafeArea(
+          bottom: context.hasThreeButtonNavigation,
+          top: false,
+          child: Stack(
+            children: [
+              // Camera Preview Area
+              Positioned.fill(child: _buildCameraPreview(controller)),
 
-            // Scanning Frame Overlay
-            Positioned.fill(child: _buildScanningOverlay(controller)),
+              // Scanning Frame Overlay
+              Positioned.fill(child: _buildScanningOverlay(controller)),
 
-            // Top Header
-            Positioned(top: 26, left: 0, right: 0, child: _buildHeader()),
+              // Top Header
+              Positioned(top: 26, left: 0, right: 0, child: _buildHeader()),
 
-            // Gallery Button at bottom
-            Positioned(
-              bottom: 40,
-              left: 0,
-              right: 0,
-              child: _buildGalleryButton(controller),
-            ),
-          ],
+              // Gallery Button at bottom
+              Positioned(
+                bottom: 40,
+                left: 0,
+                right: 0,
+                child: _buildGalleryButton(controller),
+              ),
+            ],
+          ),
         ),
       ),
     );

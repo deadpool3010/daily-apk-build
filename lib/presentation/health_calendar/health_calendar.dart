@@ -23,7 +23,7 @@ class _HealthCalendarState extends State<HealthCalendar> {
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
-        statusBarColor: Colors.red,
+        // statusBarColor: Colors.red,
         systemNavigationBarColor: Colors.transparent,
       ),
       child: Scaffold(

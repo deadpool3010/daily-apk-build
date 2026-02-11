@@ -10,13 +10,14 @@ class BlogScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Get.find<BlogScreenController>();
     final article = Get.arguments as Map<String, dynamic>? ?? {};
-    
+
     // Fetch content by ID if contentId is provided
     final contentId = article['contentId'] as String?;
     if (contentId != null && contentId.isNotEmpty) {
       // Load content only once when screen is built
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (controller.contentData.value == null && !controller.isLoading.value) {
+        if (controller.contentData.value == null &&
+            !controller.isLoading.value) {
           controller.loadContentById(contentId);
         }
       });
@@ -49,15 +50,13 @@ class BlogScreen extends StatelessWidget {
         final isLoading = controller.isLoading.value;
         final errorMessage = controller.errorMessage.value;
         final hasContentId = contentId != null && contentId.isNotEmpty;
-        
+
         if (isLoading && hasContentId) {
           return Center(
-            child: CircularProgressIndicator(
-              color: AppColors.primaryColor,
-            ),
+            child: CircularProgressIndicator(color: AppColors.primaryColor),
           );
         }
-        
+
         if (errorMessage.isNotEmpty && hasContentId) {
           return Center(
             child: Padding(
@@ -89,17 +88,28 @@ class BlogScreen extends StatelessWidget {
             ),
           );
         }
-        
+
         // Format date from API response if available
         String formattedDate = displayData['date'] ?? '';
         if (formattedDate.isEmpty && displayData['createdAt'] != null) {
           try {
             final dateTime = DateTime.parse(displayData['createdAt']);
             final months = [
-              'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-              'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+              'Jan',
+              'Feb',
+              'Mar',
+              'Apr',
+              'May',
+              'Jun',
+              'Jul',
+              'Aug',
+              'Sep',
+              'Oct',
+              'Nov',
+              'Dec',
             ];
-            formattedDate = '${months[dateTime.month - 1]} ${dateTime.day.toString().padLeft(2, '0')}, ${dateTime.year}';
+            formattedDate =
+                '${months[dateTime.month - 1]} ${dateTime.day.toString().padLeft(2, '0')}, ${dateTime.year}';
           } catch (e) {
             formattedDate = displayData['createdAt'] ?? 'Nov 09, 2025';
           }
@@ -107,52 +117,63 @@ class BlogScreen extends StatelessWidget {
         if (formattedDate.isEmpty) {
           formattedDate = 'Nov 09, 2025';
         }
-        
+
         // Get tags from API response
         List<String> tags = [];
         if (displayData['tags'] != null && displayData['tags'] is List) {
           tags = (displayData['tags'] as List)
-              .map((tag) => tag is Map ? (tag['name'] ?? tag.toString()) : tag.toString())
+              .map(
+                (tag) => tag is Map
+                    ? (tag['name'] ?? tag.toString())
+                    : tag.toString(),
+              )
               .cast<String>()
               .toList();
-        } else if (displayData['tags'] != null && displayData['tags'] is List<String>) {
+        } else if (displayData['tags'] != null &&
+            displayData['tags'] is List<String>) {
           tags = List<String>.from(displayData['tags']);
         } else if (article['tags'] != null && article['tags'] is List) {
-          tags = (article['tags'] as List).map((tag) => tag.toString()).toList();
+          tags = (article['tags'] as List)
+              .map((tag) => tag.toString())
+              .toList();
         }
-        
+
         // Get author name - handle both Map and String types
         String authorName = 'Dr. Sohail Ali';
         if (displayData['author'] != null) {
           if (displayData['author'] is Map) {
-            authorName = (displayData['author'] as Map)['name']?.toString() ?? 
-                        displayData['author'].toString();
+            authorName =
+                (displayData['author'] as Map)['name']?.toString() ??
+                displayData['author'].toString();
           } else {
             authorName = displayData['author'].toString();
           }
         } else if (article['author'] != null) {
           if (article['author'] is Map) {
-            authorName = (article['author'] as Map)['name']?.toString() ?? 
-                        article['author'].toString();
+            authorName =
+                (article['author'] as Map)['name']?.toString() ??
+                article['author'].toString();
           } else {
             authorName = article['author'].toString();
           }
         }
-        
+
         // Get cover image URL
-        String? coverImageUrl = displayData['coverImage']?['fileUrl'] ?? 
-                               displayData['imageUrl'] ?? 
-                               article['imageUrl'];
-        
+        String? coverImageUrl =
+            displayData['coverImage']?['fileUrl'] ??
+            displayData['imageUrl'] ??
+            article['imageUrl'];
+
         // Check if audio field exists in API response (only when content is loaded from API)
         // Audio should only show if:
         // 1. Content is loaded from API (hasContentId is true)
         // 2. Audio field exists in the API response and is not null/empty
-        final hasAudio = hasContentId && 
-                        controller.contentData.value != null &&
-                        controller.contentData.value!['audio'] != null &&
-                        controller.contentData.value!['audio'].toString().isNotEmpty;
-        
+        final hasAudio =
+            hasContentId &&
+            controller.contentData.value != null &&
+            controller.contentData.value!['audio'] != null &&
+            controller.contentData.value!['audio'].toString().isNotEmpty;
+
         return SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -172,7 +193,9 @@ class BlogScreen extends StatelessWidget {
                 const SizedBox(height: 8),
                 // Title
                 Text(
-                  displayData['title'] ?? article['title'] ?? 'New Diet for Cancer Patients',
+                  displayData['title'] ??
+                      article['title'] ??
+                      'New Diet for Cancer Patients',
                   style: GoogleFonts.roboto(
                     fontSize: 24,
                     fontWeight: FontWeight.w500,
@@ -183,13 +206,24 @@ class BlogScreen extends StatelessWidget {
                 const SizedBox(height: 16),
                 // Tags
                 if (tags.isNotEmpty)
-                  Wrap(spacing: 8, runSpacing: 8, children: tags.map((tag) => _buildTag(tag)).toList())
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: tags.map((tag) => _buildTag(tag)).toList(),
+                  )
                 else
-                  Wrap(spacing: 8, runSpacing: 8, children: _buildTags(article)),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: _buildTags(article),
+                  ),
                 const SizedBox(height: 24),
                 // Hero Image (shown when cover image is available)
                 if (coverImageUrl != null && coverImageUrl.isNotEmpty)
-                  _buildHeroImageFromUrl(coverImageUrl, article['heroTag'] as String?),
+                  _buildHeroImageFromUrl(
+                    coverImageUrl,
+                    article['heroTag'] as String?,
+                  ),
                 // Image Carousel (shown when hero image is not present)
                 if (coverImageUrl == null || coverImageUrl.isEmpty)
                   _buildImageCarousel(controller),
@@ -526,7 +560,6 @@ class BlogScreen extends StatelessWidget {
         ),
       );
     });
-    
   }
 
   Widget _buildArticleText(Map<String, dynamic> article) {
@@ -539,7 +572,8 @@ class BlogScreen extends StatelessWidget {
     }
 
     // Fallback to static view for backward compatibility
-    final description = article['description'] ??
+    final description =
+        article['description'] ??
         'I woke up to the soft light filtering through my window, and for the first time in a while, I didn\'t rush to check my phone. Instead, I took a deep breath and stretched, feeling my body wake up slowly.';
 
     return Column(

@@ -1,4 +1,5 @@
 import 'package:bandhucare_new/core/export_file/app_exports.dart';
+import 'package:bandhucare_new/core/utils/context_extensions.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'controller/abha_register_controller.dart';
 
@@ -25,6 +26,7 @@ class AbhaRegisterScreen extends StatelessWidget {
           },
           behavior: HitTestBehavior.translucent,
           child: SafeArea(
+            bottom: context.hasThreeButtonNavigation,
             child: SingleChildScrollView(
               padding: EdgeInsets.symmetric(horizontal: 24, vertical: 20),
               child: Column(
@@ -530,10 +532,11 @@ class AbhaRegisterScreen extends StatelessWidget {
               onPressed: isLoading
                   ? null
                   : () {
-                      final aadhaarNumber = controller.aadhaarControllers[0].text +
+                      final aadhaarNumber =
+                          controller.aadhaarControllers[0].text +
                           controller.aadhaarControllers[1].text +
                           controller.aadhaarControllers[2].text;
-                      
+
                       // Validate before calling handleGetAadhaarOTP
                       if (controller.validateAadhaarNumber(aadhaarNumber)) {
                         controller.handleGetAadhaarOTP();
@@ -668,7 +671,7 @@ class AbhaRegisterScreen extends StatelessWidget {
             );
             return;
           }
-          
+
           // Auto-advance to next field when 4 digits are entered
           if (value.length == 4 && index < 2) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -745,7 +748,9 @@ class AbhaRegisterScreen extends StatelessWidget {
                 final numericValue = value.replaceAll(RegExp(r'[^0-9]'), '');
                 controller.mobileController.value = TextEditingValue(
                   text: numericValue,
-                  selection: TextSelection.collapsed(offset: numericValue.length),
+                  selection: TextSelection.collapsed(
+                    offset: numericValue.length,
+                  ),
                 );
                 return;
               }
@@ -769,7 +774,7 @@ class AbhaRegisterScreen extends StatelessWidget {
                 : () {
                     final otp = controller.enteredAadhaarOtp.value;
                     final mobile = controller.mobileController.text.trim();
-                    
+
                     // Validate before calling handleVerifyOtp
                     if (controller.validateOTP(otp) &&
                         controller.validateMobileNumber(mobile)) {

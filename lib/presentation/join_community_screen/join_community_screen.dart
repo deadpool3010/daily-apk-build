@@ -1,4 +1,5 @@
 import 'package:bandhucare_new/core/export_file/app_exports.dart';
+import 'package:bandhucare_new/core/utils/context_extensions.dart';
 
 class JoinCommunityScreen extends GetView<JoinCommunityController> {
   const JoinCommunityScreen({super.key});
@@ -14,6 +15,8 @@ class JoinCommunityScreen extends GetView<JoinCommunityController> {
       child: Scaffold(
         backgroundColor: const Color(0xFFF5F7FB),
         body: SafeArea(
+          top: false,
+          bottom: context.hasThreeButtonNavigation,
           child: Column(
             children: [
               Padding(

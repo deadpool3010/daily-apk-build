@@ -1,4 +1,5 @@
 import 'package:bandhucare_new/core/export_file/app_exports.dart';
+import 'package:bandhucare_new/core/utils/context_extensions.dart';
 import 'package:bandhucare_new/presentation/join_group_screen/controller/join_group_controller.dart';
 
 class GroupScreen extends StatelessWidget {
@@ -33,6 +34,8 @@ class GroupScreen extends StatelessWidget {
       child: Scaffold(
         backgroundColor: Color(0xFFFFFFFF),
         body: SafeArea(
+          top: false,
+          bottom: context.hasThreeButtonNavigation,
           child: Column(
             children: [
               Padding(

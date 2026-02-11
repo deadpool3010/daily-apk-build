@@ -1,4 +1,5 @@
 import 'package:bandhucare_new/core/export_file/app_exports.dart';
+import 'package:bandhucare_new/core/utils/context_extensions.dart';
 import 'package:bandhucare_new/feature/edit_profile/section/edit_field_section.dart';
 import 'package:bandhucare_new/feature/edit_profile/section/profile_image.dart';
 import 'package:bandhucare_new/feature/edit_profile/section/save_changes.dart';
@@ -32,13 +33,16 @@ class EditProfileUi extends StatelessWidget {
           titleSpacing: 150,
           onActionPressed: _handleBackPressed,
         ),
-        body: Column(
-          children: [
-            EditProfileImage(),
-            Expanded(child: EditFieldSection()),
-            SaveChanges(),
-            SizedBox(height: 20),
-          ],
+        body: SafeArea(
+          bottom: context.hasThreeButtonNavigation,
+          child: Column(
+            children: [
+              EditProfileImage(),
+              Expanded(child: EditFieldSection()),
+              SaveChanges(),
+              SizedBox(height: 20),
+            ],
+          ),
         ),
       ),
     );

@@ -1,3 +1,4 @@
+import 'package:bandhucare_new/core/utils/context_extensions.dart';
 import 'package:bandhucare_new/feature/hospital_information/section/google_map_section.dart';
 import 'package:bandhucare_new/feature/hospital_information/section/hospital_section.dart';
 import 'package:bandhucare_new/feature/user_profile/sections/profile_header.dart';
@@ -14,16 +15,19 @@ class HospitalInformation extends StatelessWidget {
       backgroundColor: Colors.white,
       appBar: CommonAppBar(title: 'Hospital Information'),
       body: SingleChildScrollView(
-        child: Column(
-          children: [
-            ProfileHeaderSection(),
-            SizedBox(height: 24),
-            SeperatorLine(),
-            SizedBox(height: 24),
-            HospitalInformationSection(),
-            SizedBox(height: 24),
-            GoogleMapSection(),
-          ],
+        child: SafeArea(
+          bottom: context.hasThreeButtonNavigation,
+          child: Column(
+            children: [
+              ProfileHeaderSection(),
+              SizedBox(height: 24),
+              SeperatorLine(),
+              SizedBox(height: 24),
+              HospitalInformationSection(),
+              SizedBox(height: 24),
+              GoogleMapSection(),
+            ],
+          ),
         ),
       ),
     );
