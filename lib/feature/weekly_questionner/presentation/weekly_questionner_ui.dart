@@ -1,9 +1,9 @@
 import 'package:bandhucare_new/core/export_file/app_exports.dart';
+import 'package:bandhucare_new/core/utils/context_extensions.dart';
 import 'package:bandhucare_new/feature/search_function/presentation/common_searchbar.dart';
 import 'package:bandhucare_new/feature/weekly_questionner/sections/further_assistance.dart';
 import 'package:bandhucare_new/feature/weekly_questionner/sections/weekly_questionner_section.dart';
 import 'package:bandhucare_new/feature/weekly_questionner/controller/weekly_questionner_controller.dart';
-import 'package:flutter/widgets.dart';
 
 class WeeklyQuestionnerUi extends StatelessWidget {
   const WeeklyQuestionnerUi({super.key});
@@ -11,6 +11,8 @@ class WeeklyQuestionnerUi extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Initialize controller if not already registered
+    final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
+    final bool isKeyboardOpen = keyboardHeight > 0;
     if (!Get.isRegistered<WeeklyQuestionnerController>()) {
       Get.put(WeeklyQuestionnerController());
     }
@@ -19,25 +21,31 @@ class WeeklyQuestionnerUi extends StatelessWidget {
     return Scaffold(
       appBar: CommonAppBar(title: 'Weekly Questionner'),
       backgroundColor: Colors.white,
-      body: Obx(
-        () => Column(
-          children: [
-            AssesmentTitle(),
-            SizedBox(height: 20),
-            CustomSearchBar(onSearchChanged: controller.searchQuestionner),
+      body: SafeArea(
+        bottom: context.hasThreeButtonNavigation,
+        child: Obx(
+          () => SafeArea(
+            bottom: context.hasThreeButtonNavigation,
+            child: Column(
+              children: [
+                AssesmentTitle(),
+                SizedBox(height: 20),
+                CustomSearchBar(onSearchChanged: controller.searchQuestionner),
 
-            SizedBox(height: 30),
+                SizedBox(height: 30),
 
-            QuestionText(),
-            const SizedBox(height: 10),
-            Expanded(
-              child: controller.isLoading.value
-                  ? Center(child: CircularProgressIndicator())
-                  : QuestionAnswerTile(),
+                QuestionText(),
+                const SizedBox(height: 10),
+                Expanded(
+                  child: controller.isLoading.value
+                      ? Center(child: CircularProgressIndicator())
+                      : QuestionAnswerTile(),
+                ),
+                SizedBox(height: 20),
+                if (isKeyboardOpen == false) ...{FurtherAssistance()},
+              ],
             ),
-            SizedBox(height: 20),
-            FurtherAssistance(),
-          ],
+          ),
         ),
       ),
     );

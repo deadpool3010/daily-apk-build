@@ -1,4 +1,5 @@
 import 'package:bandhucare_new/core/export_file/app_exports.dart';
+import 'package:bandhucare_new/core/utils/context_extensions.dart';
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'controller/mobile_register_controller.dart';
@@ -26,45 +27,49 @@ class MobileRegisterScreen extends StatelessWidget {
             FocusScope.of(context).unfocus();
           },
           behavior: HitTestBehavior.translucent,
-          child: Builder(
-            builder: (context) {
-              final keyboardVisible =
-                  MediaQuery.of(context).viewInsets.bottom > 0;
+          child: SafeArea(
+            top: false,
+            bottom: context.hasThreeButtonNavigation,
+            child: Builder(
+              builder: (context) {
+                final keyboardVisible =
+                    MediaQuery.of(context).viewInsets.bottom > 0;
 
-              if (keyboardVisible) {
-                return Stack(
-                  children: [
-                    Column(
-                      children: [_buildRegisterHeader(controller), Spacer()],
-                    ),
-                    Positioned(
-                      left: 0,
-                      right: 0,
-                      bottom: 0,
-                      child: _buildRegisterContentCard(
+                if (keyboardVisible) {
+                  return Stack(
+                    children: [
+                      Column(
+                        children: [_buildRegisterHeader(controller), Spacer()],
+                      ),
+                      Positioned(
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        child: _buildRegisterContentCard(
+                          context,
+                          controller,
+                          keyboardVisible,
+                        ),
+                      ),
+                    ],
+                  );
+                } else {
+                  return Stack(
+                    children: [
+                      // Header Section with Dark Blue Background
+                      _buildRegisterHeader(controller),
+
+                      // Content Card Section
+                      _buildRegisterContentCard(
                         context,
                         controller,
                         keyboardVisible,
                       ),
-                    ),
-                  ],
-                );
-              } else {
-                return Stack(
-                  children: [
-                    // Header Section with Dark Blue Background
-                    _buildRegisterHeader(controller),
-
-                    // Content Card Section
-                    _buildRegisterContentCard(
-                      context,
-                      controller,
-                      keyboardVisible,
-                    ),
-                  ],
-                );
-              }
-            },
+                    ],
+                  );
+                }
+              },
+            ),
           ),
         ),
       ),
@@ -320,14 +325,21 @@ class MobileRegisterScreen extends StatelessWidget {
             : () {
                 final fullName = controller.fullNameController.text.trim();
                 final mobile = controller.mobileController.text.trim();
-                final createPassword = controller.createPasswordController.text.trim();
-                final confirmPassword = controller.confirmPasswordController.text.trim();
-                
+                final createPassword = controller.createPasswordController.text
+                    .trim();
+                final confirmPassword = controller
+                    .confirmPasswordController
+                    .text
+                    .trim();
+
                 // Validate before calling handleRegister
                 if (controller.validateFullName(fullName) &&
                     controller.validateMobileNumber(mobile) &&
                     controller.validatePassword(createPassword) &&
-                    controller.validateConfirmPassword(createPassword, confirmPassword)) {
+                    controller.validateConfirmPassword(
+                      createPassword,
+                      confirmPassword,
+                    )) {
                   controller.handleRegister();
                 }
               },

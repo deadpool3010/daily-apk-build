@@ -14,6 +14,7 @@ class _QuestionAnswerTileState extends State<QuestionAnswerTile> {
 
   int? expandedIndex;
   int? _closingTileIndex;
+  int? editingIndex;
 
   @override
   void initState() {
@@ -43,11 +44,14 @@ class _QuestionAnswerTileState extends State<QuestionAnswerTile> {
             itemCount: controller.filteredQuestionner.length,
             itemBuilder: (context, index) {
               final question = controller.filteredQuestionner[index].keys.first;
-              final ans = controller.filteredQuestionner[index].values.first;
+              final questionMap = controller.filteredQuestionner[index];
+              final data = questionMap[question];
+              final ans = data?['response'] ?? '';
+              final questionId = data?['questionId'] ?? '';
+
               final originalIndex = controller.filteredIndices[index];
               final isExpanded = expandedIndex == index;
 
-              // Only change key for tile that's being closed (to force it closed)
               // Keep stable key for opening tile so it can animate naturally
               final tileKey = (_closingTileIndex == index)
                   ? ValueKey(
@@ -63,10 +67,13 @@ class _QuestionAnswerTileState extends State<QuestionAnswerTile> {
                     ExpansionTile(
                       key: tileKey,
                       initiallyExpanded: isExpanded,
-                      maintainState: true, // ✅ Helps with animation
+                      maintainState: true,
                       onExpansionChanged: (bool value) {
                         setState(() {
                           if (value == true) {
+                            if (editingIndex != index) {
+                              editingIndex = null;
+                            }
                             // If there was a previously expanded tile, mark it for closing
                             if (expandedIndex != null &&
                                 expandedIndex != index) {
@@ -115,14 +122,109 @@ class _QuestionAnswerTileState extends State<QuestionAnswerTile> {
                         ),
                       ),
                       children: [
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            ans,
-                            style: TextStyle(
-                              color: isExpanded ? Colors.black : Colors.black54,
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              flex: 5,
+                              child: editingIndex == index
+                                  ? TextField(
+                                      onChanged: (value) {
+                                        setState(() {});
+                                      },
+                                      focusNode: controller.editFocusNode,
+                                      controller: controller.editController,
+                                      maxLines: null,
+                                      decoration: InputDecoration(
+                                        border: InputBorder.none,
+                                        enabledBorder: InputBorder.none,
+                                        focusedBorder: InputBorder.none,
+                                      ),
+                                    )
+                                  : Text(
+                                      ans,
+                                      style: TextStyle(
+                                        color: isExpanded
+                                            ? Colors.black
+                                            : Colors.black54,
+                                      ),
+                                    ),
                             ),
-                          ),
+
+                            if (editingIndex != index) ...{
+                              TextButton(
+                                onPressed: () {
+                                  setState(() {
+                                    if (editingIndex == index) {
+                                      editingIndex = null;
+                                    } else {
+                                      editingIndex = index;
+                                      controller.editController.text = ans;
+                                      WidgetsBinding.instance
+                                          .addPostFrameCallback((_) {
+                                            controller.editFocusNode
+                                                .requestFocus();
+                                          });
+                                    }
+                                  });
+                                },
+                                child: Text(
+                                  "Edit",
+                                  style: TextStyle(color: Colors.black),
+                                ),
+                              ),
+                            } else ...{
+                              TextButton(
+                                onPressed:
+                                    editingIndex == index &&
+                                        controller.editController.text.trim() ==
+                                            ans.trim()
+                                    ? null
+                                    : () async {
+                                        String newResponse = controller
+                                            .editController
+                                            .text
+                                            .trim();
+                                        if (newResponse.isEmpty) {
+                                          // Show error message
+                                          Get.snackbar(
+                                            'Error',
+                                            'Response cannot be empty',
+                                            snackPosition: SnackPosition.BOTTOM,
+                                          );
+                                          return;
+                                        }
+
+                                        print("newResponse is" + newResponse);
+                                        print("sessionId is" + sessionId);
+                                        print("questionId is" + questionId);
+
+                                        await controller.updateAnswer(
+                                          sessionId: controller
+                                              .sessionId!, // Get sessionId from data
+                                          questionId: questionId,
+                                          newResponse: newResponse,
+                                        );
+
+                                        setState(() {
+                                          editingIndex = null;
+                                        });
+                                      },
+                                child: Text(
+                                  "Save",
+                                  style: TextStyle(
+                                    color:
+                                        editingIndex == index &&
+                                            controller.editController.text ==
+                                                ans
+                                        ? Colors
+                                              .grey // Disabled color
+                                        : Colors.black,
+                                  ),
+                                ),
+                              ),
+                            },
+                          ],
                         ),
                       ],
                     ),

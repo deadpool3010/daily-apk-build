@@ -74,3 +74,8 @@ String getCarehubApi({String? tags, String? type, int? page, int? limit, String?
   }
   return url;
 }
+String editAnswer = "form/edit-question";
+String switchGroup(String groupId) => "groups/switch-group/$groupId";
+String updateProfile = "auth/profile";
+String getAllStates = "auth/get-all-states";
+String getAllCities(String stateId) => "auth/get-cities-by-state/$stateId";

@@ -1,4 +1,5 @@
 import 'package:bandhucare_new/core/export_file/app_exports.dart';
+import 'package:bandhucare_new/core/utils/context_extensions.dart';
 
 class SimpleLanguageScreen extends StatefulWidget {
   const SimpleLanguageScreen({super.key});
@@ -30,6 +31,8 @@ class _SimpleLanguageScreenState extends State<SimpleLanguageScreen> {
         backgroundColor: Colors.white,
         appBar: CommonAppBar(title: 'Language Settings'),
         body: SafeArea(
+          top: false,
+          bottom: context.hasThreeButtonNavigation,
           child: Stack(
             children: [
               Column(

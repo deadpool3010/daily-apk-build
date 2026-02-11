@@ -1,5 +1,6 @@
-import 'package:bandhucare_new/core/export_file/app_exports.dart';
+import 'package:bandhucare_new/theme/app_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart' show GoogleFonts;
 
 class DoctorsHealthWorkersSection extends StatefulWidget {
   const DoctorsHealthWorkersSection({super.key});
@@ -154,11 +155,7 @@ class _DoctorsHealthWorkersSectionState
         CircleAvatar(
           radius: 20,
           backgroundColor: Colors.grey[300],
-          child: Icon(
-            Icons.person,
-            size: 20,
-            color: Colors.grey[600],
-          ),
+          child: Icon(Icons.person, size: 20, color: Colors.grey[600]),
         ),
         const SizedBox(width: 12),
         Expanded(
@@ -189,4 +186,3 @@ class _DoctorsHealthWorkersSectionState
     );
   }
 }
-

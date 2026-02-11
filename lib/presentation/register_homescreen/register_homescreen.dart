@@ -1,4 +1,5 @@
 import 'package:bandhucare_new/core/export_file/app_exports.dart';
+import 'package:bandhucare_new/core/utils/context_extensions.dart';
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'controller/register_homescreen_controller.dart';
 import 'package:bandhucare_new/widget/alternative_login_buttons.dart';
@@ -20,6 +21,8 @@ class RegisterHomescreen extends StatelessWidget {
       child: Scaffold(
         backgroundColor: Color(0xFFF8F9FA),
         body: SafeArea(
+          top: false,
+          bottom: context.hasThreeButtonNavigation,
           child: Stack(
             children: [
               SingleChildScrollView(

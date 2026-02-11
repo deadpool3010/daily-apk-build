@@ -1,4 +1,5 @@
 import 'package:bandhucare_new/core/export_file/app_exports.dart';
+import 'package:bandhucare_new/core/utils/context_extensions.dart';
 
 class PeoplesStoriesScreen extends StatelessWidget {
   const PeoplesStoriesScreen({super.key});
@@ -58,21 +59,25 @@ class PeoplesStoriesScreen extends StatelessWidget {
             ),
           ],
         ),
-        body: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 20),
-              // Most Recents Section
-              _buildMostRecentsSection(),
-              const SizedBox(height: 40),
-              // All time Favorites Section
-              _buildAllTimeFavoritesSection(),
-              const SizedBox(height: 10),
-              // True Strength Section
-              _buildTrueStrengthSection(),
-              const SizedBox(height: 40),
-            ],
+        body: SafeArea(
+          bottom: context.hasThreeButtonNavigation,
+          top: false,
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 20),
+                // Most Recents Section
+                _buildMostRecentsSection(),
+                const SizedBox(height: 40),
+                // All time Favorites Section
+                _buildAllTimeFavoritesSection(),
+                const SizedBox(height: 10),
+                // True Strength Section
+                _buildTrueStrengthSection(),
+                const SizedBox(height: 40),
+              ],
+            ),
           ),
         ),
       ),

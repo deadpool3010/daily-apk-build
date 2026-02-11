@@ -1,13 +1,20 @@
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:bandhucare_new/core/controller/session_controller.dart';
+import 'package:bandhucare_new/model/city_model.dart';
 import 'package:bandhucare_new/model/patientModel.dart';
 import 'package:bandhucare_new/core/constants/variables.dart';
 import 'package:bandhucare_new/core/api/api_constant.dart';
 import 'package:bandhucare_new/core/services/shared_pref_localization.dart';
+import 'package:bandhucare_new/model/state_model.dart';
+import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
+import 'package:toastification/toastification.dart';
 
 Future<Map<String, dynamic>> signUpApi({
   required String name,
@@ -1081,6 +1088,8 @@ class GoogleAuthService {
       final result = jsonDecode(response.body);
       print('✅ Backend login success');
 
+      print("Google Sign in $result");
+
       // Save user info to shared preferences
       if (result['data'] != null && result['data']['profileDetails'] != null) {
         await SharedPrefLocalization().saveUserInfo(
@@ -1089,10 +1098,20 @@ class GoogleAuthService {
         final userModel = PatientModel.fromJson(
           result['data']['profileDetails'],
         );
+        //  print("Google Sign in data is  ${result['data']['profileDetails']}");
         final session = Get.find<SessionController>();
         session.setUser(userModel);
+        // print('✅ User info saved to local storage');
+        final userinfo = await SharedPrefLocalization().getUserInfo();
+        // print("Google Sign in $userinfo");
+        final token = await SharedPrefLocalization().getTokens();
+        // print("Google Sign in Tokens ");
+        final accessToken = result['data']['accessToken'];
+        final refreshToken = result['data']['refreshToken'];
 
-        print('✅ User info saved to local storage');
+        await SharedPrefLocalization().saveTokens(accessToken, refreshToken);
+
+        // print("Success Fully saved ${accessToken} and ${refreshToken}");
       }
 
       print('📦 Response data: $result');
@@ -1175,7 +1194,9 @@ Future<Map<String, dynamic>> getUserGroupsApi() async {
     final prefs = SharedPrefLocalization();
     final savedLocale = await prefs.getAppLocale();
     final languageCode = savedLocale.isNotEmpty
-        ? savedLocale.toLowerCase().trim() // "hi_IN" -> "hi_in", "en_US" -> "en_us"
+        ? savedLocale
+              .toLowerCase()
+              .trim() // "hi_IN" -> "hi_in", "en_US" -> "en_us"
         : 'en_us'; // Default fallback to English
 
     print('═══════════════════════════════════════════════════════════');
@@ -1324,6 +1345,192 @@ Future<Map<String, dynamic>> getHomepageApi() async {
     }
   } catch (e) {
     print('GetHomepage Error: $e');
+    throw Exception(e);
+  }
+}
+
+Future<Map<String, dynamic>> editAnswerApi({
+  required String sessionId,
+  required String questionId,
+  required String updatedAnswer,
+}) async {
+  try {
+    final url = baseUrl + editAnswer;
+
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $accessToken",
+      },
+      body: jsonEncode({
+        "sessionId": sessionId,
+        "questionId": questionId,
+        "response": updatedAnswer,
+      }),
+    );
+
+    final result = jsonDecode(response.body);
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return result;
+    } else {
+      throw Exception(result['message'] ?? 'Failed to edit answer');
+    }
+  } catch (e) {
+    throw Exception(e);
+  }
+}
+
+Future<Map<String, dynamic>> switchGroupApi({String? groupId}) async {
+  print('Switch Group API URL: $groupId');
+  final url = baseUrl + switchGroup(groupId!);
+
+  try {
+    final response = await http.get(
+      Uri.parse(url),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $accessToken",
+      },
+    );
+    final result = jsonDecode(response.body);
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      print('Switch Group Response :$result');
+      return result;
+    } else {
+      Fluttertoast.showToast(
+        msg: result['message'] ?? 'Unknown error',
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+      );
+      throw Exception(result['message'] ?? 'Unknown error');
+    }
+  } catch (e) {
+    throw Exception(e);
+  }
+}
+
+Future<Map<String, dynamic>> updateProfileApi({
+  String? name,
+  File? image,
+  String? gender,
+  String? houseAddress,
+  String? state,
+  String? city,
+}) async {
+  try {
+    final url = baseUrl + updateProfile;
+
+    var request = http.MultipartRequest('POST', Uri.parse(url));
+    print('Update Profile Request :$request');
+    if (name != null) {
+      request.fields['name'] = name;
+    }
+    if (gender != null) {
+      request.fields['gender'] = gender;
+    }
+    if (houseAddress != null) {
+      request.fields['address'] = houseAddress;
+    }
+    if (state != null) {
+      request.fields['state'] = state;
+    }
+    if (city != null) {
+      request.fields['city'] = city;
+    }
+    if (image != null && image.path.isNotEmpty) {
+      print('object');
+      final fileName = image.path.split('/').last;
+      print('Update Profile - Adding image: $fileName');
+      request.files.add(
+        await http.MultipartFile.fromPath(
+          'file',
+          image.path,
+          filename: fileName,
+        ),
+      );
+    }
+
+    request.headers.addAll({'Authorization': 'Bearer $accessToken'});
+    final responseBody = await request.send();
+    final response = await http.Response.fromStream(responseBody);
+
+    final result = jsonDecode(response.body);
+
+    print('Update Profile Response :$result');
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      print('Update Profile Response :$result');
+      Toastification().show(
+        type: ToastificationType.success,
+        animationDuration: Duration(seconds: 2),
+        title: Text("Profile Update Successfully"),
+      );
+
+      return result;
+    } else {
+      Fluttertoast.showToast(
+        msg: result['message'] ?? 'Unknown error',
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+      );
+      throw Exception(result['message'] ?? 'Unknown error');
+    }
+  } catch (e) {
+    throw Exception(e);
+  }
+}
+
+Future<List<StateModel>> getAllStatesApi() async {
+  final url = baseUrl + getAllStates;
+
+  try {
+    final response = await http.get(
+      Uri.parse(url),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $accessToken",
+      },
+    );
+    print("Get All States Response Status: ${response.statusCode}");
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      final result = jsonDecode(response.body);
+      print('States Response :$result');
+
+      final List list = result['data']['states'];
+      return list.map((e) => StateModel.fromJson(e)).toList();
+    } else {
+      throw Exception('Failed to load states');
+    }
+  } catch (e) {
+    throw Exception(e);
+  }
+}
+
+Future<List<CityModel>> getAllCitiesApi(String stateId) async {
+  final url = baseUrl + getAllCities(stateId);
+  try {
+    print("StateCode is ${stateId}");
+    final response = await http.get(
+      Uri.parse(url),
+      headers: {
+        'content-type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+    print(response.body);
+    if (response.statusCode == 201 || response.statusCode == 200) {
+      final result = jsonDecode(response.body);
+      final List list = result['data']['cities'];
+      return list.map((e) {
+        return CityModel.fromJson(e);
+      }).toList();
+    } else {
+      throw Exception('Failed to load states');
+    }
+  } catch (e) {
     throw Exception(e);
   }
 }

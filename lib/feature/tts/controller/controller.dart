@@ -22,6 +22,11 @@ class TtsController extends GetxController {
     _setupAudioPlayerListeners();
   }
 
+  void onReady() {
+    super.onReady();
+    play();
+  }
+
   void _setupAudioPlayerListeners() {
     // Listen to player state changes
     _audioPlayer.onPlayerStateChanged.listen((state) {

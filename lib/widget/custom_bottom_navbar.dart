@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:bandhucare_new/core/controller/session_controller.dart';
 import 'package:bandhucare_new/core/utils/image_constant.dart';
 import 'package:bandhucare_new/routes/app_routes.dart';
 import 'package:bandhucare_new/widget/search_groups_card.dart';
@@ -20,15 +21,16 @@ class CustomBottomBar extends StatefulWidget {
 
 class _CustomBottomBarState extends State<CustomBottomBar> {
   final GlobalKey _hospitalIconKey = GlobalKey();
+  final sessionController = Get.find<SessionController>();
 
   @override
   Widget build(BuildContext context) {
     return Obx(() {
       final currentIndex = widget.controller.selectedBottomNavIndex.value;
-      final profilePhoto = widget.controller.profileInfo.value?.profilePhoto;
+      final profilePhoto = sessionController.user?.profilePhoto;
       final activeGroup = widget.controller.activeGroup;
       final activeGroupImage = activeGroup?.image;
-      
+
       return Stack(
         clipBehavior: Clip.none,
         children: [
@@ -76,8 +78,7 @@ class _CustomBottomBarState extends State<CustomBottomBar> {
                       PageRouteBuilder(
                         opaque: false,
                         barrierColor: Colors.transparent,
-                        pageBuilder:
-                            (context, animation, secondaryAnimation) {
+                        pageBuilder: (context, animation, secondaryAnimation) {
                           return SearchGroupsCard(
                             onClose: () {
                               Navigator.of(context).pop();
@@ -85,13 +86,13 @@ class _CustomBottomBarState extends State<CustomBottomBar> {
                             hospitalIconKey: _hospitalIconKey,
                           );
                         },
-                        transitionsBuilder: (context, animation,
-                            secondaryAnimation, child) {
-                          return FadeTransition(
-                            opacity: animation,
-                            child: child,
-                          );
-                        },
+                        transitionsBuilder:
+                            (context, animation, secondaryAnimation, child) {
+                              return FadeTransition(
+                                opacity: animation,
+                                child: child,
+                              );
+                            },
                       ),
                     );
                   },
@@ -154,7 +155,7 @@ class _CustomBottomBarState extends State<CustomBottomBar> {
         },
         child: Container(
           height: 65,
-          margin: EdgeInsets.symmetric(horizontal: 10,vertical: 10),
+          margin: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
           decoration: BoxDecoration(
             color: isSelected ? AppColors.primaryColor : Colors.transparent,
             borderRadius: BorderRadius.circular(25),
@@ -167,23 +168,19 @@ class _CustomBottomBarState extends State<CustomBottomBar> {
                 isProfile
                     ? _buildProfileIcon(isSelected, profilePhoto)
                     : isLogo && groupImage != null && groupImage.isNotEmpty
-                        ? _buildGroupLogoIcon(groupImage, isSelected, iconKey)
-                        : imagePath != null
-                            ? isLogo
-                                ? _buildLogoIcon(imagePath, isSelected, iconKey)
-                                : _buildImageIcon(imagePath, color, isSelected)
-                            : heroIcon != null
-                                ? HeroIcon(
-                                    heroIcon,
-                                    style: HeroIconStyle.solid,
-                                    color: color,
-                                    size: 24,
-                                  )
-                                : Icon(
-                                    iconData ?? Icons.circle,
-                                    size: 24,
-                                    color: color,
-                                  ),              
+                    ? _buildGroupLogoIcon(groupImage, isSelected, iconKey)
+                    : imagePath != null
+                    ? isLogo
+                          ? _buildLogoIcon(imagePath, isSelected, iconKey)
+                          : _buildImageIcon(imagePath, color, isSelected)
+                    : heroIcon != null
+                    ? HeroIcon(
+                        heroIcon,
+                        style: HeroIconStyle.solid,
+                        color: color,
+                        size: 24,
+                      )
+                    : Icon(iconData ?? Icons.circle, size: 24, color: color),
               ],
             ),
           ),
@@ -192,7 +189,7 @@ class _CustomBottomBarState extends State<CustomBottomBar> {
     );
   }
 
-  Widget _buildImageIcon(String imagePath, Color color, bool isSelected,) {
+  Widget _buildImageIcon(String imagePath, Color color, bool isSelected) {
     return ColorFiltered(
       colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
       child: Image.asset(
@@ -228,33 +225,37 @@ class _CustomBottomBarState extends State<CustomBottomBar> {
     );
   }
 
-  Widget _buildGroupLogoIcon(String groupImage, bool isSelected, GlobalKey? iconKey) {
+  Widget _buildGroupLogoIcon(
+    String groupImage,
+    bool isSelected,
+    GlobalKey? iconKey,
+  ) {
     return ClipOval(
       child: _DelayedImageWithShimmer(
-      imageUrl: groupImage,
-      width: 40,
-      height: 40,
-      fit: BoxFit.contain,
-      key: iconKey,
-      fallbackWidget: Image.asset(
-        ImageConstant.hospitalLogo,
+        imageUrl: groupImage,
         width: 40,
         height: 40,
         fit: BoxFit.contain,
-        errorBuilder: (context, error, stackTrace) {
-          return Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: Colors.grey[400],
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(
-              Icons.local_hospital,
-              size: 20,
-              color: Colors.white,
-            ),
-          );
+        key: iconKey,
+        fallbackWidget: Image.asset(
+          ImageConstant.hospitalLogo,
+          width: 40,
+          height: 40,
+          fit: BoxFit.contain,
+          errorBuilder: (context, error, stackTrace) {
+            return Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: Colors.grey[400],
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.local_hospital,
+                size: 20,
+                color: Colors.white,
+              ),
+            );
           },
         ),
       ),
@@ -265,7 +266,7 @@ class _CustomBottomBarState extends State<CustomBottomBar> {
     final borderColor = isSelected ? AppColors.white : Colors.grey[600]!;
     final size = isSelected ? 30.0 : 30.0;
     final hasActiveGroup = widget.controller.activeGroup != null;
-    
+
     return Stack(
       clipBehavior: Clip.none,
       children: [
@@ -274,10 +275,7 @@ class _CustomBottomBarState extends State<CustomBottomBar> {
           height: isSelected ? 40 : 30,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            border: Border.all(
-              color: borderColor,
-              width: isSelected ? 2.5 : 2,
-            ),
+            border: Border.all(color: borderColor, width: isSelected ? 2.5 : 2),
           ),
           child: ClipOval(
             child: profilePhoto != null && profilePhoto.isNotEmpty
@@ -301,8 +299,8 @@ class _CustomBottomBarState extends State<CustomBottomBar> {
                   ),
           ),
         ),
+
         // Blue dot indicator for active group
-      
       ],
     );
   }
@@ -326,7 +324,8 @@ class _DelayedImageWithShimmer extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<_DelayedImageWithShimmer> createState() => _DelayedImageWithShimmerState();
+  State<_DelayedImageWithShimmer> createState() =>
+      _DelayedImageWithShimmerState();
 }
 
 class _DelayedImageWithShimmerState extends State<_DelayedImageWithShimmer> {
@@ -358,7 +357,7 @@ class _DelayedImageWithShimmerState extends State<_DelayedImageWithShimmer> {
         child: Container(
           width: widget.width,
           height: widget.height,
-          
+
           decoration: BoxDecoration(
             color: Colors.white,
             shape: BoxShape.circle,

@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:bandhucare_new/core/export_file/app_exports.dart';
+import 'package:bandhucare_new/core/utils/context_extensions.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:toastification/toastification.dart';
@@ -23,92 +24,96 @@ class _YourRemindersState extends State<YourReminders> {
 
   @override
   Widget build(BuildContext context) {
-    return CustomScrollView(
-      slivers: [
-        SliverPadding(
-          padding: const EdgeInsets.all(16.0),
-          sliver: SliverList(
-            delegate: SliverChildListDelegate([
-              const SizedBox(height: 8),
-              // Calendar Header
-              _buildCalendarHeader(),
-              const SizedBox(height: 16),
-              // Horizontal Date Picker
-              // _buildHorizontalDatePicker(),
-              WeekCalendar(),
-              //   SizedBox(height: 24),
-              // Daily Reminders Header with Filter
-              _buildDailyRemindersHeader(),
-              const SizedBox(height: 16),
-              // Reminder Cards from API
-              Obx(() {
-                if (controller.isLoading.value) {
-                  return const Center(
-                    child: Padding(
-                      padding: EdgeInsets.all(32.0),
-                      child: CircularProgressIndicator(),
-                    ),
-                  );
-                }
-
-                if (controller.errorMessage.value.isNotEmpty) {
-                  return Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(32.0),
-                      child: Text(
-                        controller.errorMessage.value,
-                        style: const TextStyle(color: Colors.red),
-                        textAlign: TextAlign.center,
+    return SafeArea(
+      top: false,
+      bottom: context.hasThreeButtonNavigation,
+      child: CustomScrollView(
+        slivers: [
+          SliverPadding(
+            padding: const EdgeInsets.all(16.0),
+            sliver: SliverList(
+              delegate: SliverChildListDelegate([
+                const SizedBox(height: 8),
+                // Calendar Header
+                _buildCalendarHeader(),
+                const SizedBox(height: 16),
+                // Horizontal Date Picker
+                // _buildHorizontalDatePicker(),
+                WeekCalendar(),
+                //   SizedBox(height: 24),
+                // Daily Reminders Header with Filter
+                _buildDailyRemindersHeader(),
+                const SizedBox(height: 16),
+                // Reminder Cards from API
+                Obx(() {
+                  if (controller.isLoading.value) {
+                    return const Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(32.0),
+                        child: CircularProgressIndicator(),
                       ),
-                    ),
-                  );
-                }
+                    );
+                  }
 
-                final filteredReminders = controller.filteredReminders;
-
-                if (filteredReminders.isEmpty) {
-                  return const Center(
-                    child: Padding(
-                      padding: EdgeInsets.all(32.0),
-                      child: Text(
-                        'No reminders found',
-                        style: TextStyle(color: Color(0xFF64748B)),
+                  if (controller.errorMessage.value.isNotEmpty) {
+                    return Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(32.0),
+                        child: Text(
+                          controller.errorMessage.value,
+                          style: const TextStyle(color: Colors.red),
+                          textAlign: TextAlign.center,
+                        ),
                       ),
-                    ),
-                  );
-                }
+                    );
+                  }
 
-                return Column(
-                  children: [
-                    ...filteredReminders.asMap().entries.map((entry) {
-                      final index = entry.key;
-                      final reminder = entry.value;
-                      return Column(
-                        children: [
-                          _buildReminderCard(
-                            status: reminder['status'] ?? '',
-                            date: reminder['date'] ?? '',
-                            completed: reminder['completed'] ?? 0,
-                            total: reminder['total'] ?? 0,
-                            percentage: reminder['percentage'] ?? 0,
-                            isCompleted: reminder['isCompleted'] ?? false,
-                            title: reminder['title'] ?? 'Questionnaire',
-                            description: reminder['description'] ?? '',
-                            sessionId: reminder['id'] ?? '',
-                          ),
-                          if (index < filteredReminders.length - 1)
-                            const SizedBox(height: 16),
-                        ],
-                      );
-                    }).toList(),
-                    const SizedBox(height: 20),
-                  ],
-                );
-              }),
-            ]),
+                  final filteredReminders = controller.filteredReminders;
+
+                  if (filteredReminders.isEmpty) {
+                    return const Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(32.0),
+                        child: Text(
+                          'No reminders found',
+                          style: TextStyle(color: Color(0xFF64748B)),
+                        ),
+                      ),
+                    );
+                  }
+
+                  return Column(
+                    children: [
+                      ...filteredReminders.asMap().entries.map((entry) {
+                        final index = entry.key;
+                        final reminder = entry.value;
+                        return Column(
+                          children: [
+                            _buildReminderCard(
+                              status: reminder['status'] ?? '',
+                              date: reminder['date'] ?? '',
+                              completed: reminder['completed'] ?? 0,
+                              total: reminder['total'] ?? 0,
+                              percentage: reminder['percentage'] ?? 0,
+                              isCompleted: reminder['isCompleted'] ?? false,
+                              title: reminder['title'] ?? 'Questionnaire',
+                              description: reminder['description'] ?? '',
+                              sessionId: reminder['id'] ?? '',
+                            ),
+                            if (index < filteredReminders.length - 1)
+                              const SizedBox(height: 16),
+                          ],
+                        );
+                      }).toList(),
+                      const SizedBox(height: 20),
+                    ],
+                  );
+                }),
+              ]),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -137,6 +142,11 @@ class _YourRemindersState extends State<YourReminders> {
         ],
       ),
     );
+  }
+
+  String _capitalizeFirst(String text) {
+    if (text.isEmpty) return text;
+    return text[0].toUpperCase() + text.substring(1);
   }
 
   Widget _buildDailyRemindersHeader() {
@@ -169,17 +179,17 @@ class _YourRemindersState extends State<YourReminders> {
             child: PopupMenuButton<String>(
               onSelected: controller.updateFilter,
               itemBuilder: (context) => [
-                const PopupMenuItem(value: 'active', child: Text('active')),
+                const PopupMenuItem(value: 'active', child: Text('Active')),
                 const PopupMenuItem(
                   value: 'in-progress',
-                  child: Text('in-progress'),
+                  child: Text('In Progress'),
                 ),
                 const PopupMenuItem(
                   value: 'completed',
-                  child: Text('completed'),
+                  child: Text('Completed'),
                 ),
-                const PopupMenuItem(value: 'missed', child: Text('missed')),
-                const PopupMenuItem(value: 'all', child: Text('all')),
+                const PopupMenuItem(value: 'missed', child: Text('Missed')),
+                const PopupMenuItem(value: 'all', child: Text('All')),
               ],
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(14),
@@ -188,7 +198,7 @@ class _YourRemindersState extends State<YourReminders> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    controller.selectedFilter.value,
+                    _capitalizeFirst(controller.selectedFilter.value),
                     style: const TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w500,

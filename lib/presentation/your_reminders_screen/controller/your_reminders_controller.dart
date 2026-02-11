@@ -1,13 +1,10 @@
 import 'package:bandhucare_new/core/api/api_services.dart';
-import 'package:bandhucare_new/presentation/chat_screen/controller/chat_screeen_controller.dart';
-import 'package:bandhucare_new/presentation/chat_screen/chat_bot_screen.dart';
 import 'package:get/get.dart';
-import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class YourRemindersController extends GetxController {
   final headerMonthYear = DateFormat('MMMM yyyy').format(DateTime.now()).obs;
-  final selectedFilter = 'in-progress'.obs;
+  final selectedFilter = 'all'.obs;
   final selectedDate = DateFormat('yyyy-MM-dd').format(DateTime.now()).obs;
 
   // Reminder data from API
@@ -137,8 +134,6 @@ class YourRemindersController extends GetxController {
     // Navigate to response view
     print('Viewing response for: $reminderId');
   }
-
-
 
   // Future<void> continueQuestionnaire(String sessionId) async {
   //   try {

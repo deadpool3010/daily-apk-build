@@ -1,4 +1,5 @@
 import 'package:bandhucare_new/core/export_file/app_exports.dart';
+import 'package:bandhucare_new/core/utils/context_extensions.dart';
 import 'package:bandhucare_new/feature/user_profile/sections/abha_section.dart';
 import 'package:bandhucare_new/feature/user_profile/sections/account_settings.dart';
 import 'package:bandhucare_new/feature/user_profile/sections/profile_header.dart';
@@ -24,30 +25,33 @@ class UserProfileScreen extends StatelessWidget {
           titleSpacing: 140,
         ),
         body: SingleChildScrollView(
-          child: Column(
-            children: [
-              SizedBox(height: 20),
-              ProfileHeaderSection(),
-              SizedBox(height: 24),
-              SeperatorLine(),
-              SizedBox(height: 24),
-              AbhaSection(),
-              SizedBox(height: 24),
-              Container(
-                width: 360,
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  "Account Settings",
-                  style: TextStyle(
-                    fontFamily: GoogleFonts.roboto().fontFamily,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 18,
+          child: SafeArea(
+            bottom: context.hasThreeButtonNavigation,
+            child: Column(
+              children: [
+                SizedBox(height: 20),
+                ProfileHeaderSection(),
+                SizedBox(height: 24),
+                SeperatorLine(),
+                SizedBox(height: 24),
+                AbhaSection(),
+                SizedBox(height: 24),
+                Container(
+                  width: 360,
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    "Account Settings",
+                    style: TextStyle(
+                      fontFamily: GoogleFonts.roboto().fontFamily,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 18,
+                    ),
                   ),
                 ),
-              ),
-              SizedBox(height: 24),
-              AccountSettingsSection(),
-            ],
+                SizedBox(height: 24),
+                AccountSettingsSection(),
+              ],
+            ),
           ),
         ),
       ),

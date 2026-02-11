@@ -1,4 +1,5 @@
 import 'package:bandhucare_new/core/export_file/app_exports.dart';
+import 'package:bandhucare_new/core/utils/context_extensions.dart';
 import 'controller/abha_created_controller.dart';
 
 class AbhaCreatedScreen extends StatelessWidget {
@@ -18,149 +19,153 @@ class AbhaCreatedScreen extends StatelessWidget {
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         backgroundColor: Colors.white,
-        body: Column(
-          children: [
-            Expanded(
-              child: SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      controller.showAbhaCard.value
-                          ? const SizedBox(height: 80)
-                          : SizedBox(height: 100),
-                      // Welcome Header
-                      _buildWelcomeSection(controller),
-                      const SizedBox(height: 40),
-                      // ABHA Card (only show if not from registration)
-                      Obx(() {
-                        if (controller.showAbhaCard.value) {
-                          return Column(
-                            children: [
-                              Center(child: _buildAbhaCard(controller)),
-                              const SizedBox(height: 40),
-                            ],
-                          );
-                        }
-                        return const SizedBox.shrink();
-                      }),
-                      // Animated sections that appear after card flip
-                      AnimatedBuilder(
-                        animation: controller.flipAnimation,
-                        builder: (context, child) {
-                          final flipProgress = controller.flipAnimation.value;
-                          // Only show sections when flip is complete (front side is showing)
-                          // Start fading in when flipProgress > 0.8 (80% complete)
-                          final opacity = flipProgress > 0.8
-                              ? ((flipProgress - 0.8) / 0.2).clamp(0.0, 1.0)
-                              : 0.0;
-                          return Opacity(
-                            opacity: opacity,
-                            child: IgnorePointer(
-                              ignoring: opacity < 1.0,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  _buildHowScanningWorksSection(),
-                                  const SizedBox(height: 32),
-                                  _buildFaqSection(),
-                                  const SizedBox(height: 32),
-                                  Center(
-                                    child: _buildNeedFurtherAssistanceSection(),
-                                  ),
-                                ],
+        body: SafeArea(
+          bottom: context.hasThreeButtonNavigation,
+          child: Column(
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        controller.showAbhaCard.value
+                            ? const SizedBox(height: 80)
+                            : SizedBox(height: 100),
+                        // Welcome Header
+                        _buildWelcomeSection(controller),
+                        const SizedBox(height: 40),
+                        // ABHA Card (only show if not from registration)
+                        Obx(() {
+                          if (controller.showAbhaCard.value) {
+                            return Column(
+                              children: [
+                                Center(child: _buildAbhaCard(controller)),
+                                const SizedBox(height: 40),
+                              ],
+                            );
+                          }
+                          return const SizedBox.shrink();
+                        }),
+                        // Animated sections that appear after card flip
+                        AnimatedBuilder(
+                          animation: controller.flipAnimation,
+                          builder: (context, child) {
+                            final flipProgress = controller.flipAnimation.value;
+                            // Only show sections when flip is complete (front side is showing)
+                            // Start fading in when flipProgress > 0.8 (80% complete)
+                            final opacity = flipProgress > 0.8
+                                ? ((flipProgress - 0.8) / 0.2).clamp(0.0, 1.0)
+                                : 0.0;
+                            return Opacity(
+                              opacity: opacity,
+                              child: IgnorePointer(
+                                ignoring: opacity < 1.0,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    _buildHowScanningWorksSection(),
+                                    const SizedBox(height: 32),
+                                    _buildFaqSection(),
+                                    const SizedBox(height: 32),
+                                    Center(
+                                      child:
+                                          _buildNeedFurtherAssistanceSection(),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                          );
-                        },
-                      ),
-                      const SizedBox(height: 40),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            // Scan to Join Group Button at bottom
-            Container(
-              padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).padding.bottom > 0
-                    ? MediaQuery.of(context).padding.bottom
-                    : 16,
-                top: 8,
-                left: 24,
-                right: 24,
-              ),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(24),
-                  topRight: Radius.circular(24),
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 12,
-                    offset: Offset(0, -4),
-                    spreadRadius: 0,
-                  ),
-                ],
-              ),
-              child: GestureDetector(
-                onTap: () {
-                  controller.handleScanToJoinGroup();
-                },
-                child: Container(
-                  width: double.infinity,
-                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [Color(0xFF0774E9), Color(0xFF0A7FF0)],
-                      begin: Alignment.centerLeft,
-                      end: Alignment.centerRight,
+                            );
+                          },
+                        ),
+                        const SizedBox(height: 40),
+                      ],
                     ),
-                    borderRadius: BorderRadius.circular(100),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      Icon(
-                        Icons.qr_code_scanner,
-                        color: Colors.white,
-                        size: 24,
-                      ),
-                      const SizedBox(width: 12),
-                      Flexible(
-                        child: Text(
-                          'lbl_scan_to_join_group'.tr,
-                          style: GoogleFonts.roboto(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(100),
-                        ),
-                        margin: EdgeInsets.only(right: 10),
-                        child: Icon(
-                          Icons.arrow_forward,
-                          color: Colors.black,
-                          size: 20,
-                        ),
-                      ),
-                    ],
                   ),
                 ),
               ),
-            ),
-          ],
+              // Scan to Join Group Button at bottom
+              Container(
+                padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).padding.bottom > 0
+                      ? MediaQuery.of(context).padding.bottom
+                      : 16,
+                  top: 8,
+                  left: 24,
+                  right: 24,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(24),
+                    topRight: Radius.circular(24),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 12,
+                      offset: Offset(0, -4),
+                      spreadRadius: 0,
+                    ),
+                  ],
+                ),
+                child: GestureDetector(
+                  onTap: () {
+                    controller.handleScanToJoinGroup();
+                  },
+                  child: Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Color(0xFF0774E9), Color(0xFF0A7FF0)],
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                      ),
+                      borderRadius: BorderRadius.circular(100),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        Icon(
+                          Icons.qr_code_scanner,
+                          color: Colors.white,
+                          size: 24,
+                        ),
+                        const SizedBox(width: 12),
+                        Flexible(
+                          child: Text(
+                            'lbl_scan_to_join_group'.tr,
+                            style: GoogleFonts.roboto(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(100),
+                          ),
+                          margin: EdgeInsets.only(right: 10),
+                          child: Icon(
+                            Icons.arrow_forward,
+                            color: Colors.black,
+                            size: 20,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

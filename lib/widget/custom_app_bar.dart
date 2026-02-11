@@ -73,7 +73,8 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
           ),
         ),
       ),
-      actions: (actionIcon != null || actionText != null) && onActionPressed != null
+      actions:
+          (actionIcon != null || actionText != null) && onActionPressed != null
           ? [
               Padding(
                 padding: const EdgeInsets.only(right: 16.0),
@@ -97,7 +98,8 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
                         )
                       : const SizedBox.shrink(),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: actionButtonColor ?? AppColors.primaryColor,
+                    backgroundColor:
+                        actionButtonColor ?? AppColors.primaryColor,
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(
                       horizontal: 16,

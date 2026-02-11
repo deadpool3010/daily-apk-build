@@ -1,8 +1,6 @@
-import 'dart:async';
 import 'package:bandhucare_new/core/export_file/app_exports.dart';
 import 'package:bandhucare_new/core/controller/session_controller.dart';
 import 'package:bandhucare_new/feature/user_profile/widgets/avatar.dart';
-import 'package:bandhucare_new/core/ui/shimmer/shimmer.dart';
 import 'package:flutter/material.dart';
 
 class ProfileHeaderSection extends StatelessWidget {
@@ -20,31 +18,22 @@ class ProfileHeaderSection extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _DelayedTextWithShimmer(
-                  text: "${sessionController.user?.name ?? ''}",
+                Text(
+                  "${sessionController.user?.name}",
                   style: TextStyle(
                     fontFamily: GoogleFonts.roboto().fontFamily,
                     fontWeight: FontWeight.w600,
                     fontSize: 16,
                   ),
                 ),
-                _DelayedTextWithShimmer(
-                  text: () {
-                    final user = sessionController.user;
-                    final email = user?.email;
-                    final abhaAddress = user?.abhaAddress;
-                    final mobile = user?.mobile;
-                    
-                    if (email != null && email.isNotEmpty) {
-                      return email;
-                    } else if (abhaAddress != null && abhaAddress.isNotEmpty) {
-                      return abhaAddress;
-                    } else if (mobile != null && mobile.isNotEmpty) {
-                      return mobile;
-                    } else {
-                      return '—';
-                    }
-                  }(),
+                Text(
+                  (sessionController.user?.abhaAddress?.isNotEmpty == true)
+                      ? sessionController.user!.abhaAddress!
+                      : (sessionController.user?.email?.isNotEmpty == true)
+                      ? sessionController.user!.email!
+                      : (sessionController.user?.mobile?.isNotEmpty == true)
+                      ? sessionController.user!.mobile!
+                      : '',
                   style: TextStyle(
                     fontFamily: GoogleFonts.roboto().fontFamily,
                     fontWeight: FontWeight.w600,
@@ -55,72 +44,24 @@ class ProfileHeaderSection extends StatelessWidget {
               ],
             ),
             Spacer(), // Pushes edit icon to the end
+            //Icon(Icons.edit, size: 20, color: Colors.black),
             InkWell(
               onTap: () {
                 Get.toNamed(AppRoutes.editProfileScreen);
               },
-              child: Icon(Icons.edit, size: 20, color: Colors.black),
+              child: Container(
+                height: 30,
+                width: 30,
+                decoration: BoxDecoration(
+                  color: Color.fromARGB(109, 57, 122, 233),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(Icons.edit_outlined, size: 20, color: Colors.black),
+              ),
             ),
           ],
         ),
       ),
-    );
-  }
-}
-
-class _DelayedTextWithShimmer extends StatefulWidget {
-  final String text;
-  final TextStyle style;
-
-  const _DelayedTextWithShimmer({
-    required this.text,
-    required this.style,
-  });
-
-  @override
-  State<_DelayedTextWithShimmer> createState() => _DelayedTextWithShimmerState();
-}
-
-class _DelayedTextWithShimmerState extends State<_DelayedTextWithShimmer> {
-  bool _showText = false;
-  Timer? _timer;
-
-  @override
-  void initState() {
-    super.initState();
-    _timer = Timer(const Duration(seconds: 2), () {
-      if (mounted) {
-        setState(() {
-          _showText = true;
-        });
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    _timer?.cancel();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (!_showText || widget.text.isEmpty) {
-      return Shimmer(
-        child: Container(
-          width: 120,
-          height: widget.style.fontSize ?? 16,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(4),
-          ),
-        ),
-      );
-    }
-
-    return Text(
-      widget.text,
-      style: widget.style,
     );
   }
 }

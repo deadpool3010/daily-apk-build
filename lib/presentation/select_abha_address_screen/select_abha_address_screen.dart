@@ -1,4 +1,5 @@
 import 'package:bandhucare_new/core/export_file/app_exports.dart';
+import 'package:bandhucare_new/core/utils/context_extensions.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'controller/select_abha_address_controller.dart';
 
@@ -19,6 +20,8 @@ class SelectAbhaAddressScreen extends StatelessWidget {
       child: Scaffold(
         backgroundColor: Color(0xFFE8F4FD), // Light blue background
         body: SafeArea(
+          top: false,
+          bottom: context.hasThreeButtonNavigation,
           child: Column(
             children: [
               Expanded(

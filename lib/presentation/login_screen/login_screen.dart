@@ -1,4 +1,5 @@
 import 'package:bandhucare_new/core/export_file/app_exports.dart';
+import 'package:bandhucare_new/core/utils/context_extensions.dart';
 import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
@@ -24,43 +25,49 @@ class LoginScreen extends StatelessWidget {
             FocusScope.of(context).unfocus();
           },
           behavior: HitTestBehavior.translucent,
-          child: Builder(
-            builder: (context) {
-              final keyboardVisible =
-                  MediaQuery.of(context).viewInsets.bottom > 0;
+          child: SafeArea(
+            top: false,
+            bottom: context.hasThreeButtonNavigation,
+            child: Builder(
+              builder: (context) {
+                final keyboardVisible =
+                    MediaQuery.of(context).viewInsets.bottom > 0;
 
-              if (keyboardVisible) {
-                return Stack(
-                  children: [
-                    Column(children: [_buildLoginHeader(controller), Spacer()]),
-                    Positioned(
-                      left: 0,
-                      right: 0,
-                      bottom: 0,
-                      child: _buildLoginContentCard(
+                if (keyboardVisible) {
+                  return Stack(
+                    children: [
+                      Column(
+                        children: [_buildLoginHeader(controller), Spacer()],
+                      ),
+                      Positioned(
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        child: _buildLoginContentCard(
+                          context,
+                          controller,
+                          keyboardVisible,
+                        ),
+                      ),
+                    ],
+                  );
+                } else {
+                  return Stack(
+                    children: [
+                      // Header Section with Dark Blue Background
+                      _buildLoginHeader(controller),
+
+                      // Content Card Section
+                      _buildLoginContentCard(
                         context,
                         controller,
                         keyboardVisible,
                       ),
-                    ),
-                  ],
-                );
-              } else {
-                return Stack(
-                  children: [
-                    // Header Section with Dark Blue Background
-                    _buildLoginHeader(controller),
-
-                    // Content Card Section
-                    _buildLoginContentCard(
-                      context,
-                      controller,
-                      keyboardVisible,
-                    ),
-                  ],
-                );
-              }
-            },
+                    ],
+                  );
+                }
+              },
+            ),
           ),
         ),
       ),
@@ -252,7 +259,8 @@ class LoginScreen extends StatelessWidget {
                         onPressed: controller.isLoadingSignIn.value
                             ? null
                             : () {
-                                final phone = controller.phoneController.text.trim();
+                                final phone = controller.phoneController.text
+                                    .trim();
                                 if (controller.validatePhoneNumber(phone)) {
                                   controller.handleGetOTP();
                                 }

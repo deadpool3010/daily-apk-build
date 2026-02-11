@@ -11,6 +11,7 @@ class HomepageController extends GetxController {
   final Rx<ProfileInfo?> profileInfo = Rx<ProfileInfo?>(null);
   final Rx<HospitalInfo?> hospitalInfo = Rx<HospitalInfo?>(null);
   final RxList<HomepageGroup> groups = <HomepageGroup>[].obs;
+  final RxString hospitalImageUrl = ''.obs;
   final RxList<HomepageArticle> articles = <HomepageArticle>[].obs;
   final RxList<HomepageStory> stories = <HomepageStory>[].obs;
   final RxBool isLoading = false.obs;
@@ -63,6 +64,8 @@ class HomepageController extends GetxController {
         profileInfo.value = homepageResponse.data.profileInfo;
         hospitalInfo.value = homepageResponse.data.hospitalInfo;
         groups.value = homepageResponse.data.groups;
+        hospitalImageUrl.value =
+            response['data']['hospitalInfo']['image'] ?? '';
         articles.value = homepageResponse.data.articles;
         stories.value = homepageResponse.data.stories;
 
@@ -82,6 +85,26 @@ class HomepageController extends GetxController {
       _hasCalledApi = false;
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  /// Silent refresh (no loading state). Use after switch-group to get updated isActive.
+  Future<bool> refreshHomepageDataSilent() async {
+    try {
+      final response = await getHomepageApi();
+      if (response['success'] == true && response['data'] != null) {
+        final homepageResponse = HomepageResponse.fromJson(response);
+        profileInfo.value = homepageResponse.data.profileInfo;
+        hospitalInfo.value = homepageResponse.data.hospitalInfo;
+        groups.value = homepageResponse.data.groups;
+        hospitalImageUrl.value =
+            response['data']['hospitalInfo']['image'] ?? '';
+        return true;
+      }
+      return false;
+    } catch (e) {
+      print('Error refreshing homepage data silently: $e');
+      return false;
     }
   }
 

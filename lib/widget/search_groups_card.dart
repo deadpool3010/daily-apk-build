@@ -25,6 +25,9 @@ class _SearchGroupsCardState extends State<SearchGroupsCard>
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
 
+  /// Group id for which switch is in progress; shows loading on that card.
+  String? _switchingGroupId;
+
   @override
   void dispose() {
     _controller.dispose();
@@ -43,22 +46,15 @@ class _SearchGroupsCardState extends State<SearchGroupsCard>
     _scaleAnimation = Tween<double>(
       begin: 0.8,
       end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeOutCubic,
-    ));
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic));
 
     _opacityAnimation = Tween<double>(
       begin: 0.0,
       end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeOut,
-    ));
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
 
     _controller.forward();
   }
-
 
   void _closeCard() {
     _controller.reverse().then((_) {
@@ -92,9 +88,7 @@ class _SearchGroupsCardState extends State<SearchGroupsCard>
                   opacity: _opacityAnimation,
                   child: BackdropFilter(
                     filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-                    child: Container(
-                      color: Colors.black.withOpacity(0.2),
-                    ),
+                    child: Container(color: Colors.black.withOpacity(0.2)),
                   ),
                 ),
               ),
@@ -191,7 +185,7 @@ class _SearchGroupsCardState extends State<SearchGroupsCard>
                 final controller = Get.find<HomepageController>();
                 final isLoading = controller.isLoading.value;
                 final allGroups = controller.groups;
-                
+
                 // Show shimmer loading effect
                 if (isLoading) {
                   return ListView.builder(
@@ -203,21 +197,21 @@ class _SearchGroupsCardState extends State<SearchGroupsCard>
                     },
                   );
                 }
-                
+
                 // Filter groups based on search query
                 var filteredGroups = _searchQuery.isEmpty
                     ? allGroups.toList()
                     : allGroups.where((group) {
                         return group.name.toLowerCase().contains(_searchQuery);
                       }).toList();
-                
+
                 // Sort groups: active groups first, then inactive
                 filteredGroups.sort((a, b) {
                   if (a.isActive && !b.isActive) return -1;
                   if (!a.isActive && b.isActive) return 1;
                   return 0;
                 });
-                
+
                 if (filteredGroups.isEmpty) {
                   return Padding(
                     padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
@@ -234,7 +228,7 @@ class _SearchGroupsCardState extends State<SearchGroupsCard>
                     ),
                   );
                 }
-                
+
                 return ListView.builder(
                   shrinkWrap: true,
                   padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
@@ -251,83 +245,122 @@ class _SearchGroupsCardState extends State<SearchGroupsCard>
     );
   }
 
-  Widget _buildGroupItem(HomepageGroup group) {
-    final isActive = group.isActive;
-    
-    return InkWell(
-      onTap: () {
-        // Set bottom navigation index to 0 (home) when closing
-        final controller = Get.find<HomepageController>();
+  Future<void> _onGroupTap(HomepageGroup group) async {
+    final controller = Get.find<HomepageController>();
+    if (group.isActive) {
+      controller.changeBottomNavIndex(0);
+      _closeCard();
+      return;
+    }
+    setState(() => _switchingGroupId = group.id);
+    try {
+      await switchGroupApi(groupId: group.id);
+      final refreshed = await controller.refreshHomepageDataSilent();
+      if (!mounted) return;
+      if (refreshed) {
         controller.changeBottomNavIndex(0);
         _closeCard();
-        // Get.toNamed(AppRoutes.groupDetailsScreen);
-      },
+      } else {
+        setState(() => _switchingGroupId = null);
+        Fluttertoast.showToast(
+          msg: 'Failed to refresh group',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+        );
+      }
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _switchingGroupId = null);
+      Fluttertoast.showToast(
+        msg: e.toString().replaceFirst('Exception: ', ''),
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+      );
+    }
+  }
+
+  Widget _buildGroupItem(HomepageGroup group) {
+    final isActive = group.isActive;
+    final isSwitching = _switchingGroupId == group.id;
+
+    return InkWell(
+      onTap: isSwitching ? null : () => _onGroupTap(group),
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 16),
         decoration: BoxDecoration(
-          color:Colors.transparent,
+          color: Colors.transparent,
           border: Border(
-            bottom: BorderSide(
-              color: Colors.grey[200]!,
-              width: 1,
-            ),
+            bottom: BorderSide(color: Colors.grey[200]!, width: 1),
           ),
         ),
         child: Row(
           children: [
-            // Group image or icon
+            // Group image or icon (or loading)
             Container(
               width: 48,
               height: 48,
-              decoration: const BoxDecoration(
-                // Remove colored background; keep circular shape only
-                color: Colors.transparent,
+              decoration: BoxDecoration(
+                color: isActive
+                    ? AppColors.primaryColor
+                    : AppColors.secondaryColor,
                 shape: BoxShape.circle,
               ),
-              child: ClipOval(
-                child: group.image != null && group.image!.isNotEmpty
-                    ? Image.network(
-                        group.image!,
-                        width: 48,
-                        height: 48,
-                        fit: BoxFit.cover,
-                        loadingBuilder: (context, child, loadingProgress) {
-                          // While loading, show shimmer placeholder
-                          if (loadingProgress != null) {
-                            return Shimmer(
-                              child: Container(
-                                width: 48,
-                                height: 48,
-                                color: Colors.white,
-                              ),
-                            );
-                          }
-                          // When fully loaded, show the actual image without shimmer
-                          return child;
-                        },
-                        errorBuilder: (context, error, stackTrace) {
-                          return Image.asset(
-                            ImageConstant.hospitalLogo,
-                            width: 24,
-                            height: 24,
-                            fit: BoxFit.contain,
-                          );
-                        },
-                      )
-                    : Image.asset(
-                        ImageConstant.hospitalLogo,
+              child: isSwitching
+                  ? const Center(
+                      child: SizedBox(
                         width: 24,
                         height: 24,
-                        fit: BoxFit.contain,
-                        errorBuilder: (context, error, stackTrace) {
-                          return const Icon(
-                            Icons.medical_services,
-                            color: Colors.white,
-                            size: 24,
-                          );
-                        },
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            Colors.white,
+                          ),
+                        ),
                       ),
-              ),
+                    )
+                  : ClipOval(
+                      child: group.image != null && group.image!.isNotEmpty
+                          ? Image.network(
+                              group.image!,
+                              width: 48,
+                              height: 48,
+                              fit: BoxFit.cover,
+                              loadingBuilder:
+                                  (context, child, loadingProgress) {
+                                    if (loadingProgress == null) {
+                                      return child;
+                                    }
+                                    return Shimmer(
+                                      child: Container(
+                                        width: 48,
+                                        height: 48,
+                                        color: Colors.white,
+                                      ),
+                                    );
+                                  },
+                              errorBuilder: (context, error, stackTrace) {
+                                return Image.asset(
+                                  ImageConstant.hospitalLogo,
+                                  width: 24,
+                                  height: 24,
+                                  fit: BoxFit.contain,
+                                );
+                              },
+                            )
+                          : Image.asset(
+                              ImageConstant.hospitalLogo,
+                              width: 24,
+                              height: 24,
+                              fit: BoxFit.contain,
+                              errorBuilder: (context, error, stackTrace) {
+                                return const Icon(
+                                  Icons.medical_services,
+                                  color: Colors.white,
+                                  size: 24,
+                                );
+                              },
+                            ),
+                    ),
             ),
             const SizedBox(width: 16),
             // Group name
@@ -341,14 +374,9 @@ class _SearchGroupsCardState extends State<SearchGroupsCard>
                 ),
               ),
             ),
+
             // Active indicator or Chevron icon
-           
-          
-              Icon(
-                Icons.chevron_right,
-                color: Colors.grey[400],
-                size: 24,
-              ),
+            Icon(Icons.chevron_right, color: Colors.grey[400], size: 24),
             if (isActive) const SizedBox(width: 8),
           ],
         ),
@@ -360,12 +388,7 @@ class _SearchGroupsCardState extends State<SearchGroupsCard>
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16),
       decoration: BoxDecoration(
-        border: Border(
-          bottom: BorderSide(
-            color: Colors.grey[200]!,
-            width: 1,
-          ),
-        ),
+        border: Border(bottom: BorderSide(color: Colors.grey[200]!, width: 1)),
       ),
       child: Row(
         children: [
@@ -490,5 +513,3 @@ class SpeechBubblePainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
-
-

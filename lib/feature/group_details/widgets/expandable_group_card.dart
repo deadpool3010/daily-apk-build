@@ -6,6 +6,7 @@ class ExpandableGroupCard extends StatefulWidget {
   final String createdDate;
   final String location;
   final bool isActive;
+  final String? image;
   final String linkedNode;
   final String nodeType;
   final String totalUsers;
@@ -13,14 +14,17 @@ class ExpandableGroupCard extends StatefulWidget {
   final String contactName;
   final String emailAddress;
   final String hospitalAddress;
+
   final List<Map<String, String>>? doctorsAndHealthWorkers;
 
   const ExpandableGroupCard({
     super.key,
+
     required this.groupName,
     required this.createdDate,
     required this.location,
     required this.isActive,
+    this.image,
     required this.linkedNode,
     required this.nodeType,
     required this.totalUsers,
@@ -111,7 +115,29 @@ class _ExpandableGroupCardState extends State<ExpandableGroupCard>
                     color: AppColors.secondaryColor,
                     shape: BoxShape.circle,
                   ),
-                  child: Image.asset(ImageConstant.hospitalLogo, width: 24, height: 24, fit: BoxFit.cover,),
+                  child: ClipOval(
+                    child: widget.image != null && widget.image!.isNotEmpty
+                        ? Image.network(
+                            widget.image!,
+                            width: 48,
+                            height: 48,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Image.asset(
+                                ImageConstant.hospitalLogo,
+                                width: 24,
+                                height: 24,
+                                fit: BoxFit.contain,
+                              );
+                            },
+                          )
+                        : Image.asset(
+                            ImageConstant.hospitalLogo,
+                            width: 24,
+                            height: 24,
+                            fit: BoxFit.contain,
+                          ),
+                  ),
                 ),
                 const SizedBox(width: 12),
                 // Group details
@@ -223,10 +249,7 @@ class _ExpandableGroupCardState extends State<ExpandableGroupCard>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 16),
-                const Divider(
-                  color: Colors.grey,
-                  thickness: 0.5,
-                ),
+                const Divider(color: Colors.grey, thickness: 0.5),
                 const SizedBox(height: 16),
                 _buildDetailRow('Linked Node', widget.linkedNode),
                 const SizedBox(height: 12),
@@ -234,7 +257,11 @@ class _ExpandableGroupCardState extends State<ExpandableGroupCard>
                 const SizedBox(height: 12),
                 _buildDetailRow('Total Users', widget.totalUsers),
                 const SizedBox(height: 12),
-                _buildContactRow('Contact No', widget.contactNo, widget.contactName),
+                _buildContactRow(
+                  'Contact No',
+                  widget.contactNo,
+                  widget.contactName,
+                ),
                 const SizedBox(height: 12),
                 _buildDetailRow('Email Address', widget.emailAddress),
                 const SizedBox(height: 12),
@@ -243,10 +270,7 @@ class _ExpandableGroupCardState extends State<ExpandableGroupCard>
                 if (widget.doctorsAndHealthWorkers != null &&
                     widget.doctorsAndHealthWorkers!.isNotEmpty) ...[
                   const SizedBox(height: 24),
-                  const Divider(
-                    color: Colors.grey,
-                    thickness: 0.5,
-                  ),
+                  const Divider(color: Colors.grey, thickness: 0.5),
                   const SizedBox(height: 16),
                   _buildDoctorsSection(),
                 ],
@@ -376,7 +400,9 @@ class _ExpandableGroupCardState extends State<ExpandableGroupCard>
                                 radius: 14,
                                 backgroundColor: Colors.white,
                                 child: ClipOval(
-                                  child: members[index]['avatar'] != null && members[index]['avatar']!.isNotEmpty
+                                  child:
+                                      members[index]['avatar'] != null &&
+                                          members[index]['avatar']!.isNotEmpty
                                       ? DelayedImageWithShimmer(
                                           imageUrl: members[index]['avatar']!,
                                           width: 28,
@@ -523,4 +549,3 @@ class _ExpandableGroupCardState extends State<ExpandableGroupCard>
     );
   }
 }
-

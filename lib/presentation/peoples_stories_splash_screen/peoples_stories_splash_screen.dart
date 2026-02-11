@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:bandhucare_new/core/export_file/app_exports.dart';
+import 'package:bandhucare_new/core/utils/context_extensions.dart';
 import 'package:bandhucare_new/presentation/peoples_stories_splash_screen/controller/peoples_stories_splash_controller.dart';
 
 class PeoplesStoriesSplashScreen extends StatelessWidget {
@@ -20,6 +21,8 @@ class PeoplesStoriesSplashScreen extends StatelessWidget {
       child: Scaffold(
         backgroundColor: const Color(0xFFF3F9FF),
         body: SafeArea(
+          top: false,
+          bottom: context.hasThreeButtonNavigation,
           child: SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.only(bottom: 10),

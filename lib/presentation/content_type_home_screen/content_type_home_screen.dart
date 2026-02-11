@@ -1,4 +1,5 @@
 import 'package:bandhucare_new/core/export_file/app_exports.dart';
+import 'package:bandhucare_new/core/utils/context_extensions.dart';
 import 'package:bandhucare_new/presentation/content_type_home_screen/controller/content_type_home_screen_controller.dart';
 
 class ContentTypeHomeScreen extends StatelessWidget {
@@ -41,206 +42,214 @@ class ContentTypeHomeScreen extends StatelessWidget {
           leadingWidth: 50,
         ),
         extendBodyBehindAppBar: controller.showHeaderImage,
-        body: SingleChildScrollView(
-          controller: controller.scrollController,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Header with image and fixed search bar (conditionally shown)
-              if (controller.showHeaderImage)
-                SizedBox(
-                  width: double.infinity,
-                  height: 220,
-                  child: Stack(
-                    children: [
-                      // Image
-                      Positioned.fill(
-                        child: Image.asset(
-                          ImageConstant.content_type_img_1,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Container(color: const Color(0xFFF3F9FF));
-                          },
+        body: SafeArea(
+          top: false,
+          bottom: context.hasThreeButtonNavigation,
+          child: SingleChildScrollView(
+            controller: controller.scrollController,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Header with image and fixed search bar (conditionally shown)
+                if (controller.showHeaderImage)
+                  SizedBox(
+                    width: double.infinity,
+                    height: 220,
+                    child: Stack(
+                      children: [
+                        // Image
+                        Positioned.fill(
+                          child: Image.asset(
+                            ImageConstant.content_type_img_1,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Container(color: const Color(0xFFF3F9FF));
+                            },
+                          ),
                         ),
-                      ),
 
-                      // Bottom shadow / fade (FORCED on top)
-                      Positioned(
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
-                        height: 160, // MUST be visible
-                        child: Container(
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: [
-                                Colors.transparent,
-                                Color(0xFFF3F9FF), // noticeable
-                              ],
+                        // Bottom shadow / fade (FORCED on top)
+                        Positioned(
+                          left: 0,
+                          right: 0,
+                          bottom: 0,
+                          height: 160, // MUST be visible
+                          child: Container(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [
+                                  Colors.transparent,
+                                  Color(0xFFF3F9FF), // noticeable
+                                ],
+                              ),
                             ),
                           ),
                         ),
+                      ],
+                    ),
+                  ),
+                if (controller.showHeaderImage) const SizedBox(height: 20),
+                if (!controller.showHeaderImage) const SizedBox(height: 10),
+                _buildSearchBar(),
+                // Main Content
+                Container(
+                  color: Color(0xFFF3F9FF),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 20),
+
+                      // Article Cards Section
+                      // Popular Articles Section
+                      _buildPopularArticlesHeader(),
+
+                      const SizedBox(height: 16),
+
+                      // Popular Articles Horizontal List
+                      Builder(
+                        builder: (context) {
+                          // Dynamic height calculation: image (240) + spacing (10) + title max 2 lines (~48) + spacing (8) + author (~18) + spacing (4) + date (~18) = ~346
+                          // Using screen height percentage for better responsiveness
+                          final screenHeight = MediaQuery.of(
+                            context,
+                          ).size.height;
+                          final dynamicHeight = (screenHeight * 0.4).clamp(
+                            310.0,
+                            350.0,
+                          );
+
+                          return SizedBox(
+                            height: dynamicHeight,
+                            child: ListView.separated(
+                              scrollDirection: Axis.horizontal,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                              ),
+                              itemCount: 4,
+                              separatorBuilder: (context, index) =>
+                                  const SizedBox(width: 26),
+                              itemBuilder: (context, index) {
+                                final articles = [
+                                  {
+                                    'image': ImageConstant.care_hub_img_2,
+                                    'title': 'New Treatment goes viral !!!',
+                                    'author': 'Dr. Mukesh Kumar',
+                                    'date': 'Dec 18, 2025',
+                                  },
+                                  {
+                                    'image': ImageConstant.care_hub_img_3,
+                                    'title': 'New Diet for Cancer Patient',
+                                    'author': 'Dr. Sohail Ali',
+                                    'date': 'Nov 09, 2025',
+                                  },
+                                  {
+                                    'image': ImageConstant.care_hub_img_2,
+                                    'title': 'New Diet for Cancer Patient',
+                                    'author': 'Dr. Sohail Ali',
+                                    'date': 'Nov 09, 2025',
+                                  },
+                                  {
+                                    'image': ImageConstant.care_hub_img_3,
+                                    'title': 'New Diet for Cancer Patient',
+                                    'author': 'Dr. Sohail Ali',
+                                    'date': 'Nov 09, 2025',
+                                  },
+                                ];
+                                final article = articles[index];
+                                return _buildArticleCard(
+                                  article,
+                                  'popular_article_$index',
+                                );
+                              },
+                            ),
+                          );
+                        },
                       ),
+
+                      // Just for You Section
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Just for You :)',
+                              style: GoogleFonts.roboto(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.black,
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () {},
+                              child: Text(
+                                'See All',
+                                style: GoogleFonts.lato(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  decoration: TextDecoration.underline,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      const SizedBox(height: 20),
+
+                      // Just for You Horizontal List
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: _buildJustForYouSection(),
+                      ),
+
+                      const SizedBox(height: 30),
+
+                      // Curated for You Section
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Curated for You',
+                              style: GoogleFonts.roboto(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.black,
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () {},
+                              child: Text(
+                                'See All',
+                                style: GoogleFonts.lato(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  decoration: TextDecoration.underline,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      const SizedBox(height: 20),
+
+                      // Curated for You Horizontal List
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: _buildCuratedForYouSection(),
+                      ),
+
+                      const SizedBox(height: 30),
                     ],
                   ),
                 ),
-              if (controller.showHeaderImage) const SizedBox(height: 20),
-              if (!controller.showHeaderImage) const SizedBox(height: 10),
-              _buildSearchBar(),
-              // Main Content
-              Container(
-                color: Color(0xFFF3F9FF),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 20),
-
-                    // Article Cards Section
-                    // Popular Articles Section
-                    _buildPopularArticlesHeader(),
-
-                    const SizedBox(height: 16),
-
-                    // Popular Articles Horizontal List
-                    Builder(
-                      builder: (context) {
-                        // Dynamic height calculation: image (240) + spacing (10) + title max 2 lines (~48) + spacing (8) + author (~18) + spacing (4) + date (~18) = ~346
-                        // Using screen height percentage for better responsiveness
-                        final screenHeight = MediaQuery.of(context).size.height;
-                        final dynamicHeight = (screenHeight * 0.4).clamp(
-                          310.0,
-                          350.0,
-                        );
-
-                        return SizedBox(
-                          height: dynamicHeight,
-                          child: ListView.separated(
-                            scrollDirection: Axis.horizontal,
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            itemCount: 4,
-                            separatorBuilder: (context, index) =>
-                                const SizedBox(width: 26),
-                            itemBuilder: (context, index) {
-                              final articles = [
-                                {
-                                  'image': ImageConstant.care_hub_img_2,
-                                  'title': 'New Treatment goes viral !!!',
-                                  'author': 'Dr. Mukesh Kumar',
-                                  'date': 'Dec 18, 2025',
-                                },
-                                {
-                                  'image': ImageConstant.care_hub_img_3,
-                                  'title': 'New Diet for Cancer Patient',
-                                  'author': 'Dr. Sohail Ali',
-                                  'date': 'Nov 09, 2025',
-                                },
-                                {
-                                  'image': ImageConstant.care_hub_img_2,
-                                  'title': 'New Diet for Cancer Patient',
-                                  'author': 'Dr. Sohail Ali',
-                                  'date': 'Nov 09, 2025',
-                                },
-                                {
-                                  'image': ImageConstant.care_hub_img_3,
-                                  'title': 'New Diet for Cancer Patient',
-                                  'author': 'Dr. Sohail Ali',
-                                  'date': 'Nov 09, 2025',
-                                },
-                              ];
-                              final article = articles[index];
-                              return _buildArticleCard(
-                                article,
-                                'popular_article_$index',
-                              );
-                            },
-                          ),
-                        );
-                      },
-                    ),
-
-                    // Just for You Section
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Just for You :)',
-                            style: GoogleFonts.roboto(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.black,
-                            ),
-                          ),
-                          GestureDetector(
-                            onTap: () {},
-                            child: Text(
-                              'See All',
-                              style: GoogleFonts.lato(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                                decoration: TextDecoration.underline,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    const SizedBox(height: 20),
-
-                    // Just for You Horizontal List
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: _buildJustForYouSection(),
-                    ),
-
-                    const SizedBox(height: 30),
-
-                    // Curated for You Section
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Curated for You',
-                            style: GoogleFonts.roboto(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.black,
-                            ),
-                          ),
-                          GestureDetector(
-                            onTap: () {},
-                            child: Text(
-                              'See All',
-                              style: GoogleFonts.lato(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                                decoration: TextDecoration.underline,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    const SizedBox(height: 20),
-
-                    // Curated for You Horizontal List
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: _buildCuratedForYouSection(),
-                    ),
-
-                    const SizedBox(height: 30),
-                  ],
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
