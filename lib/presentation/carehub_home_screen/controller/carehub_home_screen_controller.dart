@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:bandhucare_new/core/api/api_services.dart';
+import 'package:bandhucare_new/model/homepage_model.dart';
 
 class CarehubHomeScreenController extends GetxController
     with GetTickerProviderStateMixin {
@@ -10,6 +12,13 @@ class CarehubHomeScreenController extends GetxController
   late Animation<double> titleFadeAnimation;
   late Animation<double> searchBarFadeAnimation;
   late Animation<Offset> searchBarSlideAnimation;
+
+  // CareHub data observables
+  final RxList<CarehubArticle> articles = <CarehubArticle>[].obs;
+  final RxList<CarehubStory> stories = <CarehubStory>[].obs;
+  final RxBool isLoading = false.obs;
+  final RxString errorMessage = ''.obs;
+  bool _hasCalledApi = false;
 
   @override
   void onInit() {
@@ -38,6 +47,46 @@ class CarehubHomeScreenController extends GetxController
       parent: searchBarAnimationController,
       curve: Curves.easeOutCubic,
     ));
+    
+    // Load CareHub data
+    if (!_hasCalledApi) {
+      loadCarehubData();
+    }
+  }
+
+  Future<void> loadCarehubData() async {
+    if (_hasCalledApi && isLoading.value) {
+      return;
+    }
+
+    try {
+      isLoading.value = true;
+      errorMessage.value = '';
+      _hasCalledApi = true;
+
+      // Call API - fetch both articles and stories
+      final response = await getCarehubApiService();
+
+      if (response['success'] == true && response['data'] != null) {
+        final carehubResponse = CarehubResponse.fromJson(response);
+
+        // Update observables
+        articles.value = carehubResponse.data.articles;
+        stories.value = carehubResponse.data.stories;
+
+        print('CareHub data loaded successfully');
+        print('Articles: ${articles.length}');
+        print('Stories: ${stories.length}');
+      } else {
+        throw Exception(response['message'] ?? 'Failed to load CareHub data');
+      }
+    } catch (e) {
+      print('Error loading CareHub data: $e');
+      errorMessage.value = e.toString().replaceAll('Exception: ', '');
+      _hasCalledApi = false;
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   @override

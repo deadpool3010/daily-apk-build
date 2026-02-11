@@ -285,7 +285,12 @@ class _HomepageScreenState extends State<HomepageScreen> {
                                   ),
                                 ),
                                 GestureDetector(
-                                  onTap: () {},
+                                  onTap: () {
+                                    Get.toNamed(
+                                      AppRoutes.articlesScreen,
+                                      arguments: {'type': 'articles'},
+                                    );
+                                  },
                                   child: Text(
                                     'See All',
                                     style: GoogleFonts.lato(
@@ -395,90 +400,109 @@ class _HomepageScreenState extends State<HomepageScreen> {
                           // Meet Our Strong Warriors Section
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 20),
-                            child: Text(
-                              'Meet Our Strong Warriors',
-                              style: GoogleFonts.roboto(
-                                textStyle: TextStyle(
-                                  color: AppColors.black,
-                                  fontSize: 18.0,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 14),
-                          // Horizontal scrollable journey cards with thread background
-                          Container(
-                            height: 355,
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFF3F9FF),
-                            ),
-                            child: Stack(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                // Background thread/string
-                                Positioned(
-                                  top: 25,
-                                  left: 0,
-                                  right: 0,
-                                  child: CustomPaint(painter: ThreadPainter()),
-                                ),
-                                // Journey cards
-                                ListView.separated(
-                                  scrollDirection: Axis.horizontal,
-                                  padding: const EdgeInsets.only(
-                                    left: 20,
-                                    right: 20,
-                                    top: 15,
-                                    bottom: 15,
+                                Text(
+                                  'Meet Our Strong Warriors',
+                                  style: GoogleFonts.roboto(
+                                    textStyle: TextStyle(
+                                      color: AppColors.black,
+                                      fontSize: 18.0,
+                                      fontWeight: FontWeight.w500,
+                                    ),
                                   ),
-                                  itemCount: 3,
-                                  separatorBuilder: (context, index) =>
-                                      const SizedBox(width: 50),
-                                  itemBuilder: (context, index) {
-                                    final journeyData = [
-                                      {
-                                        'imageUrl':
-                                            'https://t4.ftcdn.net/jpg/06/33/37/89/360_F_633378965_iRc8bqmOoxkrAlYKvNcBqUhqGXNBmfTB.jpg',
-                                        'title': 'Sita Amma\'s Journey',
-                                        'description':
-                                            'After her 6-month treatment, Sita Amma began walking every morning again. She says, "I found my strength in small steps and big smiles."',
-                                        'buttonText': 'Read her Story',
-                                        'rotation': 0.02,
-                                      },
-                                      {
-                                        'imageUrl':
-                                            'https://t4.ftcdn.net/jpg/06/33/37/89/360_F_633378965_iRc8bqmOoxkrAlYKvNcBqUhqGXNBmfTB.jpg',
-                                        'title': 'Natasha\'s Journey',
-                                        'description':
-                                            'After her 6-month treatment, Natasha began walking every morning again. She says, "I found my strength in small steps and big smiles."',
-                                        'buttonText': 'Read her Story',
-                                        'rotation': -0.02,
-                                      },
-                                      {
-                                        'imageUrl':
-                                            'https://t4.ftcdn.net/jpg/06/33/37/89/360_F_633378965_iRc8bqmOoxkrAlYKvNcBqUhqGXNBmfTB.jpg',
-                                        'title': 'Prashanth\'s Story',
-                                        'description':
-                                            'After his 6-month treatment, Prashanth began walking every morning again. He says, "I found my strength in small steps and big smiles."',
-                                        'buttonText': 'Read his Story',
-                                        'rotation': 0.03,
-                                      },
-                                    ];
-                                    final data = journeyData[index];
-                                    return JourneyCard(
-                                      imageUrl: data['imageUrl'] as String,
-                                      title: data['title'] as String,
-                                      description:
-                                          data['description'] as String,
-                                      buttonText: data['buttonText'] as String,
-                                      rotation: data['rotation'] as double,
-                                      index: index,
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    Get.toNamed(
+                                      AppRoutes.storiesScreen,
+                                      arguments: {'type': 'stories'},
                                     );
                                   },
+                                  child: Text(
+                                    'See All',
+                                    style: GoogleFonts.lato(
+                                      textStyle: TextStyle(
+                                        color: AppColors.black,
+                                        fontSize: 14.0,
+                                        fontWeight: FontWeight.w500,
+                                        decoration: TextDecoration.underline,
+                                      ),
+                                    ),
+                                  ),
                                 ),
                               ],
                             ),
                           ),
+                          const SizedBox(height: 14),
+                          // Horizontal scrollable journey cards with thread background
+                          Obx(() {
+                            final stories = controller.stories;
+                            if (stories.isEmpty) {
+                              return const SizedBox.shrink();
+                            }
+                            return Container(
+                              height: 355,
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFF3F9FF),
+                              ),
+                              child: Stack(
+                                children: [
+                                  // Background thread/string
+                                  Positioned(
+                                    top: 25,
+                                    left: 0,
+                                    right: 0,
+                                    child: CustomPaint(painter: ThreadPainter()),
+                                  ),
+                                  // Journey cards
+                                  ListView.separated(
+                                    scrollDirection: Axis.horizontal,
+                                    padding: const EdgeInsets.only(
+                                      left: 20,
+                                      right: 20,
+                                      top: 15,
+                                      bottom: 15,
+                                    ),
+                                    itemCount: stories.length,
+                                    separatorBuilder: (context, index) =>
+                                        const SizedBox(width: 80),
+                                    itemBuilder: (context, index) {
+                                      final story = stories[index];
+                                      // Rotation list with 4 predefined rotations
+                                      final rotationList = [0.02, -0.02, 0.03, -0.01];
+                                      final rotation = rotationList[index % rotationList.length];
+                                      
+                                      // Format button text based on patient name
+                                      final patientName = story.patient.name;
+                                      final firstName = StringUtils.getFirstName(patientName);
+                                      final buttonText = 'Read Story';
+                                      
+                                      return JourneyCard(
+                                        imageUrl: story.coverImage?.fileUrl ?? '',
+                                        title: story.title,
+                                        description: story.description,
+                                        buttonText: buttonText,
+                                        rotation: rotation,
+                                        index: index,
+                                        onTap: () {
+                                          final arguments = {
+                                            'contentId': story.id,
+                                            'heroTag': 'story_${story.id}',
+                                            'imageUrl': story.coverImage?.fileUrl ?? '',
+                                            'title': story.title,
+                                            'date': story.createdAt,
+                                          };
+                                          Get.toNamed(AppRoutes.blogScreen, arguments: arguments);
+                                        },
+                                      );
+                                    },
+                                  ),
+                                ],
+                              ),
+                            );
+                          }),
                           // Shared with heart section
                           Padding(
                             padding: const EdgeInsets.only(

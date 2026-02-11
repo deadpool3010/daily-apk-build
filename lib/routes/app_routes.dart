@@ -56,6 +56,10 @@ import '../presentation/carehub_home_screen/carehub_home_screen.dart';
 import '../presentation/carehub_home_screen/binding/carehub_home_screen_binding.dart';
 import '../presentation/content_type_home_screen/content_type_home_screen.dart';
 import '../presentation/content_type_home_screen/binding/content_type_home_screen_binding.dart';
+import '../presentation/articles_screen/articles_screen.dart';
+import '../presentation/articles_screen/binding/articles_screen_binding.dart';
+import '../presentation/stories_screen/stories_screen.dart';
+import '../presentation/stories_screen/binding/stories_screen_binding.dart';
 import '../presentation/blog_screen/blog_screen.dart';
 import '../presentation/blog_screen/binding/blog_screen_binding.dart';
 import '../presentation/documents_screen/documents_screen.dart';
@@ -102,6 +106,8 @@ class AppRoutes {
   static const chatScreen = '/chat-screen';
   static const carehubHomeScreen = '/carehub-home';
   static const contentTypeHomeScreen = '/content-type-home';
+  static const articlesScreen = '/articles-screen';
+  static const storiesScreen = '/stories-screen';
   static const blogScreen = '/blog-screen';
   static const documentsScreen = '/documents-screen';
   static const affirmationsScreen = '/affirmations-screen';
@@ -285,6 +291,20 @@ class AppPages {
       name: AppRoutes.contentTypeHomeScreen,
       page: () => const ContentTypeHomeScreen(),
       binding: ContentTypeHomeScreenBinding(),
+      transition: Transition.rightToLeftWithFade,
+      transitionDuration: const Duration(milliseconds: 400),
+    ),
+    GetPage(
+      name: AppRoutes.articlesScreen,
+      page: () => const ArticlesScreen(),
+      binding: ArticlesScreenBinding(),
+      transition: Transition.rightToLeftWithFade,
+      transitionDuration: const Duration(milliseconds: 400),
+    ),
+    GetPage(
+      name: AppRoutes.storiesScreen,
+      page: () => const StoriesScreen(),
+      binding: StoriesScreenBinding(),
       transition: Transition.rightToLeftWithFade,
       transitionDuration: const Duration(milliseconds: 400),
     ),

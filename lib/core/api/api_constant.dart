@@ -51,3 +51,26 @@ String disLikeMessage = 'chat/dislike-message';
 String getFormQuestionAns(String sessionId) => "form/report/$sessionId";
 String getHomepage = "auth/homepage";
 String getContentById(String contentId) => "content/$contentId";
+String getCarehubApi({String? tags, String? type, int? page, int? limit, String? language}) {
+  String url = "auth/carehub";
+  List<String> params = [];
+  if (tags != null && tags.isNotEmpty) {
+    params.add("tags=$tags");
+  }
+  if (type != null && type.isNotEmpty) {
+    params.add("type=$type");
+  }
+  if (page != null) {
+    params.add("page=$page");
+  }
+  if (limit != null) {
+    params.add("limit=$limit");
+  }
+  if (language != null && language.trim().isNotEmpty) {
+    params.add("language=${Uri.encodeComponent(language.trim())}");
+  }
+  if (params.isNotEmpty) {
+    url += "?${params.join('&')}";
+  }
+  return url;
+}

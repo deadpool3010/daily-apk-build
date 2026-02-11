@@ -121,21 +121,55 @@ class BlogScreen extends StatelessWidget {
           tags = (article['tags'] as List).map((tag) => tag.toString()).toList();
         }
         
-        // Get author name - handle both Map and String types
-        String authorName = 'Dr. Sohail Ali';
-        if (displayData['author'] != null) {
-          if (displayData['author'] is Map) {
-            authorName = (displayData['author'] as Map)['name']?.toString() ?? 
-                        displayData['author'].toString();
-          } else {
-            authorName = displayData['author'].toString();
+        // Check if content is a story or article
+        // Story has file.fileType == "story" or has patient field
+        String? fileType;
+        if (displayData['file']?['fileType'] != null) {
+          fileType = displayData['file']?['fileType'];
+        } else if (hasContentId && controller.contentData.value != null) {
+          fileType = controller.contentData.value!['file']?['fileType'];
+        }
+        final isStory = fileType == 'story' || 
+                       displayData['patient'] != null ||
+                       (hasContentId && controller.contentData.value != null &&
+                        controller.contentData.value!['patient'] != null);
+        
+        // Get patient name for stories, author name for articles
+        String displayName = 'Dr. Sohail Ali';
+        if (isStory) {
+          // For stories, show patient name
+          if (displayData['patient'] != null) {
+            if (displayData['patient'] is Map) {
+              displayName = (displayData['patient'] as Map)['name']?.toString() ?? 
+                          displayData['patient'].toString();
+            } else {
+              displayName = displayData['patient'].toString();
+            }
+          } else if (hasContentId && controller.contentData.value != null &&
+                     controller.contentData.value!['patient'] != null) {
+            final patient = controller.contentData.value!['patient'];
+            if (patient is Map) {
+              displayName = patient['name']?.toString() ?? patient.toString();
+            } else {
+              displayName = patient.toString();
+            }
           }
-        } else if (article['author'] != null) {
-          if (article['author'] is Map) {
-            authorName = (article['author'] as Map)['name']?.toString() ?? 
-                        article['author'].toString();
-          } else {
-            authorName = article['author'].toString();
+        } else {
+          // For articles, show author name
+          if (displayData['author'] != null) {
+            if (displayData['author'] is Map) {
+              displayName = (displayData['author'] as Map)['name']?.toString() ?? 
+                          displayData['author'].toString();
+            } else {
+              displayName = displayData['author'].toString();
+            }
+          } else if (article['author'] != null) {
+            if (article['author'] is Map) {
+              displayName = (article['author'] as Map)['name']?.toString() ?? 
+                          article['author'].toString();
+            } else {
+              displayName = article['author'].toString();
+            }
           }
         }
         
@@ -204,11 +238,11 @@ class BlogScreen extends StatelessWidget {
                 // Article Text
                 _buildArticleText(displayData),
                 const SizedBox(height: 24),
-                // Author
+                // Author (for articles) or Patient (for stories)
                 Padding(
                   padding: const EdgeInsets.only(left: 8, right: 6),
                   child: Text(
-                    '- $authorName',
+                    '- $displayName',
                     style: GoogleFonts.lato(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
