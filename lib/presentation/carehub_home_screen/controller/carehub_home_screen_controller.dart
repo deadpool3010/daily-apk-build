@@ -117,4 +117,3 @@ class CarehubHomeScreenController extends GetxController
     }
   }
 }
-
