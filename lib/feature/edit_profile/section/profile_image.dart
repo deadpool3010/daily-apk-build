@@ -96,7 +96,7 @@ class EditProfileImage extends StatelessWidget {
                 Container(
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    border: Border.all(color: Colors.blue, width: 2),
+                    border: Border.all(color: Color(0xFF3865FF), width: 2),
                   ),
                   child: imageWidget,
                 ),
@@ -107,12 +107,12 @@ class EditProfileImage extends StatelessWidget {
                     height: 32,
                     width: 32,
                     decoration: BoxDecoration(
-                      color: Colors.blue,
+                      color: Color(0xFF007AFF),
                       shape: BoxShape.circle,
                       border: Border.all(color: Colors.white, width: 2),
                     ),
                     child: const Icon(
-                      Icons.camera_alt,
+                      TablerIcons.pencil,
                       size: 16,
                       color: Colors.white,
                     ),
