@@ -1,7 +1,8 @@
 name: Daily APK Build & Upload to Slack
 on:
-    schedule:
-        - cron: '30 13 * * *'
+      push:
+        branches:
+           - main
     workflow_dispatch:
 jobs:
     build:
