@@ -8,7 +8,6 @@ import 'package:bandhucare_new/core/constants/variables.dart';
 import 'package:bandhucare_new/core/api/api_constant.dart';
 import 'package:bandhucare_new/core/services/shared_pref_localization.dart';
 import 'package:bandhucare_new/model/state_model.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
@@ -1101,10 +1100,10 @@ class GoogleAuthService {
         //  print("Google Sign in data is  ${result['data']['profileDetails']}");
         final session = Get.find<SessionController>();
         session.setUser(userModel);
-        // print('✅ User info saved to local storage');
-        final userinfo = await SharedPrefLocalization().getUserInfo();
-        // print("Google Sign in $userinfo");
-        final token = await SharedPrefLocalization().getTokens();
+        // // print('✅ User info saved to local storage');
+        // final userinfo = await SharedPrefLocalization().getUserInfo();
+        // // print("Google Sign in $userinfo");
+        // final token = await SharedPrefLocalization().getTokens();
         // print("Google Sign in Tokens ");
         final accessToken = result['data']['accessToken'];
         final refreshToken = result['data']['refreshToken'];
@@ -1561,6 +1560,47 @@ Future<Map<String, dynamic>> getContentByIdApi(String contentId) async {
     }
   } catch (e) {
     print('GetContentById Error: $e');
+    throw Exception(e);
+  }
+}
+
+Future<Map<String, dynamic>> getCarehubApiService({String? tags, String? type, int? page, int? limit}) async {
+  try {
+    // Get language from SharedPreferences
+    final prefs = SharedPrefLocalization();
+    final savedLocale = await prefs.getAppLocale();
+    final languageCode = savedLocale.isNotEmpty
+        ? savedLocale.toLowerCase().trim() // "hi_IN" -> "hi_in", "en_US" -> "en_us"
+        : 'en_us'; // Default fallback to English
+
+    print('GetCarehub - Language from SharedPreferences:');
+    print('  Original Locale: "$savedLocale"');
+    print('  API Format: "$languageCode"');
+
+    final url = baseUrl + getCarehubApi(tags: tags, type: type, page: page, limit: limit, language: languageCode);
+
+    print('GetCarehub API URL: $url');
+
+    final response = await http.get(
+      Uri.parse(url),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $accessToken",
+      },
+    );
+
+    print('GetCarehub Response Status: ${response.statusCode}');
+    print('GetCarehub Response Body: ${response.body}');
+
+    final result = jsonDecode(response.body);
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return result;
+    } else {
+      throw Exception(result['message'] ?? 'Unknown error');
+    }
+  } catch (e) {
+    print('GetCarehub Error: $e');
     throw Exception(e);
   }
 }

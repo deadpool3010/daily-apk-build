@@ -50,13 +50,13 @@ class ProfileHeaderSection extends StatelessWidget {
                 Get.toNamed(AppRoutes.editProfileScreen);
               },
               child: Container(
-                height: 30,
-                width: 30,
+                height: 36,
+                width: 36,
                 decoration: BoxDecoration(
-                  color: Color.fromARGB(109, 57, 122, 233),
+                  color: Color(0xFF397BE9).withOpacity(0.16),
                   shape: BoxShape.circle,
                 ),
-                child: Icon(Icons.edit_outlined, size: 20, color: Colors.black),
+                child: Icon(TablerIcons.pencil, size: 20, color: Colors.black),
               ),
             ),
           ],

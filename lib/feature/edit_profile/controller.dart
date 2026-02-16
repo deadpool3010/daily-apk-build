@@ -34,6 +34,37 @@ class EditProfileController extends GetxController {
   final List<String> genderList = ['Male', 'Female', 'Other'];
   RxInt selectedGenderIndex = (-1).obs;
 
+  // Helper method to convert API gender code to display name
+  String genderCodeToName(String? genderCode) {
+    if (genderCode == null || genderCode.isEmpty) {
+      return 'Select Gender';
+    }
+    switch (genderCode.toUpperCase()) {
+      case 'M':
+        return 'Male';
+      case 'F':
+        return 'Female';
+      case 'O':
+        return 'Other';
+      default:
+        return 'Select Gender';
+    }
+  }
+
+  // Helper method to convert display name to API gender code
+  String genderNameToCode(String genderName) {
+    switch (genderName) {
+      case 'Male':
+        return 'M';
+      case 'Female':
+        return 'F';
+      case 'Other':
+        return 'O';
+      default:
+        return '';
+    }
+  }
+
   // List<Map<String,String>>StateCodeMapping=[{
   //  'Gujarat':''
   // }];
@@ -45,20 +76,19 @@ class EditProfileController extends GetxController {
       text: sessionController.user?.name ?? 'NA',
     );
     stateController = TextEditingController(
-      text: sessionController.user?.state ?? 'NA',
+      text: sessionController.user?.state ?? 'Select State',
     );
     cityController = TextEditingController(
-      text: sessionController.user?.city ?? 'NA',
+      text: sessionController.user?.city ?? 'Select City',
     );
     addressController = TextEditingController(
-      text: sessionController.user?.address ?? 'NA',
+      text: sessionController.user?.address ?? 'Enter Address',
     );
+    final genderDisplayName = genderCodeToName(sessionController.user?.gender);
     genderController = TextEditingController(
-      text: sessionController.user?.gender ?? 'NA',
+      text: genderDisplayName,
     );
-    selectedGenderIndex.value = genderList.indexOf(
-      sessionController.user?.gender ?? 'NA',
-    );
+    selectedGenderIndex.value = genderList.indexOf(genderDisplayName);
     check();
     loadAllState().then((_) {
       if (selectedStateIndex.value != -1) {
@@ -139,8 +169,10 @@ class EditProfileController extends GetxController {
     if (compare?.name.trim() != nameController.text.trim()) {
       changes['name'] = nameController.text.trim();
     }
-    if (compare?.gender?.trim() != genderController.text.trim()) {
-      changes['gender'] = genderController.text.trim();
+    final currentGenderCode = genderNameToCode(genderController.text.trim());
+    final originalGenderCode = compare?.gender?.trim().toUpperCase() ?? '';
+    if (originalGenderCode != currentGenderCode && currentGenderCode.isNotEmpty) {
+      changes['gender'] = currentGenderCode;
     }
     if (compare?.state?.trim() != stateController.text.trim()) {
       changes['state'] = stateController.text.trim();

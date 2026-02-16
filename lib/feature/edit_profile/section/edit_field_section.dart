@@ -69,7 +69,7 @@ class EditFieldSection extends StatelessWidget {
                 SizedBox(height: 20),
                 FieldWidget(
                   label: "House Address",
-                  icon: Icons.location_pin,
+                  // icon: Icons.location_pin,
                   controller: controller.addressController,
                 ),
                 SizedBox(height: 20),
@@ -93,7 +93,7 @@ class EditFieldSection extends StatelessWidget {
                           controller.selectedStateIndex.value = index;
                           controller.stateController.text =
                               controller.states[index].name ?? '';
-                          controller.cityController.text = 'NA';
+                          controller.cityController.text = 'Select City';
                           controller.selectedCityIndex.value = -1;
 
                           final stateCode = controller.states[index].code;
@@ -111,7 +111,7 @@ class EditFieldSection extends StatelessWidget {
                           controller.selectedStateIndex.value = index;
                           controller.stateController.text =
                               controller.states[index].name ?? '';
-                          controller.cityController.text = 'NA';
+                          controller.cityController.text = 'Select State';
                           controller.selectedCityIndex.value = -1;
 
                           final stateCode = controller.states[index].code;
@@ -185,8 +185,10 @@ class EditFieldSection extends StatelessWidget {
       controller.changes['name'] = controller.nameController.text;
     }
 
-    if (compare?.gender?.trim() != controller.genderController.text.trim()) {
-      controller.changes['gender'] = controller.genderController.text;
+    final currentGenderCode = controller.genderNameToCode(controller.genderController.text.trim());
+    final originalGenderCode = compare?.gender?.trim().toUpperCase() ?? '';
+    if (originalGenderCode != currentGenderCode && currentGenderCode.isNotEmpty) {
+      controller.changes['gender'] = currentGenderCode;
     }
 
     if (compare?.state?.trim() != controller.stateController.text.trim()) {

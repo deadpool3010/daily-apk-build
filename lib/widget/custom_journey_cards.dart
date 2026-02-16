@@ -8,6 +8,7 @@ class JourneyCard extends StatefulWidget {
   final String buttonText;
   final double rotation;
   final int index;
+  final VoidCallback? onTap;
 
   const JourneyCard({
     super.key,
@@ -18,6 +19,7 @@ class JourneyCard extends StatefulWidget {
     required this.buttonText,
     this.rotation = 0.0,
     required this.index,
+    this.onTap,
   }) : assert(
          imageUrl != null || imageAsset != null,
          'Either imageUrl or imageAsset must be provided',
@@ -110,10 +112,6 @@ class _JourneyCardState extends State<JourneyCard>
                 // Polaroid card
                 Container(
                   width: 220,
-                  margin: const EdgeInsets.symmetric(
-                    vertical: 10,
-                    horizontal: 0,
-                  ),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(8),
@@ -150,7 +148,7 @@ class _JourneyCardState extends State<JourneyCard>
                       // Title and description in white space below image
                       Flexible(
                         child: Padding(
-                          padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+                          padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisSize: MainAxisSize.min,
@@ -186,28 +184,32 @@ class _JourneyCardState extends State<JourneyCard>
                               const SizedBox(height: 10),
                               Align(
                                 alignment: Alignment.centerRight,
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                    vertical: 8,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFF397BE9),
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                  child: Text(
-                                    widget.buttonText,
-                                    style: GoogleFonts.lato(
-                                      textStyle: TextStyle(
-                                        color: AppColors.white,
-                                        fontSize: 11.0,
-                                      ),
+                                child: GestureDetector(
+                                  onTap: widget.onTap,
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                      vertical: 8,
                                     ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFF397BE9),
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    child: Text(
+                                      widget.buttonText,
+                                      style: GoogleFonts.lato(
+                                        textStyle: TextStyle(
+                                          color: AppColors.white,
+                                          fontSize: 11.0,
+                                        ),
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
                                   ),
                                 ),
                               ),
+                              SizedBox(height: 10),
                             ],
                           ),
                         ),

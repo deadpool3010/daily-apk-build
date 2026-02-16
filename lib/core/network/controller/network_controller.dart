@@ -1,5 +1,4 @@
 import 'package:bandhucare_new/core/network/service/network_service.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class NetworkController extends GetxController {
