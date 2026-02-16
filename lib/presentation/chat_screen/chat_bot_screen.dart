@@ -108,9 +108,13 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
     // Set status bar to transparent for blur effect
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
-        systemNavigationBarColor: Colors.transparent,
+        systemNavigationBarColor: Colors.white,
+
         statusBarColor: Colors.transparent, // Make status bar transparent
         statusBarIconBrightness: isLightColor
+            ? Brightness.dark
+            : Brightness.light,
+        systemNavigationBarIconBrightness: isLightColor
             ? Brightness.dark
             : Brightness.light,
         statusBarBrightness: isLightColor

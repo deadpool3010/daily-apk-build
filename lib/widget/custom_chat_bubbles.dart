@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:ui';
+import 'package:bandhucare_new/feature/user_profile/widgets/avatar.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:pdfx/pdfx.dart';
@@ -714,29 +715,7 @@ class _AudioChatBubbleState extends State<AudioChatBubble> {
                         child: Stack(
                           clipBehavior: Clip.none,
                           children: [
-                            Container(
-                              width: 50,
-                              height: 50,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Colors.white.withOpacity(0.2),
-                                image: widget.profileImageUrl != null
-                                    ? DecorationImage(
-                                        image: NetworkImage(
-                                          widget.profileImageUrl!,
-                                        ),
-                                        fit: BoxFit.cover,
-                                      )
-                                    : null,
-                              ),
-                              child: widget.profileImageUrl == null
-                                  ? const Icon(
-                                      Icons.person,
-                                      color: Colors.white,
-                                      size: 30,
-                                    )
-                                  : null,
-                            ),
+                            Container(child: Avatar()),
                             // Microphone icon overlay
                             Positioned(
                               bottom: -2,

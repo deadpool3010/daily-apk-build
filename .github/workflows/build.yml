@@ -1,0 +1,83 @@
+name: Daily APK Build & Upload to Slack
+on:
+    schedule:
+        - cron: '30 13 * * *'
+    workflow_dispatch:
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout Repository
+              uses: actions/checkout@v4
+            
+            - name: Setup Java
+              uses: actions/setup-java@v4
+              with:
+                distribution: 'temurin'
+                java-version: '17'
+            
+            - name: Setup Flutter
+              uses: subosito/flutter-action@v2
+              with:
+                flutter-version: '3.35.3'
+            
+            - name: Install Dependencies
+              run: flutter pub get
+            
+            - name: Build Release APK
+              run: flutter build apk --release
+            
+            - name: Verify APK Exists
+              run: ls -lh build/app/outputs/flutter-apk/
+            
+            - name: Upload APK to Slack
+              run: |
+                echo "Uploading APK to Slack..."
+                
+                APK_PATH="build/app/outputs/flutter-apk/app-release.apk"
+                APK_SIZE=$(stat -c%s "$APK_PATH")
+                APK_NAME="app-release-build-${{ github.run_number }}.apk"
+                
+                echo "APK Size: $APK_SIZE bytes"
+                
+                # Step 1: Get upload URL
+                echo "Step 1: Getting upload URL..."
+                UPLOAD_RESPONSE=$(curl -s -X POST https://slack.com/api/files.getUploadURLExternal \
+                  -H "Authorization: Bearer ${{ secrets.SLACK_BOT_TOKEN }}" \
+                  -F "filename=$APK_NAME" \
+                  -F "length=$APK_SIZE")
+                
+                echo "Upload URL response: $UPLOAD_RESPONSE"
+                
+                UPLOAD_URL=$(echo $UPLOAD_RESPONSE | jq -r '.upload_url')
+                FILE_ID=$(echo $UPLOAD_RESPONSE | jq -r '.file_id')
+                
+                echo "Upload URL: $UPLOAD_URL"
+                echo "File ID: $FILE_ID"
+                
+                # Step 2: Upload file to the URL
+                echo "Step 2: Uploading file..."
+                curl -X POST "$UPLOAD_URL" \
+                  -H "Content-Type: application/octet-stream" \
+                  --data-binary "@$APK_PATH"
+                
+                echo ""
+                echo "Step 3: Completing upload..."
+                
+                # Step 3: Complete the upload
+                COMPLETE_RESPONSE=$(curl -s -X POST https://slack.com/api/files.completeUploadExternal \
+                  -H "Authorization: Bearer ${{ secrets.SLACK_BOT_TOKEN }}" \
+                  -F "files=[{\"id\":\"$FILE_ID\",\"title\":\"APK Build #${{ github.run_number }}\"}]" \
+                  -F "channel_id=${{ secrets.SLACK_CHANNEL_ID }}" \
+                  -F "initial_comment=APk Build - Build #${{ github.run_number }} ($(date +'%Y-%m-%d %H:%M:%S'))")
+                
+                echo "Complete response: $COMPLETE_RESPONSE"
+                
+                # Check if upload was successful
+                if echo "$COMPLETE_RESPONSE" | jq -e '.ok == true' > /dev/null; then
+                  echo "✅ APK uploaded successfully to Slack!"
+                else
+                  echo "❌ Failed to upload APK to Slack"
+                  echo "$COMPLETE_RESPONSE" | jq '.'
+                  exit 1
+                fi

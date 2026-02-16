@@ -1,3 +1,4 @@
+import 'package:bandhucare_new/core/services/screen_shot_service.dart';
 import 'package:bandhucare_new/core/utils/image_constant.dart';
 import 'package:bandhucare_new/presentation/blog_screen/widgets/tiptap/tiptap_renderer_registration.dart';
 import 'package:bandhucare_new/core/api/api_services.dart';
@@ -7,7 +8,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 
-class BlogScreenController extends GetxController with GetTickerProviderStateMixin {
+class BlogScreenController extends GetxController
+    with GetTickerProviderStateMixin {
   final RxInt currentImagePage = 0.obs;
   final RxBool isPlaying = false.obs;
   final RxString currentTime = '00:32'.obs;
@@ -15,13 +17,13 @@ class BlogScreenController extends GetxController with GetTickerProviderStateMix
   final RxBool isLoading = false.obs;
   final RxString errorMessage = ''.obs;
   final Rx<Map<String, dynamic>?> contentData = Rx<Map<String, dynamic>?>(null);
-  
+
   Timer? _audioTimer;
   Timer? _carouselTimer;
   Timer? _waveformTimer;
   late AnimationController _waveformAnimationController;
   int _audioSeconds = 32;
-  
+
   // Waveform bar count
   static const int waveformBarCount = 35;
   // Waveform bar width (can be changed)
@@ -66,11 +68,18 @@ class BlogScreenController extends GetxController with GetTickerProviderStateMix
   }
 
   @override
+  void onReady() {
+    ScreenShotService.screenShotService.disable();
+    super.onReady();
+  }
+
+  @override
   void onClose() {
     _stopImageCarousel();
     _stopAudio();
     _stopWaveform();
     _waveformAnimationController.dispose();
+    ScreenShotService.screenShotService.enable();
     super.onClose();
   }
 
@@ -100,7 +109,8 @@ class BlogScreenController extends GetxController with GetTickerProviderStateMix
       _audioSeconds++;
       final minutes = _audioSeconds ~/ 60;
       final seconds = _audioSeconds % 60;
-      currentTime.value = '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
+      currentTime.value =
+          '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
     });
     _startWaveform();
   }
@@ -149,12 +159,12 @@ class BlogScreenController extends GetxController with GetTickerProviderStateMix
     try {
       isLoading.value = true;
       errorMessage.value = '';
-      
+
       final response = await getContentByIdApi(contentId);
-      
+
       if (response['success'] == true && response['data'] != null) {
         final content = response['data']['content'] as Map<String, dynamic>;
-        
+
         // Parse TipTap content if it's a string
         if (content['content'] != null && content['content'] is String) {
           try {
@@ -163,7 +173,7 @@ class BlogScreenController extends GetxController with GetTickerProviderStateMix
             print('Error parsing TipTap content: $e');
           }
         }
-        
+
         contentData.value = content;
       } else {
         throw Exception(response['message'] ?? 'Failed to load content');
@@ -176,4 +186,3 @@ class BlogScreenController extends GetxController with GetTickerProviderStateMix
     }
   }
 }
-

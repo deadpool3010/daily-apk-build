@@ -1,7 +1,6 @@
 import 'package:bandhucare_new/core/export_file/app_exports.dart';
 import 'package:bandhucare_new/core/utils/context_extensions.dart';
 import 'package:bandhucare_new/presentation/carehub_home_screen/controller/carehub_home_screen_controller.dart';
-import 'package:bandhucare_new/presentation/blog_screen/data/blog_screen_navigation_example.dart';
 
 class CarehubHomeScreen extends StatelessWidget {
   const CarehubHomeScreen({super.key});
